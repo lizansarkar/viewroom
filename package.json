@@ -1,0 +1,11 @@
+{
+  "name": "viewroom-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ViewRoom - Immersive Virtual Property Exploration Platform",
+  "scripts": {
+    "dev": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "preview": "npm --prefix client run preview"
+  }
+}
