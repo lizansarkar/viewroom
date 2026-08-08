@@ -37,11 +37,11 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm tracking-wider uppercase mb-4">Explore Categories</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><Link to="/explore?category=house" className="hover:text-emerald-400 transition-colors">Luxury Houses</Link></li>
-              <li><Link to="/explore?category=apartment" className="hover:text-emerald-400 transition-colors">Modern Apartments</Link></li>
-              <li><Link to="/explore?category=hotel" className="hover:text-emerald-400 transition-colors">Hotels & Resorts</Link></li>
-              <li><Link to="/explore?category=office" className="hover:text-emerald-400 transition-colors">Corporate Offices</Link></li>
-              <li><Link to="/explore?category=building" className="hover:text-emerald-400 transition-colors">Commercial Buildings</Link></li>
+              <li><Link to="/explore?category=house" className="hover:text-emerald-400 transition-colors cursor-pointer">Luxury Houses</Link></li>
+              <li><Link to="/explore?category=apartment" className="hover:text-emerald-400 transition-colors cursor-pointer">Modern Apartments</Link></li>
+              <li><Link to="/explore?category=hotel" className="hover:text-emerald-400 transition-colors cursor-pointer">Hotels & Resorts</Link></li>
+              <li><Link to="/explore?category=office" className="hover:text-emerald-400 transition-colors cursor-pointer">Corporate Offices</Link></li>
+              <li><Link to="/explore?category=office" className="hover:text-emerald-400 transition-colors cursor-pointer">Commercial Buildings</Link></li>
             </ul>
           </div>
 
@@ -49,11 +49,11 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm tracking-wider uppercase mb-4">Platform</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="#tours" className="hover:text-emerald-400 transition-colors">360° Virtual Builder</a></li>
-              <li><a href="#owner" className="hover:text-emerald-400 transition-colors">For Property Owners</a></li>
-              <li><a href="#pricing" className="hover:text-emerald-400 transition-colors">Pricing & Plans</a></li>
-              <li><a href="#admin" className="hover:text-emerald-400 transition-colors">Partner Dashboard</a></li>
-              <li><a href="#security" className="hover:text-emerald-400 transition-colors">Security & RBAC</a></li>
+              <li><Link to="/explore" className="hover:text-emerald-400 transition-colors cursor-pointer">360° Virtual Builder</Link></li>
+              <li><Link to="/explore" className="hover:text-emerald-400 transition-colors cursor-pointer">For Property Owners</Link></li>
+              <li><Link to="/explore" className="hover:text-emerald-400 transition-colors cursor-pointer">Pricing & Plans</Link></li>
+              <li><Link to="/explore" className="hover:text-emerald-400 transition-colors cursor-pointer">Partner Dashboard</Link></li>
+              <li><Link to="/explore" className="hover:text-emerald-400 transition-colors cursor-pointer">Security & RBAC</Link></li>
             </ul>
           </div>
 
@@ -70,7 +70,7 @@ export default function Footer() {
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 top-1.5 bottom-1.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white transition-colors flex items-center justify-center"
+                  className="absolute right-1.5 top-1.5 bottom-1.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white transition-colors flex items-center justify-center cursor-pointer"
                   aria-label="Subscribe"
                 >
                   <Send className="w-3.5 h-3.5" />
@@ -84,9 +84,9 @@ export default function Footer() {
         <div className="pt-8 border-t border-slate-800/60 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} ViewRoom. All rights reserved. Immersive Virtual Property Exploration Platform.</p>
           <div className="flex items-center gap-6">
-            <a href="#privacy" className="hover:text-slate-400 transition-colors">Privacy Policy</a>
-            <a href="#terms" className="hover:text-slate-400 transition-colors">Terms of Service</a>
-            <a href="#cookies" className="hover:text-slate-400 transition-colors">Cookie Preferences</a>
+            <Link to="/explore" className="hover:text-slate-400 transition-colors cursor-pointer">Privacy Policy</Link>
+            <Link to="/explore" className="hover:text-slate-400 transition-colors cursor-pointer">Terms of Service</Link>
+            <Link to="/explore" className="hover:text-slate-400 transition-colors cursor-pointer">Cookie Preferences</Link>
           </div>
         </div>
       </div>

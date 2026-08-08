@@ -1,63 +1,30 @@
-import React, { useState } from 'react';
-import { Search, Filter, Compass, Eye, MapPin, Bed, Bath, ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Search, Compass, Eye, MapPin, Bed, Bath, ArrowUpRight } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { MOCK_PROPERTIES } from '../data/mockProperties';
 
 export default function Explore() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category') || 'all';
+
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const sampleProperties = [
-    {
-      id: 'prop-1',
-      title: 'Azure Horizon Luxury Villa',
-      category: 'house',
-      location: 'Malibu, California',
-      price: '$4,250,000',
-      beds: 5,
-      baths: 6,
-      scenesCount: 8,
-      thumbnail: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
-      badge: 'Featured 360°',
-    },
-    {
-      id: 'prop-2',
-      title: 'The Glasshouse Penthouse',
-      category: 'apartment',
-      location: 'Manhattan, New York',
-      price: '$3,800,000',
-      beds: 3,
-      baths: 3.5,
-      scenesCount: 6,
-      thumbnail: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
-      badge: 'Hotspot Tour',
-    },
-    {
-      id: 'prop-3',
-      title: 'Serene Sanctuary Eco Resort Room',
-      category: 'hotel',
-      location: 'Ubud, Bali',
-      price: '$450 / night',
-      beds: 1,
-      baths: 1,
-      scenesCount: 4,
-      thumbnail: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
-      badge: 'Resort Suite',
-    },
-    {
-      id: 'prop-4',
-      title: 'Metropolitan Commercial Tower - Suite 400',
-      category: 'office',
-      location: 'Downtown, Chicago',
-      price: '$12,000 / mo',
-      beds: 0,
-      baths: 2,
-      scenesCount: 5,
-      thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
-      badge: 'Commercial Space',
-    },
-  ];
+  useEffect(() => {
+    setSelectedCategory(categoryParam);
+  }, [categoryParam]);
 
-  const filteredProperties = sampleProperties.filter((p) => {
+  const handleCategoryChange = (catId) => {
+    setSelectedCategory(catId);
+    if (catId === 'all') {
+      searchParams.delete('category');
+    } else {
+      searchParams.set('category', catId);
+    }
+    setSearchParams(searchParams);
+  };
+
+  const filteredProperties = MOCK_PROPERTIES.filter((p) => {
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -102,8 +69,8 @@ export default function Explore() {
           ].map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              onClick={() => handleCategoryChange(cat.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                 selectedCategory === cat.id
                   ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
                   : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
@@ -118,9 +85,10 @@ export default function Explore() {
       {/* Property Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
         {filteredProperties.map((prop) => (
-          <div
+          <Link
             key={prop.id}
-            className="glass-panel rounded-2xl border border-slate-800/80 overflow-hidden hover:border-emerald-500/40 transition-all duration-300 group flex flex-col justify-between"
+            to={`/property/${prop.id}`}
+            className="glass-panel rounded-2xl border border-slate-800/80 overflow-hidden hover:border-emerald-500/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             {/* Image & Badge */}
             <div className="relative h-56 overflow-hidden">
@@ -165,16 +133,13 @@ export default function Explore() {
                   </span>
                 </div>
 
-                <Link
-                  to={`/property/${prop.id}`}
-                  className="px-3.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white text-xs font-semibold transition-all flex items-center gap-1 border border-emerald-500/30"
-                >
+                <span className="px-3.5 py-1.5 rounded-lg bg-emerald-500/10 group-hover:bg-emerald-500 text-emerald-400 group-hover:text-white text-xs font-semibold transition-all flex items-center gap-1 border border-emerald-500/30">
                   Enter Tour
                   <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
+                </span>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

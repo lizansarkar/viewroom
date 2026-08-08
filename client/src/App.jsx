@@ -5,6 +5,7 @@ import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
 import PropertyDetails from './pages/PropertyDetails';
+import PropertyViewerPage from './pages/PropertyViewerPage';
 import DesignSystemShowcase from './pages/DesignSystemShowcase';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route path="/property/:id/view" element={<PropertyViewerPage />} />
             <Route path="/design-system" element={<DesignSystemShowcase />} />
           </Routes>
         </main>

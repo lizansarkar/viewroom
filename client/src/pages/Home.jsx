@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
   const categories = [
-    { title: 'Luxury Houses', icon: HomeIcon, count: '142 Spaces', color: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/30' },
-    { title: 'Modern Apartments', icon: Building, count: '98 Spaces', color: 'from-blue-500/20 to-cyan-500/20', border: 'border-blue-500/30' },
-    { title: 'Hotels & Resorts', icon: Hotel, count: '64 Spaces', color: 'from-amber-500/20 to-orange-500/20', border: 'border-amber-500/30' },
-    { title: 'Corporate Offices', icon: Compass, count: '51 Spaces', color: 'from-purple-500/20 to-indigo-500/20', border: 'border-purple-500/30' },
+    { id: 'house', title: 'Luxury Houses', icon: HomeIcon, count: '142 Spaces', color: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/30' },
+    { id: 'apartment', title: 'Modern Apartments', icon: Building, count: '98 Spaces', color: 'from-blue-500/20 to-cyan-500/20', border: 'border-blue-500/30' },
+    { id: 'hotel', title: 'Hotels & Resorts', icon: Hotel, count: '64 Spaces', color: 'from-amber-500/20 to-orange-500/20', border: 'border-amber-500/30' },
+    { id: 'office', title: 'Corporate Offices', icon: Compass, count: '51 Spaces', color: 'from-purple-500/20 to-indigo-500/20', border: 'border-purple-500/30' },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
               to="/explore"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base transition-all duration-300 shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-3 group"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-base transition-all duration-300 shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-3 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <Eye className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
               Explore 360° Properties
@@ -51,13 +51,13 @@ export default function Home() {
 
             <a
               href="#categories"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel border border-slate-700/80 hover:border-slate-600 text-slate-200 font-semibold text-base transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel border border-slate-700/80 hover:border-slate-600 text-slate-200 font-semibold text-base transition-all flex items-center justify-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               Browse Categories
             </a>
           </div>
 
-          {/* Key Metrics */}
+          {/* Key Metrics (Non-interactive stats) */}
           <div className="pt-16 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-slate-800/80 max-w-4xl mx-auto">
             <div className="space-y-1">
               <p className="text-3xl font-extrabold text-white">360°</p>
@@ -89,12 +89,13 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat, idx) => {
+          {categories.map((cat) => {
             const IconComponent = cat.icon;
             return (
-              <div
-                key={idx}
-                className={`p-6 rounded-2xl bg-gradient-to-b ${cat.color} border ${cat.border} glass-panel hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col justify-between h-48`}
+              <Link
+                key={cat.id}
+                to={`/explore?category=${cat.id}`}
+                className={`p-6 rounded-2xl bg-gradient-to-b ${cat.color} border ${cat.border} glass-panel hover:scale-[1.02] transition-all duration-300 cursor-pointer group flex flex-col justify-between h-48 focus:outline-none focus:ring-2 focus:ring-emerald-500`}
               >
                 <div className="flex items-center justify-between">
                   <div className="p-3 rounded-xl bg-slate-900/80 text-emerald-400 border border-slate-800">
@@ -113,7 +114,7 @@ export default function Home() {
                     Virtual Tour Available <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                   </p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
