@@ -6,7 +6,6 @@ import Home from './pages/Home';
 import Explore from './pages/Explore';
 import PropertyDetails from './pages/PropertyDetails';
 import PropertyViewerPage from './pages/PropertyViewerPage';
-import DesignSystemShowcase from './pages/DesignSystemShowcase';
 
 export default function App() {
   return (
@@ -19,7 +18,7 @@ export default function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/property/:id/view" element={<PropertyViewerPage />} />
-            <Route path="/design-system" element={<DesignSystemShowcase />} />
+
           </Routes>
         </main>
         <Footer />

@@ -12,9 +12,7 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Explore', path: '/explore' },
-    { name: 'Featured Tours', path: '/explore' },
-    { name: 'Categories', path: '/#categories' },
-    { name: 'Design System', path: '/design-system' },
+    { name: 'Categories', path: '/categories' },
   ];
 
   const handleSignIn = () => {
@@ -38,11 +36,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl p-1">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-300">
-                <div className="w-full h-full bg-[#0a0f1d] rounded-[10px] flex items-center justify-center">
-                  <Eye className="w-5 h-5 text-emerald-400" />
-                </div>
-              </div>
+              
               <div className="flex flex-col">
                 <span className="font-bold text-xl tracking-tight text-white flex items-center gap-1.5">
                   VIEW<span className="text-emerald-400 font-extrabold">ROOM</span>
@@ -68,13 +62,6 @@ export default function Header() {
 
             {/* Action Buttons */}
             <div className="hidden md:flex items-center gap-4">
-              <Link
-                to="/explore"
-                className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl"
-              >
-                <Compass className="w-4 h-4 text-emerald-400" />
-                Browse Spaces
-              </Link>
 
               <button
                 onClick={handleSignIn}
