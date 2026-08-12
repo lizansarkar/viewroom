@@ -1,11 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import Home from './pages/Home';
-import Explore from './pages/Explore';
-import PropertyDetails from './pages/PropertyDetails';
-import PropertyViewerPage from './pages/PropertyViewerPage';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import Home from "./pages/Home";
+import Explore from "./pages/Explore";
+import PropertyViewerPage from "./pages/PropertyViewerPage";
+import TourEditor from "./pages/TourEditor";
 
 export default function App() {
   return (
@@ -16,9 +16,14 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/explore" element={<Explore />} />
-            <Route path="/property/:id" element={<PropertyDetails />} />
-            <Route path="/property/:id/view" element={<PropertyViewerPage />} />
-
+            <Route
+              path="/property/:slug/view"
+              element={<PropertyViewerPage />}
+            />
+            <Route
+              path="/admin/property/:slug/tour-editor"
+              element={<TourEditor />}
+            />
           </Routes>
         </main>
         <Footer />

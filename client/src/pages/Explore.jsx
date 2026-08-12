@@ -87,7 +87,7 @@ export default function Explore() {
         {filteredProperties.map((prop) => (
           <Link
             key={prop.id}
-            to={`/property/${prop.id}`}
+            to={`/property/${prop.id}/view`}
             className="glass-panel rounded-2xl border border-slate-800/80 overflow-hidden hover:border-emerald-500/40 transition-all duration-300 group flex flex-col justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             {/* Image & Badge */}
