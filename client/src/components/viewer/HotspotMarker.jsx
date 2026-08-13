@@ -83,7 +83,7 @@ export default function HotspotMarker({
           center
           distanceFactor={240}
           position={[0, 8, 0]}
-          occlude={[sphereRef]}
+          occlude={sphereRef && sphereRef.layers ? [sphereRef] : undefined}
           zIndexRange={[40, 0]}
           style={{ pointerEvents: "auto" }}
         >
@@ -106,7 +106,7 @@ export default function HotspotMarker({
           center
           distanceFactor={200}
           position={[0, 6, 0]}
-          occlude={[sphereRef]}
+          occlude={sphereRef && sphereRef.layers ? [sphereRef] : undefined}
           zIndexRange={[40, 0]}
           style={{ pointerEvents: "auto" }}
         >

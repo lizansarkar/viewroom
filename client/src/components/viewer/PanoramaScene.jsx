@@ -111,6 +111,7 @@ export default function PanoramaScene({
   onAddHotspotSaved,
   onAddHotspotRequest,
   currentSceneId,
+  hideHotspots = false,
 }) {
   const { camera } = useThree();
   const isDebug =
@@ -142,10 +143,14 @@ export default function PanoramaScene({
       panoramaUrl,
       (loadedTexture) => {
         if (isCancelled) return;
-        loadedTexture.wrapS = THREE.ClampToEdgeWrapping;
+        // Configure equirectangular-style mapping and encoding for panoramas
+        loadedTexture.mapping = THREE.EquirectangularReflectionMapping;
+        loadedTexture.wrapS = THREE.RepeatWrapping;
         loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
         loadedTexture.minFilter = THREE.LinearFilter;
         loadedTexture.magFilter = THREE.LinearFilter;
+        loadedTexture.encoding = THREE.sRGBEncoding;
+        loadedTexture.flipY = false;
         // Dispose previous texture if present
         if (prevTextureRef.current && prevTextureRef.current.dispose)
           prevTextureRef.current.dispose();
@@ -240,7 +245,16 @@ export default function PanoramaScene({
     }
   };
 
-  if (!texture) return null;
+  // Use a procedural fallback texture while the real texture is loading or failed
+  const usedTexture = texture || createCanvasPanoramaTexture(sceneName);
+
+  // Ensure mapping/encoding are set on the used texture (covers fallback canvas texture)
+  if (usedTexture && !usedTexture.mapping) {
+    usedTexture.mapping = THREE.EquirectangularReflectionMapping;
+  }
+  if (usedTexture && usedTexture.encoding === undefined) {
+    usedTexture.encoding = THREE.sRGBEncoding;
+  }
 
   return (
     <>
@@ -266,15 +280,20 @@ export default function PanoramaScene({
           }
         }}
       >
-        <mesh ref={sphereRef} scale={[-1, 1, 1]}>
+        <mesh ref={sphereRef}>
           <sphereGeometry args={[500, 60, 40]} />
-          <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
+          <meshBasicMaterial map={usedTexture} side={THREE.BackSide} />
         </mesh>
 
         {/* Render hotspots as 3D anchored markers */}
-        {hotspots.map((h) => {
-          // hotspots may store positions as yaw/pitch or as unit direction vectors
-          const rawPos = h.position || h.dir || { x: 0, y: 0, z: 1 };
+        {(!hideHotspots ? hotspots : []).map((h) => {
+          // hotspots may store positions as yaw/pitch at top-level or under `position`, or as a unit direction vector.
+          const rawPos =
+            h.position ||
+            h.dir ||
+            (h.yaw !== undefined
+              ? { yaw: h.yaw, pitch: h.pitch || 0 }
+              : { x: 0, y: 0, z: 1 });
           const dir =
             rawPos && rawPos.yaw !== undefined
               ? sphericalToDir(rawPos.yaw, rawPos.pitch || 0)
@@ -282,7 +301,7 @@ export default function PanoramaScene({
           const pos = dirToPosition(dir, HOTSPOT_SPHERE_RADIUS);
           return (
             <HotspotMarker
-              key={h.id}
+              key={h.id || `${h.label}-${Math.random()}`}
               hotspot={h}
               position={pos}
               sphereRef={sphereRef.current}
@@ -294,13 +313,14 @@ export default function PanoramaScene({
 
       {/* Orbit Controls tuned for natural touch & mouse rotation */}
       <OrbitControls
+        enableRotate={true}
         enableZoom={true}
         enablePan={false}
         enableDamping={true}
         dampingFactor={0.05}
-        rotateSpeed={-0.45}
+        rotateSpeed={0.55}
         zoomSpeed={0.8}
-        minDistance={1}
+        minDistance={0.05}
         maxDistance={200}
         minPolarAngle={Math.PI * 0.1}
         maxPolarAngle={Math.PI * 0.9}

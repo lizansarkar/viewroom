@@ -10,7 +10,7 @@ function InfoOverlay({ title, propertyId }) {
   const prop = propertyId ? getPropertyById(propertyId) : null;
 
   return (
-    <div className="pointer-events-auto">
+    <div className="">
       <button
         onClick={() => setOpen((s) => !s)}
         className="m-4 px-3 py-2 rounded-full bg-slate-900/70 text-slate-200 border border-slate-800"

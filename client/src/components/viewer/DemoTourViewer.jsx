@@ -4,6 +4,16 @@ import PanoramaScene from "./PanoramaScene";
 import { getPropertyById } from "../../data/mockProperties";
 import scenesData from "../../data/demo-scenes.json";
 import * as THREE from "three";
+import { gsap } from "gsap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTimes,
+  faVideo,
+  faVolumeHigh,
+  faEyeSlash,
+  faExpand,
+  faCamera,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function DemoTourViewer({ propertyId, onBack }) {
   const prop = getPropertyById(propertyId);
@@ -12,6 +22,7 @@ export default function DemoTourViewer({ propertyId, onBack }) {
   const fadeRef = useRef();
   const [fading, setFading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hideHotspots, setHideHotspots] = useState(false);
 
   useEffect(() => {
     // ensure initial fade hidden
@@ -34,12 +45,15 @@ export default function DemoTourViewer({ propertyId, onBack }) {
     // preload
     await preloadImage(target.image);
 
-    // fade out -> switch -> fade in using CSS transition
+    // fade out -> switch -> fade in using GSAP for smoothness
     setFading(true);
-    await new Promise((res) => setTimeout(res, 300));
+    if (fadeRef.current)
+      await gsap.to(fadeRef.current, { duration: 0.32, opacity: 1 });
     setCurrentId(targetId);
-    // wait a bit for scene to render, then fade back
-    await new Promise((res) => setTimeout(res, 120));
+    // small delay to ensure texture bind
+    await new Promise((res) => setTimeout(res, 80));
+    if (fadeRef.current)
+      await gsap.to(fadeRef.current, { duration: 0.36, opacity: 0 });
     setFading(false);
   };
 
@@ -82,55 +96,74 @@ export default function DemoTourViewer({ propertyId, onBack }) {
       <div
         className={`fixed right-4 top-20 z-50 flex flex-col gap-3 transition-transform ${menuOpen ? "translate-x-0" : "translate-x-32"}`}
       >
-        {/* circular icon buttons */}
-        {[
-          { id: "close", label: "Close", icon: "✖", onClick: onBack },
-          {
-            id: "vr",
-            label: "VR",
-            icon: "🕶️",
-            onClick: () => alert("VR placeholder"),
-          },
-          {
-            id: "sound",
-            label: "Sound",
-            icon: "🔊",
-            onClick: () => alert("Sound toggle"),
-          },
-          {
-            id: "hide",
-            label: "Hide",
-            icon: "🙈",
-            onClick: () => alert("Hide markers"),
-          },
-          {
-            id: "fs",
-            label: "Fullscreen",
-            icon: "⤢",
-            onClick: async () => {
-              try {
-                if (!document.fullscreenElement)
-                  await document.documentElement.requestFullscreen();
-                else await document.exitFullscreen();
-              } catch (e) {}
-            },
-          },
-          {
-            id: "snap",
-            label: "Snap",
-            icon: "📷",
-            onClick: () => alert("Snapshot"),
-          },
-        ].map((b) => (
-          <button
-            key={b.id}
-            onClick={b.onClick}
-            className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
-            title={b.label}
-          >
-            <span className="text-lg">{b.icon}</span>
-          </button>
-        ))}
+        {/* circular icon buttons using FontAwesome */}
+        <button
+          onClick={onBack}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="Close"
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+
+        <button
+          onClick={() => alert("VR placeholder")}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="VR"
+        >
+          <FontAwesomeIcon icon={faVideo} />
+        </button>
+
+        <button
+          onClick={() => alert("Sound toggle")}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="Sound"
+        >
+          <FontAwesomeIcon icon={faVolumeHigh} />
+        </button>
+
+        <button
+          onClick={() => setHideHotspots((s) => !s)}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="Toggle Hotspots"
+        >
+          <FontAwesomeIcon icon={faEyeSlash} />
+        </button>
+
+        <button
+          onClick={async () => {
+            try {
+              if (!document.fullscreenElement)
+                await document.documentElement.requestFullscreen();
+              else await document.exitFullscreen();
+            } catch (e) {}
+          }}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="Fullscreen"
+        >
+          <FontAwesomeIcon icon={faExpand} />
+        </button>
+
+        <button
+          onClick={() => {
+            const canvas = document.querySelector("canvas");
+            if (!canvas) return;
+            try {
+              const data = canvas.toDataURL("image/png");
+              const a = document.createElement("a");
+              a.href = data;
+              a.download = `${propertyId}-${currentId}.png`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            } catch (err) {
+              console.warn("Snapshot failed", err);
+            }
+          }}
+          className="w-12 h-12 rounded-full bg-black/60 border border-white/10 text-white flex items-center justify-center cursor-pointer shadow-lg"
+          title="Snapshot"
+        >
+          <FontAwesomeIcon icon={faCamera} />
+        </button>
       </div>
 
       <Canvas
@@ -138,10 +171,10 @@ export default function DemoTourViewer({ propertyId, onBack }) {
         className="w-full h-full"
       >
         <PanoramaScene
-          panoramaUrl={current.image}
+          panoramaUrl={current.image || current.panorama || current.panoramaUrl}
           sceneName={current.name}
-          hotspots={current.hotspots}
-          onHotspotClick={(h) => changeScene(h.target)}
+          hotspots={current.hotspots || []}
+          onHotspotClick={(h) => changeScene(h.target || h.targetSceneId)}
         />
       </Canvas>
 
