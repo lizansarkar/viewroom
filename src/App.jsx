@@ -1,9 +1,16 @@
+import React from 'react'
+import Navbar from './components/universal/Navbar'
+import Footer from './components/universal/Footer'
+import AppRouter from './router/AppRouter'
+
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-base-200">
-      <h1 className="text-6xl font-bold text-center text-primary">
-        View Room
-      </h1>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-1">
+        <AppRouter />
+      </main>
+      <Footer />
     </div>
   )
 }
