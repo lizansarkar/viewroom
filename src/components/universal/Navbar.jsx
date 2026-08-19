@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import ThemeToggle from '../reuseable/ThemeToggle'
 
 function Navbar() {
   return (
@@ -36,6 +37,7 @@ function Navbar() {
         </ul>
       </div>
       <div className="navbar-end">
+        <ThemeToggle />
         <div className="dropdown dropdown-end md:hidden">
           <div tabIndex={0} role="button" className="btn btn-ghost">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

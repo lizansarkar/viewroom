@@ -1,2 +1,187 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* =========================================================
+   DAISYUI THEME — DARK
+   ========================================================= */
+
+@plugin "daisyui/theme" {
+  name: "viewroom-dark";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: oklch(0.16 0.006 285);
+  --color-base-200: oklch(0.20 0.006 285);
+  --color-base-300: oklch(0.25 0.006 285);
+  --color-base-content: oklch(0.93 0.006 285);
+  --color-primary: oklch(0.65 0.18 260);
+  --color-primary-content: oklch(0.98 0 0);
+  --color-secondary: oklch(0.62 0.15 300);
+  --color-secondary-content: oklch(0.98 0 0);
+  --color-accent: oklch(0.70 0.16 180);
+  --color-accent-content: oklch(0.15 0.006 285);
+  --color-neutral: oklch(0.22 0.006 285);
+  --color-neutral-content: oklch(0.93 0.006 285);
+  --color-info: oklch(0.65 0.18 240);
+  --color-success: oklch(0.65 0.18 150);
+  --color-warning: oklch(0.75 0.18 80);
+  --color-error: oklch(0.65 0.22 25);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* =========================================================
+   DAISYUI THEME — LIGHT
+   ========================================================= */
+
+@plugin "daisyui/theme" {
+  name: "viewroom-light";
+  color-scheme: light;
+  --color-base-100: oklch(0.98 0.002 285);
+  --color-base-200: oklch(0.95 0.002 285);
+  --color-base-300: oklch(0.91 0.002 285);
+  --color-base-content: oklch(0.18 0.006 285);
+  --color-primary: oklch(0.55 0.18 260);
+  --color-primary-content: oklch(0.98 0 0);
+  --color-secondary: oklch(0.52 0.15 300);
+  --color-secondary-content: oklch(0.98 0 0);
+  --color-accent: oklch(0.55 0.16 180);
+  --color-accent-content: oklch(0.98 0 0);
+  --color-neutral: oklch(0.90 0.002 285);
+  --color-neutral-content: oklch(0.18 0.006 285);
+  --color-info: oklch(0.55 0.18 240);
+  --color-success: oklch(0.55 0.18 150);
+  --color-warning: oklch(0.70 0.18 80);
+  --color-error: oklch(0.55 0.22 25);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* =========================================================
+   CSS CUSTOM PROPERTIES — mapped from DaisyUI theme vars
+   ========================================================= */
+
+@theme {
+  --font-heading: "Raleway", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+:root {
+  --app-background: var(--color-base-100);
+  --app-text-primary: var(--color-base-content);
+  --app-text-secondary: oklch(0.6 0.01 285);
+}
+
+/* =========================================================
+   GLOBAL / BASE STYLES
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+
+  background-color: var(--app-background);
+  color: var(--app-text-primary);
+
+  font-family: var(--font-body);
+
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+
+/* =========================================================
+   HEADINGS
+   ---------------------------------------------------------
+   All headings use Raleway.
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+
+  font-family: var(--font-heading);
+  font-weight: 700;
+
+  color: var(--app-text-primary);
+
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+
+/* =========================================================
+   PARAGRAPHS
+   ---------------------------------------------------------
+   Body content uses Inter.
+   ========================================================= */
+
+p {
+  margin: 0;
+
+  font-family: var(--font-body);
+  color: var(--app-text-secondary);
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+
+/* =========================================================
+   MEDIA
+   ========================================================= */
+
+img,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--app-text-primary);
+  color: var(--app-background);
+}
