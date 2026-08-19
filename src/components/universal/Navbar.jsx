@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Button from "../reuseable/Button";
 
 const NAV_LINKS = [
   { label: "Explore", to: "/explore" },
@@ -197,14 +198,14 @@ function Navbar() {
             {theme === "viewroom-light" ? <SunIcon /> : <MoonIcon />}
           </button>
 
-          <Link to="/sign-in" className="btn btn-outline btn-sm px-5">
-            Sign in
+          <Link to="/sign-in" className="">
+            <Button variant="primary">Sign in</Button>
           </Link>
           <Link
             to="/explore"
-            className="btn btn-outline btn-sm px-5 bg-base-200 border-base-300"
+            className=""
           >
-            Explore
+            <Button variant="secondary">Explore</Button>
           </Link>
         </div>
 
