@@ -6,7 +6,7 @@ import ExampleUsage from '../../components/reuseable/ExampleUsage'
 function Home() {
   return (
     <div>
-      <ExampleUsage />
+      {/* <ExampleUsage /> */}
       <Hero />
     </div>
   )
