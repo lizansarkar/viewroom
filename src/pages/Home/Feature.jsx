@@ -477,7 +477,7 @@ function Feature() {
         {/* ── Panoramic Visual ── */}
         <div
           ref={visualRef}
-          className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/[0.06] bg-base-200 shadow-2xl"
+          className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[var(--app-border)]/20 bg-base-200 shadow-2xl"
           style={{ transformOrigin: 'center center' }}
         >
           {/* 360° Canvas */}
@@ -500,7 +500,7 @@ function Feature() {
           <SpatialUI />
 
           {/* Edge ring */}
-          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.04]" />
+          <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-[var(--app-border)]/10" />
         </div>
 
         {/* ── Headline / Copy (parallax) ── */}
