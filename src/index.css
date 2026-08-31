@@ -8,7 +8,7 @@
 
 @plugin "daisyui/theme" {
   name: "viewroom-light";
-  prefersdark: true;
+  default: true;
   color-scheme: light;
   --color-base-100: #0a0a0a;
   --color-base-200: #141414;
@@ -40,7 +40,7 @@
 
 @plugin "daisyui/theme" {
   name: "viewroom-dark";
-  default: true;
+  prefersdark: true;
   color-scheme: dark;
   --color-base-100: #f5f5f0;
   --color-base-200: #ededea;
@@ -159,7 +159,6 @@ select {
 }
 
 .btn {
-  border-radius: 9999px;
   font-family: var(--font-body);
   font-weight: 500;
   border-width: 1px;

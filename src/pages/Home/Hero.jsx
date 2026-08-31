@@ -248,13 +248,6 @@ function Hero() {
           </Link>
         </div>
       </div>
-
-      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 sm:bottom-8">
-        <div className="flex animate-pulse items-center gap-2.5 rounded-full border border-white/15 bg-black/30 px-5 py-2.5 text-xs font-medium uppercase tracking-[0.2em] text-white/70 backdrop-blur-md sm:text-[13px]">
-          <DragIcon />
-          Drag to explore
-        </div>
-      </div>
     </section>
   )
 }
