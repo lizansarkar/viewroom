@@ -1,18 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Button from "../reuseable/Button";
 
 const NAV_LINKS = [
-  { label: "Explore", to: "/explore" },
-  { label: "Properties", to: "/properties" },
-  { label: "Hotels", to: "/hotels" },
-];
-
-const HOW_IT_WORKS_LINKS = [
-  { label: "How it works", to: "/how-it-works" },
-  { label: "For owners", to: "/for-owners" },
-  { label: "Pricing", to: "/pricing" },
-  { label: "FAQ", to: "/faq" },
+  { label: "360 Virtual Tour", to: "/360-virtual-tour" },
+  { label: "360 Product", to: "/360-product" },
+  { label: "360 Video", to: "/360-video" },
+  { label: "Matterport", to: "/matterport" },
+  { label: "Photography", to: "/photography" },
+  { label: "Contact", to: "/contact" },
 ];
 
 function SunIcon(props) {
@@ -36,23 +32,6 @@ function MoonIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" {...props}>
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-    </svg>
-  );
-}
-
-function ChevronDown(props) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-3.5 w-3.5"
-      {...props}
-    >
-      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
@@ -92,24 +71,12 @@ function CloseIcon(props) {
 function Navbar() {
   const [theme, setTheme] = useState("viewroom-light");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("viewroom-theme");
     const initial = stored || "viewroom-light";
     setTheme(initial);
     document.documentElement.setAttribute("data-theme", initial);
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setHowItWorksOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -153,39 +120,6 @@ function Navbar() {
               {link.label}
             </NavLink>
           ))}
-
-          {/* How it works dropdown */}
-          <div className="relative inline-flex items-center" ref={dropdownRef}>
-            <button
-              onClick={() => setHowItWorksOpen((v) => !v)}
-              className="flex items-center gap-1.5 text-[15px] cursor-pointer"
-              aria-expanded={howItWorksOpen}
-            >
-              <NavLink className={navLinkClass}>
-                How it works
-              </NavLink>
-              <ChevronDown
-                className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                  howItWorksOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {howItWorksOpen && (
-              <div className="absolute top-full left-0 mt-3 w-52 rounded-2xl border border-[var(--app-border)]/20 bg-base-100 shadow-lg py-2 overflow-hidden z-50">
-                {HOW_IT_WORKS_LINKS.map((item) => (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setHowItWorksOpen(false)}
-                    className="block px-4 py-2.5 text-sm text-base-content/80 hover:text-base-content hover:bg-base-200 transition-colors cursor-pointer"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Right side (desktop) */}
@@ -267,22 +201,6 @@ function Navbar() {
                   {link.label}
                 </NavLink>
               ))}
-
-              <div className="py-3 border-b border-[var(--app-border)]/10">
-                <p className="text-base font-medium mb-2">How it works</p>
-                <div className="flex flex-col gap-2 pl-2">
-                  {HOW_IT_WORKS_LINKS.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setMobileOpen(false)}
-                      className="text-sm text-base-content/80"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className="flex flex-col gap-3 mt-8">
