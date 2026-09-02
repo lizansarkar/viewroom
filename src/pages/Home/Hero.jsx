@@ -5,101 +5,147 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import Button from '../../components/reuseable/Button'
 
-function createPanoramaTexture() {
-  const width = 2048
-  const height = 1024
+function createDiskTexture() {
+  const size = 1024
+  const c = size / 2
   const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
+  canvas.width = size
+  canvas.height = size
   const ctx = canvas.getContext('2d')
 
-  const sky = ctx.createLinearGradient(0, 0, 0, height)
-  sky.addColorStop(0, '#04050d')
-  sky.addColorStop(0.22, '#0a0f24')
-  sky.addColorStop(0.36, '#181c3a')
-  sky.addColorStop(0.46, '#3a3054')
-  sky.addColorStop(0.5, '#7a4f63')
-  sky.addColorStop(0.54, '#b06a52')
-  sky.addColorStop(0.58, '#41243a')
-  sky.addColorStop(0.66, '#160f1e')
-  sky.addColorStop(1, '#050308')
-  ctx.fillStyle = sky
-  ctx.fillRect(0, 0, width, height)
+  const innerRatio = 2.3 / 6.4
+  const rIn = c * innerRatio
+  const rOut = c
 
-  ctx.globalCompositeOperation = 'screen'
+  ctx.clearRect(0, 0, size, size)
+  ctx.lineCap = 'round'
 
-  const sunX = width * 0.66
-  const sunY = height * 0.52
-  const glow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, height * 0.42)
-  glow.addColorStop(0, 'rgba(255, 196, 128, 0.95)')
-  glow.addColorStop(0.18, 'rgba(255, 150, 84, 0.5)')
-  glow.addColorStop(0.5, 'rgba(180, 92, 70, 0.16)')
-  glow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-  ctx.fillStyle = glow
-  ctx.fillRect(0, 0, width, height)
+  const palette = [
+    [255, 243, 217, 0.85],
+    [255, 217, 160, 0.7],
+    [255, 185, 122, 0.6],
+    [231, 127, 78, 0.5],
+    [168, 74, 53, 0.45],
+    [110, 47, 40, 0.4],
+  ]
 
-  const horizonBand = ctx.createLinearGradient(0, height * 0.34, 0, height * 0.62)
-  horizonBand.addColorStop(0, 'rgba(0, 0, 0, 0)')
-  horizonBand.addColorStop(0.5, 'rgba(214, 118, 78, 0.28)')
-  horizonBand.addColorStop(1, 'rgba(0, 0, 0, 0)')
-  ctx.fillStyle = horizonBand
-  ctx.fillRect(0, height * 0.34, width, height * 0.28)
-
-  ctx.globalCompositeOperation = 'source-over'
-
-  for (let i = 0; i < 650; i++) {
-    const x = Math.random() * width
-    const y = Math.random() * height * 0.42
-    const r = Math.random() * 1.3 + 0.2
-    const a = Math.random() * 0.65 + 0.1
-    ctx.fillStyle = `rgba(255, 255, 255, ${a})`
+  for (let i = 0; i < 720; i++) {
+    if (Math.random() > 0.9) continue
+    const r = rIn + Math.pow(Math.random(), 1.35) * (rOut - rIn)
+    const a0 = Math.random() * Math.PI * 2
+    const sweep = (0.3 + Math.random() * 2.8) * (Math.random() > 0.5 ? 1 : -1)
+    const col = palette[(Math.random() * palette.length) | 0]
+    ctx.globalAlpha = 0.12 + Math.random() * 0.5
+    ctx.lineWidth = 1.5 + Math.random() * 6
+    ctx.strokeStyle = `rgba(${col[0]}, ${col[1]}, ${col[2]}, ${col[3]})`
     ctx.beginPath()
-    ctx.arc(x, y, r, 0, Math.PI * 2)
-    ctx.fill()
+    ctx.arc(c, c, r, a0, a0 + sweep)
+    ctx.stroke()
   }
+  ctx.globalAlpha = 1
 
-  ctx.filter = 'blur(7px)'
-  for (let i = 0; i < 16; i++) {
-    const cx = Math.random() * width
-    const cy = height * (0.36 + Math.random() * 0.13)
-    const rw = width * (0.04 + Math.random() * 0.1)
-    const rh = height * (0.008 + Math.random() * 0.02)
-    ctx.fillStyle = `rgba(255, 176, 130, ${0.04 + Math.random() * 0.06})`
-    ctx.beginPath()
-    ctx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2)
-    ctx.fill()
-  }
+  const innerGlow = ctx.createRadialGradient(c, c, rIn * 0.86, c, c, rIn * 1.9)
+  innerGlow.addColorStop(0, 'rgba(255, 236, 205, 0)')
+  innerGlow.addColorStop(0.45, 'rgba(255, 220, 170, 0.24)')
+  innerGlow.addColorStop(1, 'rgba(255, 190, 130, 0)')
+  ctx.fillStyle = innerGlow
+  ctx.fillRect(0, 0, size, size)
+
+  ctx.filter = 'blur(1.5px)'
+  ctx.drawImage(canvas, 0, 0)
   ctx.filter = 'none'
-
-  const groundGlow = ctx.createRadialGradient(sunX, height * 0.58, 0, sunX, height * 0.58, height * 0.3)
-  groundGlow.addColorStop(0, 'rgba(196, 108, 66, 0.2)')
-  groundGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-  ctx.fillStyle = groundGlow
-  ctx.fillRect(0, height * 0.52, width, height * 0.48)
-
-  for (let i = 0; i < 5000; i++) {
-    const x = Math.random() * width
-    const y = Math.random() * height
-    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255, 255, 255, 0.015)' : 'rgba(0, 0, 0, 0.03)'
-    ctx.fillRect(x, y, 1.5, 1.5)
-  }
 
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
-  texture.wrapS = THREE.RepeatWrapping
+  texture.anisotropy = 4
   return texture
 }
 
-function PanoramaSphere() {
-  const texture = useMemo(() => createPanoramaTexture(), [])
+function createPhotonRingTexture() {
+  const size = 1024
+  const c = size / 2
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')
+
+  ctx.clearRect(0, 0, size, size)
+
+  const g = ctx.createRadialGradient(c, c, 0, c, c, c)
+  g.addColorStop(0, 'rgba(255, 255, 255, 0)')
+  g.addColorStop(0.78, 'rgba(255, 255, 255, 0)')
+  g.addColorStop(0.82, 'rgba(255, 228, 186, 0.3)')
+  g.addColorStop(0.845, 'rgba(255, 250, 235, 1)')
+  g.addColorStop(0.9, 'rgba(255, 205, 150, 0.4)')
+  g.addColorStop(0.97, 'rgba(255, 170, 110, 0.05)')
+  g.addColorStop(1, 'rgba(255, 160, 100, 0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, size, size)
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
+}
+
+function PhotonRing() {
+  const ref = useRef()
+  const texture = useMemo(() => createPhotonRingTexture(), [])
 
   useEffect(() => () => texture.dispose(), [texture])
 
+  useFrame(({ camera }) => {
+    if (ref.current) ref.current.lookAt(camera.position)
+  })
+
   return (
-    <mesh scale={[-1, 1, 1]}>
-      <sphereGeometry args={[80, 64, 48]} />
-      <meshBasicMaterial map={texture} side={THREE.BackSide} fog={false} toneMapped={false} />
+    <mesh ref={ref}>
+      <ringGeometry args={[1.94, 2.34, 128, 2]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        side={THREE.DoubleSide}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        toneMapped={false}
+      />
     </mesh>
+  )
+}
+
+function BlackHole() {
+  const diskRef = useRef()
+  const diskTexture = useMemo(() => createDiskTexture(), [])
+
+  useEffect(() => () => diskTexture.dispose(), [diskTexture])
+
+  useFrame((_, delta) => {
+    if (diskRef.current) diskRef.current.rotation.z += delta * 0.03
+  })
+
+  return (
+    <group>
+      {/* Event horizon */}
+      <mesh>
+        <sphereGeometry args={[1.9, 64, 48]} />
+        <meshBasicMaterial color="#030206" toneMapped={false} />
+      </mesh>
+
+      {/* Tilted accretion disk (spin animated) */}
+      <mesh ref={diskRef} rotation={[Math.PI / 2 - 0.14, 0, 0.6]}>
+        <ringGeometry args={[2.3, 6.4, 256, 4]} />
+        <meshBasicMaterial
+          map={diskTexture}
+          transparent
+          side={THREE.DoubleSide}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      </mesh>
+
+      {/* Photon ring — always faces the camera */}
+      <PhotonRing />
+    </group>
   )
 }
 
@@ -201,13 +247,13 @@ function Hero() {
     <section className="relative h-[calc(100svh-72px)] min-h-[560px] w-full overflow-hidden bg-base-100">
       <div className="absolute inset-0">
         <Canvas
-          camera={{ fov: 75, near: 0.1, far: 200, position: [0, 0, 0.01] }}
+          camera={{ fov: 60, near: 0.1, far: 200, position: [0, 0, 6.2] }}
           dpr={[1, 1.75]}
           gl={{ antialias: true, powerPreference: 'high-performance' }}
           flat
         >
-          <fog attach="fog" args={['#07060d', 18, 70]} />
-          <PanoramaSphere />
+          <fog attach="fog" args={['#050307', 12, 42]} />
+          <BlackHole />
           <Dust />
           <PanoramaControls />
         </Canvas>
