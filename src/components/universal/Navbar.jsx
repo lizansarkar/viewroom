@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Button from "../reuseable/Button";
+import { useTheme } from "../../context/ThemeContext";
 
 const NAV_LINKS = [
   { label: "360 Virtual Tour", to: "/360-virtual-tour" },
@@ -69,15 +70,8 @@ function CloseIcon(props) {
 }
 
 function Navbar() {
-  const [theme, setTheme] = useState("viewroom-light");
+  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("viewroom-theme");
-    const initial = stored || "viewroom-light";
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -85,14 +79,6 @@ function Navbar() {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
-
-  const toggleTheme = () => {
-    const next =
-      theme === "viewroom-light" ? "viewroom-dark" : "viewroom-light";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("viewroom-theme", next);
-  };
 
   const navLinkClass = ({ isActive }) =>
     `text-[15px] font-medium transition-colors ${
@@ -129,7 +115,7 @@ function Navbar() {
             aria-label="Toggle theme"
             className="btn btn-outline btn-circle btn-sm"
           >
-            {theme === "viewroom-light" ? <SunIcon /> : <MoonIcon />}
+            {theme === "light" ? <SunIcon /> : <MoonIcon />}
           </button>
 
           <Link to="/sign-in" className="">
@@ -150,7 +136,7 @@ function Navbar() {
             aria-label="Toggle theme"
             className="btn btn-outline btn-circle btn-sm"
           >
-            {theme === "viewroom-light" ? <SunIcon /> : <MoonIcon />}
+            {theme === "light" ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
             onClick={() => setMobileOpen(true)}
