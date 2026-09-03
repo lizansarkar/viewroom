@@ -14,8 +14,9 @@ function Home() {
       <Hero />
       <Explore />
       <Featured />
+      <HowItWorks />
+
       <ImmersiveScroll/>
-      
       {/* <HomeCategories/> */}
       <PropertyShowcase />
       <HowItWorks />
