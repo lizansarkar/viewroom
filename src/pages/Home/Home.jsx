@@ -8,6 +8,8 @@ import Explore from './Explore'
 import Featured from './Featured'
 import Hotspots from './Hotspots'
 import Discover from './Discover'
+import Properties from './Properties'
+import Cta from './Cta'
 
 function Home() {
   return (
@@ -19,9 +21,11 @@ function Home() {
       <HowItWorks />
       <Hotspots />
       <Discover />
-      <ImmersiveScroll/>
+      <Properties />
+      <Cta />
+      {/* <ImmersiveScroll/>   */}
       {/* <HomeCategories/> */}
-      <PropertyShowcase />
+      {/* <PropertyShowcase /> */}
     </div>
   )
 }
