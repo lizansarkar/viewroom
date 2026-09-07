@@ -11,19 +11,23 @@ import Discover from './Discover'
 import Properties from './Properties'
 import Cta from './Cta'
 import Gallery from './Gallery'
+import Benefits from './Benefits'
+import TrustedBy from './TrustedBy'
 
 function Home() {
   return (
     <div>
       {/* <ExampleUsage /> */}
       <Hero />
-      <Gallery/>
+      <TrustedBy/>
+      <Properties />
       <Explore />
+      <Benefits/>
       <Featured />
       <HowItWorks />
       <Hotspots />
       <Discover />
-      <Properties />
+      <Gallery/>
       <Cta />
       {/* <ImmersiveScroll/>   */}
       {/* <HomeCategories/> */}
