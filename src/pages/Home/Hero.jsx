@@ -1,34 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 const hotspotsData = [
-  { id: 1, label: 'Kitchen', top: '28%', left: '32%', active: true },
-  { id: 2, label: 'Master Bedroom', top: '22%', left: '46%' },
-  { id: 3, label: 'Balcony View', top: '25%', left: '68%' },
-  { id: 4, label: 'Living Space', top: '65%', left: '52%' },
-  { id: 5, label: 'Bathroom', top: '48%', left: '74%' },
+  { id: 1, label: "Kitchen", top: "28%", left: "32%", active: true },
+  { id: 2, label: "Master Bedroom", top: "22%", left: "46%" },
+  { id: 3, label: "Balcony View", top: "25%", left: "68%" },
+  { id: 4, label: "Living Space", top: "65%", left: "52%" },
+  { id: 5, label: "Bathroom", top: "48%", left: "74%" },
 ];
 
-const categories = ['Apartments', 'Villas', 'Commercial', 'Lofts', 'Studio', 'Modern'];
+const categories = [
+  "Apartments",
+  "Villas",
+  "Commercial",
+  "Lofts",
+  "Studio",
+  "Modern",
+];
 
 function Hero() {
-  const [activeCategory, setActiveCategory] = useState('Apartments');
-  const [selectedHotspot, setSelectedHotspot] = useState('Kitchen');
+  const [activeCategory, setActiveCategory] = useState("Apartments");
+  const [selectedHotspot, setSelectedHotspot] = useState("Kitchen");
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log("Autoplay was prevented:", error);
+      });
+    }
+  }, []);
 
   return (
     <section className="relative w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-12 px-4 sm:px-8 flex flex-col items-center justify-center overflow-hidden">
-
       <div className="max-w-5xl w-full mx-auto flex flex-col items-center z-10">
-        
         {/* TOP SECTION: 3D Isometric Viewport Container with PC Stand */}
         <div className="relative w-full max-w-3xl flex flex-col items-center mb-10">
-          
           {/* Hexagonal / 3D Isometric Outer Frame (PC Screen) */}
           <div className="relative w-full h-[320px] sm:h-[420px] md:h-[480px] rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl bg-[#0e1117] p-2 flex items-center justify-center">
-            
             {/* Room Image */}
-            <img
+            {/* <img
               src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200"
               alt="3D Interior Room Space"
+              className="w-full h-full object-cover rounded-2xl opacity-90"
+            /> */}
+
+            {/* Room Video Tag */}
+            <video
+              ref={videoRef}
+              src="/video/home.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
               className="w-full h-full object-cover rounded-2xl opacity-90"
             />
 
@@ -38,11 +61,10 @@ function Hero() {
           </div>
 
           {/* PC Monitor Stand Neck */}
-          <div className="w-20 sm:w-24 h-6 sm:h-8 bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 border-x border-slate-700/60 shadow-inner" />
+          <div className="w-20 sm:w-24 h-6 sm:h-16 bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 border-x border-slate-700/60 shadow-inner" />
 
           {/* PC Monitor Stand Base */}
           <div className="w-40 sm:w-48 h-3 sm:h-3.5 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border border-slate-600/50 rounded-full shadow-lg" />
-
         </div>
 
         {/* MIDDLE SECTION: Main Headline & Subtitle */}
@@ -51,7 +73,8 @@ function Hero() {
             Explore Spaces. Redefine Reality.
           </h1>
           <p className="text-sm sm:text-base text-[var(--app-text-secondary)] leading-relaxed">
-            Step into immersive 3D architectural tours of properties worldwide with ViewRoom's cutting-edge platform.
+            Step into immersive 3D architectural tours of properties worldwide
+            with ViewRoom's cutting-edge platform.
           </p>
         </div>
 
@@ -71,7 +94,6 @@ function Hero() {
             </button>
           ))}
         </div> */}
-
       </div>
     </section>
   );

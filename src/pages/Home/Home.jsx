@@ -10,12 +10,14 @@ import Hotspots from './Hotspots'
 import Discover from './Discover'
 import Properties from './Properties'
 import Cta from './Cta'
+import Gallery from './Gallery'
 
 function Home() {
   return (
     <div>
       {/* <ExampleUsage /> */}
       <Hero />
+      <Gallery/>
       <Explore />
       <Featured />
       <HowItWorks />
