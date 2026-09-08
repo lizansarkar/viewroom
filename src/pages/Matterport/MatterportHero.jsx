@@ -2,7 +2,7 @@ import React from 'react';
 
 function MatterportHero() {
   return (
-    <section className="relative w-full min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center text-white overflow-hidden px-6 sm:px-12 bg-zinc-900">
+    <section className="relative w-full min-h-[50vh] sm:min-h-[60vh] flex items-center justify-center text-white overflow-hidden px-6 sm:px-12 bg-zinc-900">
       
       {/* Background Image with Blur & Dark Overlay */}
       <div className="absolute inset-0 z-0">
