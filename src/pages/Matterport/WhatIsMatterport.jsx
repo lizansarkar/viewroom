@@ -183,11 +183,11 @@ function WhatIsMatterport() {
           </Button>
 
           <Button
-            variant={activeTab === "look" ? "neutral" : "neutral"}
+            variant="neutral"
             onClick={() => setActiveTab("look")}
             className="!px-6 !py-2 !text-xs !font-bold"
           >
-            Look <span>&rarr;</span>
+            Look
           </Button>
         </div>
       </div>
