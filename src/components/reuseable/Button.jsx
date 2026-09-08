@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 function Button({
-  children = 'Button',
-  variant = 'primary', // 'primary' (grey 3d) or 'secondary' (light 3d)
+  children = "Button",
+  variant = "primary", // 'primary' (grey 3d) or 'secondary' (light 3d)
   onClick,
-  className = '',
-  type = 'button',
+  className = "",
+  type = "button",
   ...props
 }) {
   // Base Pill 3D shape with active tactile press feedback
@@ -21,6 +21,10 @@ function Button({
     // Right Button: Off-white background with subtle grey bottom bevel
     secondary:
       "bg-[#f0f0f0] hover:bg-[#e8e8e8] shadow-[inset_0_-5px_0_0_#d8d8d8,inset_0_2px_2px_rgba(255,255,255,1),0_4px_6px_-1px_rgba(0,0,0,0.3)]",
+
+    // Neutral Button: Transparent background with no border
+    neutral:
+      "bg-transparent border-none p-0 text-[var(--app-text-primary)] hover:opacity-80 transition-opacity flex items-center gap-2 cursor-pointer font-semibold",
   };
 
   return (
