@@ -14,7 +14,7 @@ function Matterport() {
       <MatterportHowItWorks />
       <MatterportFeatures />
       <MatterportUseCases />
-      <MatterportSlider />
+      {/* <MatterportSlider /> */}
     </div>
   )
 }

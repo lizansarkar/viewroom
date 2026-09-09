@@ -89,7 +89,7 @@ function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
-      <nav className="w-full px-5 sm:px-8 lg:px-12 xl:px-16 h-[72px] flex items-center justify-between">
+      <nav className="w-full max-w-7xl mx-auto px-2 lg:px-0 xl:px-0 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <Link
           to="/"

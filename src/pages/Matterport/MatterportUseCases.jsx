@@ -61,8 +61,8 @@ function MatterportUseCases() {
     {
       id: 5,
       image:
-        "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1000&q=80",
-      initX: "20%",
+        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80",
+      initX: "25%",
       initY: "10%",
       spreadXDesktop: 440,
       spreadYDesktop: 240,
@@ -71,7 +71,6 @@ function MatterportUseCases() {
     },
     {
       id: 6,
-      // ৬ নম্বর অতিরিক্ত ইমেজ
       image:
         "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=80",
       initX: "2%",
@@ -127,7 +126,7 @@ function MatterportUseCases() {
       className="relative w-full h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 flex items-center justify-center overflow-hidden"
     >
       {/* 1. CENTER TEXT CONTENT (প্রারম্ভিক অবস্থায় সম্পূর্ণ ঢেকে থাকবে) */}
-      <div className="z-10 max-w-2xl mx-auto px-6 text-center flex flex-col items-center select-none">
+      <div className="z-10 max-w-2xl mx-auto px-6 text-center flex flex-col items-center select-none gap-1 md:gap-3">
         <span className="text-[11px] font-black uppercase tracking-[0.3em] text-[var(--app-text-secondary)] mb-4">
           INSIDE
         </span>
@@ -141,7 +140,7 @@ function MatterportUseCases() {
         </p>
 
         {/* SWITCHER PILL */}
-        <div className="flex items-center bg-[var(--app-text-primary)]/10 border border-[var(--app-text-secondary)]/20 rounded-full p-1 shadow-md">
+        <div className="flex items-center">
           <Button
             variant={activeTab === "enter" ? "primary" : "neutral"}
             onClick={() => setActiveTab("enter")}
@@ -155,7 +154,7 @@ function MatterportUseCases() {
             onClick={() => setActiveTab("look")}
             className="!px-6 !py-2 !text-xs !font-bold cursor-pointer"
           >
-            Look &gt;
+            Look
           </Button>
         </div>
       </div>

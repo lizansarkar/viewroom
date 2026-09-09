@@ -9,10 +9,10 @@ function MatterportHero() {
         <img
           src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80"
           alt="Blurred Interior Background"
-          className="w-full h-full object-cover scale-110 blur-xl opacity-40 brightness-75"
+          className="w-full h-full object-cover scale-110 blur-md opacity-40 brightness-75"
         />
         {/* Dark overlay to match image background tone */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0" />
       </div>
 
       {/* Content Area */}

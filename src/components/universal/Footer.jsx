@@ -126,7 +126,7 @@ function Footer() {
 
   return (
     <footer className="bg-base-100 text-base-content">
-      <div className="max-w-full mx-auto px-6 sm:px-8 lg:px-10 pt-14 pb-8">
+      <div className="max-w-7xl mx-auto px-1 sm:px-2 lg:px-0 pt-14 pb-8">
         {/* Link columns */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-10">
           {columns.map((col) => (
