@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalendar,
@@ -59,55 +59,78 @@ function EventsSlider() {
     },
   ];
 
-  // Horizontal Slide Control
+  // Horizontal Scroll Controller
   const handleScroll = (direction) => {
     if (sliderRef.current) {
       const scrollAmount = sliderRef.current.clientWidth;
-      sliderRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
+      const maxScroll = sliderRef.current.scrollWidth - sliderRef.current.clientWidth;
+
+      if (direction === 'right') {
+        if (sliderRef.current.scrollLeft >= maxScroll - 10) {
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      } else {
+        if (sliderRef.current.scrollLeft <= 10) {
+          sliderRef.current.scrollTo({ left: maxScroll, behavior: 'smooth' });
+        } else {
+          sliderRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        }
+      }
     }
   };
+
+  // Autoplay functionality (Loop every 4 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleScroll('right');
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="relative w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-20 px-6 sm:px-12 select-none">
       
-      {/* SECTION HEADER */}
-      <div className="max-w-7xl mx-auto text-center mb-12 flex flex-col items-center">
-        <span className="text-xs font-black uppercase tracking-[0.25em] text-[var(--app-text-secondary)] mb-2">
-          LIVE
-        </span>
-        <h2 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tight text-[var(--app-text-primary)] mb-4">
-          EVENTS
-        </h2>
-        <p className="text-sm sm:text-base text-[var(--app-text-secondary)] font-medium max-w-xl">
-          Walk through spaces with the people who built them.
-        </p>
-      </div>
-
-      {/* SLIDER CONTAINER WITH NAVIGATION ARROWS */}
-      <div className="max-w-7xl mx-auto relative group">
+      <div className="max-w-7xl mx-auto">
         
-        {/* PREV BUTTON */}
-        <button
-          onClick={() => handleScroll('left')}
-          className="absolute -left-4 sm:-left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--app-text-primary)] text-[var(--app-background)] flex items-center justify-center shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-105 cursor-pointer"
-          style={{ cursor: 'pointer' }}
-          aria-label="Previous events"
-        >
-          <FontAwesomeIcon icon={faChevronLeft} className="text-sm" />
-        </button>
+        {/* SECTION HEADER & TOP-RIGHT CONTROLS */}
+        <div className="flex items-end justify-between mb-12 border-b border-[var(--app-text-secondary)]/10 pb-6">
+          {/* LEFT HEADER CONTENT */}
+          <div className="flex flex-col items-start">
+            <span className="text-xs font-black uppercase tracking-[0.25em] text-[var(--app-text-secondary)] mb-2">
+              LIVE
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-[var(--app-text-primary)] mb-2">
+              EVENTS
+            </h2>
+            <p className="text-xs sm:text-sm text-[var(--app-text-secondary)] font-medium">
+              Walk through spaces with the people who built them.
+            </p>
+          </div>
 
-        {/* NEXT BUTTON */}
-        <button
-          onClick={() => handleScroll('right')}
-          className="absolute -right-4 sm:-right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--app-text-primary)] text-[var(--app-background)] flex items-center justify-center shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-105 cursor-pointer"
-          style={{ cursor: 'pointer' }}
-          aria-label="Next events"
-        >
-          <FontAwesomeIcon icon={faChevronRight} className="text-sm" />
-        </button>
+          {/* TOP RIGHT PREV/NEXT NAVIGATION BUTTONS */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleScroll('left')}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-[var(--app-text-secondary)]/20 bg-[var(--app-text-primary)]/5 text-[var(--app-text-primary)] flex items-center justify-center transition-all duration-300 hover:bg-[var(--app-text-primary)] hover:text-[var(--app-background)] active:scale-95 cursor-pointer"
+              style={{ cursor: 'pointer' }}
+              aria-label="Previous events"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} className="text-xs sm:text-sm" />
+            </button>
+
+            <button
+              onClick={() => handleScroll('right')}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-[var(--app-text-secondary)]/20 bg-[var(--app-text-primary)]/5 text-[var(--app-text-primary)] flex items-center justify-center transition-all duration-300 hover:bg-[var(--app-text-primary)] hover:text-[var(--app-background)] active:scale-95 cursor-pointer"
+              style={{ cursor: 'pointer' }}
+              aria-label="Next events"
+            >
+              <FontAwesomeIcon icon={faChevronRight} className="text-xs sm:text-sm" />
+            </button>
+          </div>
+        </div>
 
         {/* 3 CARDS HORIZONTAL SCROLL TRACK */}
         <div

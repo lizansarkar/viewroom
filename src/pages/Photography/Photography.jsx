@@ -1,12 +1,14 @@
 import React from 'react'
-import VirtualGalleryCanvas from './VirtualGalleryCanvas'
 import PhotographyHero from './PhotographyHero'
+import EventsSlider from './EventsSlider'
+import VirtualGallery from './VirtualGallery'
 
 function Photography() {
   return (
     <div>
       <PhotographyHero />
-      <VirtualGalleryCanvas />
+      <VirtualGallery />
+      <EventsSlider />
     </div>
   )
 }
