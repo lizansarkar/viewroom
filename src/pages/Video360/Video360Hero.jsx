@@ -67,7 +67,7 @@ function Video360Hero() {
           
           {/* LEFT HEADING */}
           <div className="max-w-2xl">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.05] text-[var(--app-text-primary)]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-[1.05] text-[var(--app-text-primary)]">
               WALK THROUGH <br className="hidden sm:inline" />
               BEFORE YOU EVER <br className="hidden sm:inline" />
               ARRIVE
