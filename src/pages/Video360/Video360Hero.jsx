@@ -49,7 +49,7 @@ function Video360Hero() {
       {/* 1. TOP VIDEO SECTION (FULL WIDTH - AUTOPLAYS IMMEDIATELY) */}
       <div
         ref={containerRef}
-        className="relative w-full aspect-video sm:aspect-[21/9] lg:h-[60vh]"
+        className="relative w-full aspect-video sm:aspect-[21/9] lg:h-[70vh]"
       >
         <iframe
           ref={iframeRef}

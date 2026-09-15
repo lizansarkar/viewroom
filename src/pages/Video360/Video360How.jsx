@@ -45,7 +45,7 @@ const steps = [
 
 function Video360How() {
   return (
-    <section className="w-full bg-base-100 text-base-content px-4 sm:px-6 lg:px-10 py-14 sm:py-16 lg:py-20">
+    <section className="w-full bg-base-100 text-base-content px-2 lg:px-10 py-4 sm:py-6 lg:py-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
         {/* Left: label, heading, CTA */}
         <div className="flex flex-col justify-start">
