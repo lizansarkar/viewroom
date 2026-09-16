@@ -1,5 +1,14 @@
 import React, { useState, useRef } from "react";
 import Button from "../../components/reuseable/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronUp,
+  faChevronDown,
+  faChevronRight,
+  faLocationDot,
+  faMap,
+} from "@fortawesome/free-solid-svg-icons";
 
 // Panoramic rooms dataset with hotspots connecting rooms
 const TOUR_ROOMS = [
@@ -110,23 +119,27 @@ function VirtualTourViewer() {
       
       {/* Room Selector Navigation Tabs */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10">
-        {TOUR_ROOMS.map((room, idx) => (
-          <button
-            key={room.id}
-            onClick={() => {
-              setCurrentRoomIndex(idx);
-              setPanX(0);
-              setPanY(0);
-            }}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
-              currentRoomIndex === idx
-                ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-transparent shadow-md"
-                : "bg-base-200/60 text-[var(--app-text-secondary)] border-[var(--app-border)]/30 hover:text-[var(--app-text-primary)]"
-            }`}
-          >
-            {room.name}
-          </button>
-        ))}
+        {TOUR_ROOMS.map((room, idx) => {
+          const isActive = currentRoomIndex === idx;
+          return (
+            <button
+              type="button"
+              key={room.id}
+              onClick={() => {
+                setCurrentRoomIndex(idx);
+                setPanX(0);
+                setPanY(0);
+              }}
+              className={`btn btn-sm sm:btn-md rounded-md font-heading text-[11px] sm:text-xs tracking-wide uppercase font-semibold px-4 sm:px-5 border-none transition-colors duration-200 ${
+                isActive
+                  ? "bg-base-content text-base-100 hover:bg-base-content hover:text-base-100"
+                  : "bg-base-200 text-base-content hover:bg-base-300"
+              }`}
+            >
+              {room.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* Main 360 Tour Viewport Container */}
@@ -138,7 +151,7 @@ function VirtualTourViewer() {
         onTouchStart={handleMouseDown}
         onTouchMove={handleMouseMove}
         onTouchEnd={handleMouseUp}
-        className="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl bg-[#0a0a0d] flex items-center justify-center cursor-grab active:cursor-grabbing"
+        className="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-3xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing"
       >
         {/* Panoramic Layer with Pan Matrix */}
         <div
@@ -227,9 +240,9 @@ function VirtualTourViewer() {
               nudgePan(60, 0);
             }}
             title="Pan Left"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
           >
-            ◄
+            <FontAwesomeIcon icon={faChevronLeft} className="text-[10px]" />
           </button>
           <button
             onClick={(e) => {
@@ -237,9 +250,9 @@ function VirtualTourViewer() {
               nudgePan(0, 30);
             }}
             title="Pan Up"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
           >
-            ▲
+            <FontAwesomeIcon icon={faChevronUp} className="text-[10px]" />
           </button>
           <button
             onClick={(e) => {
@@ -247,9 +260,9 @@ function VirtualTourViewer() {
               nudgePan(0, -30);
             }}
             title="Pan Down"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
           >
-            ▼
+            <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
           </button>
           <button
             onClick={(e) => {
@@ -257,9 +270,9 @@ function VirtualTourViewer() {
               nudgePan(-60, 0);
             }}
             title="Pan Right"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
           >
-            ►
+            <FontAwesomeIcon icon={faChevronRight} className="text-[10px]" />
           </button>
 
           {/* Toggle Hotspots */}
@@ -269,11 +282,11 @@ function VirtualTourViewer() {
               setShowHotspots(!showHotspots);
             }}
             title="Toggle Doorway Hotspots"
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer ${
               showHotspots ? "bg-cyan-500 text-black font-bold" : "bg-white/10 text-white/50"
             }`}
           >
-            ✦
+            <FontAwesomeIcon icon={faLocationDot} className="text-[11px]" />
           </button>
 
           {/* Toggle Mini-Map */}
@@ -283,11 +296,11 @@ function VirtualTourViewer() {
               setShowMinimap(!showMinimap);
             }}
             title="Toggle Floor Radar"
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer ${
               showMinimap ? "bg-white/30 text-white" : "bg-white/10 text-white/50"
             }`}
           >
-            🗺️
+            <FontAwesomeIcon icon={faMap} className="text-[11px]" />
           </button>
         </div>
 
