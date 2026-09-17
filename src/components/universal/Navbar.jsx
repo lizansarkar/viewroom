@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Button from "../reuseable/Button";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 const NAV_LINKS = [
   { label: "360 Virtual Tour", to: "/360-virtual-tour" },
@@ -71,6 +72,7 @@ function CloseIcon(props) {
 
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const { isRegistered, isLoggedIn, user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -89,7 +91,7 @@ function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
-      <nav className="w-full max-w-7xl mx-auto px-2 lg:px-0 xl:px-0 h-[72px] flex items-center justify-between">
+      <nav className="w-full max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center justify-between">
         {/* Logo */}
         <Link
           to="/"
@@ -118,13 +120,29 @@ function Navbar() {
             {theme === "light" ? <SunIcon /> : <MoonIcon />}
           </button>
 
-          <Link to="/sign-in" className="">
-            <Button variant="primary">Sign in</Button>
-          </Link>
-          <Link
-            to="/explore"
-            className=""
-          >
+          {/* Conditional Auth Button rendering */}
+          {isLoggedIn ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] bg-base-200 border border-[var(--app-border)]/30 px-3 py-1.5 rounded-full">
+                Hi, {user?.name || "Member"}
+              </span>
+              <Button variant="secondary" onClick={logout}>
+                Log out
+              </Button>
+            </div>
+          ) : isRegistered ? (
+            /* User is already registered -> prompt to Log in */
+            <Link to="/sign-in">
+              <Button variant="primary">Log in</Button>
+            </Link>
+          ) : (
+            /* User is NOT registered -> prompt to Register */
+            <Link to="/sign-up">
+              <Button variant="primary">Register</Button>
+            </Link>
+          )}
+
+          <Link to="/explore">
             <Button variant="secondary">Explore</Button>
           </Link>
         </div>
@@ -190,13 +208,34 @@ function Navbar() {
             </div>
 
             <div className="flex flex-col gap-3 mt-8">
-              <Link
-                to="/sign-in"
-                onClick={() => setMobileOpen(false)}
-                className="btn btn-outline w-full"
-              >
-                Sign in
-              </Link>
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileOpen(false);
+                  }}
+                  className="btn btn-outline w-full"
+                >
+                  Log out ({user?.name || "User"})
+                </button>
+              ) : isRegistered ? (
+                <Link
+                  to="/sign-in"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn btn-outline w-full"
+                >
+                  Log in
+                </Link>
+              ) : (
+                <Link
+                  to="/sign-up"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn btn-outline w-full"
+                >
+                  Register
+                </Link>
+              )}
+
               <Link
                 to="/explore"
                 onClick={() => setMobileOpen(false)}

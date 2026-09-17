@@ -8,6 +8,7 @@ import Product360 from '../pages/Product360/Product360'
 import Video360 from '../pages/Video360/Video360'
 import Matterport from '../pages/Matterport/Matterport'
 import Photography from '../pages/Photography/Photography'
+import Auth from '../pages/Auth/Auth'
 
 function AppRouter() {
   return (
@@ -20,6 +21,8 @@ function AppRouter() {
       <Route path="/photography" element={<Photography />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/sign-in" element={<Auth />} />
+      <Route path="/sign-up" element={<Auth />} />
     </Routes>
   )
 }
