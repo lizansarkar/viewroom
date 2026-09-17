@@ -1,325 +1,480 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
+import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
+import "@photo-sphere-viewer/core/index.css";
+import "@photo-sphere-viewer/markers-plugin/index.css";
+import gsap from "gsap";
 import Button from "../../components/reuseable/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBars,
+  faXmark,
+  faExpand,
+  faCompress,
+  faVolumeHigh,
+  faVolumeMute,
+  faEye,
+  faEyeSlash,
+  faCamera,
   faChevronLeft,
-  faChevronUp,
-  faChevronDown,
   faChevronRight,
-  faLocationDot,
-  faMap,
+  faVrCardboard,
 } from "@fortawesome/free-solid-svg-icons";
 
-// Panoramic rooms dataset with hotspots connecting rooms
-const TOUR_ROOMS = [
+// 360 Scenes dataset (AERIAL VIEW, ENTRANCE, 1ST FLOOR - 6TH FLOOR)
+const PANORAMA_DATA = [
   {
-    id: "living",
-    name: "Living Room",
-    sqft: "1,200 sq ft",
-    floor: "Floor 42",
-    panorama: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1600",
-    hotspots: [
-      { id: 1, targetRoom: "kitchen", label: "Walk to Kitchen ➔", x: 72, y: 48 },
-      { id: 2, targetRoom: "balcony", label: "View Balcony ➔", x: 28, y: 40 },
+    id: "aerial_view",
+    name: "AERIAL VIEW",
+    category: "Campus Aerial",
+    thumbnail: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_entrance",
+        position: { yaw: "0deg", pitch: "-15deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
+                  <span class="text-xs font-black">▲ ENTRANCE</span>
+                </div>
+              </div>`,
+        targetId: "entrance",
+      },
     ],
   },
   {
-    id: "kitchen",
-    name: "Chef's Kitchen",
-    sqft: "450 sq ft",
-    floor: "Floor 42",
-    panorama: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=1600",
-    hotspots: [
-      { id: 1, targetRoom: "living", label: "Back to Living Room ➔", x: 25, y: 52 },
-      { id: 2, targetRoom: "suite", label: "Master Suite ➔", x: 78, y: 45 },
+    id: "entrance",
+    name: "ENTRANCE",
+    category: "Main Building",
+    thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor1",
+        position: { yaw: "30deg", pitch: "-5deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="w-14 h-14 rounded-full bg-black/80 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                  🚪
+                </div>
+                <span class="mt-1 bg-black/80 text-cyan-300 px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">1ST FLOOR LOBBY</span>
+              </div>`,
+        targetId: "floor_1",
+      },
     ],
   },
   {
-    id: "suite",
-    name: "Master Suite",
-    sqft: "680 sq ft",
-    floor: "Floor 42",
-    panorama: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=1600",
-    hotspots: [
-      { id: 1, targetRoom: "kitchen", label: "To Kitchen ➔", x: 20, y: 50 },
-      { id: 2, targetRoom: "balcony", label: "Private Terrace ➔", x: 82, y: 42 },
+    id: "floor_1",
+    name: "1ST FLOOR",
+    category: "Reception Lobby",
+    thumbnail: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor2",
+        position: { yaw: "-45deg", pitch: "0deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                  <span class="w-4 h-4 rounded-full bg-white"></span>
+                </div>
+                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">2ND FLOOR WORKSPACE</span>
+              </div>`,
+        targetId: "floor_2",
+      },
     ],
   },
   {
-    id: "balcony",
-    name: "Skyline Balcony",
-    sqft: "320 sq ft",
-    floor: "Floor 42",
-    panorama: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1600",
-    hotspots: [
-      { id: 1, targetRoom: "living", label: "Enter Living Room ➔", x: 50, y: 58 },
+    id: "floor_2",
+    name: "2ND FLOOR",
+    category: "Open Office",
+    thumbnail: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor3",
+        position: { yaw: "60deg", pitch: "0deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                  <span class="w-4 h-4 rounded-full bg-white"></span>
+                </div>
+                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">3RD FLOOR LAB</span>
+              </div>`,
+        targetId: "floor_3",
+      },
+    ],
+  },
+  {
+    id: "floor_3",
+    name: "3RD FLOOR",
+    category: "R&D Workstations",
+    thumbnail: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor4",
+        position: { yaw: "-30deg", pitch: "-5deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="w-14 h-14 rounded-full bg-black/80 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                  🚪
+                </div>
+                <span class="mt-1 bg-black/80 text-cyan-300 px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">4TH FLOOR GALLERY</span>
+              </div>`,
+        targetId: "floor_4",
+      },
+    ],
+  },
+  {
+    id: "floor_4",
+    name: "4TH FLOOR",
+    category: "Fashion Gallery",
+    thumbnail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor5",
+        position: { yaw: "90deg", pitch: "-10deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
+                  <span class="text-xs font-black">▲ 5TH FLOOR CAFETERIA</span>
+                </div>
+              </div>`,
+        targetId: "floor_5",
+      },
+    ],
+  },
+  {
+    id: "floor_5",
+    name: "5TH FLOOR",
+    category: "Dining & Lounge",
+    thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_floor6",
+        position: { yaw: "-80deg", pitch: "0deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
+                  <span class="w-4 h-4 rounded-full bg-white"></span>
+                </div>
+                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">6TH FLOOR SUITE</span>
+              </div>`,
+        targetId: "floor_6",
+      },
+    ],
+  },
+  {
+    id: "floor_6",
+    name: "6TH FLOOR",
+    category: "Executive Workshop",
+    thumbnail: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2000",
+    markers: [
+      {
+        id: "m_aerial",
+        position: { yaw: "180deg", pitch: "-15deg" },
+        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
+                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
+                  <span class="text-xs font-black">▲ AERIAL CAMPUS</span>
+                </div>
+              </div>`,
+        targetId: "aerial_view",
+      },
     ],
   },
 ];
 
 function VirtualTourViewer() {
-  const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
-  const [panX, setPanX] = useState(0);
-  const [panY, setPanY] = useState(0);
+  const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
-  const [showMinimap, setShowMinimap] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
+  const [snapshotEffect, setSnapshotEffect] = useState(false);
 
-  const dragStartRef = useRef({ x: 0, y: 0 });
-  const panStartRef = useRef({ x: 0, y: 0 });
+  const psvRef = useRef(null);
+  const viewportRef = useRef(null);
+  const thumbnailScrollRef = useRef(null);
 
-  const activeRoom = TOUR_ROOMS[currentRoomIndex];
+  const activeScene = PANORAMA_DATA.find((s) => s.id === currentPanoramaId) || PANORAMA_DATA[0];
 
-  // Mouse / Touch drag handlers for 360 pan
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-    dragStartRef.current = { x: clientX, y: clientY };
-    panStartRef.current = { x: panX, y: panY };
-  };
+  // GSAP Smooth Fade Transition on Panorama Change
+  const changePanoramaWithGsap = (targetId) => {
+    if (targetId === currentPanoramaId) return;
 
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-    const deltaX = clientX - dragStartRef.current.x;
-    const deltaY = clientY - dragStartRef.current.y;
-
-    // Pan bounds
-    const newPanX = Math.max(-250, Math.min(250, panStartRef.current.x + deltaX * 0.8));
-    const newPanY = Math.max(-80, Math.min(80, panStartRef.current.y + deltaY * 0.5));
-
-    setPanX(newPanX);
-    setPanY(newPanY);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  // Navigate directly to room by ID
-  const goToRoomById = (id) => {
-    const idx = TOUR_ROOMS.findIndex((r) => r.id === id);
-    if (idx !== -1) {
-      setCurrentRoomIndex(idx);
-      setPanX(0);
-      setPanY(0);
+    if (viewportRef.current) {
+      gsap.to(viewportRef.current, {
+        opacity: 0,
+        duration: 0.25,
+        ease: "power2.inOut",
+        onComplete: () => {
+          setCurrentPanoramaId(targetId);
+          gsap.to(viewportRef.current, {
+            opacity: 1,
+            duration: 0.25,
+            ease: "power2.inOut",
+          });
+        },
+      });
+    } else {
+      setCurrentPanoramaId(targetId);
     }
   };
 
-  // Pan helper buttons
-  const nudgePan = (dx, dy) => {
-    setPanX((prev) => Math.max(-250, Math.min(250, prev + dx)));
-    setPanY((prev) => Math.max(-80, Math.min(80, prev + dy)));
+  // Photo Sphere Viewer Instance Callback
+  const handleReady = (instance) => {
+    psvRef.current = instance;
+
+    // Handle marker click events
+    const markersPlugin = instance.getPlugin(MarkersPlugin);
+    if (markersPlugin) {
+      markersPlugin.addEventListener("select-marker", (e) => {
+        const targetId = e.marker.config.targetId;
+        if (targetId) {
+          changePanoramaWithGsap(targetId);
+        }
+      });
+    }
   };
 
+  // Scroll Thumbnails Helper
+  const scrollThumbnails = (direction) => {
+    if (thumbnailScrollRef.current) {
+      const amount = direction === "left" ? -280 : 280;
+      thumbnailScrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
+    }
+  };
+
+  // Toggle Fullscreen
+  const toggleFullscreen = () => {
+    if (!viewportRef.current) return;
+    if (!document.fullscreenElement) {
+      viewportRef.current.requestFullscreen().catch((err) => console.log(err));
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen().catch((err) => console.log(err));
+      setIsFullscreen(false);
+    }
+  };
+
+  // Snapshot Flash Effect
+  const takeSnapshot = () => {
+    setSnapshotEffect(true);
+    setTimeout(() => setSnapshotEffect(false), 400);
+  };
+
+  // Plugin configuration for ReactPhotoSphereViewer
+  const plugins = [
+    [
+      MarkersPlugin,
+      {
+        markers: showHotspots ? activeScene.markers : [],
+      },
+    ],
+  ];
+
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none">
+    <div className="w-full max-w-7xl mx-auto flex flex-col items-center select-none">
       
-      {/* Room Selector Navigation Tabs */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10">
-        {TOUR_ROOMS.map((room, idx) => {
-          const isActive = currentRoomIndex === idx;
-          return (
-            <button
-              type="button"
-              key={room.id}
-              onClick={() => {
-                setCurrentRoomIndex(idx);
-                setPanX(0);
-                setPanY(0);
-              }}
-              className={`btn btn-sm sm:btn-md rounded-md font-heading text-[11px] sm:text-xs tracking-wide uppercase font-semibold px-4 sm:px-5 border-none transition-colors duration-200 ${
-                isActive
-                  ? "bg-base-content text-base-100 hover:bg-base-content hover:text-base-100"
-                  : "bg-base-200 text-base-content hover:bg-base-300"
-              }`}
-            >
-              {room.name}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Main 360 Tour Viewport Container */}
+      {/* 360 VIEWPORT CONTAINER */}
       <div
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleMouseDown}
-        onTouchMove={handleMouseMove}
-        onTouchEnd={handleMouseUp}
-        className="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-3xl overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing"
+        ref={viewportRef}
+        className="relative w-full h-[520px] sm:h-[640px] lg:h-[720px] rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl bg-black group"
       >
-        {/* Panoramic Layer with Pan Matrix */}
-        <div
-          className="absolute inset-0 w-[140%] h-[140%] -top-[20%] -left-[20%] transition-transform duration-100 ease-out"
-          style={{
-            transform: `translate3d(${panX}px, ${panY}px, 0px) scale(1.15)`,
-          }}
-        >
-          <img
-            src={activeRoom.panorama}
-            alt={activeRoom.name}
-            className="w-full h-full object-cover filter brightness-[0.95]"
-          />
-        </div>
+        {/* Photo Sphere Viewer Renderer */}
+        <ReactPhotoSphereViewer
+          src={activeScene.panorama}
+          height="100%"
+          width="100%"
+          container="psv-container"
+          navbar={false}
+          mousewheel={true}
+          defaultYaw="0deg"
+          defaultPitch="0deg"
+          plugins={plugins}
+          onReady={handleReady}
+        />
 
-        {/* Room Navigation Hotspots */}
-        {showHotspots &&
-          activeRoom.hotspots.map((hs) => (
-            <div
-              key={hs.id}
-              style={{
-                top: `${hs.y}%`,
-                left: `${hs.x}%`,
-                transform: `translate3d(${panX * 0.4}px, ${panY * 0.4}px, 0px)`,
-              }}
-              className="absolute z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
-            >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goToRoomById(hs.targetRoom);
-                }}
-                className="group flex items-center gap-2 bg-black/75 hover:bg-black/95 text-white border border-white/30 hover:border-cyan-400 px-3.5 py-2 rounded-full shadow-2xl backdrop-blur-md transition-all duration-200 hover:scale-105"
-              >
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
-                <span className="text-xs font-bold tracking-wide uppercase">
-                  {hs.label}
-                </span>
-              </button>
-            </div>
-          ))}
+        {/* Snapshot Flash Overlay */}
+        {snapshotEffect && (
+          <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
+        )}
 
-        {/* Active Room Title Tag */}
-        <div className="absolute top-4 left-4 z-10 bg-black/70 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 flex items-center gap-2.5 shadow-lg">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-bold tracking-wider uppercase text-white">
-            360° VIRTUAL TOUR • {activeRoom.name} ({activeRoom.sqft})
+        {/* TOP-LEFT BRANDING HEADLINE */}
+        <div className="absolute top-5 left-5 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
+          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase">
+            360° TOUR • {activeScene.name}
           </span>
         </div>
 
-        {/* Interactive Mini-Map Radar Overlay */}
-        {showMinimap && (
-          <div className="absolute bottom-4 left-4 z-10 hidden sm:flex flex-col bg-black/75 backdrop-blur-md border border-white/15 p-3 rounded-2xl shadow-2xl w-40">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-white/70 uppercase">FLOOR RADAR</span>
-              <span className="text-[10px] font-semibold text-cyan-400">{activeRoom.floor}</span>
+        {/* VERTICAL TOGGLE ACTION MENU (Exact Match to Image 1) */}
+        <div className="absolute top-5 right-5 z-30 flex flex-col items-center gap-3 pointer-events-auto">
+          {isMenuOpen ? (
+            <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in-95 duration-200">
+              {/* 1. CLOSE BUTTON (✕ Circle with white border) */}
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+                title="Close Action Menu"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border-2 border-white/80 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faXmark} className="text-lg" />
+              </button>
+
+              {/* 2. VR HEADSET MODE BUTTON */}
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                title="VR Mode / Headset"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faVrCardboard} className="text-base" />
+              </button>
+
+              {/* 3. AUDIO MUTE / UNMUTE BUTTON */}
+              <button
+                type="button"
+                onClick={() => setIsMuted(!isMuted)}
+                title={isMuted ? "Unmute Sound" : "Mute Sound"}
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} className="text-base" />
+              </button>
+
+              {/* 4. HOTSPOTS TOGGLE EYE BUTTON */}
+              <button
+                type="button"
+                onClick={() => setShowHotspots(!showHotspots)}
+                title={showHotspots ? "Hide Hotspots" : "Show Hotspots"}
+                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border border-white/40 flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
+                  showHotspots ? "bg-white/40 text-cyan-300" : "bg-white/20 text-white/50"
+                }`}
+              >
+                <FontAwesomeIcon icon={showHotspots ? faEye : faEyeSlash} className="text-base" />
+              </button>
+
+              {/* 5. FULLSCREEN BUTTON */}
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                title="Toggle Fullscreen"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} className="text-base" />
+              </button>
+
+              {/* 6. CAMERA SNAPSHOT BUTTON */}
+              <button
+                type="button"
+                onClick={takeSnapshot}
+                title="Take Snapshot"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faCamera} className="text-base" />
+              </button>
             </div>
+          ) : (
+            /* COLLAPSED SINGLE MENU BUTTON (☰) */
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              title="Open Action Menu"
+              className="w-12 h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border-2 border-white/80 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110 cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faBars} className="text-lg" />
+            </button>
+          )}
+        </div>
+
+        {/* BOTTOM THUMBNAIL GALLERY CAROUSEL (Exact Match to Image 2) */}
+        <div className="absolute bottom-4 inset-x-4 sm:inset-x-8 z-20 flex items-center justify-center pointer-events-none">
+          <div className="relative w-full max-w-5xl flex items-center justify-between pointer-events-auto">
             
-            {/* Schematic Mini Map */}
-            <div className="relative w-full h-24 bg-zinc-900/90 border border-white/10 rounded-lg p-2 flex flex-col justify-between">
-              <div className="flex justify-between text-[9px] font-semibold text-white/60">
-                <span className={currentRoomIndex === 0 ? "text-cyan-400 font-bold" : ""}>Living</span>
-                <span className={currentRoomIndex === 1 ? "text-cyan-400 font-bold" : ""}>Kitchen</span>
-              </div>
-              <div className="flex justify-between text-[9px] font-semibold text-white/60">
-                <span className={currentRoomIndex === 3 ? "text-cyan-400 font-bold" : ""}>Balcony</span>
-                <span className={currentRoomIndex === 2 ? "text-cyan-400 font-bold" : ""}>Suite</span>
-              </div>
-              
-              {/* Radar Vision Cone */}
-              <div
-                className="absolute w-6 h-6 border-t-2 border-cyan-400 bg-cyan-400/20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200"
-                style={{
-                  transform: `translate(-50%, -50%) rotate(${panX * 0.8}deg)`,
-                }}
-              />
+            {/* Scroll Left Button */}
+            <button
+              type="button"
+              onClick={() => scrollThumbnails("left")}
+              className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 mr-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+            </button>
+
+            {/* Scrollable Thumbnail Strip (Matching Image 2) */}
+            <div
+              ref={thumbnailScrollRef}
+              className="flex items-center gap-3.5 overflow-x-auto scrollbar-none py-2 px-1 scroll-smooth w-full justify-start sm:justify-center"
+            >
+              {PANORAMA_DATA.map((scene) => {
+                const isActive = scene.id === currentPanoramaId;
+                return (
+                  <button
+                    type="button"
+                    key={scene.id}
+                    onClick={() => changePanoramaWithGsap(scene.id)}
+                    className="flex flex-col items-center shrink-0 group cursor-pointer"
+                  >
+                    {/* Rounded Thumbnail Image Box */}
+                    <div
+                      className={`relative w-28 sm:w-36 h-16 sm:h-20 rounded-2xl overflow-hidden transition-all duration-200 ${
+                        isActive
+                          ? "border-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.7)] scale-105"
+                          : "border border-white/30 opacity-75 group-hover:opacity-100 group-hover:border-white/70"
+                      }`}
+                    >
+                      <img
+                        src={scene.thumbnail}
+                        alt={scene.name}
+                        className="w-full h-full object-cover"
+                      />
+                      {isActive && (
+                        <div className="absolute inset-0 bg-white/10 pointer-events-none" />
+                      )}
+                    </div>
+
+                    {/* Thumbnail Label Text Directly Below */}
+                    <span
+                      className={`text-[11px] sm:text-xs font-extrabold uppercase tracking-wider mt-2 transition-colors ${
+                        isActive ? "text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" : "text-white/75 group-hover:text-white"
+                      }`}
+                    >
+                      {scene.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+
+            {/* Scroll Right Button */}
+            <button
+              type="button"
+              onClick={() => scrollThumbnails("right")}
+              className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 ml-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
+            >
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
+
           </div>
-        )}
-
-        {/* Floating Pan Controls */}
-        <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-black/75 backdrop-blur-md border border-white/15 p-1.5 rounded-full shadow-2xl">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nudgePan(60, 0);
-            }}
-            title="Pan Left"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faChevronLeft} className="text-[10px]" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nudgePan(0, 30);
-            }}
-            title="Pan Up"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faChevronUp} className="text-[10px]" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nudgePan(0, -30);
-            }}
-            title="Pan Down"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nudgePan(-60, 0);
-            }}
-            title="Pan Right"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faChevronRight} className="text-[10px]" />
-          </button>
-
-          {/* Toggle Hotspots */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowHotspots(!showHotspots);
-            }}
-            title="Toggle Doorway Hotspots"
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer ${
-              showHotspots ? "bg-cyan-500 text-black font-bold" : "bg-white/10 text-white/50"
-            }`}
-          >
-            <FontAwesomeIcon icon={faLocationDot} className="text-[11px]" />
-          </button>
-
-          {/* Toggle Mini-Map */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowMinimap(!showMinimap);
-            }}
-            title="Toggle Floor Radar"
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-colors cursor-pointer ${
-              showMinimap ? "bg-white/30 text-white" : "bg-white/10 text-white/50"
-            }`}
-          >
-            <FontAwesomeIcon icon={faMap} className="text-[11px]" />
-          </button>
         </div>
 
       </div>
 
-      {/* Tour Specs Footer Bar */}
+      {/* METADATA FOOTER BELOW VIEWER */}
       <div className="w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-2">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
-            LUXURY PENTHOUSE TOUR • 4 ROOMS CONNECTED
+            CURRENT SCENE • {activeScene.category}
           </span>
           <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--app-text-primary)]">
-            The Glass Pavilion Residence
+            {activeScene.name}
           </h3>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="primary">Launch Fullscreen VR</Button>
-          <Button variant="secondary">Book Space Tour</Button>
+          <Button variant="primary" onClick={toggleFullscreen}>
+            Launch Fullscreen 360
+          </Button>
+          <Button variant="secondary" onClick={() => setShowHotspots(!showHotspots)}>
+            {showHotspots ? "Hide Hotspots" : "Show Hotspots"}
+          </Button>
         </div>
       </div>
 
