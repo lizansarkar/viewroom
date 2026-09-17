@@ -1,48 +1,48 @@
-import React from 'react';
-import Button from '../../components/reuseable/Button';
+import React from "react";
+import Button from "../../components/reuseable/Button";
 
 const propertyData = [
   {
     id: 1,
-    title: "Modern Residence",
-    tag: "360°",
+    title: "The Glass Pavilion Penthouse",
+    tag: "360° Tour • 4 Rooms",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 2,
-    title: "Harbor Apartment",
-    tag: "360°",
+    title: "Horizon Coastal Villa",
+    tag: "360° Tour • Oceanfront",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 3,
-    title: "The Grand Hotel",
-    tag: "360°",
+    title: "Metropolitan Luxury Hotel",
+    tag: "360° Tour • Boutique Suite",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 4,
-    title: "Modern Residence",
-    tag: "360°",
+    title: "Minimalist Skyline Loft",
+    tag: "360° Tour • Open Space",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 5,
-    title: "Harbor Apartment",
-    tag: "360°",
+    title: "Alpine Mountain Sanctuary",
+    tag: "360° Tour • 5 Rooms",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 6,
-    title: "The Grand Hotel",
-    tag: "360°",
+    title: "Architectural Design Studio",
+    tag: "360° Tour • Creative Studio",
     price: "Free",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800",
   },
 ];
 
@@ -73,19 +73,29 @@ function Properties() {
         {/* 3 Columns x 2 Rows Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {propertyData.map((item) => (
-            <div key={item.id} className="flex flex-col group">
-              {/* Card Image */}
-              <div className="w-full h-[280px] sm:h-[320px] rounded-2xl overflow-hidden mb-4 bg-base-200">
+            <div
+              key={item.id}
+              className="flex flex-col justify-between group cursor-pointer p-4 sm:p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 shadow-md hover:border-[var(--app-border)]/60 transition-all duration-300"
+            >
+              {/* Card Image Container */}
+              <div className="relative w-full h-[280px] sm:h-[320px] rounded-2xl overflow-hidden mb-4 bg-base-200 shadow-md">
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
                 />
+
+                {/* 360 Badge Overlay */}
+                <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
+                  <span className="text-xs font-bold tracking-wider text-white uppercase">
+                    360° TOUR
+                  </span>
+                </div>
               </div>
 
               {/* Title & Price Info */}
               <div className="flex items-start justify-between mb-1">
-                <h3 className="text-base font-bold text-[var(--app-text-primary)] tracking-tight">
+                <h3 className="text-base font-bold text-[var(--app-text-primary)] tracking-tight uppercase">
                   {item.title}
                 </h3>
                 <span className="text-sm font-bold text-[var(--app-text-primary)]">
@@ -99,10 +109,12 @@ function Properties() {
               </span>
 
               {/* Explore Button */}
-              <Button variant="secondary" className="">
-                <span>Explore 360°</span>
-                <span className="text-sm">→</span>
-              </Button>
+              <div>
+                <Button variant="secondary" className="w-full">
+                  <span>Explore 360°</span>
+                  <span className="text-sm ml-1">→</span>
+                </Button>
+              </div>
             </div>
           ))}
         </div>

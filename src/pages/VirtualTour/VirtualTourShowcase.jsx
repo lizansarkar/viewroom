@@ -50,7 +50,7 @@ function VirtualTourShowcase() {
   return (
     <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-16 px-6 sm:px-12 lg:px-20 transition-colors duration-250">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div>
@@ -73,7 +73,10 @@ function VirtualTourShowcase() {
         {/* 3 Columns Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {TOUR_PROPERTIES.map((item) => (
-            <div key={item.id} className="flex flex-col group cursor-pointer">
+            <div
+              key={item.id}
+              className="flex flex-col justify-between group cursor-pointer p-4 sm:p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 shadow-md hover:border-[var(--app-border)]/60 transition-all duration-300"
+            >
               {/* Card Image */}
               <div className="relative w-full h-[280px] sm:h-[320px] rounded-2xl overflow-hidden mb-4 bg-base-200 shadow-md">
                 <img

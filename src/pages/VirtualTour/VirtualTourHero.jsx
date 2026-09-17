@@ -4,7 +4,7 @@ import VirtualTourViewer from "./VirtualTourViewer";
 function VirtualTourHero() {
   return (
     <section className="relative w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-12 sm:py-16 px-4 sm:px-8 flex flex-col items-center justify-center overflow-hidden">
-      <div className="max-w-6xl w-full mx-auto flex flex-col items-center z-10">
+      <div className="max-w-7xl w-full mx-auto flex flex-col items-center z-10">
         
         {/* Top Hero Text Section */}
         <div className="text-center max-w-3xl mx-auto mb-10">

@@ -300,7 +300,6 @@ function VirtualTourViewer() {
 
         {/* TOP-LEFT BRANDING HEADLINE */}
         <div className="absolute top-5 left-5 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
-          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
           <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase">
             360° TOUR • {activeScene.name}
           </span>
@@ -340,18 +339,6 @@ function VirtualTourViewer() {
                 <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} className="text-base" />
               </button>
 
-              {/* 4. HOTSPOTS TOGGLE EYE BUTTON */}
-              <button
-                type="button"
-                onClick={() => setShowHotspots(!showHotspots)}
-                title={showHotspots ? "Hide Hotspots" : "Show Hotspots"}
-                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border border-white/40 flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
-                  showHotspots ? "bg-white/40 text-cyan-300" : "bg-white/20 text-white/50"
-                }`}
-              >
-                <FontAwesomeIcon icon={showHotspots ? faEye : faEyeSlash} className="text-base" />
-              </button>
-
               {/* 5. FULLSCREEN BUTTON */}
               <button
                 type="button"
@@ -360,16 +347,6 @@ function VirtualTourViewer() {
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} className="text-base" />
-              </button>
-
-              {/* 6. CAMERA SNAPSHOT BUTTON */}
-              <button
-                type="button"
-                onClick={takeSnapshot}
-                title="Take Snapshot"
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faCamera} className="text-base" />
               </button>
             </div>
           ) : (

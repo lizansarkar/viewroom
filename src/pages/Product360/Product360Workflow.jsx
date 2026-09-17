@@ -26,7 +26,7 @@ const steps = [
 
 function Product360Workflow() {
   return (
-    <section className="w-full bg-base-100 text-base-content py-16 px-6 sm:px-12 lg:px-20 border-t border-[var(--app-border)]/15">
+    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-16 px-6 sm:px-12 lg:px-20 border-t border-[var(--app-border)]/15 transition-colors duration-250">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Title */}
@@ -44,13 +44,13 @@ function Product360Workflow() {
           {steps.map((s) => (
             <div
               key={s.step}
-              className="bg-base-200/50 border border-[var(--app-border)]/20 p-8 rounded-2xl flex flex-col justify-between hover:border-[var(--app-border)]/60 transition-all duration-300"
+              className="bg-base-200/50 border border-[var(--app-border)]/20 p-8 rounded-2xl flex flex-col justify-between shadow-md hover:border-[var(--app-border)]/60 transition-all duration-300 group hover:scale-[1.02]"
             >
               <div>
-                <span className="font-heading text-3xl font-black text-[var(--app-text-secondary)] opacity-40 block mb-4">
+                <span className="font-heading text-3xl font-black text-[var(--app-text-secondary)] opacity-40 block mb-4 group-hover:opacity-80 transition-opacity">
                   {s.step}
                 </span>
-                <h3 className="font-heading text-lg font-bold uppercase tracking-tight mb-3">
+                <h3 className="font-heading text-lg font-bold uppercase tracking-tight mb-3 text-[var(--app-text-primary)]">
                   {s.title}
                 </h3>
                 <p className="text-xs sm:text-sm text-[var(--app-text-secondary)] leading-relaxed">
