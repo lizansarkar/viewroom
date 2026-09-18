@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { apiRegister, apiLogin } from "../services/api";
 
 const AuthContext = createContext();
 
@@ -36,24 +37,35 @@ export function AuthProvider({ children }) {
   }, [user]);
 
   // Register user action
-  const register = ({ name, email }) => {
-    const userData = { name: name || "User", email };
+  const register = async ({ name, email, password }) => {
+    const res = await apiRegister({ name, email, password });
+    const userData = res.user || { name: name || "User", email };
     setUser(userData);
     setIsRegistered(true);
     setIsLoggedIn(true);
+    if (res.token) {
+      localStorage.setItem("viewroom-jwt", res.token);
+    }
+    return res;
   };
 
   // Login user action
-  const login = ({ email }) => {
-    const userData = user || { name: email.split("@")[0], email };
+  const login = async ({ email, password }) => {
+    const res = await apiLogin({ email, password });
+    const userData = res.user || user || { name: email.split("@")[0], email };
     setUser(userData);
     setIsRegistered(true);
     setIsLoggedIn(true);
+    if (res.token) {
+      localStorage.setItem("viewroom-jwt", res.token);
+    }
+    return res;
   };
 
   // Logout action
   const logout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem("viewroom-jwt");
   };
 
   return (

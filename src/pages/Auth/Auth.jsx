@@ -71,13 +71,14 @@ function Auth() {
 
   return (
     <main className="w-full min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] flex flex-col justify-between transition-colors duration-250 select-none">
-      <div className="w-full min-h-screen flex flex-col lg:flex-row">
+      {/* Container aligned with max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col lg:flex-row items-center justify-between">
         
         {/* LEFT PANEL: AUTHENTICATION FORM CONTAINER */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-between p-6 sm:p-10 lg:p-14 z-10">
+        <div className="w-full lg:w-1/2 flex flex-col justify-between py-8 lg:py-12 lg:pr-10 z-10 min-h-[85vh]">
           
           {/* Top Header Branding */}
-          <div className="flex items-center justify-between mb-8 sm:mb-12">
+          <div className="flex items-center justify-between mb-6">
             <Link
               to="/"
               className="text-3xl font-bold italic tracking-tight"
@@ -208,14 +209,14 @@ function Auth() {
           </div>
 
           {/* Bottom Copyright Watermark */}
-          <div className="mt-auto pt-6 text-left text-xs font-semibold text-[var(--app-text-secondary)]">
+          <div className="mt-auto pt-4 text-left text-xs font-semibold text-[var(--app-text-secondary)]">
             © ViewRoom
           </div>
 
         </div>
 
         {/* RIGHT PANEL: ARCHITECTURAL 360 HERO SHOWCASE IMAGE (Full Height) */}
-        <div className="hidden lg:flex lg:w-1/2 p-4 sm:p-6 lg:p-8 relative">
+        <div className="hidden lg:flex lg:w-1/2 py-8 lg:py-12 lg:pl-6 relative w-full h-[650px] lg:h-[80vh]">
           <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 bg-base-200">
             {/* High-Resolution Architectural 360 Space Showcase Image */}
             <img

@@ -1,0 +1,121 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User & Authentication Schema
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String?
+  passwordHash  String?
+  role          Role           @default(CLIENT)
+  tours         VirtualTour[]
+  products      Product360[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum Role {
+  ADMIN
+  CREATOR
+  CLIENT
+  VISITOR
+}
+
+// 360° Virtual Tour & Scene Models
+model VirtualTour {
+  id            String         @id @default(uuid())
+  title         String
+  description   String?
+  category      String
+  floorPlanUrl  String?
+  sqft          Int?
+  isPublished   Boolean        @default(true)
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  scenes        Scene[]
+  analytics     Analytics[]
+  createdAt     DateTime       @default(now())
+}
+
+model Scene {
+  id            String         @id @default(uuid())
+  tourId        String
+  tour          VirtualTour    @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  name          String
+  floorLevel    String
+  thumbnailUrl  String
+  panoramaUrl   String
+  orderIndex    Int            @default(0)
+  hotspots      Hotspot[]
+}
+
+model Hotspot {
+  id            String         @id @default(uuid())
+  sceneId       String
+  scene         Scene          @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  type          HotspotType
+  yaw           Float          // Spherical Yaw Angle (-180 to 180)
+  pitch         Float          // Spherical Pitch Angle (-90 to 90)
+  targetSceneId String?        // Destination Scene ID
+  label         String
+  description   String?
+}
+
+enum HotspotType {
+  RING
+  DOOR
+  CHEVRON
+  TARGET
+  INFO
+}
+
+// 360° Interactive Product Models
+model Product360 {
+  id            String         @id @default(uuid())
+  title         String
+  category      String
+  status        String         @default("Studio Ready")
+  model3DUrl    String?        // .gltf / .glb / .usdz
+  variants      ProductVariant[]
+  specHotspots  ProductHotspot[]
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  createdAt     DateTime       @default(now())
+}
+
+model ProductVariant {
+  id            String         @id @default(uuid())
+  productId     String
+  product       Product360     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name          String
+  colorHex      String
+  accentHex     String
+  imageSequence String[]       // Array of 36-72 frame URLs for 360 spin
+}
+
+model ProductHotspot {
+  id            String         @id @default(uuid())
+  productId     String
+  product       Product360     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  angle         Float          // Rotation frame angle
+  xPercent      Float          // X position %
+  yPercent      Float          // Y position %
+  title         String
+  description   String
+}
+
+// Analytics & Heatmaps
+model Analytics {
+  id            String         @id @default(uuid())
+  tourId        String
+  tour          VirtualTour    @relation(fields: [tourId], references: [id])
+  viewsCount    Int            @default(0)
+  durationSec   Int            @default(0)
+  createdAt     DateTime       @default(now())
+}
