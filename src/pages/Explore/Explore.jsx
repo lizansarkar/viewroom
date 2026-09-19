@@ -11,7 +11,6 @@ import {
   faXmark,
   faStar,
   faArrowRight,
-  faSparkles,
   faLocationDot,
   faExpand,
 } from "@fortawesome/free-solid-svg-icons";
