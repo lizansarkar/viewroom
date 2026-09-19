@@ -17,7 +17,7 @@ export default function AIChatbot() {
     {
       id: 1,
       sender: "ai",
-      text: "Hello! I am your ViewRoom 360° Spatial AI Concierge. Ask me anything about floor navigation, room dimensions, or product 360 configurations!",
+      text: "Welcome to ViewRoom 360°. I am your Spatial AI Assistant. How can I help you explore floor plans, room dimensions, or product 360 models?",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
@@ -69,7 +69,7 @@ export default function AIChatbot() {
         {
           id: Date.now() + 1,
           sender: "ai",
-          text: "I'm temporarily experiencing spatial connectivity updates. Feel free to ask another question!",
+          text: "I am currently updating spatial connections. Feel free to ask another question!",
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -81,65 +81,66 @@ export default function AIChatbot() {
   const quickPrompts = [
     "📍 How to switch 360 floors?",
     "📐 Room specs & dimensions",
-    "🛋️ Recommend furniture layout",
-    "💳 Pricing & custom options",
+    "🛋️ Furniture layout ideas",
+    "💳 Pricing & 3D options",
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto">
-      {/* Floating Chat Modal */}
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end pointer-events-auto">
+      {/* Floating Chat Window matching ViewRoom Theme */}
       {isOpen && (
-        <div className="mb-4 w-[92vw] sm:w-[380px] h-[520px] max-h-[80vh] rounded-3xl bg-base-100/90 dark:bg-neutral-900/95 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform scale-100 origin-bottom-right">
-          {/* Header */}
-          <div className="p-4 bg-gradient-to-r from-cyan-600 via-cyan-500 to-blue-600 text-white flex items-center justify-between shadow-md">
+        <div className="mb-3.5 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[78vh] rounded-2xl bg-base-100 border border-[var(--app-border)]/40 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform scale-100 origin-bottom-right">
+          
+          {/* Header Bar */}
+          <div className="px-4 py-3.5 bg-base-200 border-b border-[var(--app-border)]/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white">
-                <FontAwesomeIcon icon={faRobot} className="text-lg" />
+              <div className="w-8 h-8 rounded-full bg-base-content text-base-100 flex items-center justify-center font-bold text-xs shadow-sm">
+                <FontAwesomeIcon icon={faRobot} />
               </div>
               <div>
-                <h3 className="font-bold text-sm tracking-wide flex items-center gap-1.5">
-                  Spatial AI Concierge
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <h3 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[var(--app-text-primary)] flex items-center gap-2">
+                  SPATIAL AI ASSISTANT
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 </h3>
-                <p className="text-[11px] text-cyan-100 opacity-90">Powered by Google Gemini 1.5</p>
+                <p className="text-[10px] text-[var(--app-text-secondary)] font-medium">Powered by Google Gemini 1.5</p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center text-white transition-colors"
+              className="w-7 h-7 rounded-full hover:bg-base-300 flex items-center justify-center text-[var(--app-text-primary)] transition-colors text-xs"
               aria-label="Close AI Chat"
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
 
-          {/* Chat Messages Body */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 custom-scrollbar">
+          {/* Messages Body */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-base-100">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex gap-2.5 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                     msg.sender === "user"
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                      : "bg-cyan-500/20 text-cyan-500 dark:text-cyan-400 border border-cyan-500/30"
+                      ? "bg-base-content text-base-100"
+                      : "bg-base-200 border border-[var(--app-border)]/40 text-[var(--app-text-primary)]"
                   }`}
                 >
                   <FontAwesomeIcon icon={msg.sender === "user" ? faUser : faRobot} />
                 </div>
                 <div
-                  className={`max-w-[80%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                  className={`max-w-[82%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
                     msg.sender === "user"
-                      ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-tr-none"
-                      : "bg-base-200/80 dark:bg-neutral-800/80 text-base-content border border-base-300 dark:border-neutral-700/60 rounded-tl-none"
+                      ? "bg-base-content text-base-100 rounded-tr-none font-medium"
+                      : "bg-base-200/90 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] rounded-tl-none"
                   }`}
                 >
                   <p>{msg.text}</p>
                   <span
-                    className={`block text-[9px] mt-1 text-right opacity-70 ${
-                      msg.sender === "user" ? "text-cyan-100" : "text-base-content/60"
+                    className={`block text-[9px] mt-1 text-right ${
+                      msg.sender === "user" ? "opacity-75" : "text-[var(--app-text-secondary)]"
                     }`}
                   >
                     {msg.timestamp}
@@ -148,29 +149,29 @@ export default function AIChatbot() {
               </div>
             ))}
 
-            {/* Loading Indicator */}
+            {/* Loading Animation */}
             {isLoading && (
               <div className="flex gap-2.5 items-center">
-                <div className="w-7 h-7 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs">
+                <div className="w-6 h-6 rounded-full bg-base-200 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] flex items-center justify-center text-[10px]">
                   <FontAwesomeIcon icon={faRobot} />
                 </div>
-                <div className="bg-base-200 dark:bg-neutral-800 p-3 rounded-2xl rounded-tl-none border border-base-300 dark:border-neutral-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"></span>
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.4s]"></span>
+                <div className="bg-base-200/90 p-3 rounded-2xl rounded-tl-none border border-[var(--app-border)]/40 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--app-text-primary)] animate-bounce"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--app-text-primary)] animate-bounce [animation-delay:0.2s]"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--app-text-primary)] animate-bounce [animation-delay:0.4s]"></span>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts */}
-          <div className="px-3 py-2 bg-base-200/40 dark:bg-neutral-950/40 border-t border-base-300/40 dark:border-neutral-800/60 flex gap-1.5 overflow-x-auto no-scrollbar">
+          {/* Quick Prompts Bar */}
+          <div className="px-3 py-2 bg-base-200/60 border-t border-[var(--app-border)]/30 flex gap-1.5 overflow-x-auto no-scrollbar">
             {quickPrompts.map((promptText, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(promptText)}
-                className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-base-100 dark:bg-neutral-800 border border-base-300 dark:border-neutral-700 text-base-content/80 hover:text-cyan-500 hover:border-cyan-500/50 whitespace-nowrap transition-colors"
+                className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-base-100 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] hover:bg-base-content hover:text-base-100 whitespace-nowrap transition-all"
               >
                 {promptText}
               </button>
@@ -183,43 +184,40 @@ export default function AIChatbot() {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-3 bg-base-100 dark:bg-neutral-900 border-t border-base-300 dark:border-neutral-800 flex items-center gap-2"
+            className="p-3 bg-base-100 border-t border-[var(--app-border)]/30 flex items-center gap-2"
           >
             <input
               type="text"
-              placeholder="Ask AI about 360° spaces or products..."
+              placeholder="Ask about 360° spaces or products..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              className="flex-1 bg-base-200/60 dark:bg-neutral-800/80 text-xs px-3.5 py-2.5 rounded-full border border-base-300 dark:border-neutral-700/80 focus:outline-none focus:border-cyan-500 text-base-content placeholder:text-base-content/40"
+              className="flex-1 bg-base-200/60 text-xs px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]"
             />
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading}
-              className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white flex items-center justify-center disabled:opacity-40 hover:opacity-90 transition-opacity shadow-md flex-shrink-0"
+              className="w-9 h-9 rounded-full bg-base-content text-base-100 flex items-center justify-center disabled:opacity-40 hover:opacity-90 transition-opacity shadow-sm flex-shrink-0 text-xs"
               aria-label="Send Message"
             >
-              <FontAwesomeIcon icon={faPaperPlane} className="text-xs" />
+              <FontAwesomeIcon icon={faPaperPlane} />
             </button>
           </form>
         </div>
       )}
 
-      {/* Floating Toggle Button */}
+      {/* Floating Toggle Button matching ViewRoom Luxury Design */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="group relative w-14 h-14 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-400 text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/20"
-        aria-label="Toggle AI Concierge"
+        className="group relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-base-content text-base-100 border border-[var(--app-border)]/50 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300"
+        aria-label="Toggle AI Assistant"
       >
-        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 blur opacity-40 group-hover:opacity-80 transition duration-300 animate-pulse"></div>
-        <div className="relative flex items-center justify-center">
-          <FontAwesomeIcon
-            icon={isOpen ? faChevronDown : faRobot}
-            className="text-xl transition-transform duration-300 group-hover:rotate-12"
-          />
-        </div>
+        <FontAwesomeIcon
+          icon={isOpen ? faChevronDown : faRobot}
+          className="text-lg sm:text-xl transition-transform duration-300"
+        />
         {!isOpen && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 border-2 border-base-100 flex items-center justify-center">
-            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-base-100 flex items-center justify-center">
+            <span className="w-1 h-1 rounded-full bg-white animate-ping"></span>
           </span>
         )}
       </button>
