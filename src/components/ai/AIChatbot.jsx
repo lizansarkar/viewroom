@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSparkles,
   faXmark,
   faPaperPlane,
   faRobot,
