@@ -27,8 +27,8 @@ const PANORAMA_DATA = [
     id: "aerial_view",
     name: "AERIAL VIEW",
     category: "Campus Aerial",
-    thumbnail: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=2000",
+    thumbnail: "/panoramas/panorama_aerial.jpg",
+    panorama: "/panoramas/panorama_aerial.jpg",
     markers: [
       {
         id: "m_entrance",
@@ -46,8 +46,8 @@ const PANORAMA_DATA = [
     id: "entrance",
     name: "ENTRANCE",
     category: "Main Building",
-    thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000",
+    thumbnail: "/panoramas/panorama_entrance.jpg",
+    panorama: "/panoramas/panorama_entrance.jpg",
     markers: [
       {
         id: "m_floor1",
@@ -66,8 +66,8 @@ const PANORAMA_DATA = [
     id: "floor_1",
     name: "1ST FLOOR",
     category: "Reception Lobby",
-    thumbnail: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000",
+    thumbnail: "/panoramas/panorama_floor1.jpg",
+    panorama: "/panoramas/panorama_floor1.jpg",
     markers: [
       {
         id: "m_floor2",
