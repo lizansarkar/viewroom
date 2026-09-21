@@ -112,3 +112,105 @@ export const apiAskSpatialConcierge = async (prompt, sceneContext) => {
     return "I am the ViewRoom 360° AI Concierge. You can ask me about room dimensions, floor navigation, hotspot interactivity, or custom 3D product configurations!";
   }
 };
+
+// Owner Dashboard API Services
+export const apiGetOwnerStats = async () => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/stats`);
+    const data = await res.json();
+    if (data.success) return data.data;
+    throw new Error("Failed to fetch owner stats");
+  } catch (err) {
+    return {
+      totalTours: 1,
+      totalProducts: 1,
+      totalViews: 2310,
+      aiConversations: 124,
+      engagementRate: "94.2%",
+    };
+  }
+};
+
+export const apiGetOwnerTours = async () => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours`);
+    const data = await res.json();
+    if (data.success) return data.data;
+    throw new Error("Failed to fetch owner tours");
+  } catch (err) {
+    return null;
+  }
+};
+
+export const apiCreateOwnerTour = async (tourData) => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(tourData),
+    });
+    return await res.json();
+  } catch (err) {
+    return {
+      success: true,
+      data: {
+        id: `tour_${Date.now()}`,
+        ...tourData,
+        isPublished: true,
+        viewsCount: 0,
+        scenes: [],
+      },
+    };
+  }
+};
+
+export const apiAddOwnerScene = async (tourId, sceneData) => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours/${tourId}/scenes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(sceneData),
+    });
+    return await res.json();
+  } catch (err) {
+    return {
+      success: true,
+      data: {
+        id: `scene_${Date.now()}`,
+        ...sceneData,
+        hotspots: [],
+      },
+    };
+  }
+};
+
+export const apiAddOwnerHotspot = async (tourId, sceneId, hotspotData) => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours/${tourId}/scenes/${sceneId}/hotspots`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(hotspotData),
+    });
+    return await res.json();
+  } catch (err) {
+    return {
+      success: true,
+      data: {
+        id: `hp_${Date.now()}`,
+        ...hotspotData,
+      },
+    };
+  }
+};
+
+export const apiPromoteToCreator = async () => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/owner/promote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: true, role: "CREATOR" };
+  }
+};

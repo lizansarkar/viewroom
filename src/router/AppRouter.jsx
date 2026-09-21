@@ -10,12 +10,14 @@ import Matterport from '../pages/Matterport/Matterport'
 import Photography from '../pages/Photography/Photography'
 import Auth from '../pages/Auth/Auth'
 import Explore from '../pages/Explore/Explore'
+import Dashboard from '../pages/Dashboard/Dashboard'
 
 function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/explore" element={<Explore />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/360-virtual-tour" element={<VirtualTour360 />} />
       <Route path="/360-product" element={<Product360 />} />
       <Route path="/360-video" element={<Video360 />} />

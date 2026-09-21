@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import tourRoutes from "./routes/tourRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import ownerRoutes from "./routes/ownerRoutes.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/tours", tourRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/ai", aiRoutes);
+app.use("/api/v1/owner", ownerRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {
