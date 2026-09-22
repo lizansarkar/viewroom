@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Button from "../reuseable/Button";
+import Logo from "../reuseable/Logo";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
@@ -172,13 +173,7 @@ function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
       <nav className="w-full max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center justify-between">
         {/* Logo */}
-        <Link
-          to="/"
-          className="text-[28px] font-bold italic tracking-tight shrink-0"
-          style={{ fontFamily: "'Brush Script MT', cursive" }}
-        >
-          Logo
-        </Link>
+        <Logo size="md" />
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8 ml-12 mr-auto text-[15px]">
@@ -370,12 +365,7 @@ function Navbar() {
           <div className="absolute top-0 right-0 h-full w-[80%] max-w-sm bg-base-100 shadow-xl flex flex-col px-6 pt-6 pb-8 overflow-y-auto justify-between">
             <div>
               <div className="flex items-center justify-between mb-8">
-                <span
-                  className="text-2xl font-bold italic"
-                  style={{ fontFamily: "'Brush Script MT', cursive" }}
-                >
-                  Logo
-                </span>
+                <Logo size="sm" />
                 <button
                   onClick={() => setMobileOpen(false)}
                   aria-label="Close menu"

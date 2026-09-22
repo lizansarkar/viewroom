@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Logo from '../reuseable/Logo'
 
 function Footer() {
   const year = new Date().getFullYear()
@@ -163,13 +164,7 @@ function Footer() {
 
         {/* Logo + avatar group row */}
         <div className="flex items-center justify-between mt-14 mb-6">
-          <Link
-            to="/"
-            className="font-['cursive'] italic text-3xl font-semibold tracking-tight"
-            style={{ fontFamily: "'Brush Script MT', cursive" }}
-          >
-            Logo
-          </Link>
+          <Logo size="lg" />
 
           <div className="flex -space-x-3">
             {avatars.map((src, i) => (
