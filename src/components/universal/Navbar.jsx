@@ -25,21 +25,31 @@ function SunIcon(props) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="2"
       strokeLinecap="round"
-      className="h-4.5 w-4.5"
+      strokeLinejoin="round"
+      className="w-5 h-5"
       {...props}
     >
-      <circle cx="12" cy="12" r="4.2" />
-      <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
     </svg>
   );
 }
 
 function MoonIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" {...props}>
-      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-5 h-5"
+      {...props}
+    >
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
     </svg>
   );
 }
@@ -228,7 +238,8 @@ function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="btn btn-outline btn-circle btn-sm"
+            title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
+            className="p-2.5 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
           >
             {theme === "light" ? <SunIcon /> : <MoonIcon />}
           </button>
@@ -334,7 +345,8 @@ function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="btn btn-outline btn-circle btn-sm"
+            title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
+            className="p-2.5 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
           >
             {theme === "light" ? <SunIcon /> : <MoonIcon />}
           </button>
