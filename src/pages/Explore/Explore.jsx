@@ -91,8 +91,57 @@ const categories = ["ALL", "SPACES", "PRODUCTS"];
 export default function Explore() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [apiData, setApiData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const filteredData = exploreItems.filter((item) => {
+  useEffect(() => {
+    fetchExploreData();
+  }, [searchQuery, activeCategory, sortBy]);
+
+  const fetchExploreData = async () => {
+    setLoading(true);
+    try {
+      const [tours, products] = await Promise.all([
+        apiGetTours({ search: searchQuery, sortBy }),
+        apiGetProducts({ search: searchQuery, sortBy }),
+      ]);
+
+      if (tours || products) {
+        const mappedTours = (tours || []).map((t) => ({
+          id: t.id,
+          title: t.title,
+          tag: `360° Tour • ${t.totalScenes || 1} Scenes`,
+          price: t.price || "Free",
+          category: "SPACES",
+          type: "tour",
+          image: t.coverImage,
+          link: `/360-virtual-tour`,
+        }));
+
+        const mappedProducts = (products || []).map((p) => ({
+          id: p.id,
+          title: p.title,
+          tag: `360° Spin • ${p.subtitle || "3D Model"}`,
+          price: typeof p.price === "number" ? `$${p.price}` : p.price,
+          category: "PRODUCTS",
+          type: "product",
+          image: p.coverFrame,
+          link: `/360-product`,
+        }));
+
+        setApiData([...mappedTours, ...mappedProducts]);
+      }
+    } catch (err) {
+      console.warn("Explore page live API fetch fallback:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const dataSource = apiData !== null ? apiData : exploreItems;
+
+  const filteredData = dataSource.filter((item) => {
     const matchesCategory =
       activeCategory === "ALL" || item.category.toUpperCase() === activeCategory;
 
@@ -121,15 +170,26 @@ export default function Explore() {
             </p>
           </div>
 
-          {/* Search Bar matching ViewRoom minimal pill input */}
-          <div className="w-full md:w-80">
-            <input
-              type="text"
-              placeholder="SEARCH SPACES OR PRODUCTS..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-5 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] placeholder-[var(--app-text-secondary)] focus:outline-none focus:border-[var(--app-text-primary)] transition-colors"
-            />
+          {/* Controls: Search Bar & Sort Dropdown */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div className="w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="SEARCH SPACES OR PRODUCTS..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-5 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] placeholder-[var(--app-text-secondary)] focus:outline-none focus:border-[var(--app-text-primary)] transition-colors"
+              />
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] focus:outline-none cursor-pointer"
+            >
+              <option value="newest">Newest First</option>
+              <option value="popular">Most Popular</option>
+              <option value="title">A - Z</option>
+            </select>
           </div>
         </div>
 
@@ -151,9 +211,14 @@ export default function Explore() {
         </div>
 
         {/* 3 Columns Grid matching Properties.jsx */}
-        {filteredData.length === 0 ? (
+        {loading ? (
+          <div className="py-20 text-center">
+            <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">Searching Virtual Spaces...</p>
+          </div>
+        ) : filteredData.length === 0 ? (
           <div className="py-20 text-center text-[var(--app-text-secondary)]">
-            <p className="text-base font-bold uppercase tracking-wider mb-2">NO SPACES FOUND</p>
+            <p className="text-base font-bold uppercase tracking-wider mb-2">NO MATCHES FOUND</p>
             <p className="text-xs">Try clearing your search terms or selecting another category.</p>
           </div>
         ) : (

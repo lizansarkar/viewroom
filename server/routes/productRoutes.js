@@ -46,10 +46,42 @@ const mockProducts = [
   },
 ];
 
-// GET /api/v1/products - List 360 products
+// GET /api/v1/products - List 360 products with search, category & sortBy support
 router.get("/", (req, res) => {
   try {
-    const list = mockProducts.map((p) => ({
+    const { search, category, sortBy } = req.query;
+
+    let result = [...mockProducts];
+
+    // Search filter
+    if (search && search.trim()) {
+      const q = search.toLowerCase().trim();
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+      );
+    }
+
+    // Category filter
+    if (category && category !== "ALL" && category !== "All") {
+      const catQuery = category.toLowerCase().trim();
+      result = result.filter((p) => p.category.toLowerCase().includes(catQuery));
+    }
+
+    // Sorting
+    if (sortBy === "price_asc") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price_desc") {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === "rating") {
+      result.sort((a, b) => b.rating - a.rating);
+    } else if (sortBy === "title") {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    const list = result.map((p) => ({
       id: p.id,
       title: p.title,
       subtitle: p.subtitle,
@@ -59,7 +91,8 @@ router.get("/", (req, res) => {
       coverFrame: p.spinFrames[0],
       variantCount: p.variants.length,
     }));
-    res.json({ success: true, data: list });
+
+    res.json({ success: true, count: list.length, data: list });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

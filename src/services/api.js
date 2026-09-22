@@ -56,9 +56,15 @@ export const apiLogin = async (credentials) => {
 };
 
 // Virtual Tours API
-export const apiGetTours = async () => {
+export const apiGetTours = async (params = {}) => {
   try {
-    const res = await fetchWithTimeout(`${API_BASE_URL}/tours`);
+    const query = new URLSearchParams();
+    if (params.search) query.append("search", params.search);
+    if (params.category) query.append("category", params.category);
+    if (params.sortBy) query.append("sortBy", params.sortBy);
+
+    const url = `${API_BASE_URL}/tours${query.toString() ? `?${query.toString()}` : ""}`;
+    const res = await fetchWithTimeout(url);
     const data = await res.json();
     if (data.success) return data.data;
     throw new Error("Failed to fetch tours");
@@ -81,9 +87,15 @@ export const apiGetTourById = async (tourId) => {
 };
 
 // Product 360 API
-export const apiGetProducts = async () => {
+export const apiGetProducts = async (params = {}) => {
   try {
-    const res = await fetchWithTimeout(`${API_BASE_URL}/products`);
+    const query = new URLSearchParams();
+    if (params.search) query.append("search", params.search);
+    if (params.category) query.append("category", params.category);
+    if (params.sortBy) query.append("sortBy", params.sortBy);
+
+    const url = `${API_BASE_URL}/products${query.toString() ? `?${query.toString()}` : ""}`;
+    const res = await fetchWithTimeout(url);
     const data = await res.json();
     if (data.success) return data.data;
     throw new Error("Failed to fetch 360 products");

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Button from "../../components/reuseable/Button";
+import { apiGetProducts } from "../../services/api";
 
 // Real 360 Interactive Product Data
 const REAL_360_PRODUCTS = [
@@ -315,13 +316,64 @@ function InteractiveProductCard({ product }) {
   );
 }
 
+const PRODUCT_CATEGORIES = ["ALL", "FURNITURE", "TECH", "FASHION"];
+
 function Product360Grid() {
+  const [products, setProducts] = useState([]);
+  const [activeCategory, setActiveCategory] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("price_asc");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [searchQuery, activeCategory, sortBy]);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await apiGetProducts({
+        search: searchQuery,
+        category: activeCategory === "ALL" ? "" : activeCategory,
+        sortBy,
+      });
+
+      if (data && data.length > 0) {
+        // Map API data into full interactive product shape
+        const mapped = data.map((item, idx) => {
+          const fallback = REAL_360_PRODUCTS[idx % REAL_360_PRODUCTS.length];
+          return {
+            ...fallback,
+            id: item.id,
+            title: item.title,
+            category: item.category,
+            price: item.price,
+          };
+        });
+        setProducts(mapped);
+      } else {
+        // Local filtering fallback
+        const filtered = REAL_360_PRODUCTS.filter((p) => {
+          const matchesCat = activeCategory === "ALL" || p.category.toLowerCase().includes(activeCategory.toLowerCase());
+          const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchesCat && matchesSearch;
+        });
+        setProducts(filtered);
+      }
+    } catch (err) {
+      console.warn("Product360Grid fetch error:", err);
+      setProducts(REAL_360_PRODUCTS);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-16 px-6 sm:px-12 lg:px-20 transition-colors duration-250">
       <div className="max-w-7xl mx-auto">
         
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+        {/* Header & Controls Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--app-text-primary)] block mb-2">
               REAL 360° INTERACTIVE CATALOG
@@ -334,17 +386,65 @@ function Product360Grid() {
             </p>
           </div>
 
-          <Button variant="primary">
-            Explore All 360 Objects
-          </Button>
+          {/* Search & Sort Controls */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            <div className="w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="SEARCH 360° PRODUCTS..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-5 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] placeholder-[var(--app-text-secondary)] focus:outline-none focus:border-[var(--app-text-primary)] transition-colors"
+              />
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] focus:outline-none cursor-pointer"
+            >
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
+              <option value="title">Title (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex items-center gap-3 mb-10 overflow-x-auto pb-2 no-scrollbar">
+          {PRODUCT_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
+                activeCategory === cat
+                  ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
+                  : "bg-transparent text-[var(--app-text-primary)] border-[var(--app-border)]/30 hover:border-[var(--app-text-primary)]"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {/* 3 Columns Grid of Real 360 Products */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {REAL_360_PRODUCTS.map((product) => (
-            <InteractiveProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-20 text-center">
+            <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">Loading 360° Products...</p>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="py-20 text-center text-[var(--app-text-secondary)]">
+            <p className="text-base font-bold uppercase tracking-wider mb-2">NO PRODUCTS FOUND</p>
+            <p className="text-xs">Try adjusting your search terms or category filter.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <InteractiveProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>
