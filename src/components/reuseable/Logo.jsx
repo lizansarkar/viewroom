@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 export default function Logo({ className = "", showText = true, size = "md" }) {
   const sizeClasses = {
-    sm: "h-7 w-7",
-    md: "h-9 w-9",
-    lg: "h-12 w-12",
+    sm: "h-8 sm:h-9",
+    md: "h-10 sm:h-11",
+    lg: "h-12 sm:h-14",
   };
 
   const textClasses = {
@@ -17,15 +17,15 @@ export default function Logo({ className = "", showText = true, size = "md" }) {
   return (
     <Link
       to="/"
-      className={`inline-flex items-center gap-2.5 group focus:outline-none shrink-0 ${className}`}
+      className={`inline-flex items-center gap-3 group focus:outline-none shrink-0 ${className}`}
       aria-label="ViewRoom Home"
     >
-      {/* 360° ViewRoom Logo Symbol */}
-      <div className={`relative ${sizeClasses[size] || "h-9 w-9"} flex items-center justify-center shrink-0`}>
+      {/* User Uploaded Logo Image */}
+      <div className={`relative ${sizeClasses[size] || "h-10"} w-auto flex items-center justify-center shrink-0`}>
         <img
           src="/logo.png"
           alt="ViewRoom Logo"
-          className="w-full h-full object-contain rounded-full shadow-md group-hover:scale-105 transition-transform duration-300"
+          className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
