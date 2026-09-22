@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import Button from "../reuseable/Button";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
 const NAV_LINKS = [
   { label: "Dashboard", to: "/dashboard" },
-  { label: "360 Virtual Tour", to: "/360-virtual-tour" },
-  { label: "360 Product", to: "/360-product" },
-  { label: "360 Video", to: "/360-video" },
+  {
+    label: "360° Services",
+    dropdown: [
+      { label: "360 Virtual Tour", to: "/360-virtual-tour" },
+      { label: "360 Product", to: "/360-product" },
+      { label: "360 Video", to: "/360-video" },
+    ],
+  },
   { label: "Matterport", to: "/matterport" },
   { label: "Photography", to: "/photography" },
   { label: "Contact", to: "/contact" },
@@ -71,10 +76,29 @@ function CloseIcon(props) {
   );
 }
 
+function ChevronDownIcon(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180"
+      {...props}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { isRegistered, isLoggedIn, user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -86,7 +110,7 @@ function Navbar() {
   const navLinkClass = ({ isActive }) =>
     `text-[15px] font-medium transition-colors ${
       isActive
-        ? "text-base-content"
+        ? "text-base-content font-semibold"
         : "text-base-content/80 hover:text-base-content"
     }`;
 
@@ -104,11 +128,55 @@ function Navbar() {
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-8 ml-12 mr-auto text-[15px]">
-          {NAV_LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} className={navLinkClass}>
-              {link.label}
-            </NavLink>
-          ))}
+          {NAV_LINKS.map((link) => {
+            if (link.dropdown) {
+              const isAnyChildActive = link.dropdown.some(
+                (sub) => location.pathname === sub.to
+              );
+
+              return (
+                <div key={link.label} className="relative group py-4">
+                  <button
+                    className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
+                      isAnyChildActive
+                        ? "text-base-content font-semibold"
+                        : "text-base-content/80 hover:text-base-content"
+                    }`}
+                  >
+                    {link.label}
+                    <ChevronDownIcon />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <div className="absolute top-full left-0 pt-1 hidden group-hover:block transition-all duration-200 animate-fadeIn">
+                    <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-52 flex flex-col gap-1 z-50">
+                      {link.dropdown.map((sub) => (
+                        <NavLink
+                          key={sub.to}
+                          to={sub.to}
+                          className={({ isActive }) =>
+                            `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all ${
+                              isActive
+                                ? "bg-primary/15 text-primary font-semibold"
+                                : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
+                            }`
+                          }
+                        >
+                          {sub.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <NavLink key={link.to} to={link.to} className={navLinkClass}>
+                {link.label}
+              </NavLink>
+            );
+          })}
         </div>
 
         {/* Right side (desktop) */}
@@ -174,7 +242,7 @@ function Navbar() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute top-0 right-0 h-full w-[80%] max-w-sm bg-base-100 shadow-xl flex flex-col px-6 pt-6 pb-8">
+          <div className="absolute top-0 right-0 h-full w-[80%] max-w-sm bg-base-100 shadow-xl flex flex-col px-6 pt-6 pb-8 overflow-y-auto">
             <div className="flex items-center justify-between mb-8">
               <span
                 className="text-2xl font-bold italic"
@@ -192,20 +260,63 @@ function Navbar() {
             </div>
 
             <div className="flex flex-col gap-1">
-              {NAV_LINKS.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `py-3 text-base font-medium border-b border-[var(--app-border)]/10 ${
-                      isActive ? "text-base-content" : "text-base-content/80"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
+              {NAV_LINKS.map((link) => {
+                if (link.dropdown) {
+                  return (
+                    <div
+                      key={link.label}
+                      className="py-2 border-b border-[var(--app-border)]/10"
+                    >
+                      <button
+                        onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                        className="w-full flex items-center justify-between py-1 text-base font-medium text-base-content/80"
+                      >
+                        <span>{link.label}</span>
+                        <ChevronDownIcon
+                          className={`h-4 w-4 transition-transform duration-200 ${
+                            mobileDropdownOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      {mobileDropdownOpen && (
+                        <div className="pl-3 flex flex-col gap-1 mt-2 border-l-2 border-primary/30">
+                          {link.dropdown.map((sub) => (
+                            <NavLink
+                              key={sub.to}
+                              to={sub.to}
+                              onClick={() => setMobileOpen(false)}
+                              className={({ isActive }) =>
+                                `py-2 px-2 text-sm font-medium rounded-lg transition-colors ${
+                                  isActive
+                                    ? "text-primary font-semibold bg-primary/10"
+                                    : "text-base-content/80 hover:text-base-content"
+                                }`
+                              }
+                            >
+                              {sub.label}
+                            </NavLink>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      `py-3 text-base font-medium border-b border-[var(--app-border)]/10 ${
+                        isActive ? "text-base-content" : "text-base-content/80"
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                );
+              })}
             </div>
 
             <div className="flex flex-col gap-3 mt-8">
