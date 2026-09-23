@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import compression from "compression";
 
 import authRoutes from "./routes/authRoutes.js";
 import tourRoutes from "./routes/tourRoutes.js";
@@ -15,6 +16,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Express Gzip/Brotli response payload compression
+app.use(compression());
+
 // CORS configuration supporting frontend connections
 app.use(
   cors({
@@ -24,6 +28,16 @@ app.use(
 );
 
 app.use(express.json());
+
+// Performance Cache-Control Header Middleware for API responses
+app.use((req, res, next) => {
+  if (req.method === "GET") {
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=600");
+  } else {
+    res.set("Cache-Control", "no-store");
+  }
+  next();
+});
 
 // Health check endpoint
 app.get("/health", (req, res) => {

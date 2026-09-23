@@ -222,6 +222,27 @@ function VirtualTourViewer() {
     }
   };
 
+  // Background Preload Adjacent Scene Textures into Browser Cache for 0ms transitions
+  useEffect(() => {
+    PANORAMA_DATA.forEach((scene) => {
+      if (scene.panorama && scene.panorama.startsWith("/")) {
+        const img = new Image();
+        img.src = scene.panorama;
+      }
+    });
+
+    // Cleanup WebGL PhotoSphereViewer instance on unmount
+    return () => {
+      if (psvRef.current) {
+        try {
+          psvRef.current.destroy();
+        } catch (err) {
+          // Ignore unmount cleanup warning
+        }
+      }
+    };
+  }, []);
+
   // Photo Sphere Viewer Instance Callback
   const handleReady = (instance) => {
     psvRef.current = instance;

@@ -4,4 +4,26 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@photo-sphere-viewer') || id.includes('react-photo-sphere-viewer')) {
+              return 'vendor-photosphere';
+            }
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'vendor-three';
+            }
+            if (id.includes('@fortawesome') || id.includes('swiper') || id.includes('gsap')) {
+              return 'vendor-ui-libs';
+            }
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'vendor-core';
+            }
+          }
+        },
+      },
+    },
+  },
 })
