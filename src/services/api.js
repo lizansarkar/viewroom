@@ -106,22 +106,22 @@ export const apiGetProducts = async (params = {}) => {
 };
 
 // Spatial AI Concierge API
-export const apiAskSpatialConcierge = async (prompt, sceneContext) => {
+export const apiAskSpatialConcierge = async (prompt, sceneContext, conversationHistory = []) => {
   try {
     const res = await fetchWithTimeout(
       `${API_BASE_URL}/ai/spatial-concierge`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, sceneContext }),
+        body: JSON.stringify({ prompt, sceneContext, history: conversationHistory }),
       },
-      6000
+      8000
     );
     const data = await res.json();
     return data.reply;
   } catch (err) {
     console.warn("Spatial AI API fallback triggered:", err.message);
-    return "I am the ViewRoom 360° AI Concierge. You can ask me about room dimensions, floor navigation, hotspot interactivity, or custom 3D product configurations!";
+    return "I am the ViewRoom 360° AI Concierge. How can I assist you with floor navigation, spatial measurements, or product 360 configurations today?";
   }
 };
 
