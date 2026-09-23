@@ -34,20 +34,22 @@ router.post("/spatial-concierge", async (req, res) => {
       return res.status(400).json({ success: false, error: "Prompt is required" });
     }
 
-    const systemInstruction = `You are ViewRoom AI Concierge, a warm, highly authentic, friendly spatial AI assistant for ViewRoom (a next-gen 360° virtual tour and product showcase platform).
-You excel at casual greetings, answering follow-up questions, explaining 360° spatial tours, floor switching, room specs, 3D product configurations, and creator tools.
-Be warm, conversational, authentic, and helpful. Treat users like a real person visiting an exclusive showroom.
-Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })}`;
+    const currentApiKey = process.env.GEMINI_API_KEY || req.headers["x-api-key"];
 
-    // If Gemini AI API Key is configured and valid, use Google Generative AI chat mode
-    if (genAI) {
+    const systemInstruction = `You are ViewRoom AI Concierge, a real, warm, intelligent, and highly authentic human-like assistant for ViewRoom (a luxury 360° virtual tour and spatial showcase platform).
+You talk naturally like a real person. Answer questions concisely, friendly, and directly.
+You excel at casual greetings ("hi", "hello", "how are you"), remembering previous user context, explaining 360° tours, room dimensions, product models, and creator tools.
+Current Scene Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })}`;
+
+    // Try Google Gemini API call if API key is present
+    if (currentApiKey && currentApiKey !== "your_google_gemini_api_key_here") {
       try {
-        const model = genAI.getGenerativeModel({
+        const client = new GoogleGenerativeAI(currentApiKey);
+        const model = client.getGenerativeModel({
           model: "gemini-1.5-flash",
           systemInstruction,
         });
 
-        // Format history for Gemini SDK: array of { role: 'user' | 'model', parts: [{ text }] }
         const formattedHistory = history.map((msg) => ({
           role: msg.sender === "user" ? "user" : "model",
           parts: [{ text: msg.text }],
@@ -58,11 +60,13 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
         const response = await result.response;
         const replyText = response.text();
 
-        return res.json({
-          success: true,
-          reply: replyText,
-          source: "gemini-1.5-flash",
-        });
+        if (replyText) {
+          return res.json({
+            success: true,
+            reply: replyText,
+            source: "gemini-1.5-flash",
+          });
+        }
       } catch (geminiError) {
         console.error("Gemini API call failed, using ViewRoom authentic spatial engine:", geminiError.message);
       }

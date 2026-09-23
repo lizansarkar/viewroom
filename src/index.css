@@ -209,11 +209,11 @@ canvas {
 }
 
 /* =========================================================
-   AI CHATBOT CUSTOM SPATIAL CURSOR & GLASS STYLES
+   AI CHATBOT CUSTOM SPATIAL CURSOR & THEME SCROLLBAR
    ========================================================= */
 
 .cursor-ai-pointer {
-  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='4' fill='%2306b6d4' fill-opacity='0.4'/><line x1='12' y1='2' x2='12' y2='6'/><line x1='12' y1='18' x2='12' y2='22'/><line x1='2' y1='12' x2='6' y2='12'/><line x1='18' y1='12' x2='22' y2='12'/></svg>") 12 12, pointer !important;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='4' fill='%230a0a0a' fill-opacity='0.8'/><line x1='12' y1='2' x2='12' y2='6'/><line x1='12' y1='18' x2='12' y2='22'/><line x1='2' y1='12' x2='6' y2='12'/><line x1='18' y1='12' x2='22' y2='12'/></svg>") 12 12, pointer !important;
 }
 
 .ai-chat-scrollbar::-webkit-scrollbar {
@@ -221,15 +221,16 @@ canvas {
 }
 
 .ai-chat-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: transparent;
 }
 
 .ai-chat-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.3);
+  background: var(--app-border);
   border-radius: 9999px;
+  opacity: 0.4;
 }
 
 .ai-chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.6);
+  background: var(--app-text-primary);
 }
 
