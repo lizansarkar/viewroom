@@ -5,6 +5,7 @@ import "@photo-sphere-viewer/core/index.css";
 import "@photo-sphere-viewer/markers-plugin/index.css";
 import gsap from "gsap";
 import Button from "../../components/reuseable/Button";
+import { trackEvent } from "../../services/analyticsService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -199,6 +200,8 @@ function VirtualTourViewer() {
   // GSAP Smooth Fade Transition on Panorama Change
   const changePanoramaWithGsap = (targetId) => {
     if (targetId === currentPanoramaId) return;
+
+    trackEvent("tour_viewed", "Skyline Campus 360°", `Switched to scene ${targetId}`);
 
     if (viewportRef.current) {
       gsap.to(viewportRef.current, {

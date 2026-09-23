@@ -8,6 +8,7 @@ import {
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { apiAskSpatialConcierge } from "../../services/api";
+import { trackEvent } from "../../services/analyticsService";
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,6 +45,8 @@ export default function AIChatbot() {
       text: query.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
+
+    trackEvent("ai_queried", "Spatial AI Concierge", `Asked: '${query.trim()}'`);
 
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputMessage("");

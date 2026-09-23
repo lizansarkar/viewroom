@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/reuseable/Button";
 import HotspotEditorModal from "./HotspotEditorModal";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 import {
   apiGetOwnerStats,
   apiGetOwnerTours,
@@ -244,7 +245,7 @@ export default function CreatorDashboard({ user }) {
       </div>
 
       {/* Subtab Navigation */}
-      <div className="flex items-center gap-2 border-b border-[var(--app-border)]/20 pb-3">
+      <div className="flex items-center gap-2 border-b border-[var(--app-border)]/20 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveSubTab("overview")}
           className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
@@ -275,7 +276,20 @@ export default function CreatorDashboard({ user }) {
         >
           Scene Uploader & Builder
         </button>
+        <button
+          onClick={() => setActiveSubTab("analytics")}
+          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+            activeSubTab === "analytics"
+              ? "bg-base-content text-base-100 shadow-sm"
+              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+          }`}
+        >
+          Spatial Analytics
+        </button>
       </div>
+
+      {/* SUBTAB ANALYTICS */}
+      {activeSubTab === "analytics" && <AnalyticsDashboard />}
 
       {/* SUBTAB 1: OVERVIEW & TOURS */}
       {activeSubTab === "overview" && (

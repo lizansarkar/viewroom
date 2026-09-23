@@ -14,6 +14,7 @@ import {
   faEye,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 import {
   apiGetAdminStats,
   apiGetAdminUsers,
@@ -166,7 +167,7 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
       </div>
 
       {/* Admin Tab Switcher */}
-      <div className="flex items-center gap-2 border-b border-[var(--app-border)]/20 pb-3">
+      <div className="flex items-center gap-2 border-b border-[var(--app-border)]/20 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab("users")}
           className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
@@ -189,7 +190,21 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
           <FontAwesomeIcon icon={faBuilding} className="mr-2" />
           Global Content Moderation
         </button>
+        <button
+          onClick={() => setActiveTab("analytics")}
+          className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+            activeTab === "analytics"
+              ? "bg-base-content text-base-100 shadow-sm"
+              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+          }`}
+        >
+          <FontAwesomeIcon icon={faSliders} className="mr-2" />
+          Analytics & Telemetry
+        </button>
       </div>
+
+      {/* TAB 3: SPATIAL ANALYTICS DASHBOARD */}
+      {activeTab === "analytics" && <AnalyticsDashboard />}
 
       {/* TAB 1: USER MANAGEMENT & ROLE PROMOTION TABLE */}
       {activeTab === "users" && (
