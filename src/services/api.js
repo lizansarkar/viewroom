@@ -115,13 +115,16 @@ export const apiAskSpatialConcierge = async (prompt, sceneContext, conversationH
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt, sceneContext, history: conversationHistory }),
       },
-      8000
+      30000
     );
     const data = await res.json();
-    return data.reply;
+    if (data.success && data.reply) {
+      return data.reply;
+    }
+    throw new Error(data.error || "AI service did not return a reply");
   } catch (err) {
-    console.warn("Spatial AI API fallback triggered:", err.message);
-    return "I am the ViewRoom 360° AI Concierge. How can I assist you with floor navigation, spatial measurements, or product 360 configurations today?";
+    console.error("Spatial AI API error:", err.message);
+    throw err;
   }
 };
 

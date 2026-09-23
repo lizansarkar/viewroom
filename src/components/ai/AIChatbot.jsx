@@ -15,14 +15,7 @@ export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "ai",
-      text: "Hello! Welcome to ViewRoom. I am your Spatial AI Assistant. Feel free to ask me anything about 360° virtual tours, floor plans, room measurements, or product showcases!",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
 
   const messagesEndRef = useRef(null);
 
@@ -126,6 +119,20 @@ export default function AIChatbot() {
 
           {/* Messages Body */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-base-100 ai-chat-scrollbar">
+            {messages.length === 0 && (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 my-auto">
+                <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center mb-3 text-[var(--app-text-primary)] text-sm shadow-sm">
+                  <FontAwesomeIcon icon={faRobot} />
+                </div>
+                <p className="text-xs font-bold text-[var(--app-text-primary)] uppercase tracking-wider">
+                  ViewRoom AI Concierge
+                </p>
+                <p className="text-[11px] text-[var(--app-text-secondary)] mt-1.5 max-w-[240px]">
+                  Ask anything to start chatting live with Google Gemini AI.
+                </p>
+              </div>
+            )}
+
             {messages.map((msg) => (
               <div
                 key={msg.id}
