@@ -6,7 +6,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
 const NAV_LINKS = [
-  { label: "Dashboard", to: "/dashboard", authRequired: true },
   {
     label: "360° Services",
     dropdown: [
@@ -194,15 +193,16 @@ function Navbar() {
                 );
 
                 return (
-                  <div key={link.label} className="relative group py-4">
+                  <div key={link.label} className="relative group py-4 flex items-center">
                     <button
-                      className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
+                      type="button"
+                      className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
                         isAnyChildActive
                           ? "text-base-content font-semibold"
                           : "text-base-content/80 hover:text-base-content"
                       }`}
                     >
-                      {link.label}
+                      <span>{link.label}</span>
                       <ChevronDownIcon />
                     </button>
 
