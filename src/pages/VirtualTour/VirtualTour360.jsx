@@ -3,6 +3,7 @@ import VirtualTourHero from "./VirtualTourHero";
 import VirtualTourFeatures from "./VirtualTourFeatures";
 import VirtualTourShowcase from "./VirtualTourShowcase";
 import VirtualTourWorkflow from "./VirtualTourWorkflow";
+import VirtualTourJournal from "./VirtualTourJournal";
 import Cta from "../Home/Cta";
 
 function VirtualTour360() {
@@ -11,6 +12,7 @@ function VirtualTour360() {
       <VirtualTourHero />
       <VirtualTourFeatures />
       <VirtualTourShowcase />
+      <VirtualTourJournal />
       <VirtualTourWorkflow />
       <Cta />
     </main>
