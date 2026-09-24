@@ -167,11 +167,11 @@ function Navbar() {
     };
   }, [mobileOpen]);
 
-  const navLinkClass = ({ isActive }) =>
-    `text-[15px] font-medium transition-colors ${
+  const getNavItemClass = (isActive) =>
+    `text-[15px] font-semibold transition-colors flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-0 outline-none ${
       isActive
-        ? "text-base-content font-semibold"
-        : "text-base-content/80 hover:text-base-content"
+        ? "text-base-content font-bold"
+        : "text-base-content hover:text-primary"
     }`;
 
   const visibleNavLinks = NAV_LINKS.filter(
@@ -196,11 +196,7 @@ function Navbar() {
                   <div key={link.label} className="relative group py-4 flex items-center">
                     <button
                       type="button"
-                      className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
-                        isAnyChildActive
-                          ? "text-base-content font-semibold"
-                          : "text-base-content/80 hover:text-base-content"
-                      }`}
+                      className={getNavItemClass(isAnyChildActive)}
                     >
                       <span>{link.label}</span>
                       <ChevronDownIcon />
@@ -230,7 +226,11 @@ function Navbar() {
               }
 
               return (
-                <NavLink key={link.to} to={link.to} className={navLinkClass}>
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className={({ isActive }) => getNavItemClass(isActive)}
+                >
                   {link.label}
                 </NavLink>
               );
