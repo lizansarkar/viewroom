@@ -178,198 +178,199 @@ function Navbar() {
   const visibleNavLinks = NAV_LINKS.filter(
     (link) => !link.authRequired || isLoggedIn
   );
-
   return (
-    <header className="sticky top-0 z-50 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
-      <nav className="w-full max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center justify-between">
-        {/* Logo */}
-        <Logo size="md" />
+    <>
+      <header className="sticky top-0 z-40 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
+        <nav className="w-full max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center justify-between">
+          {/* Logo */}
+          <Logo size="md" />
 
-        {/* Desktop nav links */}
-        <div className="hidden lg:flex items-center gap-8 ml-12 mr-auto text-[15px]">
-          {visibleNavLinks.map((link) => {
-            if (link.dropdown) {
-              const isAnyChildActive = link.dropdown.some(
-                (sub) => location.pathname === sub.to
-              );
+          {/* Desktop nav links */}
+          <div className="hidden lg:flex items-center gap-8 ml-12 mr-auto text-[15px]">
+            {visibleNavLinks.map((link) => {
+              if (link.dropdown) {
+                const isAnyChildActive = link.dropdown.some(
+                  (sub) => location.pathname === sub.to
+                );
+
+                return (
+                  <div key={link.label} className="relative group py-4">
+                    <button
+                      className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
+                        isAnyChildActive
+                          ? "text-base-content font-semibold"
+                          : "text-base-content/80 hover:text-base-content"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDownIcon />
+                    </button>
+
+                    <div className="absolute top-full left-0 pt-1 hidden group-hover:block transition-all duration-200 animate-fadeIn">
+                      <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-52 flex flex-col gap-1 z-50">
+                        {link.dropdown.map((sub) => (
+                          <NavLink
+                            key={sub.to}
+                            to={sub.to}
+                            className={({ isActive }) =>
+                              `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all ${
+                                isActive
+                                  ? "bg-primary/15 text-primary font-semibold"
+                                  : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
+                              }`
+                            }
+                          >
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
 
               return (
-                <div key={link.label} className="relative group py-4">
-                  <button
-                    className={`text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
-                      isAnyChildActive
-                        ? "text-base-content font-semibold"
-                        : "text-base-content/80 hover:text-base-content"
-                    }`}
-                  >
-                    {link.label}
-                    <ChevronDownIcon />
-                  </button>
-
-                  <div className="absolute top-full left-0 pt-1 hidden group-hover:block transition-all duration-200 animate-fadeIn">
-                    <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-52 flex flex-col gap-1 z-50">
-                      {link.dropdown.map((sub) => (
-                        <NavLink
-                          key={sub.to}
-                          to={sub.to}
-                          className={({ isActive }) =>
-                            `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all ${
-                              isActive
-                                ? "bg-primary/15 text-primary font-semibold"
-                                : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                            }`
-                          }
-                        >
-                          {sub.label}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <NavLink key={link.to} to={link.to} className={navLinkClass}>
+                  {link.label}
+                </NavLink>
               );
-            }
+            })}
+          </div>
 
-            return (
-              <NavLink key={link.to} to={link.to} className={navLinkClass}>
-                {link.label}
-              </NavLink>
-            );
-          })}
-        </div>
+          {/* Right side (desktop) */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
+              className="p-2.5 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
+            >
+              {theme === "light" ? <SunIcon /> : <MoonIcon />}
+            </button>
 
-        {/* Right side (desktop) */}
-        <div className="hidden lg:flex items-center gap-3 shrink-0">
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-            className="p-2.5 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
-          >
-            {theme === "light" ? <SunIcon /> : <MoonIcon />}
-          </button>
-
-          {isLoggedIn ? (
-            <div className="dropdown dropdown-end relative">
-              <label
-                tabIndex={0}
-                className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-primary/40 transition-all focus:outline-none"
-              >
-                <div className="w-10 h-10 rounded-full ring ring-primary/40 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold shadow-md">
-                  {user?.avatar || user?.image ? (
-                    <img
-                      src={user.avatar || user.image}
-                      alt={user?.name || "User Avatar"}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-base uppercase">
-                      {(user?.name || "U").charAt(0)}
-                    </span>
-                  )}
-                </div>
-              </label>
-
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu p-3 shadow-2xl bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 rounded-2xl w-64 mt-3 z-50 gap-1.5"
-              >
-                <li className="px-2 py-2 border-b border-[var(--app-border)]/15 pb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold flex items-center justify-center shrink-0 overflow-hidden shadow">
-                      {user?.avatar || user?.image ? (
-                        <img
-                          src={user.avatar || user.image}
-                          alt={user?.name || "User Avatar"}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-sm uppercase">
-                          {(user?.name || "U").charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-bold text-sm text-base-content truncate">
-                        {user?.name || "User"}
+            {isLoggedIn ? (
+              <div className="dropdown dropdown-end relative">
+                <label
+                  tabIndex={0}
+                  className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-primary/40 transition-all focus:outline-none"
+                >
+                  <div className="w-10 h-10 rounded-full ring ring-primary/40 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold shadow-md">
+                    {user?.avatar || user?.image ? (
+                      <img
+                        src={user.avatar || user.image}
+                        alt={user?.name || "User Avatar"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-base uppercase">
+                        {(user?.name || "U").charAt(0)}
                       </span>
-                      <span className="text-xs text-base-content/60 truncate">
-                        {user?.email || "user@viewroom.com"}
-                      </span>
-                      {user?.role && (
-                        <span className="mt-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded-full w-max">
-                          {user.role}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
-                </li>
+                </label>
 
-                <li>
-                  <Link
-                    to="/dashboard"
-                    className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-base-content/90 hover:text-base-content hover:bg-base-200/70"
-                  >
-                    <LayoutDashboardIcon />
-                    <span>Dashboard</span>
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={logout}
-                    className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-error hover:bg-error/10 w-full text-left"
-                  >
-                    <LogoutIcon />
-                    <span>Logout</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          ) : isRegistered ? (
-            <Link to="/sign-in">
-              <Button variant="primary">Log in</Button>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu p-3 shadow-2xl bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 rounded-2xl w-64 mt-3 z-50 gap-1.5"
+                >
+                  <li className="px-2 py-2 border-b border-[var(--app-border)]/15 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold flex items-center justify-center shrink-0 overflow-hidden shadow">
+                        {user?.avatar || user?.image ? (
+                          <img
+                            src={user.avatar || user.image}
+                            alt={user?.name || "User Avatar"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-sm uppercase">
+                            {(user?.name || "U").charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-bold text-sm text-base-content truncate">
+                          {user?.name || "User"}
+                        </span>
+                        <span className="text-xs text-base-content/60 truncate">
+                          {user?.email || "user@viewroom.com"}
+                        </span>
+                        {user?.role && (
+                          <span className="mt-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded-full w-max">
+                            {user.role}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+
+                  <li>
+                    <Link
+                      to="/dashboard"
+                      className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-base-content/90 hover:text-base-content hover:bg-base-200/70"
+                    >
+                      <LayoutDashboardIcon />
+                      <span>Dashboard</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={logout}
+                      className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-error hover:bg-error/10 w-full text-left"
+                    >
+                      <LogoutIcon />
+                      <span>Logout</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            ) : isRegistered ? (
+              <Link to="/sign-in">
+                <Button variant="primary">Log in</Button>
+              </Link>
+            ) : (
+              <Link to="/sign-up">
+                <Button variant="primary">Register</Button>
+              </Link>
+            )}
+
+            <Link to="/explore">
+              <Button variant="secondary">Explore</Button>
             </Link>
-          ) : (
-            <Link to="/sign-up">
-              <Button variant="primary">Register</Button>
-            </Link>
-          )}
+          </div>
 
-          <Link to="/explore">
-            <Button variant="secondary">Explore</Button>
-          </Link>
-        </div>
+          {/* Mobile menu trigger */}
+          <div className="flex items-center gap-2 lg:hidden shrink-0">
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
+              className="p-2 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 focus:outline-none flex items-center justify-center cursor-pointer"
+            >
+              {theme === "light" ? <SunIcon /> : <MoonIcon />}
+            </button>
+            <button
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation menu"
+              className="p-2 rounded-xl text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors cursor-pointer"
+            >
+              <MenuIcon />
+            </button>
+          </div>
+        </nav>
+      </header>
 
-        {/* Mobile menu trigger */}
-        <div className="flex items-center gap-2 lg:hidden shrink-0">
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            title={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-            className="p-2 rounded-full text-base-content/80 hover:text-base-content hover:bg-base-200/80 focus:outline-none flex items-center justify-center cursor-pointer"
-          >
-            {theme === "light" ? <SunIcon /> : <MoonIcon />}
-          </button>
-          <button
-            onClick={() => setMobileOpen(true)}
-            aria-label="Open navigation menu"
-            className="p-2 rounded-xl text-base-content hover:bg-base-200/80 active:bg-base-300 transition-colors cursor-pointer"
-          >
-            <MenuIcon />
-          </button>
-        </div>
-      </nav>
-
-      {/* Modern Slide-In Mobile Navigation Drawer (Matching Reference Layout) */}
+      {/* Modern Slide-In Mobile Navigation Drawer (Rendered at Root level) */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-[9999] lg:hidden">
           {/* Backdrop Blur Overlay */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileOpen(false)}
           />
 
           {/* Left Slide-In Drawer Panel */}
-          <div className="absolute top-0 left-0 h-full w-[85%] max-w-xs bg-base-100 border-r border-[var(--app-border)]/20 shadow-2xl flex flex-col justify-between overflow-y-auto z-50 transform transition-transform duration-300">
+          <div className="fixed top-0 left-0 bottom-0 h-full w-[85%] max-w-xs bg-base-100 border-r border-[var(--app-border)]/20 shadow-2xl flex flex-col justify-between overflow-y-auto z-[10000] transform transition-transform duration-300">
             
             {/* Top Section: Header & User Profile Card */}
             <div className="p-5 flex flex-col gap-6">
@@ -607,7 +608,7 @@ function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
 
