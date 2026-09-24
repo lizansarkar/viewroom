@@ -360,17 +360,26 @@ function Navbar() {
         </nav>
       </header>
 
-      {/* Modern Slide-In Mobile Navigation Drawer (Rendered at Root level) */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-[9999] lg:hidden">
-          {/* Backdrop Blur Overlay */}
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-            onClick={() => setMobileOpen(false)}
-          />
+      {/* Modern Top Slide-In Mobile Navigation Drawer with Apple-style Fluid Spring Transition */}
+      <div
+        className={`fixed inset-0 z-[9999] lg:hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+          mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        {/* Backdrop Blur Overlay */}
+        <div
+          className={`fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            mobileOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setMobileOpen(false)}
+        />
 
-          {/* Left Slide-In Drawer Panel */}
-          <div className="fixed top-0 left-0 bottom-0 h-full w-[85%] max-w-xs bg-base-100 border-r border-[var(--app-border)]/20 shadow-2xl flex flex-col justify-between overflow-y-auto z-[10000] transform transition-transform duration-300">
+        {/* Apple Style Top Slide-In Drawer Panel */}
+        <div
+          className={`fixed top-0 left-0 right-0 max-h-[88vh] w-full bg-base-100 border-b border-[var(--app-border)]/20 shadow-2xl flex flex-col justify-between overflow-y-auto z-[10000] rounded-b-3xl transform transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            mobileOpen ? "translate-y-0 opacity-100 scale-100" : "-translate-y-full opacity-0 scale-[0.98]"
+          }`}
+        >
             
             {/* Top Section: Header & User Profile Card */}
             <div className="p-5 flex flex-col gap-6">
@@ -607,7 +616,6 @@ function Navbar() {
             </div>
           </div>
         </div>
-      )}
     </>
   );
 }
