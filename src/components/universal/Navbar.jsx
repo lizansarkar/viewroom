@@ -168,10 +168,8 @@ function Navbar() {
   }, [mobileOpen]);
 
   const getNavItemClass = (isActive) =>
-    `text-[15px] font-semibold transition-colors flex items-center gap-1.5 cursor-pointer bg-transparent border-none p-0 outline-none ${
-      isActive
-        ? "text-base-content font-bold"
-        : "text-base-content hover:text-primary"
+    `text-[15px] font-bold transition-colors flex items-center gap-1.5 cursor-pointer text-base-content hover:opacity-75 select-none ${
+      isActive ? "opacity-100" : "opacity-90"
     }`;
 
   const visibleNavLinks = NAV_LINKS.filter(
@@ -194,13 +192,14 @@ function Navbar() {
 
                 return (
                   <div key={link.label} className="relative group py-4 flex items-center">
-                    <button
-                      type="button"
+                    <span
+                      tabIndex={0}
+                      role="button"
                       className={getNavItemClass(isAnyChildActive)}
                     >
                       <span>{link.label}</span>
                       <ChevronDownIcon />
-                    </button>
+                    </span>
 
                     <div className="absolute top-full left-0 pt-1 hidden group-hover:block transition-all duration-200 animate-fadeIn">
                       <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-52 flex flex-col gap-1 z-50">
