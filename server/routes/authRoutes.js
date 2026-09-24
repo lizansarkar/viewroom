@@ -9,10 +9,16 @@ const JWT_SECRET = process.env.JWT_SECRET || "viewroom_jwt_secret_key";
 // POST /api/v1/auth/register
 router.post("/register", async (req, res) => {
   try {
-    const { email, name, password } = req.body;
+    const { email, name, password, role } = req.body;
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
+
+    // Role selection validation (Excluding ADMIN from self-registration)
+    const allowedSelfRoles = ["CREATOR", "CLIENT", "VISITOR"];
+    const userRole = role && allowedSelfRoles.includes(role.toUpperCase())
+      ? role.toUpperCase()
+      : "CLIENT";
 
     // Check if user already exists in Prisma database
     let existingUser = null;
@@ -35,7 +41,7 @@ router.post("/register", async (req, res) => {
           email,
           name: name || email.split("@")[0],
           passwordHash,
-          role: "CLIENT",
+          role: userRole,
         },
       });
     } catch (createErr) {
@@ -44,7 +50,7 @@ router.post("/register", async (req, res) => {
         id: `usr_${Date.now()}`,
         email,
         name: name || email.split("@")[0],
-        role: "CLIENT",
+        role: userRole,
         createdAt: new Date().toISOString(),
       };
     }

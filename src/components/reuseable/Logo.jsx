@@ -1,17 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Logo({ className = "", showText = true, size = "md" }) {
+export default function Logo({ className = "", size = "md" }) {
   const sizeClasses = {
     sm: "h-8 sm:h-9",
     md: "h-10 sm:h-11",
     lg: "h-12 sm:h-14",
-  };
-
-  const textClasses = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-3xl",
   };
 
   return (
@@ -28,15 +22,6 @@ export default function Logo({ className = "", showText = true, size = "md" }) {
           className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
-
-      {/* Brand Name Typography */}
-      {showText && (
-        <span
-          className={`font-black tracking-tight uppercase font-heading ${textClasses[size] || "text-2xl"} bg-gradient-to-r from-base-content via-cyan-400 to-primary bg-clip-text text-transparent`}
-        >
-          VIEW<span className="font-light text-cyan-400">ROOM</span>
-        </span>
-      )}
     </Link>
   );
 }

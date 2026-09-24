@@ -37,9 +37,9 @@ export function AuthProvider({ children }) {
   }, [user]);
 
   // Register user action
-  const register = async ({ name, email, password }) => {
-    const res = await apiRegister({ name, email, password });
-    const userData = res.user || { name: name || "User", email, role: "CLIENT" };
+  const register = async ({ name, email, password, role }) => {
+    const res = await apiRegister({ name, email, password, role });
+    const userData = res.user || { name: name || "User", email, role: role || "CLIENT" };
     setUser(userData);
     setIsRegistered(true);
     setIsLoggedIn(true);
