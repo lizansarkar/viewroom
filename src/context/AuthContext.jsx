@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
   // Register user action
   const register = async ({ name, email, password }) => {
     const res = await apiRegister({ name, email, password });
-    const userData = res.user || { name: name || "User", email };
+    const userData = res.user || { name: name || "User", email, role: "CLIENT" };
     setUser(userData);
     setIsRegistered(true);
     setIsLoggedIn(true);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }) {
   // Login user action
   const login = async ({ email, password }) => {
     const res = await apiLogin({ email, password });
-    const userData = res.user || user || { name: email.split("@")[0], email };
+    const userData = res.user || { name: email.split("@")[0], email, role: "CLIENT" };
     setUser(userData);
     setIsRegistered(true);
     setIsLoggedIn(true);
@@ -65,7 +65,10 @@ export function AuthProvider({ children }) {
   // Logout action
   const logout = () => {
     setIsLoggedIn(false);
+    setUser(null);
+    localStorage.removeItem("viewroom-logged-in");
     localStorage.removeItem("viewroom-jwt");
+    localStorage.removeItem("viewroom-user");
   };
 
   return (

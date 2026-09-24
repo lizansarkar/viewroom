@@ -50,23 +50,31 @@ function Auth() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignUp) {
-      register({ name, email });
-    } else {
-      login({ email });
+    try {
+      if (isSignUp) {
+        await register({ name, email, password });
+      } else {
+        await login({ email, password });
+      }
+      navigate("/");
+    } catch (err) {
+      console.error("Auth error:", err);
     }
-    navigate("/");
   };
 
-  const handleGoogleSubmit = () => {
-    if (isSignUp) {
-      register({ name: "Google User", email: "user@gmail.com" });
-    } else {
-      login({ email: "user@gmail.com" });
+  const handleGoogleSubmit = async () => {
+    try {
+      if (isSignUp) {
+        await register({ name: "Google User", email: "user@gmail.com", password: "Password123!" });
+      } else {
+        await login({ email: "user@gmail.com", password: "Password123!" });
+      }
+      navigate("/");
+    } catch (err) {
+      console.error("Google Auth error:", err);
     }
-    navigate("/");
   };
 
   return (
