@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMagnifyingGlass,
+  faArrowDownWideShort,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/reuseable/Button";
 import { apiGetTours, apiGetProducts } from "../../services/api";
 
@@ -9,7 +15,7 @@ const exploreItems = [
     title: "The Glass Pavilion Penthouse",
     tag: "360° Tour • 4 Rooms",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
@@ -19,7 +25,7 @@ const exploreItems = [
     title: "Horizon Coastal Villa",
     tag: "360° Tour • Oceanfront",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
@@ -29,7 +35,7 @@ const exploreItems = [
     title: "Ergonomic Spatial Chair X1",
     tag: "360° Spin • 3D Model",
     price: "$499",
-    category: "Products",
+    category: "PRODUCTS",
     type: "product",
     image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
     link: "/360-product",
@@ -39,7 +45,7 @@ const exploreItems = [
     title: "Metropolitan Luxury Hotel",
     tag: "360° Tour • Suite",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
@@ -49,7 +55,7 @@ const exploreItems = [
     title: "Lunar Halo Ambient Light 360",
     tag: "360° Spin • Smart Light",
     price: "$249",
-    category: "Products",
+    category: "PRODUCTS",
     type: "product",
     image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=800",
     link: "/360-product",
@@ -59,7 +65,7 @@ const exploreItems = [
     title: "Minimalist Skyline Loft",
     tag: "360° Tour • Open Space",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
@@ -69,7 +75,7 @@ const exploreItems = [
     title: "Alpine Mountain Sanctuary",
     tag: "360° Tour • 5 Rooms",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
@@ -79,9 +85,19 @@ const exploreItems = [
     title: "Architectural Design Studio",
     tag: "360° Tour • Studio",
     price: "Free",
-    category: "Spaces",
+    category: "SPACES",
     type: "tour",
     image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800",
+    link: "/360-virtual-tour",
+  },
+  {
+    id: "tour_urban_penthouse",
+    title: "Urban Skyline Glass Penthouse",
+    tag: "360° Tour • Panoramic View",
+    price: "Free",
+    category: "SPACES",
+    type: "tour",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800",
     link: "/360-virtual-tour",
   },
 ];
@@ -130,7 +146,12 @@ export default function Explore() {
           link: `/360-product`,
         }));
 
-        setApiData([...mappedTours, ...mappedProducts]);
+        const combined = [...mappedTours, ...mappedProducts];
+        if (combined.length >= 9) {
+          setApiData(combined);
+        } else {
+          setApiData(null);
+        }
       }
     } catch (err) {
       console.warn("Explore page live API fetch fallback:", err);
@@ -153,7 +174,7 @@ export default function Explore() {
   });
 
   return (
-    <div className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] min-h-screen py-16 px-6 sm:px-12 lg:px-20 transition-colors duration-250">
+    <div className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] min-h-screen py-16 px-6 sm:px-12 lg:px-20 transition-colors duration-250 select-none">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section matching Properties / Home page design */}
@@ -165,52 +186,76 @@ export default function Explore() {
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight mb-3">
               ALL SPACES & PRODUCTS
             </h1>
-            <p className="text-sm sm:text-base text-[var(--app-text-secondary)]">
+            <p className="text-sm sm:text-base text-[var(--app-text-secondary)] font-medium">
               Walk through 360° virtual rooms and inspect interactive 3D products before you go.
             </p>
           </div>
 
-          {/* Controls: Search Bar & Sort Dropdown */}
+          {/* Controls: Search Bar & Sort Dropdown styled identically to VirtualGallery.jsx */}
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-            <div className="w-full sm:w-72">
+            <div className="relative w-full sm:w-72">
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--app-text-secondary)] text-xs pointer-events-none"
+              />
               <input
                 type="text"
                 placeholder="SEARCH SPACES OR PRODUCTS..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-5 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] placeholder-[var(--app-text-secondary)] focus:outline-none focus:border-[var(--app-text-primary)] transition-colors"
+                className="w-full pl-9 pr-4 py-2.5 rounded-md bg-[var(--app-text-primary)]/5 border border-[var(--app-text-secondary)]/20 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] placeholder-[var(--app-text-secondary)] focus:outline-none focus:border-[var(--app-text-primary)] transition-all duration-300 hover:border-[var(--app-text-primary)]/50"
               />
             </div>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-3 rounded-full bg-base-200/60 border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] focus:outline-none cursor-pointer"
-            >
-              <option value="newest">Newest First</option>
-              <option value="popular">Most Popular</option>
-              <option value="title">A - Z</option>
-            </select>
+
+            <div className="relative inline-flex items-center w-full sm:w-auto">
+              <FontAwesomeIcon
+                icon={faArrowDownWideShort}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--app-text-secondary)] text-xs pointer-events-none"
+              />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full sm:w-auto pl-9 pr-8 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md cursor-pointer appearance-none bg-[var(--app-text-primary)]/5 text-[var(--app-text-primary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 focus:outline-none focus:border-[var(--app-text-primary)] shadow-sm"
+              >
+                <option value="newest" className="bg-[var(--app-background)] text-[var(--app-text-primary)]">
+                  SORT: NEWEST FIRST
+                </option>
+                <option value="popular" className="bg-[var(--app-background)] text-[var(--app-text-primary)]">
+                  SORT: MOST POPULAR
+                </option>
+                <option value="title" className="bg-[var(--app-background)] text-[var(--app-text-primary)]">
+                  SORT: TITLE (A - Z)
+                </option>
+              </select>
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--app-text-secondary)] text-[10px] pointer-events-none"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-3 mb-10 overflow-x-auto pb-2 no-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 border ${
-                activeCategory === cat
-                  ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
-                  : "bg-transparent text-[var(--app-text-primary)] border-[var(--app-border)]/30 hover:border-[var(--app-text-primary)]"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Category Filter Buttons styled identically to VirtualGallery.jsx */}
+        <div className="flex items-center justify-start flex-wrap gap-2 sm:gap-3 mb-10">
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md cursor-pointer ${
+                  isActive
+                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)] shadow-md scale-105"
+                    : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)]"
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
-        {/* 3 Columns Grid matching Properties.jsx */}
+        {/* 3 Columns Grid (3 per row) */}
         {loading ? (
           <div className="py-20 text-center">
             <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
