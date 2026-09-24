@@ -296,12 +296,12 @@ function VirtualTourViewer() {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col items-center select-none">
+    <div className="w-full flex flex-col items-center select-none">
       
-      {/* 360 VIEWPORT CONTAINER */}
+      {/* 360 VIEWPORT CONTAINER - FULL WIDTH */}
       <div
         ref={viewportRef}
-        className="relative w-full h-[520px] sm:h-[640px] lg:h-[720px] rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl bg-black group"
+        className="relative w-full h-[520px] sm:h-[640px] lg:h-[720px] overflow-hidden shadow-2xl bg-black group"
       >
         {/* Photo Sphere Viewer Renderer */}
         <ReactPhotoSphereViewer
@@ -313,6 +313,7 @@ function VirtualTourViewer() {
           mousewheel={true}
           defaultYaw="0deg"
           defaultPitch="0deg"
+          defaultZoomLvl={0}
           plugins={plugins}
           onReady={handleReady}
         />
@@ -459,7 +460,7 @@ function VirtualTourViewer() {
       </div>
 
       {/* METADATA FOOTER BELOW VIEWER */}
-      <div className="w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-2">
+      <div className="max-w-7xl w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-8">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
             CURRENT SCENE • {activeScene.category}
