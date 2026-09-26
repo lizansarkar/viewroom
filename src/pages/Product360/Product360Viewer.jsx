@@ -104,30 +104,33 @@ function Product360Viewer() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col items-center select-none">
+    <div className="w-full flex flex-col items-center select-none">
       {/* Product Selector Pills */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10">
-        {PRODUCTS.map((prod, idx) => (
-          <button
-            key={prod.id}
-            onClick={() => {
-              setSelectedProductIndex(idx);
-              setVariantIndex(0);
-              setAngle(0);
-              setActiveHotspot(null);
-            }}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
-              selectedProductIndex === idx
-                ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-transparent shadow-md"
-                : "bg-base-200/60 text-[var(--app-text-secondary)] border-[var(--app-border)]/30 hover:text-[var(--app-text-primary)]"
-            }`}
-          >
-            {prod.name}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 z-10 px-4">
+        {PRODUCTS.map((prod, idx) => {
+          const isActive = selectedProductIndex === idx;
+          return (
+            <button
+              key={prod.id}
+              onClick={() => {
+                setSelectedProductIndex(idx);
+                setVariantIndex(0);
+                setAngle(0);
+                setActiveHotspot(null);
+              }}
+              className={`px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md cursor-pointer ${
+                isActive
+                  ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)] shadow-md scale-105"
+                  : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)]"
+              }`}
+            >
+              {prod.name}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Main 360 Viewport Container */}
+      {/* Main 360 Viewport Container - Full Width */}
       <div
         ref={containerRef}
         onMouseDown={handleMouseDown}
@@ -137,7 +140,7 @@ function Product360Viewer() {
         onTouchStart={handleMouseDown}
         onTouchMove={handleMouseMove}
         onTouchEnd={handleMouseUp}
-        className="relative w-full h-[360px] sm:h-[460px] md:h-[520px] rounded-3xl overflow-hidden border border-slate-700/40 shadow-2xl bg-[#0b0c10] flex items-center justify-center cursor-grab active:cursor-grabbing transition-all"
+        className="relative w-full h-[420px] sm:h-[560px] lg:h-[680px] overflow-hidden shadow-2xl bg-[#0b0c10] flex items-center justify-center cursor-grab active:cursor-grabbing transition-all border-y border-slate-800/60"
       >
         {/* Background Radial Glow */}
         <div
@@ -324,7 +327,7 @@ function Product360Viewer() {
       </div>
 
       {/* Product Spec Header Bar Below Viewer */}
-      <div className="w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-2">
+      <div className="max-w-7xl w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-8">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
             {product.category} • {variant.name}
