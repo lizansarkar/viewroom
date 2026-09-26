@@ -146,8 +146,7 @@ function Product360Hero() {
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = false;
 
     // 4. Lighting Environment
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
@@ -644,11 +643,10 @@ function Product360Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
 
         {/* Customizer Layout: Left Viewport (Full Width Canvas) + Right Control Dock */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* 3D WATCH VIEWPORT CANVAS CONTAINER (Columns 1-8) */}
-          <div className="lg:col-span-8 flex flex-col items-center">
-            
+          {/* 3D WATCH VIEWPORT CANVAS CONTAINER (Columns 1-7) */}
+          <div className="lg:col-span-7 flex flex-col items-center">
             <div
               ref={viewportRef}
               onMouseDown={handlePointerDown}
@@ -658,7 +656,7 @@ function Product360Hero() {
               onTouchStart={handlePointerDown}
               onTouchMove={handlePointerMove}
               onTouchEnd={handlePointerUp}
-              className="relative w-full h-[460px] sm:h-[580px] lg:h-[650px] rounded-3xl overflow-hidden border border-[var(--app-border)]/20 shadow-2xl bg-transparent group cursor-grab active:cursor-grabbing transition-all"
+              className="relative w-full h-[480px] sm:h-[580px] lg:h-[640px] overflow-hidden bg-transparent group cursor-grab active:cursor-grabbing transition-all flex items-center justify-center"
             >
               {/* Webcam AR Background Video Stream */}
               <video
@@ -671,93 +669,29 @@ function Product360Hero() {
                 }`}
               />
 
-              {/* Three.js WebGL Interactive Canvas */}
-              <canvas ref={canvasRef} className="relative z-10 w-full h-full block" />
-
-              {/* Ambient Background Radial Glow */}
-              {!isArActive && (
-                <div
-                  className="absolute inset-0 opacity-30 pointer-events-none transition-all duration-500 z-0"
-                  style={{
-                    background: `radial-gradient(circle at 50% 50%, #${selectedCase.color.toString(16)}44 0%, transparent 70%)`,
-                  }}
-                />
-              )}
-
-              {/* TOP-LEFT TELEMETRY BADGE */}
-              <div className="absolute top-5 left-5 z-20 flex items-center gap-3 bg-black/75 backdrop-blur-md border border-white/15 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-                <span className="text-[11px] font-black tracking-widest text-white uppercase">
-                  3D LIVE • {fps} FPS • YAW {orbitYaw}°
-                </span>
-              </div>
-
-              {/* TOP-RIGHT ACTION TOOLBAR */}
-              <div className="absolute top-5 right-5 z-20 flex items-center gap-2 pointer-events-auto">
-                {/* Auto Rotate Toggle */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsAutoRotate(!isAutoRotate);
-                    showToast(isAutoRotate ? "Auto-rotation paused." : "Auto-rotation active.");
-                  }}
-                  title="Toggle Auto Rotation"
-                  className={`w-10 h-10 rounded-full border backdrop-blur-md text-white flex items-center justify-center text-xs transition-transform hover:scale-110 cursor-pointer ${
-                    isAutoRotate ? "bg-amber-500/30 border-amber-400 text-amber-300" : "bg-black/60 border-white/20"
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faRotate} />
-                </button>
-
-                {/* AR Try On Toggle */}
-                <button
-                  type="button"
-                  onClick={toggleArMode}
-                  title="Toggle AR Wrist Try-On Mode"
-                  className={`w-10 h-10 rounded-full border backdrop-blur-md text-white flex items-center justify-center text-xs transition-transform hover:scale-110 cursor-pointer ${
-                    isArActive ? "bg-cyan-500/30 border-cyan-400 text-cyan-300" : "bg-black/60 border-white/20"
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faCamera} />
-                </button>
-
-                {/* Capture Snapshot PNG */}
-                <button
-                  type="button"
-                  onClick={captureSnapshot}
-                  title="Capture PNG Snapshot"
-                  className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white flex items-center justify-center text-xs transition-transform hover:scale-110 cursor-pointer backdrop-blur-md"
-                >
-                  <FontAwesomeIcon icon={faDownload} />
-                </button>
-              </div>
-
-              {/* DRAG INTERACTION OVERLAY HINT */}
-              <div className="absolute bottom-5 left-5 z-20 hidden sm:flex items-center gap-2 bg-black/60 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full text-[11px] text-white/80 font-semibold pointer-events-none">
-                <FontAwesomeIcon icon={faSliders} className="text-amber-400" />
-                <span>Drag to orbit 360° • Scroll to zoom</span>
-              </div>
+              {/* Three.js WebGL Interactive Canvas - Pure Transparent */}
+              <canvas ref={canvasRef} className="relative z-10 w-full h-full block bg-transparent" />
 
               {/* AR WRIST SLIDER CONTROL DOCK OVERLAY */}
               {isArActive && (
-                <div className="absolute bottom-5 inset-x-5 z-30 bg-black/85 backdrop-blur-md border border-cyan-500/30 p-4 rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute bottom-4 inset-x-4 z-30 bg-base-200/95 text-[var(--app-text-primary)] border border-[var(--app-text-secondary)]/20 p-4 rounded-xl shadow-xl animate-in fade-in zoom-in-95 duration-200">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-black text-cyan-300 tracking-wider uppercase flex items-center gap-2">
+                    <span className="text-xs font-bold tracking-wider uppercase flex items-center gap-2">
                       <FontAwesomeIcon icon={faCamera} />
                       WEBCAM AR WRIST CALIBRATION CONTROLS
                     </span>
                     <button
                       type="button"
                       onClick={toggleArMode}
-                      className="text-xs text-white/70 hover:text-white cursor-pointer"
+                      className="text-xs text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)] cursor-pointer"
                     >
                       <FontAwesomeIcon icon={faXmark} />
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <div>
-                      <label className="text-[10px] font-bold text-white/70 uppercase block mb-1">Scale: {arScale.toFixed(2)}x</label>
+                      <label className="text-[10px] font-bold uppercase block mb-1">Scale: {arScale.toFixed(2)}x</label>
                       <input
                         type="range"
                         min="0.5"
@@ -765,12 +699,12 @@ function Product360Hero() {
                         step="0.05"
                         value={arScale}
                         onChange={(e) => setArScale(parseFloat(e.target.value))}
-                        className="w-full accent-cyan-400 cursor-pointer"
+                        className="w-full cursor-pointer"
                       />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-white/70 uppercase block mb-1">Pos X: {arPosX.toFixed(1)}</label>
+                      <label className="text-[10px] font-bold uppercase block mb-1">Pos X: {arPosX.toFixed(1)}</label>
                       <input
                         type="range"
                         min="-4"
@@ -778,12 +712,12 @@ function Product360Hero() {
                         step="0.1"
                         value={arPosX}
                         onChange={(e) => setArPosX(parseFloat(e.target.value))}
-                        className="w-full accent-cyan-400 cursor-pointer"
+                        className="w-full cursor-pointer"
                       />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-white/70 uppercase block mb-1">Pos Y: {arPosY.toFixed(1)}</label>
+                      <label className="text-[10px] font-bold uppercase block mb-1">Pos Y: {arPosY.toFixed(1)}</label>
                       <input
                         type="range"
                         min="-4"
@@ -791,12 +725,12 @@ function Product360Hero() {
                         step="0.1"
                         value={arPosY}
                         onChange={(e) => setArPosY(parseFloat(e.target.value))}
-                        className="w-full accent-cyan-400 cursor-pointer"
+                        className="w-full cursor-pointer"
                       />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-white/70 uppercase block mb-1">Tilt: {arTilt}°</label>
+                      <label className="text-[10px] font-bold uppercase block mb-1">Tilt: {arTilt}°</label>
                       <input
                         type="range"
                         min="-45"
@@ -804,12 +738,12 @@ function Product360Hero() {
                         step="1"
                         value={arTilt}
                         onChange={(e) => setArTilt(parseInt(e.target.value))}
-                        className="w-full accent-cyan-400 cursor-pointer"
+                        className="w-full cursor-pointer"
                       />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold text-white/70 uppercase block mb-1">Rotate Z: {arRotZ}°</label>
+                      <label className="text-[10px] font-bold uppercase block mb-1">Rotate Z: {arRotZ}°</label>
                       <input
                         type="range"
                         min="-180"
@@ -817,7 +751,7 @@ function Product360Hero() {
                         step="5"
                         value={arRotZ}
                         onChange={(e) => setArRotZ(parseInt(e.target.value))}
-                        className="w-full accent-cyan-400 cursor-pointer"
+                        className="w-full cursor-pointer"
                       />
                     </div>
                   </div>
@@ -827,57 +761,87 @@ function Product360Hero() {
             </div>
           </div>
 
-          {/* CUSTOMIZATION CONTROL DOCK (Columns 9-12) */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
+          {/* CUSTOMIZATION CONTROL DOCK & TOOLBAR (Columns 8-12) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
             
-            {/* Customization Navigation Tabs */}
-            <div className="grid grid-cols-3 gap-2 bg-base-200/60 p-1.5 rounded-2xl border border-[var(--app-border)]/20">
+            {/* ACTION TOOLBAR - POSITIONED ON THE RIGHT SIDE PANEL */}
+            <div className="flex items-center justify-start flex-wrap gap-2.5">
               <button
                 type="button"
-                onClick={() => setActiveTab("case")}
-                className={`py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
-                  activeTab === "case"
-                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] shadow-md"
-                    : "text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+                onClick={() => {
+                  setIsAutoRotate(!isAutoRotate);
+                  showToast(isAutoRotate ? "Auto-rotation paused." : "Auto-rotation active.");
+                }}
+                title="Toggle Auto Rotation"
+                className={`px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border transition-all cursor-pointer ${
+                  isAutoRotate
+                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
+                    : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50"
                 }`}
               >
-                Case
+                <FontAwesomeIcon icon={faRotate} className="mr-1.5" />
+                <span>{isAutoRotate ? "Pause Spin" : "Auto Spin"}</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setActiveTab("dial")}
-                className={`py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
-                  activeTab === "dial"
-                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] shadow-md"
-                    : "text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+                onClick={toggleArMode}
+                title="Toggle AR Wrist Mode"
+                className={`px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border transition-all cursor-pointer ${
+                  isArActive
+                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
+                    : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50"
                 }`}
               >
-                Dial
+                <FontAwesomeIcon icon={faCamera} className="mr-1.5" />
+                <span>AR Mode</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setActiveTab("strap")}
-                className={`py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all cursor-pointer ${
-                  activeTab === "strap"
-                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] shadow-md"
-                    : "text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
-                }`}
+                onClick={captureSnapshot}
+                title="Capture PNG Snapshot"
+                className="px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)] transition-all cursor-pointer"
               >
-                Strap
+                <FontAwesomeIcon icon={faDownload} className="mr-1.5" />
+                <span>Save PNG</span>
               </button>
             </div>
 
-            {/* TAB 1: CASE MATERIAL SELECTOR */}
+            {/* Customization Category Tabs */}
+            <div className="flex items-center justify-start flex-wrap gap-2 border-b border-[var(--app-text-secondary)]/15 pb-4">
+              {[
+                { id: "case", label: "CASE MATERIAL" },
+                { id: "dial", label: "DIAL FINISH" },
+                { id: "strap", label: "STRAP STYLE" },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md cursor-pointer ${
+                      isActive
+                        ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)] shadow-md scale-105"
+                        : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* TAB 1: CASE MATERIAL VISUAL COLOR SWATCHES */}
             {activeTab === "case" && (
-              <div className="flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT CASE MATERIAL ({CASE_MATERIALS.length})
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                    SELECT CASE COLOR & MATERIAL
                   </span>
-                  <span className="text-xs font-black text-amber-400 uppercase">
-                    SELECTED: {selectedCase.name}
+                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                    {selectedCase.name}
                   </span>
                 </div>
 
@@ -889,22 +853,21 @@ function Product360Hero() {
                         type="button"
                         key={mat.id}
                         onClick={() => setSelectedCase(mat)}
-                        className={`flex flex-col items-center p-3 rounded-2xl border transition-all cursor-pointer group ${
+                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
                           isSelected
-                            ? "border-amber-400 bg-amber-500/10 shadow-lg scale-105"
-                            : "border-[var(--app-border)]/20 bg-base-200/40 hover:border-amber-400/50"
+                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                         }`}
                       >
-                        {/* Gradient Sphere Preview */}
+                        {/* Actual Material Color Swatch Sphere */}
                         <div
-                          className="w-10 h-10 rounded-full mb-2 shadow-inner border border-white/20 transition-transform group-hover:scale-110"
+                          className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                          }`}
                           style={{ background: mat.preview }}
                         />
-                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)] mb-1">
+                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
                           {mat.name}
-                        </span>
-                        <span className="text-[10px] font-bold text-amber-400">
-                          {mat.price === 0 ? "Included" : `+$${mat.price}`}
                         </span>
                       </button>
                     );
@@ -913,15 +876,15 @@ function Product360Hero() {
               </div>
             )}
 
-            {/* TAB 2: DIAL COLOR SELECTOR */}
+            {/* TAB 2: DIAL COLOR SWATCHES */}
             {activeTab === "dial" && (
-              <div className="flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT DIAL FINISH ({DIAL_VARIANTS.length})
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                    SELECT DIAL COLOR & FINISH
                   </span>
-                  <span className="text-xs font-black text-amber-400 uppercase">
-                    SELECTED: {selectedDial.name}
+                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                    {selectedDial.name}
                   </span>
                 </div>
 
@@ -933,14 +896,17 @@ function Product360Hero() {
                         type="button"
                         key={dial.id}
                         onClick={() => setSelectedDial(dial)}
-                        className={`flex flex-col items-center p-3 rounded-2xl border transition-all cursor-pointer group ${
+                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
                           isSelected
-                            ? "border-amber-400 bg-amber-500/10 shadow-lg scale-105"
-                            : "border-[var(--app-border)]/20 bg-base-200/40 hover:border-amber-400/50"
+                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                         }`}
                       >
+                        {/* Actual Dial Color Swatch Sphere */}
                         <div
-                          className="w-10 h-10 rounded-full mb-2 shadow-inner border border-white/20 transition-transform group-hover:scale-110"
+                          className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                          }`}
                           style={{ background: dial.preview }}
                         />
                         <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
@@ -953,15 +919,15 @@ function Product360Hero() {
               </div>
             )}
 
-            {/* TAB 3: STRAP TYPE SELECTOR */}
+            {/* TAB 3: STRAP COLOR SWATCHES */}
             {activeTab === "strap" && (
-              <div className="flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT STRAP STYLE ({STRAP_OPTIONS.length})
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                    SELECT STRAP COLOR & MATERIAL
                   </span>
-                  <span className="text-xs font-black text-amber-400 uppercase">
-                    SELECTED: {selectedStrap.name}
+                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                    {selectedStrap.name}
                   </span>
                 </div>
 
@@ -973,46 +939,28 @@ function Product360Hero() {
                         type="button"
                         key={strap.id}
                         onClick={() => setSelectedStrap(strap)}
-                        className={`flex items-center gap-3 p-3 rounded-2xl border transition-all cursor-pointer group ${
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${
                           isSelected
-                            ? "border-amber-400 bg-amber-500/10 shadow-lg scale-105"
-                            : "border-[var(--app-border)]/20 bg-base-200/40 hover:border-amber-400/50"
+                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                         }`}
                       >
+                        {/* Actual Strap Material Swatch Box */}
                         <div
-                          className="w-10 h-10 rounded-xl shrink-0 shadow-inner border border-white/20 transition-transform group-hover:scale-110"
+                          className={`w-9 h-9 rounded-lg shrink-0 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                          }`}
                           style={{ background: strap.preview }}
                         />
-                        <div className="flex flex-col items-start">
-                          <span className="text-xs font-extrabold uppercase tracking-tight leading-tight text-[var(--app-text-primary)]">
-                            {strap.name}
-                          </span>
-                          <span className="text-[10px] font-bold text-amber-400">
-                            {strap.price === 0 ? "Standard" : `+$${strap.price}`}
-                          </span>
-                        </div>
+                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-left leading-tight text-[var(--app-text-primary)]">
+                          {strap.name}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
             )}
-
-            {/* ACTION BUTTONS & SPEC HIGHLIGHTS */}
-            <div className="flex flex-col gap-3 mt-4 border-t border-[var(--app-border)]/15 pt-6">
-              <Button
-                variant="primary"
-                className="w-full !py-3.5 !text-xs !font-black !tracking-widest uppercase shadow-xl"
-                onClick={() => showToast(`Saved custom watch order: ${configCode}`)}
-              >
-                ORDER CUSTOM TIMEPIECE (${totalPrice.toLocaleString()})
-              </Button>
-
-              <div className="flex items-center justify-between text-[11px] font-bold text-[var(--app-text-secondary)] px-1">
-                <span>✓ 5-YEAR INTERNATIONAL WARRANTY</span>
-                <span>✓ CERTIFIED CHRONOMETER</span>
-              </div>
-            </div>
 
           </div>
 
