@@ -454,9 +454,9 @@ function Product360Hero() {
       if (subdialHands[0]) subdialHands[0].rotation.z = -(min / 30) * Math.PI * 2;
       if (subdialHands[1]) subdialHands[1].rotation.z = -(hr / 12) * Math.PI * 2;
 
-      // Auto-rotation when idle
+      // Auto-rotation when idle (Slower luxury spin speed)
       if (isAutoRotate && watchGroup && !isArActive) {
-        watchGroup.rotation.y += 0.006;
+        watchGroup.rotation.y += 0.0015;
       }
 
       renderer.render(scene, camera);
@@ -640,39 +640,8 @@ function Product360Hero() {
         </div>
       )}
 
-      {/* Main Luxury Atelier Container */}
+      {/* Main Atelier Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
-
-        {/* Top Header & Branding Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-[var(--app-text-secondary)]/15 pb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-xs font-black tracking-[0.25em] text-[var(--app-text-secondary)] uppercase">
-                3D HAUTE HORLOGERIE ATELIER
-              </span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-none text-[var(--app-text-primary)]">
-              CRAFT YOUR TIMELINES
-            </h1>
-            <p className="mt-2 text-xs sm:text-sm text-[var(--app-text-secondary)] font-medium max-w-xl">
-              Procedural PBR materials, live local-time hand sweeping, and webcam AR wrist preview.
-            </p>
-          </div>
-
-          {/* Pricing & Config Reference Box */}
-          <div className="flex flex-col items-start md:items-end bg-base-200/50 border border-[var(--app-border)]/20 p-4 rounded-2xl backdrop-blur-md">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[var(--app-text-secondary)]">
-              ATELIER CONFIGURATION • {configCode}
-            </span>
-            <div className="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight my-0.5">
-              ${totalPrice.toLocaleString()} USD
-            </div>
-            <span className="text-[10px] font-semibold text-[var(--app-text-secondary)]">
-              Includes Swiss Chronometer Movement • Worldwide Insured Shipping
-            </span>
-          </div>
-        </div>
 
         {/* Customizer Layout: Left Viewport (Full Width Canvas) + Right Control Dock */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -689,7 +658,7 @@ function Product360Hero() {
               onTouchStart={handlePointerDown}
               onTouchMove={handlePointerMove}
               onTouchEnd={handlePointerUp}
-              className="relative w-full h-[460px] sm:h-[580px] lg:h-[650px] rounded-3xl overflow-hidden border border-amber-500/20 shadow-2xl bg-black group cursor-grab active:cursor-grabbing transition-all"
+              className="relative w-full h-[460px] sm:h-[580px] lg:h-[650px] rounded-3xl overflow-hidden border border-[var(--app-border)]/20 shadow-2xl bg-transparent group cursor-grab active:cursor-grabbing transition-all"
             >
               {/* Webcam AR Background Video Stream */}
               <video
