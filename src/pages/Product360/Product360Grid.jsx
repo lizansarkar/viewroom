@@ -6,6 +6,7 @@ import {
   faPause,
   faRotate,
   faCamera,
+  faDownload,
   faWandMagicSparkles,
   faXmark,
   faCube,
@@ -26,13 +27,22 @@ const GRID_PRODUCTS = [
     tag: "360° SPIN",
   },
   {
-    id: "headphones",
-    name: "SoundPulse Studio Pro",
-    category: "Audio Technology",
-    price: "$399",
-    glbUrl: "/models/headphones.glb",
-    color: "#3b82f6",
-    tag: "SPATIAL AUDIO",
+    id: "tshirt",
+    name: "Minimalist Black T-Shirt",
+    category: "Streetwear Apparel",
+    price: "$85",
+    glbUrl: "/models/tshirt.glb",
+    color: "#18181b",
+    tag: "COTTON 3D",
+  },
+  {
+    id: "airpods",
+    name: "AirPods Pro Spatial",
+    category: "Wireless Audio",
+    price: "$249",
+    glbUrl: "/models/airpods.glb",
+    color: "#e2e8f0",
+    tag: "NOISE CANCEL",
   },
   {
     id: "chair",
@@ -51,15 +61,6 @@ const GRID_PRODUCTS = [
     glbUrl: "/models/phone.glb",
     color: "#6366f1",
     tag: "FLAGSHIP 5G",
-  },
-  {
-    id: "speaker",
-    name: "Pulse Core Smart Speaker",
-    category: "Home Audio",
-    price: "$249",
-    glbUrl: "/models/speaker.glb",
-    color: "#10b981",
-    tag: "HI-RES ACOUSTICS",
   },
   {
     id: "camera",
@@ -128,27 +129,61 @@ function createFallbackProductGroup(productId) {
     group.add(topStrap);
     group.add(botStrap);
 
-  } else if (productId === "headphones") {
-    const headbandMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.85, roughness: 0.25 });
-    const cupMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, metalness: 0.6, roughness: 0.3 });
-    const cushionMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.85 });
+  } else if (productId === "tshirt") {
+    // Black T-Shirt Torso & Sleeves
+    const shirtMat = new THREE.MeshStandardMaterial({ color: 0x18181c, roughness: 0.85, metalness: 0.1 });
+    
+    // Torso body
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(2.1, 2.8, 0.5), shirtMat);
+    torso.position.y = -0.2;
+    group.add(torso);
 
-    const headbandGeo = new THREE.TorusGeometry(1.65, 0.12, 16, 64, Math.PI);
-    const headband = new THREE.Mesh(headbandGeo, headbandMat);
-    headband.rotation.z = Math.PI;
-    headband.position.y = 0.75;
-    group.add(headband);
+    // Left & Right Sleeves
+    const sleeveLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.4, 1.1, 24), shirtMat);
+    sleeveLeft.rotation.z = Math.PI / 3;
+    sleeveLeft.position.set(-1.45, 0.85, 0);
+    group.add(sleeveLeft);
 
-    [-1.65, 1.65].forEach((x) => {
-      const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.48, 32), cupMat);
-      cup.rotation.z = Math.PI / 2;
-      cup.position.set(x, -0.48, 0);
-      group.add(cup);
+    const sleeveRight = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.4, 1.1, 24), shirtMat);
+    sleeveRight.rotation.z = -Math.PI / 3;
+    sleeveRight.position.set(1.45, 0.85, 0);
+    group.add(sleeveRight);
 
-      const cushion = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.82, 0.22, 32), cushionMat);
-      cushion.rotation.z = Math.PI / 2;
-      cushion.position.set(x * 0.88, -0.48, 0);
-      group.add(cushion);
+    // Crew Neck Collar
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.08, 16, 32), new THREE.MeshStandardMaterial({ color: 0x27272a }));
+    collar.rotation.x = Math.PI / 2;
+    collar.position.set(0, 1.18, 0);
+    group.add(collar);
+
+  } else if (productId === "airpods") {
+    // AirPods Charging Case & Earbuds
+    const caseMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.2, roughness: 0.15 });
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.1 });
+
+    // Charging Case Body
+    const caseBody = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.8, 0.9), caseMat);
+    caseBody.position.set(0, -0.4, 0);
+    group.add(caseBody);
+
+    // Case Lid Seam
+    const seam = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.02, 16, 48), chromeMat);
+    seam.rotation.x = Math.PI / 2;
+    seam.position.set(0, 0.1, 0);
+    group.add(seam);
+
+    // Left & Right Earbuds
+    [-0.55, 0.55].forEach((x) => {
+      const earbudHead = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 24), caseMat);
+      earbudHead.position.set(x, 1.15, 0.1);
+      group.add(earbudHead);
+
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16), caseMat);
+      stem.position.set(x, 0.75, 0.1);
+      group.add(stem);
+
+      const silverTip = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.1, 16), chromeMat);
+      silverTip.position.set(x, 0.35, 0.1);
+      group.add(silverTip);
     });
 
   } else if (productId === "chair") {
@@ -184,21 +219,6 @@ function createFallbackProductGroup(productId) {
     const camBump = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.06), cameraMat);
     camBump.position.set(-0.32, 1.0, -0.09);
     group.add(camBump);
-
-  } else if (productId === "speaker") {
-    const fabricMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.85 });
-    const capMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.85, roughness: 0.2 });
-
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 0.92, 2.4, 32), fabricMat);
-    group.add(body);
-
-    const topCap = new THREE.Mesh(new THREE.CylinderGeometry(0.94, 0.94, 0.18, 32), capMat);
-    topCap.position.y = 1.2;
-    group.add(topCap);
-
-    const botCap = new THREE.Mesh(new THREE.CylinderGeometry(0.94, 0.94, 0.18, 32), capMat);
-    botCap.position.y = -1.2;
-    group.add(botCap);
 
   } else {
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.88, roughness: 0.2 });
@@ -307,7 +327,7 @@ function Product360Card({ product, onToast, onOpenModal }) {
     const animate = () => {
       animId = requestAnimationFrame(animate);
       if (isSpinningRef.current && productGroup) {
-        productGroup.rotation.y += 0.004; // Smooth slow spin up
+        productGroup.rotation.y += 0.004;
       }
       renderer.render(scene, camera);
     };
@@ -361,11 +381,21 @@ function Product360Card({ product, onToast, onOpenModal }) {
     isDraggingRef.current = false;
   };
 
+  // Download snapshot
+  const downloadSnapshot = () => {
+    if (!canvasRef.current) return;
+    const link = document.createElement("a");
+    link.download = `viewroom-${product.id}-3d.png`;
+    link.href = canvasRef.current.toDataURL("image/png");
+    link.click();
+    onToast(`Snapshot PNG downloaded for ${product.name}`);
+  };
+
   return (
     <div className="group relative flex flex-col bg-base-100/80 backdrop-blur-xl border border-[var(--app-text-secondary)]/15 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 select-none">
       
       {/* Top Header Bar inside Card */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-2 z-10">
+      <div className="flex items-center justify-between px-5 pt-5 pb-1 z-10">
         <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[var(--app-text-primary)]/10 text-[var(--app-text-primary)] border border-[var(--app-text-primary)]/15">
           {product.tag}
         </span>
@@ -374,7 +404,7 @@ function Product360Card({ product, onToast, onOpenModal }) {
         </span>
       </div>
 
-      {/* 3D WebGL Viewport Container */}
+      {/* 3D WebGL Viewport Container (Unobstructed 3D GLB Model Display) */}
       <div
         ref={viewportRef}
         onMouseDown={handlePointerDown}
@@ -384,50 +414,13 @@ function Product360Card({ product, onToast, onOpenModal }) {
         onTouchStart={handlePointerDown}
         onTouchMove={handlePointerMove}
         onTouchEnd={handlePointerUp}
-        className="relative w-full h-[260px] sm:h-[300px] bg-transparent cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[240px] sm:h-[270px] bg-transparent cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
       >
         <canvas ref={canvasRef} className="w-full h-full block bg-transparent relative z-10" />
-
-        {/* Floating Toolbar attached to each Card (Spin & Inspect 3D GLB & AR) */}
-        <div className="absolute bottom-3 inset-x-4 z-20 flex items-center justify-between bg-black/70 backdrop-blur-md border border-white/15 px-3.5 py-1.5 rounded-full opacity-95 transition-opacity">
-          {/* Pause / Play Toggle Icon */}
-          <button
-            type="button"
-            onClick={() => {
-              const next = !isSpinning;
-              setIsSpinning(next);
-              onToast(next ? `Slow spin active: ${product.name}` : `Spin paused: ${product.name}`);
-            }}
-            title={isSpinning ? "Pause Spin" : "Auto Spin"}
-            className="text-white hover:text-amber-400 transition-colors p-1.5 cursor-pointer text-sm"
-          >
-            <FontAwesomeIcon icon={isSpinning ? faPause : faRotate} />
-          </button>
-
-          {/* Inspect 3D GLB Button directly in overlay */}
-          <button
-            type="button"
-            onClick={() => onOpenModal(product)}
-            className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-white hover:text-cyan-400 transition-colors px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faCube} className="text-cyan-400 text-xs" />
-            Inspect 3D GLB
-          </button>
-
-          {/* AR Mode Icon */}
-          <button
-            type="button"
-            onClick={() => onOpenModal(product)}
-            title="AR View"
-            className="text-white hover:text-emerald-400 transition-colors p-1.5 cursor-pointer text-sm"
-          >
-            <FontAwesomeIcon icon={faCamera} />
-          </button>
-        </div>
       </div>
 
-      {/* Card Details Footer */}
-      <div className="p-5 flex flex-col gap-3 border-t border-[var(--app-text-secondary)]/10 bg-base-200/40">
+      {/* Card Details & Hero-Style Action Toolbar Footer (Positioned Below GLB Model) */}
+      <div className="p-5 flex flex-col gap-4 border-t border-[var(--app-text-secondary)]/15 bg-base-200/40">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
             {product.category}
@@ -437,14 +430,56 @@ function Product360Card({ product, onToast, onOpenModal }) {
           </h3>
         </div>
 
-        <div className="flex items-center justify-between pt-1">
+        {/* Compact Hero-Style Toolbar: Left Inspect 3D GLB Button + Right Grouped Control Icons */}
+        <div className="flex items-center justify-between pt-2 border-t border-[var(--app-text-secondary)]/15">
+          
+          {/* Left: Inspect 3D GLB Button */}
           <Button
             variant="primary"
-            className="w-full !py-2.5 !text-[11px] font-extrabold uppercase tracking-wider !rounded-xl cursor-pointer justify-center"
+            className="!px-3.5 !py-2 !text-[10px] font-extrabold uppercase tracking-wider !rounded-xl cursor-pointer flex items-center gap-1.5"
             onClick={() => onOpenModal(product)}
           >
+            <FontAwesomeIcon icon={faCube} className="text-cyan-400 text-xs" />
             Inspect 3D GLB
           </Button>
+
+          {/* Right: Grouped Action Icons (Pause/Spin, AR Camera, Download Snapshot) */}
+          <div className="flex items-center gap-2">
+            {/* Pause / Play Auto-Spin Toggle Icon */}
+            <button
+              type="button"
+              onClick={() => {
+                const next = !isSpinning;
+                setIsSpinning(next);
+                onToast(next ? `Slow spin active: ${product.name}` : `Spin paused: ${product.name}`);
+              }}
+              title={isSpinning ? "Pause Auto-Spin" : "Play Auto-Spin"}
+              className="w-8 h-8 rounded-full bg-[var(--app-text-primary)]/10 hover:bg-[var(--app-text-primary)]/20 text-[var(--app-text-primary)] flex items-center justify-center text-xs transition-colors cursor-pointer border border-[var(--app-text-primary)]/15"
+            >
+              <FontAwesomeIcon icon={isSpinning ? faPause : faRotate} />
+            </button>
+
+            {/* AR Mode Toggle Icon */}
+            <button
+              type="button"
+              onClick={() => onOpenModal(product)}
+              title="AR Camera Mode"
+              className="w-8 h-8 rounded-full bg-[var(--app-text-primary)]/10 hover:bg-[var(--app-text-primary)]/20 text-[var(--app-text-primary)] hover:text-cyan-400 flex items-center justify-center text-xs transition-colors cursor-pointer border border-[var(--app-text-primary)]/15"
+            >
+              <FontAwesomeIcon icon={faCamera} />
+            </button>
+
+            {/* Snapshot Download PNG Icon */}
+            <button
+              type="button"
+              onClick={downloadSnapshot}
+              title="Download PNG Snapshot"
+              className="w-8 h-8 rounded-full bg-[var(--app-text-primary)]/10 hover:bg-[var(--app-text-primary)]/20 text-[var(--app-text-primary)] hover:text-emerald-400 flex items-center justify-center text-xs transition-colors cursor-pointer border border-[var(--app-text-primary)]/15"
+            >
+              <FontAwesomeIcon icon={faDownload} />
+            </button>
+          </div>
+
         </div>
       </div>
 
