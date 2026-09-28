@@ -10,6 +10,7 @@ import aiRoutes from "./routes/aiRoutes.js";
 import ownerRoutes from "./routes/ownerRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/owner", ownerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
+app.use("/api/v1/contact", contactRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {

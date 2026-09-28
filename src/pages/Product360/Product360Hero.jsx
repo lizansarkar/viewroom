@@ -4,66 +4,56 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCamera,
   faRotate,
-  faSliders,
-  faEye,
+  faPause,
   faDownload,
-  faExpand,
-  faCompress,
-  faCheck,
   faXmark,
-  faCircleDot,
-  faGlobe,
-  faLock,
-  faCircleInfo,
-  faVolumeHigh,
-  faVolumeMute,
   faWandMagicSparkles,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/reuseable/Button";
 
 // =========================================================
-// PBR MATERIAL & STYLE PRESETS
+// PBR MATERIAL & LUXURY TIMEPIECE STYLE PRESETS
 // =========================================================
 
 const CASE_MATERIALS = [
-  { id: "steel", name: "Polished Steel", color: 0xe2e8f0, metalness: 0.9, roughness: 0.15, clearcoat: 0.6, price: 0, preview: "linear-gradient(135deg, #f8fafc, #94a3b8)" },
-  { id: "brushed", name: "Brushed Stainless", color: 0xcbd5e1, metalness: 0.85, roughness: 0.4, clearcoat: 0.2, price: 150, preview: "linear-gradient(135deg, #e2e8f0, #64748b)" },
-  { id: "gold", name: "18K Yellow Gold", color: 0xf59e0b, metalness: 0.95, roughness: 0.15, clearcoat: 0.8, price: 1400, preview: "linear-gradient(135deg, #fbbf24, #b45309)" },
-  { id: "rose", name: "Rose Gold", color: 0xfb7185, metalness: 0.9, roughness: 0.2, clearcoat: 0.7, price: 1500, preview: "linear-gradient(135deg, #fda4af, #be123c)" },
-  { id: "bronze", name: "Aged Bronze", color: 0xb45309, metalness: 0.8, roughness: 0.5, clearcoat: 0.1, price: 350, preview: "linear-gradient(135deg, #d97706, #78350f)" },
-  { id: "platinum", name: "Platinum 950", color: 0xf1f5f9, metalness: 0.98, roughness: 0.1, clearcoat: 0.9, price: 2200, preview: "linear-gradient(135deg, #ffffff, #cbd5e1)" },
-  { id: "ceramic", name: "Matte Black Ceramic", color: 0x18181b, metalness: 0.1, roughness: 0.75, clearcoat: 0.1, price: 600, preview: "linear-gradient(135deg, #3f3f46, #09090b)" },
-  { id: "carbon", name: "Carbon Fiber", color: 0x27272a, metalness: 0.3, roughness: 0.6, clearcoat: 0.4, price: 750, preview: "linear-gradient(135deg, #52525b, #18181b)" },
-  { id: "dlc", name: "DLC Tactical Black", color: 0x09090b, metalness: 0.7, roughness: 0.3, clearcoat: 0.5, price: 450, preview: "linear-gradient(135deg, #27272a, #000000)" },
+  { id: "steel", name: "Polished Steel", color: 0xe2e8f0, metalness: 0.92, roughness: 0.15, preview: "linear-gradient(135deg, #f8fafc, #94a3b8)" },
+  { id: "brushed", name: "Brushed Stainless", color: 0xcbd5e1, metalness: 0.88, roughness: 0.35, preview: "linear-gradient(135deg, #e2e8f0, #64748b)" },
+  { id: "gold", name: "18K Yellow Gold", color: 0xf59e0b, metalness: 0.95, roughness: 0.15, preview: "linear-gradient(135deg, #fbbf24, #b45309)" },
+  { id: "rose", name: "Rose Gold", color: 0xfb7185, metalness: 0.9, roughness: 0.2, preview: "linear-gradient(135deg, #fda4af, #be123c)" },
+  { id: "bronze", name: "Aged Bronze", color: 0xb45309, metalness: 0.8, roughness: 0.45, preview: "linear-gradient(135deg, #d97706, #78350f)" },
+  { id: "platinum", name: "Platinum 950", color: 0xf1f5f9, metalness: 0.98, roughness: 0.1, preview: "linear-gradient(135deg, #ffffff, #cbd5e1)" },
+  { id: "ceramic", name: "Matte Black Ceramic", color: 0x18181b, metalness: 0.15, roughness: 0.7, preview: "linear-gradient(135deg, #3f3f46, #09090b)" },
+  { id: "carbon", name: "Carbon Fiber", color: 0x27272a, metalness: 0.3, roughness: 0.6, preview: "linear-gradient(135deg, #52525b, #18181b)" },
+  { id: "dlc", name: "DLC Tactical Black", color: 0x09090b, metalness: 0.85, roughness: 0.25, preview: "linear-gradient(135deg, #27272a, #000000)" },
 ];
 
 const DIAL_VARIANTS = [
-  { id: "onyx", name: "Onyx Sunburst", color: 0x0c0c0e, metalness: 0.3, roughness: 0.35, preview: "linear-gradient(135deg, #18181b, #000000)" },
+  { id: "onyx", name: "Onyx Sunburst", color: 0x0c0c0e, metalness: 0.4, roughness: 0.3, preview: "linear-gradient(135deg, #18181b, #000000)" },
   { id: "champagne", name: "Champagne Gold", color: 0xd97706, metalness: 0.8, roughness: 0.25, preview: "linear-gradient(135deg, #f59e0b, #92400e)" },
   { id: "porcelain", name: "Porcelain White", color: 0xf8fafc, metalness: 0.1, roughness: 0.4, preview: "linear-gradient(135deg, #ffffff, #e2e8f0)" },
-  { id: "navy", name: "Royal Navy Sunray", color: 0x1e3a8a, metalness: 0.5, roughness: 0.3, preview: "linear-gradient(135deg, #3b82f6, #1e3a8a)" },
-  { id: "emerald", name: "Emerald Sunburst", color: 0x065f46, metalness: 0.5, roughness: 0.3, preview: "linear-gradient(135deg, #10b981, #064e3b)" },
-  { id: "slate", name: "Slate Grey", color: 0x334155, metalness: 0.4, roughness: 0.4, preview: "linear-gradient(135deg, #64748b, #1e293b)" },
-  { id: "salmon", name: "Salmon Sunray", color: 0xf43f5e, metalness: 0.5, roughness: 0.35, preview: "linear-gradient(135deg, #fb7185, #9f1239)" },
+  { id: "navy", name: "Royal Navy Sunray", color: 0x1e3a8a, metalness: 0.6, roughness: 0.25, preview: "linear-gradient(135deg, #3b82f6, #1e3a8a)" },
+  { id: "emerald", name: "Emerald Sunburst", color: 0x065f46, metalness: 0.6, roughness: 0.25, preview: "linear-gradient(135deg, #10b981, #064e3b)" },
+  { id: "slate", name: "Slate Grey", color: 0x334155, metalness: 0.45, roughness: 0.35, preview: "linear-gradient(135deg, #64748b, #1e293b)" },
+  { id: "salmon", name: "Salmon Sunray", color: 0xf43f5e, metalness: 0.55, roughness: 0.3, preview: "linear-gradient(135deg, #fb7185, #9f1239)" },
   { id: "carbon", name: "Carbon Weave", color: 0x18181b, metalness: 0.2, roughness: 0.7, preview: "linear-gradient(135deg, #3f3f46, #18181b)" },
   { id: "ice", name: "Ice Silver", color: 0x94a3b8, metalness: 0.85, roughness: 0.2, preview: "linear-gradient(135deg, #e2e8f0, #64748b)" },
 ];
 
 const STRAP_OPTIONS = [
-  { id: "leather", name: "Italian Calfskin", color: 0x78350f, price: 0, preview: "linear-gradient(135deg, #92400e, #451a03)" },
-  { id: "alligator", name: "Alligator Leather", color: 0x451a03, price: 180, preview: "linear-gradient(135deg, #78350f, #270f03)" },
-  { id: "bracelet", name: "3-Link Steel Bracelet", color: 0xcbd5e1, price: 350, preview: "linear-gradient(135deg, #f1f5f9, #64748b)" },
-  { id: "rubber", name: "Sport Rubber", color: 0x18181b, price: 90, preview: "linear-gradient(135deg, #3f3f46, #09090b)" },
-  { id: "nato", name: "NATO Fabric Weave", color: 0x1e293b, price: 60, preview: "linear-gradient(135deg, #475569, #0f172a)" },
-  { id: "suede", name: "Velvet Suede", color: 0x475569, price: 120, preview: "linear-gradient(135deg, #64748b, #1e293b)" },
+  { id: "leather", name: "Italian Calfskin", color: 0x78350f, isMetal: false, preview: "linear-gradient(135deg, #92400e, #451a03)" },
+  { id: "alligator", name: "Alligator Leather", color: 0x451a03, isMetal: false, preview: "linear-gradient(135deg, #78350f, #270f03)" },
+  { id: "bracelet", name: "3-Link Steel Bracelet", color: 0xcbd5e1, isMetal: true, preview: "linear-gradient(135deg, #f1f5f9, #64748b)" },
+  { id: "rubber", name: "Sport Rubber", color: 0x18181b, isMetal: false, preview: "linear-gradient(135deg, #3f3f46, #09090b)" },
+  { id: "nato", name: "NATO Fabric Weave", color: 0x1e293b, isMetal: false, preview: "linear-gradient(135deg, #475569, #0f172a)" },
+  { id: "suede", name: "Velvet Suede", color: 0x475569, isMetal: false, preview: "linear-gradient(135deg, #64748b, #1e293b)" },
 ];
 
 function Product360Hero() {
   // Customization State
-  const [selectedCase, setSelectedCase] = useState(CASE_MATERIALS[2]); // Gold default
-  const [selectedDial, setSelectedDial] = useState(DIAL_VARIANTS[0]); // Onyx Sunburst
-  const [selectedStrap, setSelectedStrap] = useState(STRAP_OPTIONS[0]); // Leather
-  const [activeTab, setActiveTab] = useState("case"); // "case" | "dial" | "strap" | "ar"
+  const [selectedCase, setSelectedCase] = useState(CASE_MATERIALS[0]); // Polished Steel default
+  const [selectedDial, setSelectedDial] = useState(DIAL_VARIANTS[0]); // Onyx Sunburst default
+  const [selectedStrap, setSelectedStrap] = useState(STRAP_OPTIONS[0]); // Italian Calfskin
+  const [activeTab, setActiveTab] = useState("case");
 
   // AR & Camera State
   const [isArActive, setIsArActive] = useState(false);
@@ -72,15 +62,15 @@ function Product360Hero() {
   const [arPosY, setArPosY] = useState(0);
   const [arTilt, setArTilt] = useState(0);
   const [arRotZ, setArRotZ] = useState(0);
-  const [cameraError, setCameraError] = useState(null);
 
-  // Viewport & Telemetry State
+  // Viewport State
   const [isAutoRotate, setIsAutoRotate] = useState(true);
-  const [orbitYaw, setOrbitYaw] = useState(0);
-  const [orbitPitch, setOrbitPitch] = useState(15);
-  const [activeSubdialTooltip, setActiveSubdialTooltip] = useState(null);
-  const [fps, setFps] = useState(60);
+  const isAutoRotateRef = useRef(isAutoRotate);
   const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    isAutoRotateRef.current = isAutoRotate;
+  }, [isAutoRotate]);
 
   // Refs
   const viewportRef = useRef(null);
@@ -93,27 +83,13 @@ function Product360Hero() {
     camera: null,
     renderer: null,
     watchGroup: null,
-    caseMesh: null,
-    bezelMesh: null,
-    dialMesh: null,
-    subdialMeshes: [],
     hourHand: null,
     minuteHand: null,
     secondsHand: null,
     subdialHands: [],
     strapsGroup: null,
     materialsMap: {},
-    dateTexture: null,
-    dateContext: null,
-    dateCanvas: null,
   });
-
-  // Dynamic Price Calculation
-  const basePrice = 1850;
-  const totalPrice = basePrice + selectedCase.price + selectedStrap.price;
-
-  // Configuration Code Generator
-  const configCode = `#ATELIER-${selectedCase.id.toUpperCase()}-${selectedDial.id.toUpperCase()}-${selectedStrap.id.toUpperCase()}`;
 
   // Toast Notification Helper
   const showToast = (msg) => {
@@ -122,7 +98,7 @@ function Product360Hero() {
   };
 
   // =========================================================
-  // THREE.JS WATCH GEOMETRY & SCENE INITIALIZATION
+  // THREE.JS LUXURY WATCH GEOMETRY & SCENE INITIALIZATION
   // =========================================================
   useEffect(() => {
     if (!viewportRef.current || !canvasRef.current) return;
@@ -135,9 +111,9 @@ function Product360Hero() {
 
     // 2. Camera
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 0, 8.5);
+    camera.position.set(0, 0, 8.2);
 
-    // 3. Renderer
+    // 3. Renderer with High Dynamic Quality
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true,
@@ -146,30 +122,32 @@ function Product360Hero() {
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = false;
 
-    // 4. Lighting Environment
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    // 4. Studio Lighting Environment for Metallic & Glass Reflections
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.8);
-    keyLight.position.set(5, 8, 6);
-    keyLight.castShadow = true;
+    const keyLight = new THREE.DirectionalLight(0xfff8e7, 3.2);
+    keyLight.position.set(5, 8, 7);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x93c5fd, 1.2);
-    fillLight.position.set(-6, -2, 4);
+    const fillLight = new THREE.DirectionalLight(0x93c5fd, 1.6);
+    fillLight.position.set(-6, -3, 5);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xfbbf24, 2.0);
+    const rimLight = new THREE.DirectionalLight(0xfbbf24, 2.5);
     rimLight.position.set(0, -6, -5);
     scene.add(rimLight);
+
+    const topSpecularLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    topSpecularLight.position.set(0, 6, 4);
+    scene.add(topSpecularLight);
 
     // 5. Watch Root Group
     const watchGroup = new THREE.Group();
     scene.add(watchGroup);
 
-    // Create Shared Materials Map
+    // Shared Materials Map
     const materialsMap = {
       case: new THREE.MeshStandardMaterial({
         color: selectedCase.color,
@@ -192,124 +170,189 @@ function Product360Hero() {
         roughness: 0.15,
       }),
       subdial: new THREE.MeshStandardMaterial({
-        color: 0x111115,
-        metalness: 0.4,
-        roughness: 0.5,
+        color: 0x111116,
+        metalness: 0.5,
+        roughness: 0.4,
+      }),
+      subdialBorder: new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.95,
+        roughness: 0.15,
       }),
       strap: new THREE.MeshStandardMaterial({
         color: selectedStrap.color,
-        metalness: 0.1,
-        roughness: 0.7,
+        metalness: selectedStrap.isMetal ? selectedCase.metalness : 0.1,
+        roughness: selectedStrap.isMetal ? selectedCase.roughness : 0.65,
       }),
     };
 
-    // A. MIDCASE CYLINDER & LUGS
-    const caseGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.5, 64);
+    // ---------------------------------------------------------
+    // A. MAIN STEPPED CASE CYLINDER
+    // ---------------------------------------------------------
+    const caseGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.44, 64);
     const caseMesh = new THREE.Mesh(caseGeo, materialsMap.case);
     caseMesh.rotation.x = Math.PI / 2;
     watchGroup.add(caseMesh);
 
-    // Lugs (4 curved lugs)
-    const lugGeo = new THREE.BoxGeometry(0.3, 0.4, 1.2);
+    // Case Back Plate
+    const caseBackGeo = new THREE.CylinderGeometry(2.05, 2.05, 0.08, 64);
+    const caseBackMesh = new THREE.Mesh(caseBackGeo, materialsMap.case);
+    caseBackMesh.rotation.x = Math.PI / 2;
+    caseBackMesh.position.z = -0.24;
+    watchGroup.add(caseBackMesh);
+
+    // ---------------------------------------------------------
+    // B. CURVED TAPERED LUGS (4 Lugs)
+    // ---------------------------------------------------------
     const lugPositions = [
-      [-1.3, 2.1, 0],
-      [1.3, 2.1, 0],
-      [-1.3, -2.1, 0],
-      [1.3, -2.1, 0],
+      { x: -1.25, y: 2.1, z: 0, rotZ: 0.12 },
+      { x: 1.25, y: 2.1, z: 0, rotZ: -0.12 },
+      { x: -1.25, y: -2.1, z: 0, rotZ: -0.12 },
+      { x: 1.25, y: -2.1, z: 0, rotZ: 0.12 },
     ];
-    lugPositions.forEach(([x, y, z]) => {
+    lugPositions.forEach((pos) => {
+      const lugGeo = new THREE.BoxGeometry(0.32, 0.85, 0.38);
       const lug = new THREE.Mesh(lugGeo, materialsMap.case);
-      lug.position.set(x, y, z);
-      lug.rotation.z = Math.atan2(y, x) * 0.2;
+      lug.position.set(pos.x, pos.y, pos.z);
+      lug.rotation.z = pos.rotZ;
       watchGroup.add(lug);
     });
 
-    // B. KNURLED BEZEL WITH TEETH
-    const bezelGeo = new THREE.TorusGeometry(2.05, 0.12, 16, 80);
+    // ---------------------------------------------------------
+    // C. STEPPED BEZEL & KNURLED CROWN / PUSHERS
+    // ---------------------------------------------------------
+    // Outer Bezel Ring
+    const bezelGeo = new THREE.TorusGeometry(2.08, 0.1, 16, 96);
     const bezelMesh = new THREE.Mesh(bezelGeo, materialsMap.case);
-    bezelMesh.position.z = 0.28;
+    bezelMesh.position.z = 0.23;
     watchGroup.add(bezelMesh);
 
-    // Fluted Crown
-    const crownGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.4, 18);
+    // Inner Chamfer Ring
+    const innerBezelGeo = new THREE.TorusGeometry(1.96, 0.04, 16, 96);
+    const innerBezelMesh = new THREE.Mesh(innerBezelGeo, materialsMap.goldAccent);
+    innerBezelMesh.position.z = 0.25;
+    watchGroup.add(innerBezelMesh);
+
+    // Knurled Crown at 3 o'clock
+    const crownGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.35, 24);
     const crownMesh = new THREE.Mesh(crownGeo, materialsMap.case);
-    crownMesh.position.set(2.25, 0, 0);
+    crownMesh.position.set(2.22, 0, 0);
     crownMesh.rotation.z = Math.PI / 2;
     watchGroup.add(crownMesh);
 
-    // Pushers (2 Chronograph Buttons)
-    const pusherGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.35, 16);
+    // 2 Chronograph Pushers (2 o'clock and 4 o'clock)
+    const pusherGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.32, 16);
     const pusher1 = new THREE.Mesh(pusherGeo, materialsMap.case);
-    pusher1.position.set(2.0, 1.1, 0);
+    pusher1.position.set(1.98, 1.05, 0);
     pusher1.rotation.z = Math.PI / 3;
     watchGroup.add(pusher1);
 
     const pusher2 = new THREE.Mesh(pusherGeo, materialsMap.case);
-    pusher2.position.set(2.0, -1.1, 0);
+    pusher2.position.set(1.98, -1.05, 0);
     pusher2.rotation.z = -Math.PI / 3;
     watchGroup.add(pusher2);
 
-    // C. DIAL PLATE
-    const dialGeo = new THREE.CylinderGeometry(1.95, 1.95, 0.04, 64);
+    // ---------------------------------------------------------
+    // D. DIAL FACE & LUXURY CANVAS TEXTURE (HOROLOGIUM)
+    // ---------------------------------------------------------
+    const dialGeo = new THREE.CylinderGeometry(1.93, 1.93, 0.03, 64);
     const dialMesh = new THREE.Mesh(dialGeo, materialsMap.dial);
     dialMesh.rotation.x = Math.PI / 2;
-    dialMesh.position.z = 0.25;
+    dialMesh.position.z = 0.22;
     watchGroup.add(dialMesh);
 
-    // D. 12 HOUR MARKERS & 60 MINUTE TICKS
-    const hourMarkerGeo = new THREE.BoxGeometry(0.08, 0.3, 0.05);
+    // Dial Brand Text Canvas
+    const brandCanvas = document.createElement("canvas");
+    brandCanvas.width = 512;
+    brandCanvas.height = 128;
+    const brandCtx = brandCanvas.getContext("2d");
+    brandCtx.clearRect(0, 0, 512, 128);
+    brandCtx.fillStyle = "#f59e0b";
+    brandCtx.font = "bold 34px Times New Roman, serif";
+    brandCtx.textAlign = "center";
+    brandCtx.textBaseline = "middle";
+    brandCtx.fillText("HOROLOGIUM", 256, 45);
+    brandCtx.fillStyle = "#94a3b8";
+    brandCtx.font = "bold 16px sans-serif";
+    brandCtx.fillText("AUTOMATIC CHRONOMETER", 256, 82);
+
+    const brandTexture = new THREE.CanvasTexture(brandCanvas);
+    const brandGeo = new THREE.PlaneGeometry(1.5, 0.38);
+    const brandMat = new THREE.MeshBasicMaterial({ map: brandTexture, transparent: true });
+    const brandMesh = new THREE.Mesh(brandGeo, brandMat);
+    brandMesh.position.set(0, 0.95, 0.25);
+    watchGroup.add(brandMesh);
+
+    // ---------------------------------------------------------
+    // E. 12 APPLIED HOUR MARKERS & MINUTE TICK RING
+    // ---------------------------------------------------------
+    const hourMarkerGeo = new THREE.BoxGeometry(0.08, 0.28, 0.05);
     for (let i = 0; i < 12; i++) {
       const angle = (i / 12) * Math.PI * 2;
       const marker = new THREE.Mesh(hourMarkerGeo, materialsMap.goldAccent);
-      const radius = 1.65;
-      marker.position.set(Math.sin(angle) * radius, Math.cos(angle) * radius, 0.28);
+      const radius = 1.62;
+      marker.position.set(Math.sin(angle) * radius, Math.cos(angle) * radius, 0.25);
       marker.rotation.z = -angle;
       watchGroup.add(marker);
     }
 
-    // E. 3 RECESSED SUBDIALS (3 o'clock, 6 o'clock, 9 o'clock)
+    // Outer Gold Minute Track Ring
+    const trackRingGeo = new THREE.TorusGeometry(1.78, 0.012, 16, 96);
+    const trackRingMesh = new THREE.Mesh(trackRingGeo, materialsMap.goldAccent);
+    trackRingMesh.position.z = 0.24;
+    watchGroup.add(trackRingMesh);
+
+    // ---------------------------------------------------------
+    // F. 3 RECESSED SUBDIALS WITH GOLDEN BORDER RINGS
+    // ---------------------------------------------------------
     const subdialPositions = [
-      { id: "30min", x: 0.9, y: 0, name: "30-MINUTE CHRONO REGISTER" },
-      { id: "12hr", x: 0, y: -0.9, name: "12-HOUR TOTALIZER" },
-      { id: "sec", x: -0.9, y: 0, name: "RUNNING SECONDS" },
+      { id: "30min", x: 0.85, y: 0 },
+      { id: "12hr", x: 0, y: -0.85 },
+      { id: "sec", x: -0.85, y: 0 },
     ];
-    const subdialMeshes = [];
     const subdialHands = [];
 
-    const subdialGeo = new THREE.CylinderGeometry(0.48, 0.48, 0.03, 32);
-    const subdialHandGeo = new THREE.BoxGeometry(0.02, 0.38, 0.02);
+    const subdialGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.02, 32);
+    const subdialBorderGeo = new THREE.TorusGeometry(0.47, 0.02, 16, 48);
+    const subdialHandGeo = new THREE.BoxGeometry(0.02, 0.36, 0.02);
 
     subdialPositions.forEach((pos) => {
-      const subMesh = new THREE.Mesh(subdialGeo, materialsMap.subdial.clone());
+      // Subdial Face Plate
+      const subMesh = new THREE.Mesh(subdialGeo, materialsMap.subdial);
       subMesh.rotation.x = Math.PI / 2;
-      subMesh.position.set(pos.x, pos.y, 0.27);
-      subMesh.userData = { isSubdial: true, name: pos.name };
+      subMesh.position.set(pos.x, pos.y, 0.24);
       watchGroup.add(subMesh);
-      subdialMeshes.push(subMesh);
+
+      // Subdial Gold Border Ring
+      const subBorder = new THREE.Mesh(subdialBorderGeo, materialsMap.subdialBorder);
+      subBorder.position.set(pos.x, pos.y, 0.25);
+      watchGroup.add(subBorder);
 
       // Subdial Needle Hand
       const hand = new THREE.Mesh(subdialHandGeo, materialsMap.goldAccent);
-      hand.position.set(pos.x, pos.y, 0.3);
+      hand.position.set(pos.x, pos.y, 0.27);
       watchGroup.add(hand);
       subdialHands.push(hand);
     });
 
-    // F. LIVE DATE APERTURE CANVAS TEXTURE (4:30 Position)
+    // ---------------------------------------------------------
+    // G. LIVE DATE WINDOW APERTURE (4:30 Position)
+    // ---------------------------------------------------------
     const dateCanvas = document.createElement("canvas");
     dateCanvas.width = 128;
     dateCanvas.height = 128;
     const dateCtx = dateCanvas.getContext("2d");
 
     const renderDateTexture = () => {
-      dateCtx.fillStyle = "#0c0c0e";
+      dateCtx.fillStyle = "#ffffff";
       dateCtx.fillRect(0, 0, 128, 128);
-      dateCtx.strokeStyle = "#f59e0b";
-      dateCtx.lineWidth = 6;
+      dateCtx.strokeStyle = "#b45309";
+      dateCtx.lineWidth = 8;
       dateCtx.strokeRect(4, 4, 120, 120);
 
       const today = new Date().getDate();
-      dateCtx.fillStyle = "#ffffff";
-      dateCtx.font = "bold 64px sans-serif";
+      dateCtx.fillStyle = "#0f172a";
+      dateCtx.font = "bold 68px sans-serif";
       dateCtx.textAlign = "center";
       dateCtx.textBaseline = "middle";
       dateCtx.fillText(String(today), 64, 68);
@@ -317,85 +360,112 @@ function Product360Hero() {
     renderDateTexture();
 
     const dateTexture = new THREE.CanvasTexture(dateCanvas);
-    const dateGeo = new THREE.PlaneGeometry(0.38, 0.35);
+    const dateGeo = new THREE.PlaneGeometry(0.36, 0.32);
     const dateMat = new THREE.MeshBasicMaterial({ map: dateTexture });
     const dateMesh = new THREE.Mesh(dateGeo, dateMat);
-    dateMesh.position.set(0.9, -0.9, 0.28);
+    dateMesh.position.set(0.85, -0.85, 0.25);
     watchGroup.add(dateMesh);
 
-    // G. SWORD HOUR & MINUTE HANDS + SECONDS NEEDLE
+    // ---------------------------------------------------------
+    // H. SWORD HOUR & MINUTE HANDS + SWEEPING SECONDS
+    // ---------------------------------------------------------
+    // Center Cap Pin
+    const capGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.08, 24);
+    const capMesh = new THREE.Mesh(capGeo, materialsMap.goldAccent);
+    capMesh.rotation.x = Math.PI / 2;
+    capMesh.position.z = 0.34;
+    watchGroup.add(capMesh);
+
     // Hour Hand
-    const hourHandGeo = new THREE.BoxGeometry(0.12, 1.1, 0.04);
-    hourHandGeo.translate(0, 0.45, 0);
+    const hourHandGeo = new THREE.BoxGeometry(0.12, 1.05, 0.04);
+    hourHandGeo.translate(0, 0.42, 0);
     const hourHand = new THREE.Mesh(hourHandGeo, materialsMap.goldAccent);
-    hourHand.position.z = 0.32;
+    hourHand.position.z = 0.29;
     watchGroup.add(hourHand);
 
     // Minute Hand
-    const minHandGeo = new THREE.BoxGeometry(0.09, 1.5, 0.04);
-    minHandGeo.translate(0, 0.65, 0);
+    const minHandGeo = new THREE.BoxGeometry(0.08, 1.48, 0.04);
+    minHandGeo.translate(0, 0.62, 0);
     const minuteHand = new THREE.Mesh(minHandGeo, materialsMap.silverAccent);
-    minuteHand.position.z = 0.35;
+    minuteHand.position.z = 0.32;
     watchGroup.add(minuteHand);
 
     // Sweeping Seconds Hand (Lollipop Counterweight)
-    const secHandGeo = new THREE.BoxGeometry(0.03, 1.75, 0.02);
-    secHandGeo.translate(0, 0.6, 0);
+    const secHandGeo = new THREE.BoxGeometry(0.03, 1.72, 0.02);
+    secHandGeo.translate(0, 0.58, 0);
     const secondsHand = new THREE.Mesh(secHandGeo, materialsMap.goldAccent);
-    secondsHand.position.z = 0.38;
+    secondsHand.position.z = 0.35;
 
-    // Counterweight circle
-    const dotGeo = new THREE.CircleGeometry(0.08, 16);
+    const dotGeo = new THREE.CircleGeometry(0.07, 16);
     const dotMesh = new THREE.Mesh(dotGeo, materialsMap.goldAccent);
     dotMesh.position.set(0, -0.25, 0);
     secondsHand.add(dotMesh);
     watchGroup.add(secondsHand);
 
-    // H. DOMED SAPPHIRE CRYSTAL
-    const crystalGeo = new THREE.CylinderGeometry(2.02, 2.02, 0.08, 64);
+    // ---------------------------------------------------------
+    // I. DOMED HIGH-GLOSS SAPPHIRE CRYSTAL LENS
+    // ---------------------------------------------------------
+    const crystalGeo = new THREE.CylinderGeometry(2.0, 2.0, 0.07, 64);
     const crystalMat = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.25,
-      roughness: 0,
-      transmission: 0.92,
-      ior: 1.52,
-      reflectivity: 0.8,
+      opacity: 0.18,
+      roughness: 0.05,
+      transmission: 0.95,
+      ior: 1.5,
+      reflectivity: 0.9,
     });
     const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
     crystalMesh.rotation.x = Math.PI / 2;
-    crystalMesh.position.z = 0.32;
+    crystalMesh.position.z = 0.29;
     watchGroup.add(crystalMesh);
 
-    // I. STRAPS GROUP (Top & Bottom Attachment)
+    // ---------------------------------------------------------
+    // J. STRAPS GROUP (Top & Bottom Attachment)
+    // ---------------------------------------------------------
     const strapsGroup = new THREE.Group();
     watchGroup.add(strapsGroup);
 
-    const buildStraps = (strapColor) => {
-      // Clear old straps
+    const buildStraps = (strapItem, caseMatConfig) => {
       while (strapsGroup.children.length > 0) {
         strapsGroup.remove(strapsGroup.children[0]);
       }
 
       const strapMat = new THREE.MeshStandardMaterial({
-        color: strapColor,
-        metalness: 0.1,
-        roughness: 0.7,
+        color: strapItem.color,
+        metalness: strapItem.isMetal ? caseMatConfig.metalness : 0.1,
+        roughness: strapItem.isMetal ? caseMatConfig.roughness : 0.65,
       });
 
-      // Top Strap
-      const topStrapGeo = new THREE.BoxGeometry(1.6, 2.8, 0.15);
-      topStrapGeo.translate(0, 3.2, 0);
-      const topStrap = new THREE.Mesh(topStrapGeo, strapMat);
-      strapsGroup.add(topStrap);
+      if (strapItem.isMetal) {
+        // 3-Link Steel / Metallic Bracelet Links
+        const numLinks = 9;
+        for (let i = 0; i < numLinks; i++) {
+          const yTop = 2.45 + i * 0.42;
+          const linkGeo = new THREE.BoxGeometry(1.65, 0.38, 0.16);
+          const topLink = new THREE.Mesh(linkGeo, strapMat);
+          topLink.position.set(0, yTop, -0.05);
+          strapsGroup.add(topLink);
 
-      // Bottom Strap
-      const botStrapGeo = new THREE.BoxGeometry(1.6, 2.8, 0.15);
-      botStrapGeo.translate(0, -3.2, 0);
-      const botStrap = new THREE.Mesh(botStrapGeo, strapMat);
-      strapsGroup.add(botStrap);
+          const yBot = -2.45 - i * 0.42;
+          const botLink = new THREE.Mesh(linkGeo, strapMat);
+          botLink.position.set(0, yBot, -0.05);
+          strapsGroup.add(botLink);
+        }
+      } else {
+        // Tapered Leather / Rubber / Fabric Strap
+        const topStrapGeo = new THREE.BoxGeometry(1.65, 3.2, 0.16);
+        topStrapGeo.translate(0, 3.8, -0.05);
+        const topStrap = new THREE.Mesh(topStrapGeo, strapMat);
+        strapsGroup.add(topStrap);
+
+        const botStrapGeo = new THREE.BoxGeometry(1.65, 3.2, 0.16);
+        botStrapGeo.translate(0, -3.8, -0.05);
+        const botStrap = new THREE.Mesh(botStrapGeo, strapMat);
+        strapsGroup.add(botStrap);
+      }
     };
-    buildStraps(selectedStrap.color);
+    buildStraps(selectedStrap, selectedCase);
 
     // Store references
     threeRef.current = {
@@ -403,41 +473,23 @@ function Product360Hero() {
       camera,
       renderer,
       watchGroup,
-      caseMesh,
-      bezelMesh,
-      dialMesh,
-      subdialMeshes,
       hourHand,
       minuteHand,
       secondsHand,
       subdialHands,
       strapsGroup,
       materialsMap,
-      dateTexture,
-      dateContext: dateCtx,
-      dateCanvas,
     };
 
     // =========================================================
     // REAL-TIME HAND SWEEP & RENDER ANIMATION LOOP
     // =========================================================
     let animId;
-    let lastTime = performance.now();
-    let frameCount = 0;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
 
-      // FPS Measurement
-      const nowTime = performance.now();
-      frameCount++;
-      if (nowTime - lastTime >= 1000) {
-        setFps(frameCount);
-        frameCount = 0;
-        lastTime = nowTime;
-      }
-
-      // Real-time Local Time Sweeping (28,800 vph continuous feel)
+      // Real-time Local Time Sweeping
       const now = new Date();
       const ms = now.getMilliseconds();
       const sec = now.getSeconds() + ms / 1000;
@@ -453,9 +505,9 @@ function Product360Hero() {
       if (subdialHands[0]) subdialHands[0].rotation.z = -(min / 30) * Math.PI * 2;
       if (subdialHands[1]) subdialHands[1].rotation.z = -(hr / 12) * Math.PI * 2;
 
-      // Auto-rotation when idle (Slower luxury spin speed)
-      if (isAutoRotate && watchGroup && !isArActive) {
-        watchGroup.rotation.y += 0.0015;
+      // Auto-rotation when idle
+      if (isAutoRotateRef.current && watchGroup && !isArActive) {
+        watchGroup.rotation.y += 0.002;
       }
 
       renderer.render(scene, camera);
@@ -485,12 +537,22 @@ function Product360Hero() {
   // LIVE PBR MATERIAL PREVIEW SWAPPING EFFECTS
   // =========================================================
   useEffect(() => {
-    const { materialsMap } = threeRef.current;
+    const { materialsMap, strapsGroup } = threeRef.current;
     if (materialsMap.case) {
       materialsMap.case.color.setHex(selectedCase.color);
       materialsMap.case.metalness = selectedCase.metalness;
       materialsMap.case.roughness = selectedCase.roughness;
       materialsMap.case.needsUpdate = true;
+    }
+    if (selectedStrap.isMetal && strapsGroup) {
+      const strapMat = new THREE.MeshStandardMaterial({
+        color: selectedStrap.color,
+        metalness: selectedCase.metalness,
+        roughness: selectedCase.roughness,
+      });
+      strapsGroup.traverse((child) => {
+        if (child.isMesh) child.material = strapMat;
+      });
     }
   }, [selectedCase]);
 
@@ -509,8 +571,8 @@ function Product360Hero() {
     if (strapsGroup) {
       const strapMat = new THREE.MeshStandardMaterial({
         color: selectedStrap.color,
-        metalness: 0.1,
-        roughness: 0.7,
+        metalness: selectedStrap.isMetal ? selectedCase.metalness : 0.1,
+        roughness: selectedStrap.isMetal ? selectedCase.roughness : 0.65,
       });
       strapsGroup.traverse((child) => {
         if (child.isMesh) child.material = strapMat;
@@ -544,9 +606,6 @@ function Product360Hero() {
     threeRef.current.watchGroup.rotation.y += deltaX * 0.01;
     threeRef.current.watchGroup.rotation.x += deltaY * 0.01;
 
-    setOrbitYaw(Math.round((threeRef.current.watchGroup.rotation.y * 180) / Math.PI) % 360);
-    setOrbitPitch(Math.round((threeRef.current.watchGroup.rotation.x * 180) / Math.PI) % 360);
-
     previousPointerRef.current = { x: clientX, y: clientY };
   };
 
@@ -568,11 +627,9 @@ function Product360Hero() {
         }
         setIsArActive(true);
         setIsAutoRotate(false);
-        setCameraError(null);
         showToast("Webcam AR Mode Activated! Use sliders to align on your wrist.");
       } catch (err) {
         console.warn("Camera access denied or unavailable:", err);
-        setCameraError("Camera access required for AR wrist mode.");
         showToast("Camera access error. Please grant permissions.");
       }
     } else {
@@ -609,7 +666,6 @@ function Product360Hero() {
     exportCanvas.height = canvasRef.current.height;
     const ctx = exportCanvas.getContext("2d");
 
-    // Draw video background if AR active
     if (isArActive && webcamRef.current) {
       ctx.drawImage(webcamRef.current, 0, 0, exportCanvas.width, exportCanvas.height);
     } else {
@@ -617,7 +673,6 @@ function Product360Hero() {
       ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
     }
 
-    // Draw WebGL Watch Canvas
     ctx.drawImage(canvasRef.current, 0, 0);
 
     const image = exportCanvas.toDataURL("image/png");
@@ -642,10 +697,10 @@ function Product360Hero() {
       {/* Main Atelier Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
 
-        {/* Customizer Layout: Left Viewport (Full Width Canvas) + Right Control Dock */}
+        {/* Customizer Layout: Left 3D Viewport + Right Control Dock */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* 3D WATCH VIEWPORT CANVAS CONTAINER (Columns 1-7) */}
+          {/* 3D WATCH VIEWPORT CONTAINER (Columns 1-7) */}
           <div className="lg:col-span-7 flex flex-col items-center">
             <div
               ref={viewportRef}
@@ -658,6 +713,7 @@ function Product360Hero() {
               onTouchEnd={handlePointerUp}
               className="relative w-full h-[480px] sm:h-[580px] lg:h-[640px] overflow-hidden bg-transparent group cursor-grab active:cursor-grabbing transition-all flex items-center justify-center"
             >
+
               {/* Webcam AR Background Video Stream */}
               <video
                 ref={webcamRef}
@@ -669,7 +725,7 @@ function Product360Hero() {
                 }`}
               />
 
-              {/* Three.js WebGL Interactive Canvas - Pure Transparent */}
+              {/* Three.js WebGL Interactive Canvas */}
               <canvas ref={canvasRef} className="relative z-10 w-full h-full block bg-transparent" />
 
               {/* AR WRIST SLIDER CONTROL DOCK OVERLAY */}
@@ -761,55 +817,11 @@ function Product360Hero() {
             </div>
           </div>
 
-          {/* CUSTOMIZATION CONTROL DOCK & TOOLBAR (Columns 8-12) */}
+          {/* CUSTOMIZATION CONTROL DOCK (Columns 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             
-            {/* ACTION TOOLBAR - POSITIONED ON THE RIGHT SIDE PANEL */}
-            <div className="flex items-center justify-start flex-wrap gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsAutoRotate(!isAutoRotate);
-                  showToast(isAutoRotate ? "Auto-rotation paused." : "Auto-rotation active.");
-                }}
-                title="Toggle Auto Rotation"
-                className={`px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border transition-all cursor-pointer ${
-                  isAutoRotate
-                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
-                    : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50"
-                }`}
-              >
-                <FontAwesomeIcon icon={faRotate} className="mr-1.5" />
-                <span>{isAutoRotate ? "Pause Spin" : "Auto Spin"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleArMode}
-                title="Toggle AR Wrist Mode"
-                className={`px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border transition-all cursor-pointer ${
-                  isArActive
-                    ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)]"
-                    : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50"
-                }`}
-              >
-                <FontAwesomeIcon icon={faCamera} className="mr-1.5" />
-                <span>AR Mode</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={captureSnapshot}
-                title="Capture PNG Snapshot"
-                className="px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-md border bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)] transition-all cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faDownload} className="mr-1.5" />
-                <span>Save PNG</span>
-              </button>
-            </div>
-
-            {/* Customization Category Tabs */}
-            <div className="flex items-center justify-start flex-wrap gap-2 border-b border-[var(--app-text-secondary)]/15 pb-4">
+            {/* Customization Category Tabs - 3 Buttons in 1 Row (3D Button Style) */}
+            <div className="grid grid-cols-3 gap-2 border-b border-[var(--app-text-secondary)]/15 pb-4 w-full">
               {[
                 { id: "case", label: "CASE MATERIAL" },
                 { id: "dial", label: "DIAL FINISH" },
@@ -817,150 +829,190 @@ function Product360Hero() {
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
-                  <button
+                  <Button
                     key={tab.id}
-                    type="button"
+                    variant={isActive ? "primary" : "secondary"}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md cursor-pointer ${
-                      isActive
-                        ? "bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)] shadow-md scale-105"
-                        : "bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)]"
+                    className={`w-full !px-1 !py-2 sm:!py-2.5 !rounded-sm !text-[10px] sm:!text-xs font-extrabold uppercase tracking-wider text-center justify-center cursor-pointer ${
+                      isActive ? "scale-102" : "opacity-90 hover:opacity-100"
                     }`}
                   >
                     {tab.label}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
 
-            {/* TAB 1: CASE MATERIAL VISUAL COLOR SWATCHES */}
-            {activeTab === "case" && (
-              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT CASE COLOR & MATERIAL
-                  </span>
-                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
-                    {selectedCase.name}
-                  </span>
-                </div>
+            {/* TAB CONTENT PANEL CONTAINER WITH FIXED MIN-HEIGHT TO PREVENT LAYOUT SHIFTS */}
+            <div className="min-h-[290px] sm:min-h-[310px] flex flex-col justify-start transition-all duration-300">
+              {/* TAB 1: CASE MATERIAL VISUAL COLOR SWATCHES */}
+              {activeTab === "case" && (
+                <div className="flex flex-col gap-4 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                      SELECT CASE COLOR & MATERIAL
+                    </span>
+                    <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                      {selectedCase.name}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {CASE_MATERIALS.map((mat) => {
-                    const isSelected = selectedCase.id === mat.id;
-                    return (
-                      <button
-                        type="button"
-                        key={mat.id}
-                        onClick={() => setSelectedCase(mat)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
-                          isSelected
-                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
-                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
-                        }`}
-                      >
-                        {/* Actual Material Color Swatch Sphere */}
-                        <div
-                          className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
-                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                  <div className="grid grid-cols-3 gap-3">
+                    {CASE_MATERIALS.map((mat) => {
+                      const isSelected = selectedCase.id === mat.id;
+                      return (
+                        <button
+                          type="button"
+                          key={mat.id}
+                          onClick={() => setSelectedCase(mat)}
+                          className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
+                            isSelected
+                              ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                              : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                           }`}
-                          style={{ background: mat.preview }}
-                        />
-                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
-                          {mat.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                        >
+                          {/* Swatch Sphere */}
+                          <div
+                            className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                              isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                            }`}
+                            style={{ background: mat.preview }}
+                          />
+                          <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
+                            {mat.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TAB 2: DIAL COLOR SWATCHES */}
-            {activeTab === "dial" && (
-              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT DIAL COLOR & FINISH
-                  </span>
-                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
-                    {selectedDial.name}
-                  </span>
-                </div>
+              {/* TAB 2: DIAL COLOR SWATCHES */}
+              {activeTab === "dial" && (
+                <div className="flex flex-col gap-4 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                      SELECT DIAL COLOR & FINISH
+                    </span>
+                    <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                      {selectedDial.name}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {DIAL_VARIANTS.map((dial) => {
-                    const isSelected = selectedDial.id === dial.id;
-                    return (
-                      <button
-                        type="button"
-                        key={dial.id}
-                        onClick={() => setSelectedDial(dial)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
-                          isSelected
-                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
-                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
-                        }`}
-                      >
-                        {/* Actual Dial Color Swatch Sphere */}
-                        <div
-                          className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
-                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                  <div className="grid grid-cols-3 gap-3">
+                    {DIAL_VARIANTS.map((dial) => {
+                      const isSelected = selectedDial.id === dial.id;
+                      return (
+                        <button
+                          type="button"
+                          key={dial.id}
+                          onClick={() => setSelectedDial(dial)}
+                          className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
+                            isSelected
+                              ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                              : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                           }`}
-                          style={{ background: dial.preview }}
-                        />
-                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
-                          {dial.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                        >
+                          {/* Swatch Sphere */}
+                          <div
+                            className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                              isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                            }`}
+                            style={{ background: dial.preview }}
+                          />
+                          <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
+                            {dial.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TAB 3: STRAP COLOR SWATCHES */}
-            {activeTab === "strap" && (
-              <div className="flex flex-col gap-4 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    SELECT STRAP COLOR & MATERIAL
-                  </span>
-                  <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
-                    {selectedStrap.name}
-                  </span>
-                </div>
+              {/* TAB 3: STRAP COLOR SWATCHES */}
+              {activeTab === "strap" && (
+                <div className="flex flex-col gap-4 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
+                      SELECT STRAP COLOR & MATERIAL
+                    </span>
+                    <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
+                      {selectedStrap.name}
+                    </span>
+                  </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {STRAP_OPTIONS.map((strap) => {
-                    const isSelected = selectedStrap.id === strap.id;
-                    return (
-                      <button
-                        type="button"
-                        key={strap.id}
-                        onClick={() => setSelectedStrap(strap)}
-                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${
-                          isSelected
-                            ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
-                            : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
-                        }`}
-                      >
-                        {/* Actual Strap Material Swatch Box */}
-                        <div
-                          className={`w-9 h-9 rounded-lg shrink-0 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
-                            isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                  <div className="grid grid-cols-3 gap-3">
+                    {STRAP_OPTIONS.map((strap) => {
+                      const isSelected = selectedStrap.id === strap.id;
+                      return (
+                        <button
+                          type="button"
+                          key={strap.id}
+                          onClick={() => setSelectedStrap(strap)}
+                          className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer group ${
+                            isSelected
+                              ? "border-[var(--app-text-primary)] bg-[var(--app-text-primary)]/10 scale-105 shadow-md"
+                              : "border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/40"
                           }`}
-                          style={{ background: strap.preview }}
-                        />
-                        <span className="text-[11px] font-extrabold uppercase tracking-tight text-left leading-tight text-[var(--app-text-primary)]">
-                          {strap.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                        >
+                          {/* Swatch Box */}
+                          <div
+                            className={`w-10 h-10 rounded-full mb-2 border border-white/30 shadow-md transition-transform group-hover:scale-110 ${
+                              isSelected ? "ring-2 ring-[var(--app-text-primary)] ring-offset-2 ring-offset-[var(--app-background)]" : ""
+                            }`}
+                            style={{ background: strap.preview }}
+                          />
+                          <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)]">
+                            {strap.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* ICON-ONLY ACTION TOOLBAR BELOW COLOR/MATERIAL SELECTION SECTION */}
+            <div className="flex items-center justify-start gap-6 pt-3 border-t border-[var(--app-text-secondary)]/15 mt-2">
+              {/* Pause / Auto-Spin Toggle Icon */}
+              <button
+                type="button"
+                onClick={() => {
+                  const nextState = !isAutoRotate;
+                  setIsAutoRotate(nextState);
+                  showToast(nextState ? "Auto-rotation active." : "Auto-rotation paused.");
+                }}
+                title={isAutoRotate ? "Pause Spin" : "Auto Spin"}
+                className="p-1 text-xl text-[var(--app-text-primary)] transition-transform hover:scale-125 cursor-pointer bg-transparent border-0 outline-none shadow-none"
+              >
+                <FontAwesomeIcon icon={isAutoRotate ? faPause : faRotate} />
+              </button>
+
+              {/* AR Mode Toggle Icon */}
+              <button
+                type="button"
+                onClick={toggleArMode}
+                title={isArActive ? "Exit AR Mode" : "AR Wrist Mode"}
+                className={`p-1 text-xl transition-transform hover:scale-125 cursor-pointer bg-transparent border-0 outline-none shadow-none ${
+                  isArActive ? "text-cyan-400" : "text-[var(--app-text-primary)]"
+                }`}
+              >
+                <FontAwesomeIcon icon={faCamera} />
+              </button>
+
+              {/* Save PNG Snapshot Icon */}
+              <button
+                type="button"
+                onClick={captureSnapshot}
+                title="Save PNG Snapshot"
+                className="p-1 text-xl text-[var(--app-text-primary)] transition-transform hover:scale-125 cursor-pointer bg-transparent border-0 outline-none shadow-none"
+              >
+                <FontAwesomeIcon icon={faDownload} />
+              </button>
+            </div>
 
           </div>
 

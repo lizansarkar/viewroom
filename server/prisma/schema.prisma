@@ -119,3 +119,13 @@ model Analytics {
   durationSec   Int            @default(0)
   createdAt     DateTime       @default(now())
 }
+
+// Contact Messages Submitted via Website
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+

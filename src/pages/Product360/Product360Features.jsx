@@ -53,9 +53,9 @@ const features = [
 
 function Product360Features() {
   return (
-    <section className="w-full bg-base-100 text-base-content px-4 sm:px-6 lg:px-10 py-14 sm:py-16 lg:py-20 border-t border-[var(--app-border)]/15">
+    <section className="w-full bg-base-100 text-base-content px-4 sm:px-6 lg:px-10 py-14 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Top: Header block */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 mb-12 sm:mb-16">
           <div>
