@@ -9,10 +9,7 @@ import {
   faPlus,
   faExternalLinkAlt,
   faCompass,
-  faArrowRight,
-  faRocket,
 } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../components/reuseable/Button";
 import HotspotEditorModal from "./HotspotEditorModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import {
@@ -168,120 +165,120 @@ export default function CreatorDashboard({ user }) {
   };
 
   return (
-    <div className="space-y-8 text-[var(--app-text-primary)]">
+    <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
       
-      {/* Top Creator Welcome Banner */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-base-200/50 border border-[var(--app-border)]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+      {/* Top Creator Welcome Banner - Monochrome */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-base-200 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-cyan-500 block mb-1">
+          <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block mb-1">
             CREATOR & PROPERTY OWNER CONTROL PANEL
           </span>
           <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight">
             WELCOME BACK, {user?.name?.toUpperCase() || "CREATOR"}
           </h2>
-          <p className="text-xs text-[var(--app-text-secondary)] mt-1">
+          <p className="text-xs opacity-70 mt-1">
             Publish 360° virtual property tours, attach pitch/yaw spherical hotspots, and manage 3D product spins.
           </p>
         </div>
 
         <button
           onClick={() => setActiveSubTab("uploader")}
-          className="px-6 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md hover:opacity-90 transition-opacity whitespace-nowrap"
+          className="px-6 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer"
         >
           <FontAwesomeIcon icon={faPlus} />
           <span>Build New 360 Tour</span>
         </button>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards - Monochrome */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)] block mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
               Active 360 Tours
             </span>
             <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalTours}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-base">
+          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
             <FontAwesomeIcon icon={faBuilding} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)] block mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
               3D Product Spins
             </span>
             <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalProducts}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-base">
+          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
             <FontAwesomeIcon icon={faCube} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)] block mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
               Panoramic Views
             </span>
             <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalViews}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-base">
+          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
             <FontAwesomeIcon icon={faEye} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-text-secondary)] block mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
               Engagement Rate
             </span>
             <span className="font-heading text-2xl sm:text-3xl font-black">{stats.engagementRate}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-base">
+          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
             <FontAwesomeIcon icon={faChartLine} />
           </div>
         </div>
       </div>
 
       {/* Subtab Navigation */}
-      <div className="flex items-center gap-2 border-b border-[var(--app-border)]/20 pb-3 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 border-b border-base-content/15 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveSubTab("overview")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
             activeSubTab === "overview"
-              ? "bg-base-content text-base-100 shadow-sm"
-              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+              ? "bg-base-content text-base-100 shadow-sm font-black"
+              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
           }`}
         >
           Overview
         </button>
         <button
           onClick={() => setActiveSubTab("tours")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
             activeSubTab === "tours"
-              ? "bg-base-content text-base-100 shadow-sm"
-              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+              ? "bg-base-content text-base-100 shadow-sm font-black"
+              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
           }`}
         >
           My 360° Tours
         </button>
         <button
           onClick={() => setActiveSubTab("uploader")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
             activeSubTab === "uploader"
-              ? "bg-base-content text-base-100 shadow-sm"
-              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+              ? "bg-base-content text-base-100 shadow-sm font-black"
+              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
           }`}
         >
           Scene Uploader & Builder
         </button>
         <button
           onClick={() => setActiveSubTab("analytics")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
+          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
             activeSubTab === "analytics"
-              ? "bg-base-content text-base-100 shadow-sm"
-              : "bg-base-200 text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+              ? "bg-base-content text-base-100 shadow-sm font-black"
+              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
           }`}
         >
           Spatial Analytics
@@ -297,19 +294,19 @@ export default function CreatorDashboard({ user }) {
           {tours.map((tour) => (
             <div
               key={tour.id}
-              className="p-4 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex flex-col justify-between shadow-sm hover:border-[var(--app-border)]/60 transition-all"
+              className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col justify-between shadow-sm hover:border-base-content/30 transition-all"
             >
-              <div className="relative h-44 rounded-xl overflow-hidden mb-4 bg-neutral-900">
+              <div className="relative h-44 rounded-xl overflow-hidden mb-4 bg-base-300">
                 <img src={tour.coverImage} alt={tour.title} className="w-full h-full object-cover" />
-                <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 text-white text-[10px] font-extrabold uppercase">
+                <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/15 text-[10px] font-extrabold uppercase">
                   {tour.scenes?.length || 0} ROOM SCENES
                 </div>
               </div>
 
-              <h4 className="font-heading font-bold text-sm uppercase text-[var(--app-text-primary)] mb-1">
+              <h4 className="font-heading font-bold text-sm uppercase text-base-content mb-1">
                 {tour.title}
               </h4>
-              <span className="text-xs text-[var(--app-text-secondary)] mb-4 block">
+              <span className="text-xs opacity-70 mb-4 block">
                 {tour.category} • {tour.price}
               </span>
 
@@ -322,7 +319,7 @@ export default function CreatorDashboard({ user }) {
                 </Link>
                 <button
                   onClick={() => handleAddSceneToTour(tour.id)}
-                  className="p-2 rounded-full border border-[var(--app-border)]/40 text-xs hover:bg-base-200"
+                  className="p-2 rounded-full border border-base-content/20 text-xs hover:bg-base-300 cursor-pointer"
                   title="Add Room Scene"
                 >
                   <FontAwesomeIcon icon={faPlus} />
@@ -339,13 +336,13 @@ export default function CreatorDashboard({ user }) {
           {tours.map((tour) => (
             <div
               key={tour.id}
-              className="p-5 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+              className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4">
-                <img src={tour.coverImage} alt={tour.title} className="w-20 h-16 rounded-xl object-cover" />
+                <img src={tour.coverImage} alt={tour.title} className="w-20 h-16 rounded-xl object-cover bg-base-300" />
                 <div>
                   <h4 className="font-heading font-bold text-base uppercase">{tour.title}</h4>
-                  <p className="text-xs text-[var(--app-text-secondary)]">
+                  <p className="text-xs opacity-70">
                     {tour.category} • {tour.scenes?.length || 0} Scenes • {tour.viewsCount || 0} Views
                   </p>
                 </div>
@@ -358,7 +355,7 @@ export default function CreatorDashboard({ user }) {
                       setEditingTour(tour);
                       setEditingScene(tour.scenes[0]);
                     }}
-                    className="px-3.5 py-1.5 rounded-full border border-cyan-500/40 text-cyan-500 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-cyan-500/10"
+                    className="px-3.5 py-1.5 rounded-full border border-base-content/30 text-base-content text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-base-300 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faCompass} />
                     Add Pitch/Yaw Hotspot
@@ -366,7 +363,7 @@ export default function CreatorDashboard({ user }) {
                 )}
                 <button
                   onClick={() => handleAddSceneToTour(tour.id)}
-                  className="px-3.5 py-1.5 rounded-full border border-[var(--app-border)]/40 text-xs font-bold uppercase tracking-wider hover:bg-base-200"
+                  className="px-3.5 py-1.5 rounded-full border border-base-content/20 text-xs font-bold uppercase tracking-wider hover:bg-base-300 cursor-pointer"
                 >
                   + Add Scene
                 </button>
@@ -381,13 +378,13 @@ export default function CreatorDashboard({ user }) {
 
       {/* SUBTAB 3: SCENE UPLOADER & BUILDER FORM */}
       {activeSubTab === "uploader" && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-base-200/50 border border-[var(--app-border)]/20 space-y-6 max-w-2xl">
+        <div className="p-6 sm:p-8 rounded-3xl bg-base-200/60 border border-base-content/15 space-y-6 max-w-2xl">
           <h3 className="font-heading font-black text-xl uppercase tracking-tight">
             CREATE NEW 360° TOUR & SCENE
           </h3>
           <form onSubmit={handleCreateTour} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)] mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider opacity-70 mb-1">
                 Property / Tour Title*
               </label>
               <input
@@ -396,19 +393,19 @@ export default function CreatorDashboard({ user }) {
                 placeholder="e.g. Horizon Waterfront Villa 360°"
                 value={newTourTitle}
                 onChange={(e) => setNewTourTitle(e.target.value)}
-                className="w-full px-4 py-3 rounded-full bg-base-100 border border-[var(--app-border)]/40 text-xs font-bold focus:outline-none focus:border-[var(--app-text-primary)]"
+                className="w-full px-4 py-3 rounded-full bg-base-100 border border-base-content/20 text-xs font-bold focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)] mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-70 mb-1">
                   Category
                 </label>
                 <select
                   value={newTourCategory}
                   onChange={(e) => setNewTourCategory(e.target.value)}
-                  className="w-full px-4 py-3 rounded-full bg-base-100 border border-[var(--app-border)]/40 text-xs font-bold focus:outline-none focus:border-[var(--app-text-primary)]"
+                  className="w-full px-4 py-3 rounded-full bg-base-100 border border-base-content/20 text-xs font-bold focus:outline-none"
                 >
                   <option>Commercial Real Estate</option>
                   <option>Residential Villa</option>
@@ -417,7 +414,7 @@ export default function CreatorDashboard({ user }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)] mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-70 mb-1">
                   Price Tag
                 </label>
                 <input
@@ -425,14 +422,14 @@ export default function CreatorDashboard({ user }) {
                   placeholder="e.g. Free or $2,500,000"
                   value={newTourPrice}
                   onChange={(e) => setNewTourPrice(e.target.value)}
-                  className="w-full px-4 py-3 rounded-full bg-base-100 border border-[var(--app-border)]/40 text-xs font-bold focus:outline-none focus:border-[var(--app-text-primary)]"
+                  className="w-full px-4 py-3 rounded-full bg-base-100 border border-base-content/20 text-xs font-bold focus:outline-none"
                 />
               </div>
             </div>
 
             <button
               type="submit"
-              className="px-8 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider shadow-md hover:opacity-90"
+              className="px-8 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider shadow-sm hover:opacity-90 cursor-pointer"
             >
               Save & Publish 360° Space
             </button>

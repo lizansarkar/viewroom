@@ -71,6 +71,22 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("viewroom-user");
   };
 
+  // Switch role directly (for Recruiter Sandbox / Role switching)
+  const switchRole = (newRole) => {
+    const updatedUser = {
+      id: user?.id || `usr-${newRole.toLowerCase()}-101`,
+      name: user?.name || `Demo ${newRole.charAt(0) + newRole.slice(1).toLowerCase()}`,
+      email: user?.email || `${newRole.toLowerCase()}@viewroom-demo.com`,
+      role: newRole,
+    };
+    setUser(updatedUser);
+    setIsLoggedIn(true);
+    setIsRegistered(true);
+    localStorage.setItem("viewroom-logged-in", "true");
+    localStorage.setItem("viewroom-registered", "true");
+    localStorage.setItem("viewroom-user", JSON.stringify(updatedUser));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -80,6 +96,7 @@ export function AuthProvider({ children }) {
         register,
         login,
         logout,
+        switchRole,
       }}
     >
       {children}

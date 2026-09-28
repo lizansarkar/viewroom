@@ -183,10 +183,87 @@ const PANORAMA_DATA = [
   },
 ];
 
+// ==========================================
+// AUDIBLE SPATIAL AMBIENT SOUND ENGINE
+// ==========================================
+class SpatialAmbientAudio {
+  constructor() {
+    this.ctx = null;
+    this.masterGain = null;
+    this.filter = null;
+    this.oscillators = [];
+    this.isPlaying = false;
+  }
+
+  init() {
+    if (this.ctx) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    this.ctx = new AudioContext();
+
+    this.masterGain = this.ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
+
+    // Warm Lowpass Filter for soft soothing ambient sound
+    this.filter = this.ctx.createBiquadFilter();
+    this.filter.type = "lowpass";
+    this.filter.frequency.setValueAtTime(750, this.ctx.currentTime);
+
+    this.filter.connect(this.masterGain);
+    this.masterGain.connect(this.ctx.destination);
+
+    // Lush relaxing harmonic chord (C4, E4, G4, B4, D5)
+    const freqs = [261.63, 329.63, 392.00, 493.88, 587.33];
+    this.oscillators = freqs.map((freq) => {
+      const osc = this.ctx.createOscillator();
+      const oscGain = this.ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      oscGain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+      osc.connect(oscGain);
+      oscGain.connect(this.filter);
+      return osc;
+    });
+  }
+
+  play() {
+    this.init();
+    if (!this.ctx) return;
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+    if (!this.isPlaying) {
+      try {
+        this.oscillators.forEach((osc) => osc.start());
+      } catch (e) {}
+      this.isPlaying = true;
+    }
+    // Set rich audible gain (25% volume)
+    this.masterGain.gain.setTargetAtTime(0.25, this.ctx.currentTime, 0.4);
+  }
+
+  mute() {
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.2);
+    }
+  }
+
+  unmute() {
+    if (this.masterGain && this.ctx) {
+      if (this.ctx.state === "suspended") {
+        this.ctx.resume();
+      }
+      this.masterGain.gain.setTargetAtTime(0.25, this.ctx.currentTime, 0.3);
+    }
+  }
+}
+
+const spatialAudio = new SpatialAmbientAudio();
+
 function VirtualTourViewer() {
   const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false); // Unmuted by default so sound starts when scrolled to section
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
   const [snapshotEffect, setSnapshotEffect] = useState(false);
@@ -240,8 +317,60 @@ function VirtualTourViewer() {
           // Ignore unmount cleanup warning
         }
       }
+      spatialAudio.mute();
     };
   }, []);
+
+  // Global browser gesture listener to unlock Web Audio context instantly
+  useEffect(() => {
+    const handleGesture = () => {
+      if (!isMuted) {
+        spatialAudio.play();
+      }
+    };
+
+    window.addEventListener("click", handleGesture, { once: true });
+    window.addEventListener("touchstart", handleGesture, { once: true });
+    window.addEventListener("scroll", handleGesture, { once: true });
+
+    return () => {
+      window.removeEventListener("click", handleGesture);
+      window.removeEventListener("touchstart", handleGesture);
+      window.removeEventListener("scroll", handleGesture);
+    };
+  }, [isMuted]);
+
+  // IntersectionObserver for Autoplay Audio when User Scrolls to 360 Section
+  useEffect(() => {
+    if (!viewportRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (!isMuted) {
+              spatialAudio.play();
+            }
+          } else {
+            spatialAudio.mute();
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(viewportRef.current);
+    return () => observer.disconnect();
+  }, [isMuted]);
+
+  // Sync Ambient Audio Mute State
+  useEffect(() => {
+    if (isMuted) {
+      spatialAudio.mute();
+    } else {
+      spatialAudio.unmute();
+    }
+  }, [isMuted]);
 
   // Photo Sphere Viewer Instance Callback
   const handleReady = (instance) => {
@@ -301,6 +430,9 @@ function VirtualTourViewer() {
       {/* 360 VIEWPORT CONTAINER - FULL WIDTH */}
       <div
         ref={viewportRef}
+        onClick={() => {
+          if (!isMuted) spatialAudio.play();
+        }}
         className="relative w-full h-[520px] sm:h-[640px] lg:h-[720px] overflow-hidden shadow-2xl bg-black group"
       >
         {/* Photo Sphere Viewer Renderer */}
@@ -357,9 +489,17 @@ function VirtualTourViewer() {
               {/* 3. AUDIO MUTE / UNMUTE BUTTON */}
               <button
                 type="button"
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={() => {
+                  const nextMuted = !isMuted;
+                  setIsMuted(nextMuted);
+                  if (!nextMuted) spatialAudio.play();
+                }}
                 title={isMuted ? "Unmute Sound" : "Mute Sound"}
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
+                  !isMuted
+                    ? "bg-white text-black border-white font-bold"
+                    : "bg-white/25 hover:bg-white/40 border-white/40 text-white"
+                }`}
               >
                 <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} className="text-base" />
               </button>

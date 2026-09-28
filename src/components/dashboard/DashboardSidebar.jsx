@@ -6,10 +6,8 @@ import {
   faCube,
   faPlus,
   faSliders,
-  faUserGear,
   faSignOutAlt,
   faXmark,
-  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setIsOpen, user, logout }) {
@@ -33,7 +31,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-base-200/90 border-r border-[var(--app-border)]/20 p-6 flex flex-col justify-between transition-transform duration-300 ${
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-base-200 border-r border-base-content/15 p-6 flex flex-col justify-between transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -41,31 +39,31 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
           {/* Header Branding */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-base-content text-base-100 flex items-center justify-center font-bold text-xs shadow-md">
+              <div className="w-8 h-8 rounded-lg bg-base-content text-base-100 flex items-center justify-center font-bold text-xs shadow-sm">
                 360°
               </div>
-              <span className="font-heading font-black text-sm uppercase tracking-wider text-[var(--app-text-primary)]">
+              <span className="font-heading font-black text-sm uppercase tracking-wider text-base-content">
                 OWNER DASHBOARD
               </span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+              className="lg:hidden opacity-70 hover:opacity-100"
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
 
           {/* User Profile Badge */}
-          <div className="p-3.5 rounded-xl bg-base-100 border border-[var(--app-border)]/30 mb-6 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+          <div className="p-3.5 rounded-xl bg-base-100 border border-base-content/15 mb-6 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-base-content text-base-100 flex items-center justify-center font-bold text-xs uppercase shadow-sm shrink-0">
               {user?.name ? user.name[0] : "O"}
             </div>
             <div className="overflow-hidden">
-              <h4 className="font-bold text-xs text-[var(--app-text-primary)] truncate">
+              <h4 className="font-bold text-xs text-base-content truncate">
                 {user?.name || "Owner Creator"}
               </h4>
-              <span className="inline-block px-2 py-0.5 rounded-full bg-base-300 text-[9px] font-extrabold text-[var(--app-text-secondary)] uppercase">
+              <span className="inline-block px-2 py-0.5 rounded-full bg-base-300 text-[9px] font-extrabold opacity-70 uppercase border border-base-content/10">
                 {user?.role || "CREATOR"}
               </span>
             </div>
@@ -80,10 +78,10 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
                   setActiveTab(item.id);
                   setIsOpen(false);
                 }}
-                className={`w-full px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-3 transition-all ${
+                className={`w-full px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-3 transition-all cursor-pointer ${
                   activeTab === item.id
-                    ? "bg-base-content text-base-100 shadow-md translate-x-1"
-                    : "text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)] hover:bg-base-300/50"
+                    ? "bg-base-content text-base-100 shadow-sm translate-x-1 font-black"
+                    : "opacity-70 hover:opacity-100 hover:bg-base-300"
                 }`}
               >
                 <FontAwesomeIcon icon={item.icon} className="text-sm w-4" />
@@ -94,10 +92,10 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
         </div>
 
         {/* Footer Actions */}
-        <div className="space-y-2 pt-4 border-t border-[var(--app-border)]/20">
+        <div className="space-y-2 pt-4 border-t border-base-content/15">
           <button
             onClick={logout}
-            className="w-full px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-rose-500 hover:bg-rose-500/10 flex items-center gap-3 transition-colors"
+            className="w-full px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider opacity-70 hover:opacity-100 hover:bg-base-300 flex items-center gap-3 transition-colors cursor-pointer"
           >
             <FontAwesomeIcon icon={faSignOutAlt} className="w-4" />
             <span>Sign Out</span>

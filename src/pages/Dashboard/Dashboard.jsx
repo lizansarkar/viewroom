@@ -35,47 +35,49 @@ export default function Dashboard() {
       {/* Main Content Container */}
       <div className="flex-1 min-w-0 flex flex-col">
         
-        {/* Top Navbar */}
-        <header className="px-6 py-4 bg-base-200/40 border-b border-[var(--app-border)]/20 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg bg-base-200 text-[var(--app-text-primary)]"
-            >
-              <FontAwesomeIcon icon={faBars} />
-            </button>
-            
-            <div className="flex items-center gap-2">
-              <h1 className="font-heading font-black text-lg uppercase tracking-tight">
-                {effectiveRole === "ADMIN" && "ADMINISTRATOR DASHBOARD"}
-                {effectiveRole === "CREATOR" && "CREATOR & OWNER DASHBOARD"}
-                {effectiveRole === "CLIENT" && "CLIENT SPATIAL DASHBOARD"}
-                {effectiveRole === "VISITOR" && "VISITOR DISCOVERY HUB"}
-              </h1>
+        {/* Top Navbar Header - Bounded to max-w-7xl with Monochrome Styling */}
+        <header className="px-4 sm:px-6 lg:px-8 py-4 bg-base-200/40 border-b border-base-content/15 sticky top-0 z-20 backdrop-blur-md">
+          <div className="max-w-7xl w-full mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2 rounded-lg bg-base-200 text-base-content border border-base-content/15"
+              >
+                <FontAwesomeIcon icon={faBars} />
+              </button>
+              
+              <div className="flex items-center gap-2">
+                <h1 className="font-heading font-black text-lg uppercase tracking-tight text-base-content">
+                  {effectiveRole === "ADMIN" && "ADMINISTRATOR DASHBOARD"}
+                  {effectiveRole === "CREATOR" && "CREATOR & OWNER DASHBOARD"}
+                  {effectiveRole === "CLIENT" && "CLIENT SPATIAL DASHBOARD"}
+                  {effectiveRole === "VISITOR" && "VISITOR DISCOVERY HUB"}
+                </h1>
 
-              {adminPreviewRole && (
-                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 text-[10px] font-extrabold uppercase border border-amber-500/30 flex items-center gap-1">
-                  <FontAwesomeIcon icon={faEye} />
-                  Previewing as {adminPreviewRole}
-                </span>
-              )}
+                {adminPreviewRole && (
+                  <span className="px-3 py-1 rounded-full bg-base-300 text-base-content text-[10px] font-extrabold uppercase border border-base-content/20 flex items-center gap-1">
+                    <FontAwesomeIcon icon={faEye} />
+                    Previewing as {adminPreviewRole}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Reset Preview Mode for Admin */}
-          {adminPreviewRole && (
-            <button
-              onClick={() => setAdminPreviewRole(null)}
-              className="px-3.5 py-1.5 rounded-full bg-amber-500 text-black text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:opacity-90"
-            >
-              <FontAwesomeIcon icon={faCrown} />
-              Reset to Admin View
-            </button>
-          )}
+            {/* Reset Preview Mode for Admin */}
+            {adminPreviewRole && (
+              <button
+                onClick={() => setAdminPreviewRole(null)}
+                className="px-3.5 py-1.5 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:opacity-90 shadow-sm"
+              >
+                <FontAwesomeIcon icon={faCrown} />
+                Reset to Admin View
+              </button>
+            )}
+          </div>
         </header>
 
-        {/* Dynamic Role-Based Body Content */}
-        <main className="p-6 lg:p-8 max-w-7xl w-full mx-auto flex-1">
+        {/* Dynamic Role-Based Body Content (Max 7xl width) */}
+        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto flex-1">
           
           {/* 1. ADMIN ROLE DASHBOARD */}
           {effectiveRole === "ADMIN" && (

@@ -7,9 +7,6 @@ import {
   faUser,
   faEye,
   faRocket,
-  faCompass,
-  faHistory,
-  faExternalLinkAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { apiPromoteToCreator } from "../../services/api";
 
@@ -59,22 +56,22 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
   };
 
   return (
-    <div className="space-y-8 text-[var(--app-text-primary)]">
+    <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
       
-      {/* Top Welcome Header & Upgrade Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-base-200/50 border border-[var(--app-border)]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+      {/* Top Welcome Header & Upgrade Card - Monochrome Black & White */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-base-200 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center text-xl">
+          <div className="w-12 h-12 rounded-2xl bg-base-300 text-base-content border border-base-content/20 flex items-center justify-center text-xl shrink-0">
             <FontAwesomeIcon icon={faUser} />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-purple-500 block mb-1">
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block mb-1">
               CLIENT DASHBOARD
             </span>
             <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight">
               WELCOME BACK, {user?.name?.toUpperCase() || "SPATIAL EXPLORER"}
             </h2>
-            <p className="text-xs text-[var(--app-text-secondary)] mt-1">
+            <p className="text-xs opacity-70 mt-1">
               Manage your bookmarked 360° spaces, review Spatial AI search history, and upgrade to a Creator account.
             </p>
           </div>
@@ -84,7 +81,7 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
         <button
           onClick={handleUpgrade}
           disabled={upgrading}
-          className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md hover:opacity-90 transition-opacity whitespace-nowrap self-stretch md:self-auto justify-center"
+          className="px-6 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity whitespace-nowrap self-stretch md:self-auto justify-center cursor-pointer"
         >
           <FontAwesomeIcon icon={faRocket} />
           <span>{upgrading ? "Upgrading..." : "Become a 360° Creator (Free)"}</span>
@@ -98,10 +95,10 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-              <FontAwesomeIcon icon={faBookmark} className="text-purple-500" />
+              <FontAwesomeIcon icon={faBookmark} />
               SAVED & BOOKMARKED SPACES ({mockBookmarks.length})
             </h3>
-            <Link to="/explore" className="text-xs font-bold uppercase text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]">
+            <Link to="/explore" className="text-xs font-bold uppercase opacity-70 hover:opacity-100">
               Explore More →
             </Link>
           </div>
@@ -110,11 +107,11 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
             {mockBookmarks.map((b) => (
               <div
                 key={b.id}
-                className="p-4 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 flex flex-col justify-between shadow-sm hover:border-[var(--app-border)]/60 transition-all"
+                className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col justify-between shadow-sm hover:border-base-content/30 transition-all"
               >
-                <div className="relative h-40 rounded-xl overflow-hidden mb-3 bg-neutral-900">
+                <div className="relative h-40 rounded-xl overflow-hidden mb-3 bg-base-300">
                   <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-black/70 text-white text-[9px] font-extrabold uppercase">
+                  <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/15 text-[9px] font-extrabold uppercase">
                     {b.category}
                   </span>
                 </div>
@@ -134,7 +131,7 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
         {/* Right Column: Recent AI Concierge Search History */}
         <div className="space-y-4">
           <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-            <FontAwesomeIcon icon={faRobot} className="text-cyan-500" />
+            <FontAwesomeIcon icon={faRobot} />
             AI CONCIERGE SEARCH LOGS
           </h3>
 
@@ -142,14 +139,14 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
             {mockAiHistory.map((item, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-base-200/50 border border-[var(--app-border)]/20 text-xs space-y-1.5"
+                className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 text-xs space-y-1.5"
               >
-                <div className="flex items-center justify-between text-[10px] font-bold text-cyan-500 uppercase">
+                <div className="flex items-center justify-between text-[10px] font-bold opacity-70 uppercase">
                   <span>Question</span>
-                  <span className="text-[var(--app-text-secondary)] font-normal">{item.timestamp}</span>
+                  <span className="opacity-50 font-normal">{item.timestamp}</span>
                 </div>
-                <p className="font-bold text-[var(--app-text-primary)]">"{item.query}"</p>
-                <p className="text-[11px] text-[var(--app-text-secondary)] leading-relaxed">
+                <p className="font-bold text-base-content">"{item.query}"</p>
+                <p className="text-[11px] opacity-70 leading-relaxed">
                   {item.answer}
                 </p>
               </div>
