@@ -5,12 +5,14 @@ import Navbar from './components/universal/Navbar'
 import Footer from './components/universal/Footer'
 import AppRouter from './router/AppRouter'
 import AIChatbot from './components/ai/AIChatbot'
+import RecruiterSandbox from './components/recruiter/RecruiterSandbox'
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <div className="flex flex-col min-h-screen relative">
+          <RecruiterSandbox />
           <Navbar />
           <main className="flex-1">
             <AppRouter />
