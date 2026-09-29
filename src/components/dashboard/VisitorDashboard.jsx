@@ -6,8 +6,8 @@ import {
   faBuilding,
   faUserPlus,
   faSignInAlt,
-  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../reuseable/Button";
 
 export default function VisitorDashboard() {
   const featuredSpaces = [
@@ -28,8 +28,7 @@ export default function VisitorDashboard() {
   ];
 
   return (
-    <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
-      
+    <div className="space-y-8 text-base-content w-full">
       {/* Hero Welcome Banner - Monochrome Black & White */}
       <div className="p-8 sm:p-12 rounded-3xl bg-base-200 border border-base-content/15 text-center max-w-3xl mx-auto flex flex-col items-center shadow-sm">
         <div className="w-14 h-14 rounded-2xl bg-base-300 text-base-content border border-base-content/20 flex items-center justify-center text-2xl mb-4 shrink-0">
@@ -40,7 +39,7 @@ export default function VisitorDashboard() {
           VISITOR & GUEST DISCOVERY DASHBOARD
         </span>
 
-        <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight mb-4">
+        <h2 className="text-3xl sm:text-4xl font-heading font-black uppercase tracking-tight mb-4">
           EXPLORE THE FUTURE OF 360° SPACES
         </h2>
 
@@ -48,19 +47,19 @@ export default function VisitorDashboard() {
           Welcome to ViewRoom 360°! Sign in or create a free account to bookmark 360° property spaces, save AI Concierge chats, or publish your own 360° virtual tours.
         </p>
 
-        {/* Action Buttons */}
+        {/* Action Buttons using reusable Button component */}
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
           <Link to="/sign-up" className="w-full sm:w-auto">
-            <button className="w-full px-8 py-3.5 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer">
-              <FontAwesomeIcon icon={faUserPlus} />
-              <span>Create Free Account</span>
-            </button>
+            <Button variant="primary">
+              <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
+              CREATE FREE ACCOUNT
+            </Button>
           </Link>
           <Link to="/sign-in" className="w-full sm:w-auto">
-            <button className="w-full px-8 py-3.5 rounded-full border border-base-content/20 text-xs font-bold uppercase tracking-wider hover:bg-base-300 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-              <FontAwesomeIcon icon={faSignInAlt} />
-              <span>Sign In</span>
-            </button>
+            <Button variant="secondary">
+              <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
+              SIGN IN
+            </Button>
           </Link>
         </div>
       </div>
@@ -72,8 +71,10 @@ export default function VisitorDashboard() {
             <FontAwesomeIcon icon={faBuilding} />
             FEATURED PUBLIC 360° EXPERIENCES
           </h3>
-          <Link to="/explore" className="text-xs font-bold uppercase opacity-70 hover:opacity-100">
-            Explore All →
+          <Link to="/explore">
+            <Button variant="neutral">
+              EXPLORE ALL
+            </Button>
           </Link>
         </div>
 
@@ -92,12 +93,10 @@ export default function VisitorDashboard() {
 
               <h4 className="font-heading font-bold text-base uppercase mb-3">{space.title}</h4>
 
-              <Link
-                to={space.link}
-                className="w-full py-2.5 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2"
-              >
-                <span>Launch 360° Interactive</span>
-                <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
+              <Link to={space.link} className="w-full">
+                <Button variant="primary" className="w-full text-center">
+                  LAUNCH 360° INTERACTIVE
+                </Button>
               </Link>
             </div>
           ))}

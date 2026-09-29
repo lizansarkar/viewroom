@@ -9,6 +9,7 @@ import {
   faXmark,
   faShieldHalved,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../reuseable/Button";
 import { useAuth } from "../../context/AuthContext";
 
 export default function RecruiterSandbox() {
@@ -98,24 +99,24 @@ export default function RecruiterSandbox() {
 
           {/* Right: Quick Action Buttons for Modals */}
           <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => setActiveModal("tech")}
-              className="px-2.5 py-1 rounded-full bg-base-300 hover:bg-base-100 text-base-content text-[10px] font-extrabold border border-base-content/15 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+              className="!text-[10px] !px-2.5 !py-0.5"
               title="Tech Architecture"
             >
-              <FontAwesomeIcon icon={faDiagramProject} />
+              <FontAwesomeIcon icon={faDiagramProject} className="mr-1" />
               <span>Tech</span>
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => setActiveModal("roi")}
-              className="px-2.5 py-1 rounded-full bg-base-300 hover:bg-base-100 text-base-content text-[10px] font-extrabold border border-base-content/15 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+              className="!text-[10px] !px-2.5 !py-0.5"
               title="ROI Calculator"
             >
-              <FontAwesomeIcon icon={faCalculator} />
+              <FontAwesomeIcon icon={faCalculator} className="mr-1" />
               <span>ROI</span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -170,24 +171,24 @@ export default function RecruiterSandbox() {
             </div>
 
             {/* Architecture Inspector Modal Trigger */}
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => setActiveModal("tech")}
-              className="px-3 py-1 rounded-full bg-base-300 hover:bg-base-100 text-base-content text-[10px] font-extrabold uppercase tracking-wider border border-base-content/15 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+              className="!text-[10px] !px-3 !py-1 uppercase"
             >
-              <FontAwesomeIcon icon={faDiagramProject} />
+              <FontAwesomeIcon icon={faDiagramProject} className="mr-1" />
               Tech Stack
-            </button>
+            </Button>
 
             {/* ROI Calculator Modal Trigger */}
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => setActiveModal("roi")}
-              className="px-3 py-1 rounded-full bg-base-300 hover:bg-base-100 text-base-content text-[10px] font-extrabold uppercase tracking-wider border border-base-content/15 flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
+              className="!text-[10px] !px-3 !py-1 uppercase"
             >
-              <FontAwesomeIcon icon={faCalculator} />
+              <FontAwesomeIcon icon={faCalculator} className="mr-1" />
               ROI Impact
-            </button>
+            </Button>
           </div>
 
         </div>

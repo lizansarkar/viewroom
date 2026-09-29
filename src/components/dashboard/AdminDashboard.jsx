@@ -11,6 +11,7 @@ import {
   faServer,
   faRobot,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../reuseable/Button";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import {
   apiGetAdminStats,
@@ -96,23 +97,25 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
           </div>
         </div>
 
-        {/* Role Preview Switcher for Admin */}
+        {/* Role Preview Switcher for Admin using reusable Button */}
         <div className="flex items-center gap-2 bg-base-100 p-2 rounded-2xl border border-base-content/15 shadow-sm self-stretch md:self-auto justify-center">
           <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 px-2">
             PREVIEW AS:
           </span>
-          <button
+          <Button
+            variant="secondary"
             onClick={() => onPreviewModeChange("CREATOR")}
-            className="px-3 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-xs font-bold uppercase tracking-wider transition-colors border border-base-content/10"
+            className="!text-xs !px-3 !py-1"
           >
             Creator View
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
             onClick={() => onPreviewModeChange("CLIENT")}
-            className="px-3 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-xs font-bold uppercase tracking-wider transition-colors border border-base-content/10"
+            className="!text-xs !px-3 !py-1"
           >
             Client View
-          </button>
+          </Button>
         </div>
       </div>
 

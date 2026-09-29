@@ -14,183 +14,104 @@ import {
   faCompress,
   faVolumeHigh,
   faVolumeMute,
-  faEye,
-  faEyeSlash,
-  faCamera,
   faChevronLeft,
   faChevronRight,
   faVrCardboard,
+  faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 
-// 360 Scenes dataset (AERIAL VIEW, ENTRANCE, 1ST FLOOR - 6TH FLOOR)
-const PANORAMA_DATA = [
-  {
-    id: "aerial_view",
-    name: "AERIAL VIEW",
-    category: "Campus Aerial",
-    thumbnail: "/panoramas/panorama_aerial.jpg",
-    panorama: "/panoramas/panorama_aerial.jpg",
-    markers: [
-      {
-        id: "m_entrance",
-        position: { yaw: "0deg", pitch: "-15deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
-                  <span class="text-xs font-black">▲ ENTRANCE</span>
-                </div>
-              </div>`,
-        targetId: "entrance",
-      },
-    ],
-  },
-  {
-    id: "entrance",
-    name: "ENTRANCE",
-    category: "Main Building",
-    thumbnail: "/panoramas/panorama_entrance.jpg",
-    panorama: "/panoramas/panorama_entrance.jpg",
-    markers: [
-      {
-        id: "m_floor1",
-        position: { yaw: "30deg", pitch: "-5deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="w-14 h-14 rounded-full bg-black/80 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
-                  🚪
-                </div>
-                <span class="mt-1 bg-black/80 text-cyan-300 px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">1ST FLOOR LOBBY</span>
-              </div>`,
-        targetId: "floor_1",
-      },
-    ],
-  },
-  {
-    id: "floor_1",
-    name: "1ST FLOOR",
-    category: "Reception Lobby",
-    thumbnail: "/panoramas/panorama_floor1.jpg",
-    panorama: "/panoramas/panorama_floor1.jpg",
-    markers: [
-      {
-        id: "m_floor2",
-        position: { yaw: "-45deg", pitch: "0deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
-                  <span class="w-4 h-4 rounded-full bg-white"></span>
-                </div>
-                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">2ND FLOOR WORKSPACE</span>
-              </div>`,
-        targetId: "floor_2",
-      },
-    ],
-  },
-  {
-    id: "floor_2",
-    name: "2ND FLOOR",
-    category: "Open Office",
-    thumbnail: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2000",
-    markers: [
-      {
-        id: "m_floor3",
-        position: { yaw: "60deg", pitch: "0deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
-                  <span class="w-4 h-4 rounded-full bg-white"></span>
-                </div>
-                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">3RD FLOOR LAB</span>
-              </div>`,
-        targetId: "floor_3",
-      },
-    ],
-  },
-  {
-    id: "floor_3",
-    name: "3RD FLOOR",
-    category: "R&D Workstations",
-    thumbnail: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=2000",
-    markers: [
-      {
-        id: "m_floor4",
-        position: { yaw: "-30deg", pitch: "-5deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="w-14 h-14 rounded-full bg-black/80 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
-                  🚪
-                </div>
-                <span class="mt-1 bg-black/80 text-cyan-300 px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">4TH FLOOR GALLERY</span>
-              </div>`,
-        targetId: "floor_4",
-      },
-    ],
-  },
-  {
-    id: "floor_4",
-    name: "4TH FLOOR",
-    category: "Fashion Gallery",
-    thumbnail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000",
-    markers: [
-      {
-        id: "m_floor5",
-        position: { yaw: "90deg", pitch: "-10deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
-                  <span class="text-xs font-black">▲ 5TH FLOOR CAFETERIA</span>
-                </div>
-              </div>`,
-        targetId: "floor_5",
-      },
-    ],
-  },
-  {
-    id: "floor_5",
-    name: "5TH FLOOR",
-    category: "Dining & Lounge",
-    thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000",
-    markers: [
-      {
-        id: "m_floor6",
-        position: { yaw: "-80deg", pitch: "0deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white flex items-center justify-center shadow-2xl transition-transform group-hover:scale-110">
-                  <span class="w-4 h-4 rounded-full bg-white"></span>
-                </div>
-                <span class="mt-1 bg-black/80 text-white px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase">6TH FLOOR SUITE</span>
-              </div>`,
-        targetId: "floor_6",
-      },
-    ],
-  },
-  {
-    id: "floor_6",
-    name: "6TH FLOOR",
-    category: "Executive Workshop",
-    thumbnail: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400",
-    panorama: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2000",
-    markers: [
-      {
-        id: "m_aerial",
-        position: { yaw: "180deg", pitch: "-15deg" },
-        html: `<div class="cursor-pointer group flex flex-col items-center p-5 sm:p-7">
-                <div class="px-6 py-3 rounded-full bg-white/25 hover:bg-cyan-400 backdrop-blur-md border-2 border-white text-white hover:text-black shadow-2xl flex items-center gap-2 transition-transform group-hover:scale-110">
-                  <span class="text-xs font-black">▲ AERIAL CAMPUS</span>
-                </div>
-              </div>`,
-        targetId: "aerial_view",
-      },
-    ],
-  },
-];
+// ==========================================
+// CINEMATIC LUXURY SOUND & SPATIAL AUDIO SYNTHESIZERS
+// ==========================================
+class UISoundEngine {
+  constructor() {
+    this.ctx = null;
+  }
 
-// ==========================================
-// AUDIBLE SPATIAL AMBIENT SOUND ENGINE
-// ==========================================
+  init() {
+    if (this.ctx) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    this.ctx = new AudioContext();
+  }
+
+  // Soft subtle glass tap on hover (Volume: 0.08)
+  playHoverClick() {
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume();
+
+      const now = this.ctx.currentTime;
+      const osc1 = this.ctx.createOscillator();
+      const osc2 = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc1.type = "sine";
+      osc2.type = "sine";
+
+      // Glassy double overtone (1200Hz & 2400Hz)
+      osc1.frequency.setValueAtTime(1200, now);
+      osc1.frequency.exponentialRampToValueAtTime(800, now + 0.03);
+
+      osc2.frequency.setValueAtTime(2400, now);
+      osc2.frequency.exponentialRampToValueAtTime(1600, now + 0.03);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.03);
+      osc2.stop(now + 0.03);
+    } catch (e) {}
+  }
+
+  // Luxurious smooth camera transition glide (Volume: 0.18)
+  playCameraSwoosh() {
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume();
+
+      const now = this.ctx.currentTime;
+
+      // Pitch glide chord (C5 to E5 to G5 pitch swell)
+      const freqs = [523.25, 659.25, 783.99];
+      freqs.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq * 0.7, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.1, now + 0.22);
+        osc.frequency.exponentialRampToValueAtTime(freq, now + 0.35);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.06 - idx * 0.015, now + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.35);
+      });
+    } catch (e) {}
+  }
+}
+
 class SpatialAmbientAudio {
   constructor() {
     this.ctx = null;
     this.masterGain = null;
     this.filter = null;
+    this.lfo = null;
+    this.lfoGain = null;
     this.oscillators = [];
     this.isPlaying = false;
   }
@@ -204,22 +125,35 @@ class SpatialAmbientAudio {
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
 
-    // Warm Lowpass Filter for soft soothing ambient sound
+    // Warm Analog Lowpass Filter for soft soothing ambient pad
     this.filter = this.ctx.createBiquadFilter();
     this.filter.type = "lowpass";
-    this.filter.frequency.setValueAtTime(750, this.ctx.currentTime);
+    this.filter.frequency.setValueAtTime(450, this.ctx.currentTime);
+    this.filter.Q.setValueAtTime(1.2, this.ctx.currentTime);
+
+    // LFO for slow organic breathing / swell effect (0.08 Hz)
+    this.lfo = this.ctx.createOscillator();
+    this.lfoGain = this.ctx.createGain();
+    this.lfo.type = "sine";
+    this.lfo.frequency.setValueAtTime(0.08, this.ctx.currentTime);
+    this.lfoGain.gain.setValueAtTime(120, this.ctx.currentTime);
+
+    this.lfo.connect(this.lfoGain);
+    this.lfoGain.connect(this.filter.frequency);
 
     this.filter.connect(this.masterGain);
     this.masterGain.connect(this.ctx.destination);
 
-    // Lush relaxing harmonic chord (C4, E4, G4, B4, D5)
-    const freqs = [261.63, 329.63, 392.00, 493.88, 587.33];
-    this.oscillators = freqs.map((freq) => {
+    // Deep soothing ambient chord (F2, C3, F3, A3, C4)
+    const chord = [87.31, 130.81, 174.61, 220.0, 261.63];
+    this.oscillators = chord.map((freq) => {
       const osc = this.ctx.createOscillator();
       const oscGain = this.ctx.createGain();
+
       osc.type = "sine";
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      oscGain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+      oscGain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+
       osc.connect(oscGain);
       oscGain.connect(this.filter);
       return osc;
@@ -235,11 +169,12 @@ class SpatialAmbientAudio {
     if (!this.isPlaying) {
       try {
         this.oscillators.forEach((osc) => osc.start());
+        this.lfo.start();
       } catch (e) {}
       this.isPlaying = true;
     }
-    // Set rich audible gain (25% volume)
-    this.masterGain.gain.setTargetAtTime(0.25, this.ctx.currentTime, 0.4);
+    // Set gentle relaxing background volume (15%)
+    this.masterGain.gain.setTargetAtTime(0.15, this.ctx.currentTime, 0.5);
   }
 
   mute() {
@@ -253,17 +188,227 @@ class SpatialAmbientAudio {
       if (this.ctx.state === "suspended") {
         this.ctx.resume();
       }
-      this.masterGain.gain.setTargetAtTime(0.25, this.ctx.currentTime, 0.3);
+      this.masterGain.gain.setTargetAtTime(0.15, this.ctx.currentTime, 0.3);
     }
   }
 }
 
+const uiSound = new UISoundEngine();
 const spatialAudio = new SpatialAmbientAudio();
+
+// ==========================================
+// 3D FLOOR PUCK & DRONE HOTSPOT HELPERS
+// ==========================================
+
+// Double Concentric Ring Floor Target (Puck) - Clean UI without persistent static text badge
+const createFloorPuckMarkerHtml = (label) => `
+  <div class="cursor-pointer group relative flex flex-col items-center justify-center p-3 select-none">
+    <!-- Hover Pill Badge (Fades in on hover rgba(0,0,0,0.75), white typography, arrow indicator) -->
+    <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
+      <span>${label}</span>
+      <span class="text-xs">➔</span>
+    </div>
+
+    <!-- Minimal Circular Floor Target Puck (XZ Floor Plane Perspective Tilt, scales 1.0x to 1.15x) -->
+    <div style="transform: perspective(500px) rotateX(70deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-115 group-hover:border-white group-hover:bg-white/40 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.95)]">
+      <!-- Outer Translucent Ring Ripple -->
+      <div class="absolute inset-0 rounded-full border border-white/50 animate-ping opacity-60"></div>
+      <!-- Inner Solid Bright White Circle -->
+      <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110"></div>
+    </div>
+  </div>
+`;
+
+// Floating Drone / Aerial Action Hotspot
+const createDroneHotspotHtml = (label, icon = "🛸") => `
+  <div class="cursor-pointer group flex flex-col items-center p-3 select-none">
+    <div class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-black/85 hover:bg-white hover:text-black backdrop-blur-md border-2 border-white text-white shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex items-center gap-2.5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.9)]">
+      <span class="text-base sm:text-lg animate-bounce">${icon}</span>
+      <span class="text-xs sm:text-sm font-black uppercase tracking-wider">${label}</span>
+    </div>
+  </div>
+`;
+
+// ==========================================
+// MULTI-FLOOR CONNECTED NODE GRAPH DATASET
+// ==========================================
+const TOUR_NODES = [
+  {
+    id: "aerial_view",
+    name: "Ground Floor Exterior & Aerial",
+    category: "Campus Aerial",
+    floorLevel: 0,
+    thumbnail: "/panoramas/panorama_aerial.jpg",
+    panorama: "/panoramas/panorama_aerial.jpg",
+    connections: [
+      {
+        targetNodeId: "entrance",
+        label: "Enter Main Building",
+        type: "floor_puck",
+        position: { yaw: "0deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "entrance",
+    name: "Ground Floor Lobby",
+    category: "Main Building",
+    floorLevel: 0,
+    thumbnail: "/panoramas/panorama_entrance.jpg",
+    panorama: "/panoramas/panorama_entrance.jpg",
+    connections: [
+      {
+        targetNodeId: "floor_1",
+        label: "Stairs to 1st Floor Lobby",
+        type: "floor_puck",
+        position: { yaw: "35deg", pitch: "-35deg" },
+      },
+      {
+        targetNodeId: "aerial_view",
+        label: "Fly Above • Aerial View",
+        type: "drone_badge",
+        position: { yaw: "-120deg", pitch: "30deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_1",
+    name: "1st Floor Lobby",
+    category: "Reception Lobby",
+    floorLevel: 1,
+    thumbnail: "/panoramas/panorama_floor1.jpg",
+    panorama: "/panoramas/panorama_floor1.jpg",
+    connections: [
+      {
+        targetNodeId: "floor_2",
+        label: "Stairs to 2nd Floor Workspace",
+        type: "floor_puck",
+        position: { yaw: "45deg", pitch: "-35deg" },
+      },
+      {
+        targetNodeId: "entrance",
+        label: "Return to Ground Floor",
+        type: "floor_puck",
+        position: { yaw: "-135deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_2",
+    name: "2nd Floor Lounge & Workspace",
+    category: "Open Office",
+    floorLevel: 2,
+    thumbnail: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2000",
+    connections: [
+      {
+        targetNodeId: "floor_3",
+        label: "Stairs to 3rd Floor R&D Lab",
+        type: "floor_puck",
+        position: { yaw: "60deg", pitch: "-30deg" },
+      },
+      {
+        targetNodeId: "floor_1",
+        label: "Go Down to 1st Floor Lobby",
+        type: "floor_puck",
+        position: { yaw: "-120deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_3",
+    name: "3rd Floor R&D Workstations",
+    category: "R&D Workstations",
+    floorLevel: 3,
+    thumbnail: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&q=80&w=2000",
+    connections: [
+      {
+        targetNodeId: "floor_4",
+        label: "Stairs to 4th Floor Gallery",
+        type: "floor_puck",
+        position: { yaw: "45deg", pitch: "-30deg" },
+      },
+      {
+        targetNodeId: "floor_2",
+        label: "Go Down to 2nd Floor Lounge",
+        type: "floor_puck",
+        position: { yaw: "-135deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_4",
+    name: "4th Floor Fashion Gallery",
+    category: "Fashion Gallery",
+    floorLevel: 4,
+    thumbnail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=2000",
+    connections: [
+      {
+        targetNodeId: "floor_5",
+        label: "Elevator to 5th Floor Cafeteria",
+        type: "floor_puck",
+        position: { yaw: "90deg", pitch: "-30deg" },
+      },
+      {
+        targetNodeId: "floor_3",
+        label: "Go Down to 3rd Floor Lab",
+        type: "floor_puck",
+        position: { yaw: "-90deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_5",
+    name: "5th Floor Dining & Cafeteria",
+    category: "Dining & Lounge",
+    floorLevel: 5,
+    thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2000",
+    connections: [
+      {
+        targetNodeId: "floor_6",
+        label: "Elevator to 6th Floor Suite",
+        type: "floor_puck",
+        position: { yaw: "75deg", pitch: "-30deg" },
+      },
+      {
+        targetNodeId: "floor_4",
+        label: "Go Down to 4th Floor Gallery",
+        type: "floor_puck",
+        position: { yaw: "-105deg", pitch: "-35deg" },
+      },
+    ],
+  },
+  {
+    id: "floor_6",
+    name: "6th Floor Executive Suite",
+    category: "Executive Workshop",
+    floorLevel: 6,
+    thumbnail: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400",
+    panorama: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2000",
+    connections: [
+      {
+        targetNodeId: "floor_5",
+        label: "Go Down to 5th Floor Cafeteria",
+        type: "floor_puck",
+        position: { yaw: "-150deg", pitch: "-35deg" },
+      },
+      {
+        targetNodeId: "aerial_view",
+        label: "Fly Above • Campus Aerial",
+        type: "drone_badge",
+        position: { yaw: "180deg", pitch: "25deg" },
+      },
+    ],
+  },
+];
 
 function VirtualTourViewer() {
   const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const [isMuted, setIsMuted] = useState(false); // Unmuted by default so sound starts when scrolled to section
+  const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
   const [snapshotEffect, setSnapshotEffect] = useState(false);
@@ -272,13 +417,24 @@ function VirtualTourViewer() {
   const viewportRef = useRef(null);
   const thumbnailScrollRef = useRef(null);
 
-  const activeScene = PANORAMA_DATA.find((s) => s.id === currentPanoramaId) || PANORAMA_DATA[0];
+  const activeNode = TOUR_NODES.find((s) => s.id === currentPanoramaId) || TOUR_NODES[0];
 
-  // GSAP Smooth Fade Transition on Panorama Change
+  // Dynamic Markers Generation from Connected Node Graph
+  const activeMarkers = activeNode.connections.map((conn, idx) => ({
+    id: `m_${activeNode.id}_to_${conn.targetNodeId}_${idx}`,
+    position: conn.position,
+    html:
+      conn.type === "drone_badge"
+        ? createDroneHotspotHtml(conn.label)
+        : createFloorPuckMarkerHtml(conn.label),
+    targetId: conn.targetNodeId,
+  }));
+
+  // GSAP Smooth Fade Transition on Panorama Node Change
   const changePanoramaWithGsap = (targetId) => {
     if (targetId === currentPanoramaId) return;
 
-    trackEvent("tour_viewed", "Skyline Campus 360°", `Switched to scene ${targetId}`);
+    trackEvent("tour_viewed", "Skyline Campus 360°", `Switched to node ${targetId}`);
 
     if (viewportRef.current) {
       gsap.to(viewportRef.current, {
@@ -299,29 +455,26 @@ function VirtualTourViewer() {
     }
   };
 
-  // Background Preload Adjacent Scene Textures into Browser Cache for 0ms transitions
+  // Preload Panoramas for Smooth 0ms Transitions
   useEffect(() => {
-    PANORAMA_DATA.forEach((scene) => {
-      if (scene.panorama && scene.panorama.startsWith("/")) {
+    TOUR_NODES.forEach((node) => {
+      if (node.panorama && node.panorama.startsWith("/")) {
         const img = new Image();
-        img.src = scene.panorama;
+        img.src = node.panorama;
       }
     });
 
-    // Cleanup WebGL PhotoSphereViewer instance on unmount
     return () => {
       if (psvRef.current) {
         try {
           psvRef.current.destroy();
-        } catch (err) {
-          // Ignore unmount cleanup warning
-        }
+        } catch (err) {}
       }
       spatialAudio.mute();
     };
   }, []);
 
-  // Global browser gesture listener to unlock Web Audio context instantly
+  // Global browser gesture listener to unlock Web Audio context
   useEffect(() => {
     const handleGesture = () => {
       if (!isMuted) {
@@ -340,7 +493,7 @@ function VirtualTourViewer() {
     };
   }, [isMuted]);
 
-  // IntersectionObserver for Autoplay Audio when User Scrolls to 360 Section
+  // Autoplay ambient spatial sound when viewer intersects viewport
   useEffect(() => {
     if (!viewportRef.current) return;
 
@@ -348,9 +501,7 @@ function VirtualTourViewer() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (!isMuted) {
-              spatialAudio.play();
-            }
+            if (!isMuted) spatialAudio.play();
           } else {
             spatialAudio.mute();
           }
@@ -363,7 +514,7 @@ function VirtualTourViewer() {
     return () => observer.disconnect();
   }, [isMuted]);
 
-  // Sync Ambient Audio Mute State
+  // Sync Audio Mute State
   useEffect(() => {
     if (isMuted) {
       spatialAudio.mute();
@@ -372,17 +523,37 @@ function VirtualTourViewer() {
     }
   }, [isMuted]);
 
-  // Photo Sphere Viewer Instance Callback
+  // Photo Sphere Viewer Instance Callback with Raycast & SFX Handling
   const handleReady = (instance) => {
     psvRef.current = instance;
 
-    // Handle marker click events
     const markersPlugin = instance.getPlugin(MarkersPlugin);
     if (markersPlugin) {
+      // Hover SFX on pointerenter
+      markersPlugin.addEventListener("over-marker", () => {
+        uiSound.playHoverClick();
+      });
+
+      // Select Marker: Camera Dolly Interpolation + Soft Swoosh SFX
       markersPlugin.addEventListener("select-marker", (e) => {
-        const targetId = e.marker.config.targetId;
+        const marker = e.marker;
+        const targetId = marker?.config?.targetId;
         if (targetId) {
-          changePanoramaWithGsap(targetId);
+          uiSound.playCameraSwoosh();
+
+          instance
+            .animate({
+              yaw: marker.config.position.yaw,
+              pitch: marker.config.position.pitch,
+              zoom: 60, // Camera dolly zoom toward floor node
+              speed: "3rpm",
+            })
+            .then(() => {
+              changePanoramaWithGsap(targetId);
+            })
+            .catch(() => {
+              changePanoramaWithGsap(targetId);
+            });
         }
       });
     }
@@ -408,26 +579,19 @@ function VirtualTourViewer() {
     }
   };
 
-  // Snapshot Flash Effect
-  const takeSnapshot = () => {
-    setSnapshotEffect(true);
-    setTimeout(() => setSnapshotEffect(false), 400);
-  };
-
-  // Plugin configuration for ReactPhotoSphereViewer
+  // Plugin configuration for PhotoSphereViewer
   const plugins = [
     [
       MarkersPlugin,
       {
-        markers: showHotspots ? activeScene.markers : [],
+        markers: showHotspots ? activeMarkers : [],
       },
     ],
   ];
 
   return (
     <div className="w-full flex flex-col items-center select-none">
-      
-      {/* 360 VIEWPORT CONTAINER - FULL WIDTH */}
+      {/* 360 VIEWPORT CONTAINER */}
       <div
         ref={viewportRef}
         onClick={() => {
@@ -437,7 +601,7 @@ function VirtualTourViewer() {
       >
         {/* Photo Sphere Viewer Renderer */}
         <ReactPhotoSphereViewer
-          src={activeScene.panorama}
+          src={activeNode.panorama}
           height="100%"
           width="100%"
           container="psv-container"
@@ -455,45 +619,53 @@ function VirtualTourViewer() {
           <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
         )}
 
-        {/* TOP-LEFT BRANDING HEADLINE */}
-        <div className="absolute top-5 left-5 z-20 flex items-center gap-3 bg-black/60 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
+        {/* TOP-LEFT MULTI-FLOOR BRANDING & LEVEL BADGE */}
+        <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-black/75 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
+          <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
           <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase">
-            360° TOUR • {activeScene.name}
+            FLOOR {activeNode.floorLevel} • {activeNode.name}
           </span>
         </div>
 
-        {/* VERTICAL TOGGLE ACTION MENU (Exact Match to Image 1) */}
+        {/* VERTICAL TOGGLE ACTION MENU */}
         <div className="absolute top-5 right-5 z-30 flex flex-col items-center gap-3 pointer-events-auto">
           {isMenuOpen ? (
             <div className="flex flex-col items-center gap-3 animate-in fade-in zoom-in-95 duration-200">
-              {/* 1. CLOSE BUTTON (✕ Circle with white border) */}
               <button
                 type="button"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  setIsMenuOpen(false);
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
                 title="Close Action Menu"
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border-2 border-white/80 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={faXmark} className="text-lg" />
               </button>
 
-              {/* 2. VR HEADSET MODE BUTTON */}
               <button
                 type="button"
-                onClick={toggleFullscreen}
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  toggleFullscreen();
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
                 title="VR Mode / Headset"
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={faVrCardboard} className="text-base" />
               </button>
 
-              {/* 3. AUDIO MUTE / UNMUTE BUTTON */}
               <button
                 type="button"
                 onClick={() => {
+                  uiSound.playHoverClick();
                   const nextMuted = !isMuted;
                   setIsMuted(nextMuted);
                   if (!nextMuted) spatialAudio.play();
                 }}
+                onMouseEnter={() => uiSound.playHoverClick()}
                 title={isMuted ? "Unmute Sound" : "Mute Sound"}
                 className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
                   !isMuted
@@ -504,10 +676,13 @@ function VirtualTourViewer() {
                 <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeHigh} className="text-base" />
               </button>
 
-              {/* 5. FULLSCREEN BUTTON */}
               <button
                 type="button"
-                onClick={toggleFullscreen}
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  toggleFullscreen();
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
                 title="Toggle Fullscreen"
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
               >
@@ -515,10 +690,13 @@ function VirtualTourViewer() {
               </button>
             </div>
           ) : (
-            /* COLLAPSED SINGLE MENU BUTTON (☰) */
             <button
               type="button"
-              onClick={() => setIsMenuOpen(true)}
+              onClick={() => {
+                uiSound.playHoverClick();
+                setIsMenuOpen(true);
+              }}
+              onMouseEnter={() => uiSound.playHoverClick()}
               title="Open Action Menu"
               className="w-12 h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border-2 border-white/80 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110 cursor-pointer"
             >
@@ -527,34 +705,38 @@ function VirtualTourViewer() {
           )}
         </div>
 
-        {/* BOTTOM THUMBNAIL GALLERY CAROUSEL (Exact Match to Image 2) */}
+        {/* BOTTOM THUMBNAIL GALLERY CAROUSEL */}
         <div className="absolute bottom-4 inset-x-4 sm:inset-x-8 z-20 flex items-center justify-center pointer-events-none">
           <div className="relative w-full max-w-5xl flex items-center justify-between pointer-events-auto">
-            
-            {/* Scroll Left Button */}
             <button
               type="button"
-              onClick={() => scrollThumbnails("left")}
+              onClick={() => {
+                uiSound.playHoverClick();
+                scrollThumbnails("left");
+              }}
+              onMouseEnter={() => uiSound.playHoverClick()}
               className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 mr-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
             >
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
 
-            {/* Scrollable Thumbnail Strip (Matching Image 2) */}
             <div
               ref={thumbnailScrollRef}
               className="flex items-center gap-3.5 overflow-x-auto scrollbar-none py-2 px-1 scroll-smooth w-full justify-start sm:justify-center"
             >
-              {PANORAMA_DATA.map((scene) => {
-                const isActive = scene.id === currentPanoramaId;
+              {TOUR_NODES.map((node) => {
+                const isActive = node.id === currentPanoramaId;
                 return (
                   <button
                     type="button"
-                    key={scene.id}
-                    onClick={() => changePanoramaWithGsap(scene.id)}
+                    key={node.id}
+                    onClick={() => {
+                      uiSound.playCameraSwoosh();
+                      changePanoramaWithGsap(node.id);
+                    }}
+                    onMouseEnter={() => uiSound.playHoverClick()}
                     className="flex flex-col items-center shrink-0 group cursor-pointer"
                   >
-                    {/* Rounded Thumbnail Image Box */}
                     <div
                       className={`relative w-28 sm:w-36 h-16 sm:h-20 rounded-2xl overflow-hidden transition-all duration-200 ${
                         isActive
@@ -563,8 +745,8 @@ function VirtualTourViewer() {
                       }`}
                     >
                       <img
-                        src={scene.thumbnail}
-                        alt={scene.name}
+                        src={node.thumbnail}
+                        alt={node.name}
                         className="w-full h-full object-cover"
                       />
                       {isActive && (
@@ -572,41 +754,41 @@ function VirtualTourViewer() {
                       )}
                     </div>
 
-                    {/* Thumbnail Label Text Directly Below */}
                     <span
                       className={`text-[11px] sm:text-xs font-extrabold uppercase tracking-wider mt-2 transition-colors ${
                         isActive ? "text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" : "text-white/75 group-hover:text-white"
                       }`}
                     >
-                      {scene.name}
+                      {node.name.split(" ")[0]} FL {node.floorLevel}
                     </span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Scroll Right Button */}
             <button
               type="button"
-              onClick={() => scrollThumbnails("right")}
+              onClick={() => {
+                uiSound.playHoverClick();
+                scrollThumbnails("right");
+              }}
+              onMouseEnter={() => uiSound.playHoverClick()}
               className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 ml-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
             >
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
-
           </div>
         </div>
-
       </div>
 
       {/* METADATA FOOTER BELOW VIEWER */}
       <div className="max-w-7xl w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-8">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
-            CURRENT SCENE • {activeScene.category}
+            CURRENT NODE • {activeNode.category} (FLOOR {activeNode.floorLevel})
           </span>
           <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--app-text-primary)]">
-            {activeScene.name}
+            {activeNode.name}
           </h3>
         </div>
 
@@ -619,7 +801,6 @@ function VirtualTourViewer() {
           </Button>
         </div>
       </div>
-
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   faEye,
   faRocket,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../reuseable/Button";
 import { apiPromoteToCreator } from "../../services/api";
 
 export default function ClientDashboard({ user, onUpgradeSuccess }) {
@@ -77,15 +78,16 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
           </div>
         </div>
 
-        {/* 1-Click Upgrade Button */}
-        <button
+        {/* 1-Click Upgrade Button using reusable Button component */}
+        <Button
+          variant="primary"
           onClick={handleUpgrade}
           disabled={upgrading}
-          className="px-6 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity whitespace-nowrap self-stretch md:self-auto justify-center cursor-pointer"
+          className="whitespace-nowrap cursor-pointer"
         >
-          <FontAwesomeIcon icon={faRocket} />
+          <FontAwesomeIcon icon={faRocket} className="mr-2" />
           <span>{upgrading ? "Upgrading..." : "Become a 360° Creator (Free)"}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Grid: Bookmarks & AI History */}

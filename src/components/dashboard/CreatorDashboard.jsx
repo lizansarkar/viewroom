@@ -10,6 +10,7 @@ import {
   faExternalLinkAlt,
   faCompass,
 } from "@fortawesome/free-solid-svg-icons";
+import Button from "../reuseable/Button";
 import HotspotEditorModal from "./HotspotEditorModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 import {
@@ -181,13 +182,14 @@ export default function CreatorDashboard({ user }) {
           </p>
         </div>
 
-        <button
+        <Button
+          variant="primary"
           onClick={() => setActiveSubTab("uploader")}
-          className="px-6 py-3 rounded-full bg-base-content text-base-100 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer"
+          className="whitespace-nowrap cursor-pointer"
         >
-          <FontAwesomeIcon icon={faPlus} />
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
           <span>Build New 360 Tour</span>
-        </button>
+        </Button>
       </div>
 
       {/* KPI Cards - Monochrome */}

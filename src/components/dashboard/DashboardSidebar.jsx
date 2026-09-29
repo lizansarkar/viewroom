@@ -9,6 +9,7 @@ import {
   faSignOutAlt,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import { ViewRoomLogoIcon } from "../reuseable/Logo";
 
 export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setIsOpen, user, logout }) {
   const navItems = [
@@ -29,26 +30,24 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
         ></div>
       )}
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container - Positioned below sticky Navbar (lg:top-24) with zero overlap */}
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-base-200 border-r border-base-content/15 p-6 flex flex-col justify-between transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-auto min-h-[500px] w-64 lg:w-64 shrink-0 bg-base-200 border border-base-content/15 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 shadow-sm ${
+          isOpen ? "translate-x-0 !fixed !inset-y-0 !z-50 bg-base-100 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
         <div>
           {/* Header Branding */}
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-base-content text-base-100 flex items-center justify-center font-bold text-xs shadow-sm">
-                360°
-              </div>
-              <span className="font-heading font-black text-sm uppercase tracking-wider text-base-content">
-                OWNER DASHBOARD
+            <div className="flex items-center gap-2.5 overflow-hidden">
+              <ViewRoomLogoIcon className="w-8 h-8 text-base-content shrink-0" />
+              <span className="font-heading font-black text-sm uppercase tracking-wider text-base-content truncate">
+                {user?.role ? `${user.role} DASHBOARD` : "VIEWROOM DASHBOARD"}
               </span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden opacity-70 hover:opacity-100"
+              className="lg:hidden opacity-70 hover:opacity-100 cursor-pointer"
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
@@ -56,7 +55,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
 
           {/* User Profile Badge */}
           <div className="p-3.5 rounded-xl bg-base-100 border border-base-content/15 mb-6 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-base-content text-base-100 flex items-center justify-center font-bold text-xs uppercase shadow-sm shrink-0">
+            <div className="w-9 h-9 rounded-full bg-base-content text-base-100 flex items-center justify-center font-bold text-xs uppercase shadow-sm shrink-0 font-black">
               {user?.name ? user.name[0] : "O"}
             </div>
             <div className="overflow-hidden">

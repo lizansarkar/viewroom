@@ -251,9 +251,9 @@ function Navbar() {
               <div className="dropdown dropdown-end relative">
                 <label
                   tabIndex={0}
-                  className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-primary/40 transition-all focus:outline-none"
+                  className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-base-content/40 transition-all focus:outline-none"
                 >
-                  <div className="w-10 h-10 rounded-full ring ring-primary/40 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold shadow-md">
+                  <div className="w-10 h-10 rounded-full ring-2 ring-base-content/30 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-200 text-base-content font-black shadow-sm">
                     {user?.avatar || user?.image ? (
                       <img
                         src={user.avatar || user.image}
@@ -261,67 +261,65 @@ function Navbar() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-base uppercase">
+                      <span className="text-base uppercase font-black">
                         {(user?.name || "U").charAt(0)}
                       </span>
                     )}
                   </div>
                 </label>
 
-                <ul
+                <div
                   tabIndex={0}
-                  className="dropdown-content menu p-3 shadow-2xl bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 rounded-2xl w-64 mt-3 z-50 gap-1.5"
+                  className="dropdown-content shadow-2xl bg-base-100 border border-base-content/20 rounded-2xl w-72 p-3 mt-3 z-[100] flex flex-col gap-2 font-sans"
                 >
-                  <li className="px-2 py-2 border-b border-[var(--app-border)]/15 pb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content font-bold flex items-center justify-center shrink-0 overflow-hidden shadow">
-                        {user?.avatar || user?.image ? (
-                          <img
-                            src={user.avatar || user.image}
-                            alt={user?.name || "User Avatar"}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-sm uppercase">
-                            {(user?.name || "U").charAt(0)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-bold text-sm text-base-content truncate">
-                          {user?.name || "User"}
+                  {/* User Profile Info Card Header */}
+                  <div className="p-3 rounded-xl bg-base-200/80 border border-base-content/15 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-base-content text-base-100 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                      {user?.avatar || user?.image ? (
+                        <img
+                          src={user.avatar || user.image}
+                          alt={user?.name || "User Avatar"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-sm font-black uppercase">
+                          {(user?.name || "U").charAt(0)}
                         </span>
-                        <span className="text-xs text-base-content/60 truncate">
-                          {user?.email || "user@viewroom.com"}
-                        </span>
-                        {user?.role && (
-                          <span className="mt-1 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded-full w-max">
-                            {user.role}
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
-                  </li>
+                    <div className="flex flex-col min-w-0 overflow-hidden">
+                      <span className="font-extrabold text-sm text-base-content truncate">
+                        {user?.name || "User"}
+                      </span>
+                      <span className="text-xs text-base-content/70 truncate font-medium">
+                        {user?.email || "user@viewroom.com"}
+                      </span>
+                      {user?.role && (
+                        <span className="mt-1 text-[10px] font-black uppercase tracking-wider bg-base-content text-base-100 px-2 py-0.5 rounded-full w-max">
+                          {user.role}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                  <li>
-                    <Link
-                      to="/dashboard"
-                      className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-base-content/90 hover:text-base-content hover:bg-base-200/70"
-                    >
-                      <LayoutDashboardIcon />
-                      <span>Dashboard</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={logout}
-                      className="py-2.5 font-medium flex items-center gap-2.5 rounded-xl text-error hover:bg-error/10 w-full text-left"
-                    >
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </button>
-                  </li>
-                </ul>
+                  <div className="h-px bg-base-content/10 my-0.5" />
+
+                  <Link
+                    to="/dashboard"
+                    className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-base-content hover:bg-base-200 transition-colors"
+                  >
+                    <LayoutDashboardIcon />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <button
+                    onClick={logout}
+                    className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-error hover:bg-error/10 w-full text-left transition-colors cursor-pointer"
+                  >
+                    <LogoutIcon />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </div>
             ) : isRegistered ? (
               <Link to="/sign-in">
