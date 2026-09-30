@@ -56,34 +56,17 @@ export default function Dashboard() {
         {/* Main Content Area */}
         <div className="flex-1 min-w-0 w-full flex flex-col space-y-6">
           
-          {/* Header Bar matching sidebar aesthetic */}
-          <header className="p-4 sm:p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                aria-label="Open navigation menu"
-                className="lg:hidden p-2.5 rounded-2xl bg-base-200 text-base-content hover:bg-base-300 transition-colors cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faBars} />
-              </button>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Dashboard</span>
-                <span className="text-xs text-base-content/30">/</span>
-                <span className="text-sm font-bold text-base-content capitalize">
-                  {activeTab ? activeTab.replace(/_/g, " ") : "Overview"}
-                </span>
-                
-                {adminPreviewRole && (
-                  <span className="ml-2 px-3 py-1 rounded-full bg-base-200 text-base-content text-[11px] font-semibold border border-base-content/10 flex items-center gap-1.5">
-                    <FontAwesomeIcon icon={faEye} />
-                    Previewing: {adminPreviewRole}
-                  </span>
-                )}
-              </div>
-            </div>
+          {/* Mobile Menu Trigger & Admin Preview Reset Bar */}
+          <div className="flex items-center justify-between lg:hidden mb-2">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open navigation menu"
+              className="p-2.5 rounded-2xl bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 transition-colors cursor-pointer shadow-xs flex items-center gap-2 text-xs font-semibold"
+            >
+              <FontAwesomeIcon icon={faBars} />
+              <span>Menu</span>
+            </button>
 
-            {/* Reset Preview Mode for Admin */}
             {adminPreviewRole && (
               <Button
                 variant="secondary"
@@ -91,10 +74,10 @@ export default function Dashboard() {
                 className="!text-xs !px-3.5 !py-1.5 !rounded-xl"
               >
                 <FontAwesomeIcon icon={faCrown} className="mr-1.5" />
-                Reset to Admin View
+                Reset Admin View
               </Button>
             )}
-          </header>
+          </div>
 
           {/* Dynamic Role-Based Content View & Sub-Routing */}
           <main className="w-full">
