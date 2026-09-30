@@ -21,7 +21,7 @@ import {
   apiAdminDeleteTour,
 } from "../../services/api";
 
-export default function AdminDashboard({ user, onPreviewModeChange }) {
+export default function AdminDashboard({ user, activeTab, setActiveTab: parentSetActiveTab, onPreviewModeChange }) {
   const [stats, setStats] = useState({
     totalUsers: 3,
     totalTours: 2,
@@ -32,8 +32,14 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
   });
   const [usersList, setUsersList] = useState([]);
   const [toursList, setToursList] = useState([]);
-  const [activeTab, setActiveTab] = useState("users");
+  const [currentTab, setCurrentTab] = useState(activeTab || "admin_overview");
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (activeTab) {
+      setCurrentTab(activeTab);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     loadAdminData();
@@ -169,9 +175,26 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
       {/* Admin Tab Switcher */}
       <div className="flex items-center gap-2 border-b border-base-content/10 pb-3 overflow-x-auto no-scrollbar">
         <button
-          onClick={() => setActiveTab("users")}
+          onClick={() => {
+            setCurrentTab("admin_overview");
+            if (parentSetActiveTab) parentSetActiveTab("admin_overview");
+          }}
           className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === "users"
+            currentTab === "admin_overview"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
+          }`}
+        >
+          <FontAwesomeIcon icon={faShieldHalved} className="mr-2" />
+          Admin Overview
+        </button>
+        <button
+          onClick={() => {
+            setCurrentTab("users");
+            if (parentSetActiveTab) parentSetActiveTab("users");
+          }}
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
+            currentTab === "users"
               ? "bg-base-200 text-base-content font-bold shadow-xs"
               : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
@@ -180,9 +203,12 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
           User Management & Roles
         </button>
         <button
-          onClick={() => setActiveTab("content")}
+          onClick={() => {
+            setCurrentTab("content_moderation");
+            if (parentSetActiveTab) parentSetActiveTab("content_moderation");
+          }}
           className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === "content"
+            currentTab === "content_moderation" || currentTab === "content"
               ? "bg-base-200 text-base-content font-bold shadow-xs"
               : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
@@ -191,9 +217,12 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
           Global Content Moderation
         </button>
         <button
-          onClick={() => setActiveTab("analytics")}
+          onClick={() => {
+            setCurrentTab("analytics");
+            if (parentSetActiveTab) parentSetActiveTab("analytics");
+          }}
           className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === "analytics"
+            currentTab === "analytics"
               ? "bg-base-200 text-base-content font-bold shadow-xs"
               : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
@@ -204,24 +233,24 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
       </div>
 
       {/* TAB 3: SPATIAL ANALYTICS DASHBOARD */}
-      {activeTab === "analytics" && <AnalyticsDashboard />}
+      {currentTab === "analytics" && <AnalyticsDashboard />}
 
       {/* TAB 1: USER MANAGEMENT & ROLE PROMOTION TABLE */}
-      {activeTab === "users" && (
-        <div className="p-6 rounded-3xl bg-base-200/50 border border-base-content/15 space-y-4">
+      {(currentTab === "users" || currentTab === "admin_overview") && (
+        <div className="p-6 rounded-3xl bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-              <FontAwesomeIcon icon={faUserCheck} />
-              REGISTERED USERS & ROLE ASSIGNMENT ({usersList.length})
+            <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+              <FontAwesomeIcon icon={faUserCheck} className="text-base-content/60" />
+              Registered Users & Role Assignment ({usersList.length})
             </h3>
-            <span className="text-xs opacity-70 font-medium">
-              Changes sync live to Neon PostgreSQL Database
+            <span className="text-xs text-base-content/50 font-medium">
+              Syncs live to Neon PostgreSQL Database
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-base-300/60 uppercase text-[10px] font-extrabold opacity-70 border-b border-base-content/15">
+              <thead className="bg-base-200 uppercase text-[10px] font-semibold text-base-content/60 border-b border-base-content/10">
                 <tr>
                   <th className="p-3">User Email & Name</th>
                   <th className="p-3">Current Role</th>
@@ -231,26 +260,26 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
               </thead>
               <tbody className="divide-y divide-base-content/10">
                 {usersList.map((u) => (
-                  <tr key={u.id} className="hover:bg-base-200 transition-colors">
+                  <tr key={u.id} className="hover:bg-base-200/50 transition-colors">
                     <td className="p-3 font-semibold">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-base-300 border border-base-content/20 flex items-center justify-center font-bold text-[11px]">
+                        <div className="w-8 h-8 rounded-full bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[11px]">
                           {u.name ? u.name[0] : u.email[0]}
                         </div>
                         <div>
                           <p className="font-bold text-base-content">{u.email}</p>
-                          <p className="text-[10px] opacity-70">{u.name || "User"}</p>
+                          <p className="text-[10px] text-base-content/60">{u.name || "User"}</p>
                         </div>
                       </div>
                     </td>
                     <td className="p-3">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                        className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
                           u.role === "ADMIN"
                             ? "bg-base-content text-base-100"
                             : u.role === "CREATOR"
-                            ? "bg-base-300 text-base-content border border-base-content/20"
-                            : "bg-base-200 text-base-content border border-base-content/10"
+                            ? "bg-base-200 text-base-content border border-base-content/10"
+                            : "bg-base-200/60 text-base-content/80 border border-base-content/10"
                         }`}
                       >
                         {u.role === "ADMIN" && <FontAwesomeIcon icon={faCrown} className="mr-1" />}
@@ -261,14 +290,14 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        className="px-3 py-1.5 rounded-xl bg-base-100 border border-base-content/25 text-xs font-bold text-base-content focus:outline-none"
+                        className="px-3 py-1.5 rounded-xl bg-base-100 border border-base-content/20 text-xs font-semibold text-base-content focus:outline-none"
                       >
                         <option value="CLIENT">CLIENT (Standard)</option>
                         <option value="CREATOR">CREATOR (Owner)</option>
                         <option value="ADMIN">ADMIN (System Manager)</option>
                       </select>
                     </td>
-                    <td className="p-3 opacity-70">
+                    <td className="p-3 text-base-content/60">
                       {new Date(u.createdAt || Date.now()).toLocaleDateString()}
                     </td>
                   </tr>
@@ -280,12 +309,12 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
       )}
 
       {/* TAB 2: GLOBAL CONTENT MODERATION TABLE */}
-      {activeTab === "content" && (
-        <div className="p-6 rounded-3xl bg-base-200/50 border border-base-content/15 space-y-4">
+      {(currentTab === "content_moderation" || currentTab === "content" || currentTab === "admin_overview") && (
+        <div className="p-6 rounded-3xl bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-              <FontAwesomeIcon icon={faBuilding} />
-              GLOBAL PLATFORM CONTENT MODERATION
+            <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+              <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
+              Global Platform Content Moderation
             </h3>
           </div>
 
@@ -293,18 +322,18 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
             {toursList.map((t) => (
               <div
                 key={t.id}
-                className="p-4 rounded-2xl bg-base-100 border border-base-content/15 flex items-center justify-between gap-4"
+                className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10 flex items-center justify-between gap-4"
               >
                 <div>
-                  <h4 className="font-heading font-bold text-sm uppercase">{t.title}</h4>
-                  <p className="text-xs opacity-70">
+                  <h4 className="font-bold text-sm text-base-content">{t.title}</h4>
+                  <p className="text-xs text-base-content/60">
                     Author: {t.authorEmail || "admin@viewroom.com"} • Category: {t.category} • {t.viewsCount} Views
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDeleteTour(t.id)}
-                    className="px-3.5 py-1.5 rounded-full bg-base-300 hover:bg-base-content hover:text-base-100 text-base-content border border-base-content/20 text-xs font-bold uppercase transition-all flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-full bg-base-200 hover:bg-error hover:text-white text-base-content border border-base-content/10 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faTrash} />
                     Delete Tour

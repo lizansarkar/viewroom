@@ -21,9 +21,18 @@ import {
   apiAddOwnerHotspot,
 } from "../../services/api";
 
-export default function CreatorDashboard({ user }) {
+export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const navigate = useNavigate();
   const [activeSubTab, setActiveSubTab] = useState("overview");
+
+  useEffect(() => {
+    if (activeTab) {
+      if (activeTab === "creator_overview") setActiveSubTab("overview");
+      else if (["overview", "tours", "uploader", "analytics"].includes(activeTab)) {
+        setActiveSubTab(activeTab);
+      }
+    }
+  }, [activeTab]);
   const [stats, setStats] = useState({
     totalTours: 1,
     totalProducts: 1,

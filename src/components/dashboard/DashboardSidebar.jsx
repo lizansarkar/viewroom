@@ -54,6 +54,63 @@ function AnalyticsIcon(props) {
   );
 }
 
+function UsersIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function ShieldIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
+
+function BookmarkIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+    </svg>
+  );
+}
+
+function RobotIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <rect width="18" height="12" x="3" y="6" rx="2" />
+      <path d="M9 11h.01" />
+      <path d="M15 11h.01" />
+      <path d="M12 2v4" />
+    </svg>
+  );
+}
+
+function RocketIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-3.05 11a22.35 22.35 0 0 1-3.95 2z" />
+    </svg>
+  );
+}
+
+function GlobeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
 function SettingsIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
@@ -91,29 +148,81 @@ function CloseIcon(props) {
   );
 }
 
-export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setIsOpen, user, logout }) {
-  const navSections = [
-    {
-      title: "Overview",
-      items: [
-        { id: "overview", label: "Dashboard", icon: DashboardIcon },
-        { id: "tours", label: "My 360° Tours", icon: ToursIcon },
-      ],
-    },
-    {
-      title: "Content",
-      items: [
-        { id: "products", label: "3D Product Spins", icon: ProductIcon },
-        { id: "uploader", label: "Scene & Tour Builder", icon: BuilderIcon },
-      ],
-    },
-    {
-      title: "Analytics",
-      items: [
-        { id: "analytics", label: "Spatial Analytics", icon: AnalyticsIcon },
-      ],
-    },
-  ];
+export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setIsOpen, user, role, logout }) {
+  const activeRole = role || user?.role || "CLIENT";
+
+  const ROLE_NAV_SECTIONS = {
+    ADMIN: [
+      {
+        title: "Overview",
+        items: [
+          { id: "admin_overview", label: "Admin Overview", icon: DashboardIcon },
+          { id: "users", label: "User Management", icon: UsersIcon },
+        ],
+      },
+      {
+        title: "Moderation",
+        items: [
+          { id: "content_moderation", label: "Content Moderation", icon: ShieldIcon },
+        ],
+      },
+      {
+        title: "Analytics",
+        items: [
+          { id: "analytics", label: "System Analytics", icon: AnalyticsIcon },
+        ],
+      },
+    ],
+    CREATOR: [
+      {
+        title: "Overview",
+        items: [
+          { id: "creator_overview", label: "Dashboard", icon: DashboardIcon },
+          { id: "tours", label: "My 360° Tours", icon: ToursIcon },
+        ],
+      },
+      {
+        title: "Content",
+        items: [
+          { id: "products", label: "3D Product Spins", icon: ProductIcon },
+          { id: "uploader", label: "Scene & Tour Builder", icon: BuilderIcon },
+        ],
+      },
+      {
+        title: "Analytics",
+        items: [
+          { id: "analytics", label: "Spatial Analytics", icon: AnalyticsIcon },
+        ],
+      },
+    ],
+    CLIENT: [
+      {
+        title: "Overview",
+        items: [
+          { id: "client_overview", label: "Client Overview", icon: DashboardIcon },
+          { id: "bookmarks", label: "Saved 360° Spaces", icon: BookmarkIcon },
+        ],
+      },
+      {
+        title: "Activity & AI",
+        items: [
+          { id: "ai_history", label: "AI Concierge Logs", icon: RobotIcon },
+          { id: "upgrade", label: "Become a Creator", icon: RocketIcon },
+        ],
+      },
+    ],
+    VISITOR: [
+      {
+        title: "Overview",
+        items: [
+          { id: "visitor_overview", label: "Discovery Hub", icon: GlobeIcon },
+          { id: "featured", label: "Featured Spaces", icon: ToursIcon },
+        ],
+      },
+    ],
+  };
+
+  const navSections = ROLE_NAV_SECTIONS[activeRole] || ROLE_NAV_SECTIONS.CLIENT;
 
   return (
     <>
@@ -125,13 +234,13 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
         />
       )}
 
-      {/* Sidebar Container - Exact design matching reference image */}
+      {/* Sidebar Container */}
       <aside
         className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-[calc(100vh-7rem)] w-64 shrink-0 bg-base-100 border border-base-content/10 rounded-[28px] p-4 flex flex-col justify-between transition-all duration-300 shadow-xs ${
           isOpen ? "translate-x-0 !fixed !inset-y-0 !z-50 bg-base-100 shadow-2xl rounded-none w-72" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex flex-col gap-5 overflow-y-auto">
+        <div className="flex flex-col gap-4 overflow-y-auto">
           {/* Mobile Header with Close Button */}
           <div className="flex items-center justify-between lg:hidden pb-2 border-b border-base-content/10">
             <span className="font-bold text-xs uppercase tracking-wider text-base-content/70">
@@ -145,7 +254,22 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
             </button>
           </div>
 
-          {/* Nav Sections matching reference image */}
+          {/* Active Role Indicator Badge - Prominently displayed above Overview */}
+          <div className="p-3 rounded-2xl bg-base-200/80 border border-base-content/10 flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-medium text-base-content/50 uppercase tracking-wider">
+                Current Role
+              </span>
+              <span className="text-xs font-bold text-base-content truncate">
+                {user?.name || "ViewRoom User"}
+              </span>
+            </div>
+            <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-base-content text-base-100 shadow-xs tracking-wider">
+              {activeRole}
+            </span>
+          </div>
+
+          {/* Dynamic Nav Sections by Active Role */}
           {navSections.map((section) => (
             <div key={section.title} className="flex flex-col gap-1">
               <div className="px-3 text-[11px] font-medium text-base-content/50 mb-1">
@@ -180,7 +304,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
           ))}
         </div>
 
-        {/* Bottom Section: Settings, Help, Log out matching reference image */}
+        {/* Bottom Section: Settings, Help, Log out */}
         <div className="flex flex-col gap-2 pt-4 border-t border-base-content/10 mt-4">
           <button
             onClick={() => {

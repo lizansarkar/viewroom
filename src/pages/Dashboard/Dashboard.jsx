@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import DashboardSidebar from "../../components/dashboard/DashboardSidebar";
 import AdminDashboard from "../../components/dashboard/AdminDashboard";
@@ -12,27 +12,44 @@ import { faBars, faEye, faCrown } from "@fortawesome/free-solid-svg-icons";
 export default function Dashboard() {
   const { user, isLoggedIn, login, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
 
-  // Admin Preview Override State (Allows Admins to test Creator or Client dashboard views)
+  // Admin Preview Override State
   const [adminPreviewRole, setAdminPreviewRole] = useState(null);
 
   // Determine effective role for rendering
   const effectiveRole = adminPreviewRole || (isLoggedIn ? user?.role || "CLIENT" : "VISITOR");
 
+  const getDefaultTab = (role) => {
+    switch (role) {
+      case "ADMIN": return "admin_overview";
+      case "CREATOR": return "creator_overview";
+      case "CLIENT": return "client_overview";
+      case "VISITOR": return "visitor_overview";
+      default: return "creator_overview";
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(getDefaultTab(effectiveRole));
+
+  // Sync default tab when effective role changes
+  useEffect(() => {
+    setActiveTab(getDefaultTab(effectiveRole));
+  }, [effectiveRole]);
+
   return (
     <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-sans">
       
-      {/* Main Bounded Container - Bounded to max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 to align 100% with Navbar */}
+      {/* Main Bounded Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row items-start gap-6">
         
-        {/* Left Sidebar Navigation */}
+        {/* Left Sidebar Navigation with Dynamic Role Routes */}
         <DashboardSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           isOpen={sidebarOpen}
           setIsOpen={setSidebarOpen}
           user={user}
+          role={effectiveRole}
           logout={logout}
         />
 
@@ -80,29 +97,44 @@ export default function Dashboard() {
             )}
           </header>
 
-          {/* Dynamic Role-Based Content View */}
+          {/* Dynamic Role-Based Content View & Sub-Routing */}
           <main className="w-full">
             {/* 1. ADMIN ROLE DASHBOARD */}
             {effectiveRole === "ADMIN" && (
               <AdminDashboard
                 user={user}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
                 onPreviewModeChange={(roleToPreview) => setAdminPreviewRole(roleToPreview)}
               />
             )}
 
             {/* 2. CREATOR ROLE DASHBOARD */}
-            {effectiveRole === "CREATOR" && <CreatorDashboard user={user} />}
+            {effectiveRole === "CREATOR" && (
+              <CreatorDashboard
+                user={user}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+            )}
 
             {/* 3. CLIENT ROLE DASHBOARD */}
             {effectiveRole === "CLIENT" && (
               <ClientDashboard
                 user={user}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
                 onUpgradeSuccess={() => login({ ...user, role: "CREATOR" })}
               />
             )}
 
             {/* 4. VISITOR GUEST VIEW */}
-            {effectiveRole === "VISITOR" && <VisitorDashboard />}
+            {effectiveRole === "VISITOR" && (
+              <VisitorDashboard
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+            )}
           </main>
 
         </div>
@@ -110,4 +142,5 @@ export default function Dashboard() {
       </div>
     </div>
   );
+}
 }
