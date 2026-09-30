@@ -78,41 +78,41 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
   return (
     <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
       
-      {/* Top Banner & Admin Preview Mode Bar - Monochrome Black & White */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-base-200 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+      {/* Top Banner & Admin Preview Mode Bar matching sidebar style */}
+      <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-base-300 text-base-content border border-base-content/20 flex items-center justify-center text-xl shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
             <FontAwesomeIcon icon={faShieldHalved} />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block mb-1">
-              SYSTEM MANAGER CONTROL PANEL
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-base-content/50 block mb-1">
+              System Manager Control Panel
             </span>
-            <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight">
-              ADMINISTRATOR DASHBOARD
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
+              Administrator Dashboard
             </h2>
-            <p className="text-xs opacity-70 mt-1">
+            <p className="text-xs text-base-content/70 mt-1 max-w-xl">
               Manage user roles, promote accounts, moderate platform 360° content, and inspect server infrastructure.
             </p>
           </div>
         </div>
 
-        {/* Role Preview Switcher for Admin using reusable Button */}
-        <div className="flex items-center gap-2 bg-base-100 p-2 rounded-2xl border border-base-content/15 shadow-sm self-stretch md:self-auto justify-center">
-          <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 px-2">
-            PREVIEW AS:
+        {/* Role Preview Switcher */}
+        <div className="flex items-center gap-2 bg-base-200/60 p-2 rounded-2xl border border-base-content/10 shadow-xs self-stretch md:self-auto justify-center">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-base-content/60 px-2">
+            Preview as:
           </span>
           <Button
             variant="secondary"
             onClick={() => onPreviewModeChange("CREATOR")}
-            className="!text-xs !px-3 !py-1"
+            className="!text-xs !px-3 !py-1 !rounded-xl"
           >
             Creator View
           </Button>
           <Button
             variant="secondary"
             onClick={() => onPreviewModeChange("CLIENT")}
-            className="!text-xs !px-3 !py-1"
+            className="!text-xs !px-3 !py-1 !rounded-xl"
           >
             Client View
           </Button>
@@ -120,60 +120,60 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
       </div>
 
       {/* Admin Infrastructure Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">
+            <span className="text-[11px] font-medium text-base-content/60">
               Registered Users
             </span>
-            <FontAwesomeIcon icon={faUsers} className="text-base-content text-xs opacity-70" />
+            <FontAwesomeIcon icon={faUsers} className="text-base-content/60 text-xs" />
           </div>
-          <p className="font-heading text-2xl sm:text-3xl font-black">{stats.totalUsers}</p>
-          <span className="text-[10px] opacity-70 font-semibold mt-1 block">Active Database Users</span>
+          <p className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalUsers}</p>
+          <span className="text-[10px] text-base-content/50 font-medium mt-1 block">Active Database Users</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">
+            <span className="text-[11px] font-medium text-base-content/60">
               Platform 360 Tours
             </span>
-            <FontAwesomeIcon icon={faBuilding} className="text-base-content text-xs opacity-70" />
+            <FontAwesomeIcon icon={faBuilding} className="text-base-content/60 text-xs" />
           </div>
-          <p className="font-heading text-2xl sm:text-3xl font-black">{stats.totalTours}</p>
-          <span className="text-[10px] opacity-70 font-semibold mt-1 block">Global Published Tours</span>
+          <p className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalTours}</p>
+          <span className="text-[10px] text-base-content/50 font-medium mt-1 block">Global Published Tours</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">
+            <span className="text-[11px] font-medium text-base-content/60">
               Server & DB Engine
             </span>
-            <FontAwesomeIcon icon={faServer} className="text-base-content text-xs opacity-70" />
+            <FontAwesomeIcon icon={faServer} className="text-base-content/60 text-xs" />
           </div>
-          <p className="font-heading text-sm font-extrabold uppercase mt-1">{stats.databaseEngine}</p>
-          <span className="text-[10px] opacity-70 font-semibold mt-1 block">{stats.serverStatus}</span>
+          <p className="text-sm font-bold text-base-content uppercase mt-1">{stats.databaseEngine}</p>
+          <span className="text-[10px] text-base-content/50 font-medium mt-1 block">{stats.serverStatus}</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60">
+            <span className="text-[11px] font-medium text-base-content/60">
               Gemini AI Engine
             </span>
-            <FontAwesomeIcon icon={faRobot} className="text-base-content text-xs opacity-70" />
+            <FontAwesomeIcon icon={faRobot} className="text-base-content/60 text-xs" />
           </div>
-          <p className="font-heading text-sm font-extrabold uppercase mt-1">Google Gemini 1.5</p>
-          <span className="text-[10px] opacity-70 font-semibold mt-1 block">AI Concierge Operational</span>
+          <p className="text-sm font-bold text-base-content uppercase mt-1">Google Gemini 1.5</p>
+          <span className="text-[10px] text-base-content/50 font-medium mt-1 block">AI Concierge Operational</span>
         </div>
       </div>
 
       {/* Admin Tab Switcher */}
-      <div className="flex items-center gap-2 border-b border-base-content/15 pb-3 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 border-b border-base-content/10 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab("users")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "users"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           <FontAwesomeIcon icon={faUsers} className="mr-2" />
@@ -181,10 +181,10 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
         </button>
         <button
           onClick={() => setActiveTab("content")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "content"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           <FontAwesomeIcon icon={faBuilding} className="mr-2" />
@@ -192,10 +192,10 @@ export default function AdminDashboard({ user, onPreviewModeChange }) {
         </button>
         <button
           onClick={() => setActiveTab("analytics")}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "analytics"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           <FontAwesomeIcon icon={faSliders} className="mr-2" />

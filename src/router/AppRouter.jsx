@@ -19,10 +19,10 @@ const Auth = lazy(() => import("../pages/Auth/Auth"));
 // Spatial Loading Spinner Fallback Component
 function RouteLoadingFallback() {
   return (
-    <div className="min-h-[70vh] w-full flex flex-col items-center justify-center bg-[var(--app-background)] text-[var(--app-text-primary)]">
+    <div className="min-h-[70vh] w-full flex flex-col items-center justify-center bg-[var(--app-bg)] text-[var(--app-text-primary)]">
       <div className="relative w-12 h-12 flex items-center justify-center mb-4">
-        <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-        <span className="text-[10px] font-black text-cyan-400">360°</span>
+        <div className="absolute inset-0 rounded-full border-4 border-white/20 border-t-white animate-spin" />
+        <span className="text-[10px] font-black text-white">360°</span>
       </div>
       <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)] animate-pulse">
         Loading Spatial Experience...
@@ -38,7 +38,9 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/recruiter-sandbox" element={<Dashboard />} />
         <Route path="/360-virtual-tour" element={<VirtualTour360 />} />
+        <Route path="/tour/:tourId" element={<VirtualTour360 />} />
         <Route path="/360-product" element={<Product360 />} />
         <Route path="/360-video" element={<Video360 />} />
         <Route path="/matterport" element={<Matterport />} />

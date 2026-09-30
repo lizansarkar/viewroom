@@ -29,36 +29,36 @@ export default function VisitorDashboard() {
 
   return (
     <div className="space-y-8 text-base-content w-full">
-      {/* Hero Welcome Banner - Monochrome Black & White */}
-      <div className="p-8 sm:p-12 rounded-3xl bg-base-200 border border-base-content/15 text-center max-w-3xl mx-auto flex flex-col items-center shadow-sm">
-        <div className="w-14 h-14 rounded-2xl bg-base-300 text-base-content border border-base-content/20 flex items-center justify-center text-2xl mb-4 shrink-0">
+      {/* Hero Welcome Banner matching sidebar style */}
+      <div className="p-8 sm:p-10 rounded-[28px] bg-base-100 border border-base-content/10 text-center max-w-3xl mx-auto flex flex-col items-center shadow-xs">
+        <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-xl mb-4 shrink-0">
           <FontAwesomeIcon icon={faGlobe} />
         </div>
 
-        <span className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">
-          VISITOR & GUEST DISCOVERY DASHBOARD
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-base-content/50 mb-1.5">
+          Visitor & Guest Discovery Hub
         </span>
 
-        <h2 className="text-3xl sm:text-4xl font-heading font-black uppercase tracking-tight mb-4">
-          EXPLORE THE FUTURE OF 360° SPACES
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-base-content mb-3">
+          Explore the Future of 360° Spaces
         </h2>
 
-        <p className="text-sm opacity-70 mb-8 leading-relaxed max-w-xl">
+        <p className="text-xs text-base-content/70 mb-6 leading-relaxed max-w-xl">
           Welcome to ViewRoom 360°! Sign in or create a free account to bookmark 360° property spaces, save AI Concierge chats, or publish your own 360° virtual tours.
         </p>
 
-        {/* Action Buttons using reusable Button component */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
           <Link to="/sign-up" className="w-full sm:w-auto">
-            <Button variant="primary">
+            <Button variant="primary" className="!rounded-2xl">
               <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
-              CREATE FREE ACCOUNT
+              Create Free Account
             </Button>
           </Link>
           <Link to="/sign-in" className="w-full sm:w-auto">
-            <Button variant="secondary">
+            <Button variant="secondary" className="!rounded-2xl">
               <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-              SIGN IN
+              Sign In
             </Button>
           </Link>
         </div>
@@ -67,13 +67,13 @@ export default function VisitorDashboard() {
       {/* Featured Spaces Showcase Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-            <FontAwesomeIcon icon={faBuilding} />
-            FEATURED PUBLIC 360° EXPERIENCES
+          <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+            <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
+            Featured Public 360° Experiences
           </h3>
           <Link to="/explore">
-            <Button variant="neutral">
-              EXPLORE ALL
+            <Button variant="neutral" className="!rounded-xl !text-xs">
+              Explore All
             </Button>
           </Link>
         </div>
@@ -82,20 +82,20 @@ export default function VisitorDashboard() {
           {featuredSpaces.map((space) => (
             <div
               key={space.id}
-              className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col justify-between shadow-sm hover:border-base-content/30 transition-all"
+              className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
             >
-              <div className="relative h-48 rounded-xl overflow-hidden mb-4 bg-base-300">
+              <div className="relative h-48 rounded-2xl overflow-hidden mb-4 bg-base-200">
                 <img src={space.image} alt={space.title} className="w-full h-full object-cover" />
-                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/15 text-[10px] font-extrabold uppercase">
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                   {space.category}
                 </span>
               </div>
 
-              <h4 className="font-heading font-bold text-base uppercase mb-3">{space.title}</h4>
+              <h4 className="font-bold text-base text-base-content mb-3">{space.title}</h4>
 
               <Link to={space.link} className="w-full">
-                <Button variant="primary" className="w-full text-center">
-                  LAUNCH 360° INTERACTIVE
+                <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
+                  Launch 360° Interactive
                 </Button>
               </Link>
             </div>

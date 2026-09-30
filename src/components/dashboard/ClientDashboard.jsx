@@ -59,31 +59,31 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
   return (
     <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
       
-      {/* Top Welcome Header & Upgrade Card - Monochrome Black & White */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-base-200 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+      {/* Top Welcome Header & Upgrade Card matching sidebar style */}
+      <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-base-300 text-base-content border border-base-content/20 flex items-center justify-center text-xl shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
             <FontAwesomeIcon icon={faUser} />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block mb-1">
-              CLIENT DASHBOARD
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-base-content/50 block mb-1">
+              Client Dashboard
             </span>
-            <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight">
-              WELCOME BACK, {user?.name?.toUpperCase() || "SPATIAL EXPLORER"}
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
+              Welcome back, {user?.name || "Spatial Explorer"}
             </h2>
-            <p className="text-xs opacity-70 mt-1">
+            <p className="text-xs text-base-content/70 mt-1 max-w-xl">
               Manage your bookmarked 360° spaces, review Spatial AI search history, and upgrade to a Creator account.
             </p>
           </div>
         </div>
 
-        {/* 1-Click Upgrade Button using reusable Button component */}
+        {/* 1-Click Upgrade Button */}
         <Button
           variant="primary"
           onClick={handleUpgrade}
           disabled={upgrading}
-          className="whitespace-nowrap cursor-pointer"
+          className="whitespace-nowrap cursor-pointer !rounded-2xl"
         >
           <FontAwesomeIcon icon={faRocket} className="mr-2" />
           <span>{upgrading ? "Upgrading..." : "Become a 360° Creator (Free)"}</span>
@@ -91,16 +91,16 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
       </div>
 
       {/* Grid: Bookmarks & AI History */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Column: Bookmarked Spaces (2 Cols) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-              <FontAwesomeIcon icon={faBookmark} />
-              SAVED & BOOKMARKED SPACES ({mockBookmarks.length})
+            <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+              <FontAwesomeIcon icon={faBookmark} className="text-base-content/60" />
+              Saved & Bookmarked Spaces ({mockBookmarks.length})
             </h3>
-            <Link to="/explore" className="text-xs font-bold uppercase opacity-70 hover:opacity-100">
+            <Link to="/explore" className="text-xs font-semibold text-base-content/70 hover:text-base-content">
               Explore More →
             </Link>
           </div>
@@ -109,18 +109,18 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
             {mockBookmarks.map((b) => (
               <div
                 key={b.id}
-                className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col justify-between shadow-sm hover:border-base-content/30 transition-all"
+                className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
               >
-                <div className="relative h-40 rounded-xl overflow-hidden mb-3 bg-base-300">
+                <div className="relative h-40 rounded-2xl overflow-hidden mb-3 bg-base-200">
                   <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/15 text-[9px] font-extrabold uppercase">
+                  <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                     {b.category}
                   </span>
                 </div>
-                <h4 className="font-heading font-bold text-xs uppercase mb-3 line-clamp-1">{b.title}</h4>
+                <h4 className="font-bold text-xs text-base-content mb-3 line-clamp-1">{b.title}</h4>
                 <Link
                   to={b.link}
-                  className="w-full py-2 rounded-full bg-base-content text-base-100 text-[11px] font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 rounded-xl bg-base-content text-base-100 text-xs font-semibold text-center flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90"
                 >
                   <FontAwesomeIcon icon={faEye} className="text-[10px]" />
                   Launch 360°
@@ -132,23 +132,23 @@ export default function ClientDashboard({ user, onUpgradeSuccess }) {
 
         {/* Right Column: Recent AI Concierge Search History */}
         <div className="space-y-4">
-          <h3 className="font-heading font-black text-sm uppercase tracking-wider flex items-center gap-2">
-            <FontAwesomeIcon icon={faRobot} />
-            AI CONCIERGE SEARCH LOGS
+          <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+            <FontAwesomeIcon icon={faRobot} className="text-base-content/60" />
+            AI Concierge Search Logs
           </h3>
 
           <div className="space-y-3">
             {mockAiHistory.map((item, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 text-xs space-y-1.5"
+                className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 text-xs space-y-1.5 shadow-xs"
               >
-                <div className="flex items-center justify-between text-[10px] font-bold opacity-70 uppercase">
+                <div className="flex items-center justify-between text-[10px] font-semibold text-base-content/50 uppercase">
                   <span>Question</span>
-                  <span className="opacity-50 font-normal">{item.timestamp}</span>
+                  <span className="opacity-70 font-normal">{item.timestamp}</span>
                 </div>
                 <p className="font-bold text-base-content">"{item.query}"</p>
-                <p className="text-[11px] opacity-70 leading-relaxed">
+                <p className="text-[11px] text-base-content/70 leading-relaxed">
                   {item.answer}
                 </p>
               </div>

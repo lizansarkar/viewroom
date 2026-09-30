@@ -21,12 +21,12 @@ export default function Dashboard() {
   const effectiveRole = adminPreviewRole || (isLoggedIn ? user?.role || "CLIENT" : "VISITOR");
 
   return (
-    <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-body">
+    <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-sans">
       
-      {/* Main Bounded Container - Bounded to max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 to align 100% with Navbar & Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row items-start gap-8">
+      {/* Main Bounded Container - Bounded to max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 to align 100% with Navbar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col lg:flex-row items-start gap-6">
         
-        {/* Left Sidebar Navigation - Sticks below Navbar without overlapping */}
+        {/* Left Sidebar Navigation */}
         <DashboardSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -36,31 +36,32 @@ export default function Dashboard() {
           logout={logout}
         />
 
-        {/* Main Content Area - Sits inside max-w-7xl right bounds */}
+        {/* Main Content Area */}
         <div className="flex-1 min-w-0 w-full flex flex-col space-y-6">
           
-          {/* Header Bar */}
-          <header className="p-4 sm:p-6 rounded-3xl bg-base-200/80 border border-base-content/15 flex items-center justify-between shadow-xs">
+          {/* Header Bar matching sidebar aesthetic */}
+          <header className="p-4 sm:p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2.5 rounded-xl bg-base-200 text-base-content border border-base-content/15 cursor-pointer"
+                aria-label="Open navigation menu"
+                className="lg:hidden p-2.5 rounded-2xl bg-base-200 text-base-content hover:bg-base-300 transition-colors cursor-pointer"
               >
                 <FontAwesomeIcon icon={faBars} />
               </button>
               
-              <div className="flex items-center gap-2.5">
-                <h1 className="font-heading font-black text-lg sm:text-xl uppercase tracking-tight text-base-content">
-                  {effectiveRole === "ADMIN" && "ADMINISTRATOR DASHBOARD"}
-                  {effectiveRole === "CREATOR" && "CREATOR & OWNER DASHBOARD"}
-                  {effectiveRole === "CLIENT" && "CLIENT SPATIAL DASHBOARD"}
-                  {effectiveRole === "VISITOR" && "VISITOR DISCOVERY HUB"}
+              <div className="flex items-center gap-3">
+                <h1 className="font-bold text-base sm:text-lg tracking-tight text-base-content">
+                  {effectiveRole === "ADMIN" && "Administrator Dashboard"}
+                  {effectiveRole === "CREATOR" && "Creator & Owner Dashboard"}
+                  {effectiveRole === "CLIENT" && "Client Spatial Dashboard"}
+                  {effectiveRole === "VISITOR" && "Visitor Discovery Hub"}
                 </h1>
 
                 {adminPreviewRole && (
-                  <span className="px-3 py-1 rounded-full bg-base-300 text-base-content text-[10px] font-extrabold uppercase border border-base-content/20 flex items-center gap-1">
+                  <span className="px-3 py-1 rounded-full bg-base-200 text-base-content text-[11px] font-semibold border border-base-content/10 flex items-center gap-1.5">
                     <FontAwesomeIcon icon={faEye} />
-                    Previewing as {adminPreviewRole}
+                    Previewing: {adminPreviewRole}
                   </span>
                 )}
               </div>
@@ -71,9 +72,9 @@ export default function Dashboard() {
               <Button
                 variant="secondary"
                 onClick={() => setAdminPreviewRole(null)}
-                className="!text-xs !px-3.5 !py-1.5"
+                className="!text-xs !px-3.5 !py-1.5 !rounded-xl"
               >
-                <FontAwesomeIcon icon={faCrown} className="mr-1" />
+                <FontAwesomeIcon icon={faCrown} className="mr-1.5" />
                 Reset to Admin View
               </Button>
             )}

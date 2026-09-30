@@ -18,6 +18,12 @@ import {
   faChevronRight,
   faVrCardboard,
   faLayerGroup,
+  faMicrophone,
+  faMicrophoneSlash,
+  faCommentDots,
+  faShareNodes,
+  faCopy,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 // ==========================================
@@ -413,11 +419,117 @@ function VirtualTourViewer() {
   const [showHotspots, setShowHotspots] = useState(true);
   const [snapshotEffect, setSnapshotEffect] = useState(false);
 
+  // Voice AI Spatial Tour Guide State
+  const [isListening, setIsListening] = useState(false);
+  const [isAiThinking, setIsAiThinking] = useState(false);
+  const [aiTranscript, setAiTranscript] = useState("");
+  const [aiSpokenResponse, setAiSpokenResponse] = useState("Hi! I'm your Voice AI Spatial Guide. Click the mic icon and speak!");
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
   const psvRef = useRef(null);
   const viewportRef = useRef(null);
   const thumbnailScrollRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const activeNode = TOUR_NODES.find((s) => s.id === currentPanoramaId) || TOUR_NODES[0];
+
+  // Speech Synthesis Helper
+  const speakResponse = (text) => {
+    if (!("speechSynthesis" in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.warn("Speech synthesis error:", e);
+    }
+  };
+
+  // Web Speech API Microphone Handler
+  const toggleVoiceAssistant = () => {
+    uiSound.playHoverClick();
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setAiSpokenResponse("Web Speech API is not supported in this browser. Try Chrome or Edge!");
+      speakResponse("Web Speech API is not supported in your browser.");
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setAiTranscript("Listening for your voice command...");
+      };
+
+      recognition.onresult = async (event) => {
+        const transcript = event.results[0][0].transcript;
+        setAiTranscript(`"${transcript}"`);
+        setIsListening(false);
+        setIsAiThinking(true);
+
+        try {
+          const res = await fetch("/api/v1/ai/spatial-voice", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              prompt: transcript,
+              currentPanoramaId,
+              nodes: TOUR_NODES,
+            }),
+          });
+          const data = await res.json();
+          setIsAiThinking(false);
+
+          if (data.success) {
+            setAiSpokenResponse(data.spokenResponse || "Navigating room view.");
+            speakResponse(data.spokenResponse);
+
+            if (data.targetNodeId && data.targetNodeId !== currentPanoramaId) {
+              uiSound.playCameraSwoosh();
+              changePanoramaWithGsap(data.targetNodeId);
+            }
+          }
+        } catch (err) {
+          setIsAiThinking(false);
+          const errorMsg = "I couldn't process that voice command. Please try again.";
+          setAiSpokenResponse(errorMsg);
+          speakResponse(errorMsg);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn("Speech recognition error:", event.error);
+        setIsListening(false);
+        setAiTranscript("");
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn("Speech recognition failed:", err);
+      setIsListening(false);
+    }
+  };
 
   // Dynamic Markers Generation from Connected Node Graph
   const activeMarkers = activeNode.connections.map((conn, idx) => ({
@@ -627,6 +739,26 @@ function VirtualTourViewer() {
           </span>
         </div>
 
+        {/* TOP CENTER GLASSMORPHIC VOICE AI TOAST & TRANSCRIPT */}
+        <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 max-w-md w-[90%] sm:w-auto pointer-events-auto">
+          <div className="bg-black/80 backdrop-blur-xl border border-white/30 rounded-2xl px-4 py-2.5 shadow-2xl flex items-center gap-3 text-white">
+            <div className="relative shrink-0 flex items-center justify-center">
+              <FontAwesomeIcon icon={faCommentDots} className="text-white text-base animate-pulse" />
+              {isAiThinking && (
+                <div className="absolute inset-0 rounded-full border border-white animate-spin"></div>
+              )}
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/70">
+                VOICE AI SPATIAL ASSISTANT
+              </span>
+              <p className="text-xs sm:text-sm font-medium leading-tight text-white drop-shadow">
+                {isListening ? aiTranscript : isAiThinking ? "Analyzing spatial intent..." : aiSpokenResponse}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* VERTICAL TOGGLE ACTION MENU */}
         <div className="absolute top-5 right-5 z-30 flex flex-col items-center gap-3 pointer-events-auto">
           {isMenuOpen ? (
@@ -642,6 +774,38 @@ function VirtualTourViewer() {
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border-2 border-white/80 text-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={faXmark} className="text-lg" />
+              </button>
+
+              {/* VOICE AI MICROPHONE TRIGGER BUTTON */}
+              <button
+                type="button"
+                onClick={toggleVoiceAssistant}
+                onMouseEnter={() => uiSound.playHoverClick()}
+                title={isListening ? "Stop Listening" : "Voice AI Spatial Guide"}
+                className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer ${
+                  isListening
+                    ? "bg-white text-black border-white shadow-[0_0_25px_rgba(255,255,255,1)] animate-bounce"
+                    : "bg-white/25 hover:bg-white/40 border-white/40 text-white"
+                }`}
+              >
+                <FontAwesomeIcon icon={isListening ? faMicrophone : faMicrophone} className="text-base" />
+                {isListening && (
+                  <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
+                )}
+              </button>
+
+              {/* SHARE & EMBED BUTTON */}
+              <button
+                type="button"
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  setShowShareModal(true);
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
+                title="Share Tour Link & Embed"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faShareNodes} className="text-base" />
               </button>
 
               <button
@@ -799,8 +963,78 @@ function VirtualTourViewer() {
           <Button variant="secondary" onClick={() => setShowHotspots(!showHotspots)}>
             {showHotspots ? "Hide Hotspots" : "Show Hotspots"}
           </Button>
+          <Button variant="secondary" onClick={() => setShowShareModal(true)}>
+            Share Tour
+          </Button>
         </div>
       </div>
+
+      {/* SHARE & EMBED MODAL */}
+      {showShareModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative text-white">
+            <button
+              type="button"
+              onClick={() => setShowShareModal(false)}
+              className="absolute top-5 right-5 text-zinc-400 hover:text-white transition-colors text-xl font-bold cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-1 text-white">
+              Share 360° Virtual Tour
+            </h3>
+            <p className="text-xs text-zinc-400 mb-6">
+              Share this interactive multi-floor 3D tour link or embed directly on external real estate listings.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-300">
+                  Direct Shareable Link
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${window.location.origin}/tour/${activeNode.id}`}
+                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-4 py-2.5 text-xs font-mono text-zinc-200 focus:outline-none"
+                  />
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/tour/${activeNode.id}`);
+                      setCopiedLink(true);
+                      setTimeout(() => setCopiedLink(false), 2000);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={copiedLink ? faCheck : faCopy} className="mr-2" />
+                    {copiedLink ? "Copied" : "Copy"}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-300">
+                  iFrame Embed Code
+                </label>
+                <textarea
+                  readOnly
+                  rows={3}
+                  value={`<iframe src="${window.location.origin}/tour/${activeNode.id}" width="100%" height="600px" frameborder="0" allowfullscreen></iframe>`}
+                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-3 text-[11px] font-mono text-zinc-200 focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button variant="secondary" onClick={() => setShowShareModal(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

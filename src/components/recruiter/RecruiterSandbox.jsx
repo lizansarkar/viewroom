@@ -8,16 +8,22 @@ import {
   faCalculator,
   faXmark,
   faShieldHalved,
+  faCrosshairs,
+  faCode,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { useAuth } from "../../context/AuthContext";
+import HotspotEditorModal from "../dashboard/HotspotEditorModal";
 
 export default function RecruiterSandbox() {
   const { user, switchRole } = useAuth();
-  const [activeModal, setActiveModal] = useState(null); // 'tech' | 'roi' | null
+  const [activeModal, setActiveModal] = useState(null); // 'tech' | 'roi' | 'studio' | null
   const [fps, setFps] = useState(60);
   const [apiLatency, setApiLatency] = useState(24);
   const [selectedRole, setSelectedRole] = useState(user?.role || "CLIENT");
+  const [studioHotspots, setStudioHotspots] = useState([
+    { id: "demo_1", title: "1ST FLOOR LOBBY", yaw: "25deg", pitch: "-20deg" },
+  ]);
 
   // Keep selectedRole synced if user changes externally
   useEffect(() => {
@@ -70,7 +76,7 @@ export default function RecruiterSandbox() {
     <>
       {/* Top Fixed Recruiter Bar Banner - Monochrome Black & White & Mobile-First */}
       <div className="w-full bg-base-200/95 backdrop-blur-md text-base-content border-b border-base-content/15 text-xs py-2 px-3 sm:px-4 select-none z-40 relative transition-colors duration-200">
-        
+
         {/* MOBILE VIEW (sm:hidden) */}
         <div className="flex sm:hidden items-center justify-between gap-2 w-full">
           {/* Left: Badge & Quick Role Dropdown */}
@@ -121,11 +127,11 @@ export default function RecruiterSandbox() {
         </div>
 
         {/* DESKTOP VIEW (hidden sm:flex) */}
-        <div className="hidden sm:flex max-w-7xl mx-auto items-center justify-between gap-3">
-          
+        <div className="hidden sm:flex mx-auto items-center justify-between gap-3">
+
           {/* Left: Recruiter Sandbox Tag */}
           <div className="flex items-center gap-2.5">
-            <span className="font-extrabold uppercase tracking-widest text-[11px] text-base-content flex items-center gap-1.5">
+            <span className="font-extrabold uppercase italic tracking-widest text-[11px] text-base-content flex items-center gap-1.5">
               <FontAwesomeIcon icon={faUserTie} />
               RECRUITER & HR SANDBOX
             </span>
@@ -144,11 +150,10 @@ export default function RecruiterSandbox() {
                   key={r}
                   type="button"
                   onClick={() => handleRoleSwitch(r)}
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-base-content text-base-100 shadow-md scale-105"
-                      : "opacity-75 hover:opacity-100 hover:bg-base-content/10"
-                  }`}
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${isActive
+                    ? "bg-base-content text-base-100 shadow-md scale-105"
+                    : "opacity-75 hover:opacity-100 hover:bg-base-content/10"
+                    }`}
                 >
                   {r}
                 </button>
@@ -170,45 +175,72 @@ export default function RecruiterSandbox() {
               </span>
             </div>
 
-            {/* Architecture Inspector Modal Trigger */}
+            {/* No-Code Studio Interactive Demo Trigger */}
             <Button
-              variant="secondary"
+              variant="primary"
+              onClick={() => setActiveModal("studio")}
+              className="!text-[10px] !px-3 !py-1 uppercase cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faCrosshairs} className="mr-1" />
+              Try Hotspot Studio
+            </Button>
+
+            {/* Architecture Inspector Modal Trigger */}
+            <span
               onClick={() => setActiveModal("tech")}
-              className="!text-[10px] !px-3 !py-1 uppercase"
+              className="!text-[10px] !px-3 !py-1 uppercase cursor-pointer"
             >
               <FontAwesomeIcon icon={faDiagramProject} className="mr-1" />
               Tech Stack
-            </Button>
+            </span>
 
             {/* ROI Calculator Modal Trigger */}
-            <Button
-              variant="secondary"
+            <span
               onClick={() => setActiveModal("roi")}
-              className="!text-[10px] !px-3 !py-1 uppercase"
+              className="!text-[10px] !px-3 !py-1 uppercase cursor-pointer"
             >
               <FontAwesomeIcon icon={faCalculator} className="mr-1" />
               ROI Impact
-            </Button>
+            </span>
           </div>
 
         </div>
       </div>
 
+      {/* NO-CODE HOTSPOT STUDIO DEMO MODAL */}
+      {activeModal === "studio" && (
+        <HotspotEditorModal
+          scene={{ name: "Recruiter Sandbox 360° Studio", panoramaUrl: "/panoramas/panorama_entrance.jpg" }}
+          tour={{
+            scenes: [
+              { id: "s1", name: "Ground Floor Lobby", floorLevel: 0 },
+              { id: "s2", name: "1st Floor Lobby", floorLevel: 1 },
+              { id: "s3", name: "2nd Floor Lounge", floorLevel: 2 },
+            ],
+          }}
+          onClose={() => setActiveModal(null)}
+          onSave={(newMarker) => {
+            setStudioHotspots([...studioHotspots, { id: `demo_${Date.now()}`, ...newMarker }]);
+            setActiveModal(null);
+          }}
+        />
+      )}
+
       {/* TECH STACK & SYSTEM ARCHITECTURE MODAL */}
       {activeModal === "tech" && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl bg-base-100 border border-base-content/15 rounded-3xl p-5 sm:p-8 shadow-2xl text-base-content max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between pb-4 border-b border-base-content/15 mb-6">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl bg-zinc-950 border border-zinc-800 rounded-3xl p-5 sm:p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
+
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-base-200 border border-base-content/20 text-base-content flex items-center justify-center text-lg shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center text-lg shrink-0">
                   <FontAwesomeIcon icon={faDiagramProject} />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-black uppercase text-base-content tracking-tight">
+                  <h3 className="text-lg sm:text-xl font-black uppercase text-white tracking-tight">
                     FULL-STACK SYSTEM ARCHITECTURE
                   </h3>
-                  <p className="text-xs opacity-70 font-medium">
+                  <p className="text-xs text-zinc-400 font-medium">
                     ViewRoom 360° Engineering Breakdown & Technology Choices
                   </p>
                 </div>
@@ -216,7 +248,7 @@ export default function RecruiterSandbox() {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="opacity-70 hover:opacity-100 cursor-pointer text-lg p-2"
+                className="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </button>
@@ -224,14 +256,14 @@ export default function RecruiterSandbox() {
 
             {/* Architecture Flow Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              
+
               {/* Frontend Layer */}
-              <div className="p-4 rounded-2xl bg-base-200/80 border border-base-content/10 flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+              <div className="p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
                   FRONTEND LAYER
                 </span>
-                <h4 className="text-sm font-extrabold text-base-content">React 19 + Three.js PBR</h4>
-                <ul className="text-xs opacity-80 space-y-1.5 font-medium mt-1">
+                <h4 className="text-sm font-extrabold text-white">React 19 + Three.js PBR</h4>
+                <ul className="text-xs text-zinc-300 space-y-1.5 font-medium mt-1">
                   <li>• Three.js WebGL 3D Shader Rendering</li>
                   <li>• React Router v7 Code-Splitting</li>
                   <li>• Tailwind CSS v4 Responsive Design</li>
@@ -240,12 +272,12 @@ export default function RecruiterSandbox() {
               </div>
 
               {/* Backend Layer */}
-              <div className="p-4 rounded-2xl bg-base-200/80 border border-base-content/10 flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+              <div className="p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
                   BACKEND API SERVER
                 </span>
-                <h4 className="text-sm font-extrabold text-base-content">Node.js + Express REST</h4>
-                <ul className="text-xs opacity-80 space-y-1.5 font-medium mt-1">
+                <h4 className="text-sm font-extrabold text-white">Node.js + Express REST</h4>
+                <ul className="text-xs text-zinc-300 space-y-1.5 font-medium mt-1">
                   <li>• Google Gemini AI Concierge Engine</li>
                   <li>• JWT Auth & Dynamic Role Authorization</li>
                   <li>• Payload Gzip & Brotli Compression</li>
@@ -254,12 +286,12 @@ export default function RecruiterSandbox() {
               </div>
 
               {/* Database Layer */}
-              <div className="p-4 rounded-2xl bg-base-200/80 border border-base-content/10 flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+              <div className="p-4 rounded-2xl bg-zinc-900/90 border border-zinc-800 flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
                   DATABASE & ORM
                 </span>
-                <h4 className="text-sm font-extrabold text-base-content">Prisma ORM + PostgreSQL</h4>
-                <ul className="text-xs opacity-80 space-y-1.5 font-medium mt-1">
+                <h4 className="text-sm font-extrabold text-white">Prisma ORM + PostgreSQL</h4>
+                <ul className="text-xs text-zinc-300 space-y-1.5 font-medium mt-1">
                   <li>• Neon Cloud PostgreSQL DB</li>
                   <li>• Type-Safe Prisma Client Queries</li>
                   <li>• Virtual Tour & Scene Schemas</li>
@@ -270,10 +302,10 @@ export default function RecruiterSandbox() {
             </div>
 
             {/* Recruiter Summary Note */}
-            <div className="p-4 rounded-2xl bg-base-200 border border-base-content/20 text-xs text-base-content flex items-start gap-3">
-              <FontAwesomeIcon icon={faShieldHalved} className="text-lg shrink-0 mt-0.5 opacity-80" />
+            <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 flex items-start gap-3">
+              <FontAwesomeIcon icon={faShieldHalved} className="text-lg shrink-0 mt-0.5 text-white" />
               <div>
-                <strong className="block font-extrabold mb-0.5">Engineering Highlights:</strong>
+                <strong className="block font-extrabold mb-0.5 text-white">Engineering Highlights:</strong>
                 Built with zero external template bloat, clean modular architecture, production-grade error handling, responsive accessibility, and performance budget optimizations.
               </div>
             </div>
@@ -284,19 +316,19 @@ export default function RecruiterSandbox() {
 
       {/* ROI & BUSINESS IMPACT CALCULATOR MODAL */}
       {activeModal === "roi" && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl bg-base-100 border border-base-content/15 rounded-3xl p-5 sm:p-8 shadow-2xl text-base-content max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between pb-4 border-b border-base-content/15 mb-6">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-3xl bg-zinc-950 border border-zinc-800 rounded-3xl p-5 sm:p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
+
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-base-200 border border-base-content/20 text-base-content flex items-center justify-center text-lg shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center text-lg shrink-0">
                   <FontAwesomeIcon icon={faCalculator} />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-black uppercase text-base-content tracking-tight">
+                  <h3 className="text-lg sm:text-xl font-black uppercase text-white tracking-tight">
                     3D SPATIAL BUSINESS ROI CALCULATOR
                   </h3>
-                  <p className="text-xs opacity-70 font-medium">
+                  <p className="text-xs text-zinc-400 font-medium">
                     Quantifying conversion uplift & return savings with ViewRoom 360°
                   </p>
                 </div>
@@ -304,7 +336,7 @@ export default function RecruiterSandbox() {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="opacity-70 hover:opacity-100 cursor-pointer text-lg p-2"
+                className="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </button>
@@ -312,13 +344,13 @@ export default function RecruiterSandbox() {
 
             {/* Calculator Controls Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              
+
               {/* Sliders Column */}
               <div className="flex flex-col gap-5">
                 <div>
-                  <div className="flex justify-between text-xs font-extrabold uppercase mb-2">
-                    <span className="opacity-70">Monthly Site Traffic</span>
-                    <span className="text-base-content font-bold">{monthlyVisitors.toLocaleString()} Visitors</span>
+                  <div className="flex justify-between text-xs font-extrabold uppercase mb-2 text-zinc-300">
+                    <span>Monthly Site Traffic</span>
+                    <span className="text-white font-bold">{monthlyVisitors.toLocaleString()} Visitors</span>
                   </div>
                   <input
                     type="range"
@@ -327,14 +359,14 @@ export default function RecruiterSandbox() {
                     step="5000"
                     value={monthlyVisitors}
                     onChange={(e) => setMonthlyVisitors(parseInt(e.target.value))}
-                    className="w-full accent-base-content cursor-pointer"
+                    className="w-full accent-white cursor-pointer"
                   />
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-extrabold uppercase mb-2">
-                    <span className="opacity-70">Average Order Value</span>
-                    <span className="text-base-content font-bold">${avgOrderValue}</span>
+                  <div className="flex justify-between text-xs font-extrabold uppercase mb-2 text-zinc-300">
+                    <span>Average Order Value</span>
+                    <span className="text-white font-bold">${avgOrderValue}</span>
                   </div>
                   <input
                     type="range"
@@ -343,7 +375,7 @@ export default function RecruiterSandbox() {
                     step="5"
                     value={avgOrderValue}
                     onChange={(e) => setAvgOrderValue(parseInt(e.target.value))}
-                    className="w-full accent-base-content cursor-pointer"
+                    className="w-full accent-white cursor-pointer"
                   />
                 </div>
               </div>

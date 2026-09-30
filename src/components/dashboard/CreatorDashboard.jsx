@@ -168,119 +168,119 @@ export default function CreatorDashboard({ user }) {
   return (
     <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
       
-      {/* Top Creator Welcome Banner - Monochrome */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-base-200 border border-base-content/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm">
+      {/* Top Creator Welcome Banner matching sidebar style */}
+      <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-widest opacity-60 block mb-1">
-            CREATOR & PROPERTY OWNER CONTROL PANEL
+          <span className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider block mb-1">
+            Creator & Property Owner Control Panel
           </span>
-          <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight">
-            WELCOME BACK, {user?.name?.toUpperCase() || "CREATOR"}
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
+            Welcome back, {user?.name || "Creator"}
           </h2>
-          <p className="text-xs opacity-70 mt-1">
-            Publish 360° virtual property tours, attach pitch/yaw spherical hotspots, and manage 3D product spins.
+          <p className="text-xs text-base-content/70 mt-1 max-w-xl">
+            Publish 360° virtual property tours, attach pitch/yaw spherical hotspots, and manage interactive 3D product spins.
           </p>
         </div>
 
         <Button
           variant="primary"
           onClick={() => setActiveSubTab("uploader")}
-          className="whitespace-nowrap cursor-pointer"
+          className="whitespace-nowrap cursor-pointer !rounded-2xl"
         >
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           <span>Build New 360 Tour</span>
         </Button>
       </div>
 
-      {/* KPI Cards - Monochrome */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
+      {/* KPI Cards matching sidebar style */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
+            <span className="text-[11px] font-medium text-base-content/60 block mb-1">
               Active 360 Tours
             </span>
-            <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalTours}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalTours}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
             <FontAwesomeIcon icon={faBuilding} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
+            <span className="text-[11px] font-medium text-base-content/60 block mb-1">
               3D Product Spins
             </span>
-            <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalProducts}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalProducts}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
             <FontAwesomeIcon icon={faCube} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
+            <span className="text-[11px] font-medium text-base-content/60 block mb-1">
               Panoramic Views
             </span>
-            <span className="font-heading text-2xl sm:text-3xl font-black">{stats.totalViews}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalViews}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
             <FontAwesomeIcon icon={faEye} />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-base-200/60 border border-base-content/15 flex items-center justify-between shadow-sm">
+        <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 block mb-1">
+            <span className="text-[11px] font-medium text-base-content/60 block mb-1">
               Engagement Rate
             </span>
-            <span className="font-heading text-2xl sm:text-3xl font-black">{stats.engagementRate}</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.engagementRate}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-base-300 text-base-content border border-base-content/15 flex items-center justify-center text-base shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
             <FontAwesomeIcon icon={faChartLine} />
           </div>
         </div>
       </div>
 
-      {/* Subtab Navigation */}
-      <div className="flex items-center gap-2 border-b border-base-content/15 pb-3 overflow-x-auto no-scrollbar">
+      {/* Subtab Navigation matching sidebar active pill aesthetic */}
+      <div className="flex items-center gap-2 border-b border-base-content/10 pb-3 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveSubTab("overview")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeSubTab === "overview"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           Overview
         </button>
         <button
           onClick={() => setActiveSubTab("tours")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeSubTab === "tours"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           My 360° Tours
         </button>
         <button
           onClick={() => setActiveSubTab("uploader")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeSubTab === "uploader"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           Scene Uploader & Builder
         </button>
         <button
           onClick={() => setActiveSubTab("analytics")}
-          className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
             activeSubTab === "analytics"
-              ? "bg-base-content text-base-100 shadow-sm font-black"
-              : "bg-base-200 text-base-content opacity-70 hover:opacity-100 hover:bg-base-300"
+              ? "bg-base-200 text-base-content font-bold shadow-xs"
+              : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
           }`}
         >
           Spatial Analytics
@@ -296,32 +296,32 @@ export default function CreatorDashboard({ user }) {
           {tours.map((tour) => (
             <div
               key={tour.id}
-              className="p-4 rounded-2xl bg-base-200/60 border border-base-content/15 flex flex-col justify-between shadow-sm hover:border-base-content/30 transition-all"
+              className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
             >
-              <div className="relative h-44 rounded-xl overflow-hidden mb-4 bg-base-300">
+              <div className="relative h-44 rounded-2xl overflow-hidden mb-4 bg-base-200">
                 <img src={tour.coverImage} alt={tour.title} className="w-full h-full object-cover" />
-                <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/15 text-[10px] font-extrabold uppercase">
-                  {tour.scenes?.length || 0} ROOM SCENES
+                <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
+                  {tour.scenes?.length || 0} Room Scenes
                 </div>
               </div>
 
-              <h4 className="font-heading font-bold text-sm uppercase text-base-content mb-1">
+              <h4 className="font-bold text-sm text-base-content mb-1">
                 {tour.title}
               </h4>
-              <span className="text-xs opacity-70 mb-4 block">
+              <span className="text-xs text-base-content/60 mb-4 block">
                 {tour.category} • {tour.price}
               </span>
 
               <div className="flex items-center gap-2">
                 <Link
                   to="/360-virtual-tour"
-                  className="flex-1 py-2 rounded-full bg-base-content text-base-100 text-[11px] font-bold uppercase tracking-wider text-center"
+                  className="flex-1 py-2.5 rounded-xl bg-base-content text-base-100 text-xs font-semibold text-center transition-opacity hover:opacity-90"
                 >
                   View 360°
                 </Link>
                 <button
                   onClick={() => handleAddSceneToTour(tour.id)}
-                  className="p-2 rounded-full border border-base-content/20 text-xs hover:bg-base-300 cursor-pointer"
+                  className="p-2.5 rounded-xl border border-base-content/15 text-xs hover:bg-base-200 cursor-pointer text-base-content"
                   title="Add Room Scene"
                 >
                   <FontAwesomeIcon icon={faPlus} />

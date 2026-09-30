@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Button from "../reuseable/Button";
 import Logo from "../reuseable/Logo";
@@ -158,6 +158,8 @@ function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { isRegistered, isLoggedIn, user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -166,6 +168,24 @@ function Navbar() {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    setProfileOpen(false);
+  }, [location.pathname]);
 
   const getNavItemClass = (isActive) =>
     `text-[15px] font-bold transition-colors flex items-center gap-1.5 cursor-pointer text-base-content hover:opacity-75 select-none ${
@@ -248,10 +268,13 @@ function Navbar() {
             </button>
 
             {isLoggedIn ? (
-              <div className="dropdown dropdown-end relative">
-                <label
-                  tabIndex={0}
-                  className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-base-content/40 transition-all focus:outline-none"
+              <div ref={profileRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen((prev) => !prev)}
+                  aria-expanded={profileOpen}
+                  aria-label="Toggle user profile menu"
+                  className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-base-content/40 transition-all focus:outline-none flex items-center justify-center p-0 border-0 bg-transparent"
                 >
                   <div className="w-10 h-10 rounded-full ring-2 ring-base-content/30 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-200 text-base-content font-black shadow-sm">
                     {user?.avatar || user?.image ? (
@@ -266,60 +289,63 @@ function Navbar() {
                       </span>
                     )}
                   </div>
-                </label>
+                </button>
 
-                <div
-                  tabIndex={0}
-                  className="dropdown-content shadow-2xl bg-base-100 border border-base-content/20 rounded-2xl w-72 p-3 mt-3 z-[100] flex flex-col gap-2 font-sans"
-                >
-                  {/* User Profile Info Card Header */}
-                  <div className="p-3 rounded-xl bg-base-200/80 border border-base-content/15 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-base-content text-base-100 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
-                      {user?.avatar || user?.image ? (
-                        <img
-                          src={user.avatar || user.image}
-                          alt={user?.name || "User Avatar"}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-sm font-black uppercase">
-                          {(user?.name || "U").charAt(0)}
+                {profileOpen && (
+                  <div className="absolute right-0 top-full shadow-2xl bg-base-100 border border-base-content/20 rounded-2xl w-72 p-3 mt-3 z-[100] flex flex-col gap-2 font-sans animate-fadeIn">
+                    {/* User Profile Info Card Header */}
+                    <div className="p-3 rounded-xl bg-base-200/80 border border-base-content/15 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-base-content text-base-100 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                        {user?.avatar || user?.image ? (
+                          <img
+                            src={user.avatar || user.image}
+                            alt={user?.name || "User Avatar"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-sm font-black uppercase">
+                            {(user?.name || "U").charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0 overflow-hidden">
+                        <span className="font-extrabold text-sm text-base-content truncate">
+                          {user?.name || "User"}
                         </span>
-                      )}
-                    </div>
-                    <div className="flex flex-col min-w-0 overflow-hidden">
-                      <span className="font-extrabold text-sm text-base-content truncate">
-                        {user?.name || "User"}
-                      </span>
-                      <span className="text-xs text-base-content/70 truncate font-medium">
-                        {user?.email || "user@viewroom.com"}
-                      </span>
-                      {user?.role && (
-                        <span className="mt-1 text-[10px] font-black uppercase tracking-wider bg-base-content text-base-100 px-2 py-0.5 rounded-full w-max">
-                          {user.role}
+                        <span className="text-xs text-base-content/70 truncate font-medium">
+                          {user?.email || "user@viewroom.com"}
                         </span>
-                      )}
+                        {user?.role && (
+                          <span className="mt-1 text-[10px] font-black uppercase tracking-wider bg-base-content text-base-100 px-2 py-0.5 rounded-full w-max">
+                            {user.role}
+                          </span>
+                        )}
+                      </div>
                     </div>
+
+                    <div className="h-px bg-base-content/10 my-0.5" />
+
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setProfileOpen(false)}
+                      className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-base-content hover:bg-base-200 transition-colors"
+                    >
+                      <LayoutDashboardIcon />
+                      <span>Dashboard</span>
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        logout();
+                        setProfileOpen(false);
+                      }}
+                      className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-error hover:bg-error/10 w-full text-left transition-colors cursor-pointer"
+                    >
+                      <LogoutIcon />
+                      <span>Logout</span>
+                    </button>
                   </div>
-
-                  <div className="h-px bg-base-content/10 my-0.5" />
-
-                  <Link
-                    to="/dashboard"
-                    className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-base-content hover:bg-base-200 transition-colors"
-                  >
-                    <LayoutDashboardIcon />
-                    <span>Dashboard</span>
-                  </Link>
-
-                  <button
-                    onClick={logout}
-                    className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-error hover:bg-error/10 w-full text-left transition-colors cursor-pointer"
-                  >
-                    <LogoutIcon />
-                    <span>Logout</span>
-                  </button>
-                </div>
+                )}
               </div>
             ) : isRegistered ? (
               <Link to="/sign-in">
