@@ -292,10 +292,10 @@ function Navbar() {
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 top-full shadow-2xl bg-base-100 border border-base-content/20 rounded-2xl w-72 p-3 mt-3 z-[100] flex flex-col gap-2 font-sans animate-fadeIn">
+                  <div className="absolute right-0 top-full shadow-2xl bg-base-100 border border-base-content/15 rounded-2xl w-64 p-3 mt-3 z-[100] flex flex-col gap-1 font-sans animate-fadeIn">
                     {/* User Profile Info Card Header */}
-                    <div className="p-3 rounded-xl bg-base-200/80 border border-base-content/15 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-base-content text-base-100 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                    <div className="p-3 rounded-xl bg-base-200/80 border border-base-content/10 flex items-center gap-3 mb-1">
+                      <div className="w-9 h-9 rounded-full bg-base-content text-base-100 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
                         {user?.avatar || user?.image ? (
                           <img
                             src={user.avatar || user.image}
@@ -303,46 +303,80 @@ function Navbar() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span className="text-sm font-black uppercase">
+                          <span className="text-xs font-black uppercase">
                             {(user?.name || "U").charAt(0)}
                           </span>
                         )}
                       </div>
                       <div className="flex flex-col min-w-0 overflow-hidden">
-                        <span className="font-extrabold text-sm text-base-content truncate">
+                        <span className="font-bold text-xs text-base-content truncate">
                           {user?.name || "User"}
                         </span>
-                        <span className="text-xs text-base-content/70 truncate font-medium">
+                        <span className="text-[11px] text-base-content/60 truncate font-medium">
                           {user?.email || "user@viewroom.com"}
                         </span>
-                        {user?.role && (
-                          <span className="mt-1 text-[10px] font-black uppercase tracking-wider bg-base-content text-base-100 px-2 py-0.5 rounded-full w-max">
-                            {user.role}
-                          </span>
-                        )}
                       </div>
                     </div>
 
-                    <div className="h-px bg-base-content/10 my-0.5" />
+                    <div className="h-px bg-base-content/10 my-1" />
 
+                    {/* 1. Dashboard (Speedometer Gauge Icon matching reference image) */}
                     <Link
                       to="/dashboard"
                       onClick={() => setProfileOpen(false)}
-                      className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-base-content hover:bg-base-200 transition-colors"
+                      className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-base-content hover:bg-base-200 transition-colors"
                     >
-                      <LayoutDashboardIcon />
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 text-base-content/80">
+                        <path d="M12 14l3-3" />
+                        <path d="M3.34 16A9 9 0 1 1 20.66 16" />
+                      </svg>
                       <span>Dashboard</span>
                     </Link>
 
+                    {/* 2. Notifications (Exclamation Circle Icon matching reference image) */}
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setProfileOpen(false)}
+                      className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-base-content hover:bg-base-200 transition-colors"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 text-base-content/80">
+                        <circle cx="12" cy="12" r="9" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <span>Notifications</span>
+                    </Link>
+
+                    {/* 3. User Settings (User Gear Badge Icon matching reference image) */}
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setProfileOpen(false)}
+                      className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-base-content hover:bg-base-200 transition-colors"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 text-base-content/80">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                        <circle cx="18" cy="18" r="2" />
+                        <path d="M18 15v1m0 4v1m-3-3h1m4 0h1" />
+                      </svg>
+                      <span>User Settings</span>
+                    </Link>
+
+                    <div className="h-px bg-base-content/10 my-1" />
+
+                    {/* 4. Log Out (Power Button Circle Icon matching reference image) */}
                     <button
                       onClick={() => {
                         logout();
                         setProfileOpen(false);
                       }}
-                      className="px-3.5 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider flex items-center gap-3 text-error hover:bg-error/10 w-full text-left transition-colors cursor-pointer"
+                      className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-error hover:bg-error/10 w-full text-left transition-colors cursor-pointer"
                     >
-                      <LogoutIcon />
-                      <span>Logout</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0 text-base-content/80">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                        <line x1="12" y1="2" x2="12" y2="12" />
+                      </svg>
+                      <span>Log Out</span>
                     </button>
                   </div>
                 )}
