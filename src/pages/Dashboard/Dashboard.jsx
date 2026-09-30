@@ -67,16 +67,15 @@ export default function Dashboard() {
                 <FontAwesomeIcon icon={faBars} />
               </button>
               
-              <div className="flex items-center gap-3">
-                <h1 className="font-bold text-base sm:text-lg tracking-tight text-base-content">
-                  {effectiveRole === "ADMIN" && "Administrator Dashboard"}
-                  {effectiveRole === "CREATOR" && "Creator & Owner Dashboard"}
-                  {effectiveRole === "CLIENT" && "Client Spatial Dashboard"}
-                  {effectiveRole === "VISITOR" && "Visitor Discovery Hub"}
-                </h1>
-
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Dashboard</span>
+                <span className="text-xs text-base-content/30">/</span>
+                <span className="text-sm font-bold text-base-content capitalize">
+                  {activeTab ? activeTab.replace(/_/g, " ") : "Overview"}
+                </span>
+                
                 {adminPreviewRole && (
-                  <span className="px-3 py-1 rounded-full bg-base-200 text-base-content text-[11px] font-semibold border border-base-content/10 flex items-center gap-1.5">
+                  <span className="ml-2 px-3 py-1 rounded-full bg-base-200 text-base-content text-[11px] font-semibold border border-base-content/10 flex items-center gap-1.5">
                     <FontAwesomeIcon icon={faEye} />
                     Previewing: {adminPreviewRole}
                   </span>
@@ -142,5 +141,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
 }
