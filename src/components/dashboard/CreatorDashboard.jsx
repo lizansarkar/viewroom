@@ -174,14 +174,34 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     loadDashboardData();
   }, []);
 
+  const saveToursToStorage = (updatedTours) => {
+    try {
+      localStorage.setItem("viewroom_custom_tours", JSON.stringify(updatedTours));
+    } catch (err) {
+      console.warn("Failed to save custom tours to localStorage:", err);
+    }
+  };
+
   const loadDashboardData = async () => {
     try {
+      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+      if (savedLocalTours) {
+        const parsed = JSON.parse(savedLocalTours);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTours(parsed);
+          return;
+        }
+      }
+
       const [fetchedStats, fetchedTours] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(),
       ]);
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
-      if (fetchedTours && fetchedTours.length > 0) setTours(fetchedTours);
+      if (fetchedTours && fetchedTours.length > 0) {
+        setTours(fetchedTours);
+        saveToursToStorage(fetchedTours);
+      }
     } catch (err) {
       console.warn("Creator dashboard data loading error:", err);
     }
@@ -248,7 +268,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
     const res = await apiCreateOwnerTour(tourData);
     const created = (res && res.data) || tourData;
-    setTours((prev) => [created, ...prev]);
+    
+    setTours((prev) => {
+      const updated = [created, ...prev];
+      saveToursToStorage(updated);
+      return updated;
+    });
+
     setNewTourTitle("");
     setNewTourDesc("");
     setNewTourScenesList([
@@ -297,25 +323,31 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     };
 
     const res = await apiAddOwnerScene(tourId, sceneData);
-    setTours((prev) =>
-      prev.map((t) =>
+    setTours((prev) => {
+      const updated = prev.map((t) =>
         t.id === tourId
           ? { ...t, scenes: [...(t.scenes || []), (res && res.data) || sceneData] }
           : t
-      )
-    );
+      );
+      saveToursToStorage(updated);
+      return updated;
+    });
   };
 
   const handleDeleteTour = (tourId) => {
     if (!window.confirm("Are you sure you want to delete this 360° tour?")) return;
-    setTours((prev) => prev.filter((t) => t.id !== tourId));
+    setTours((prev) => {
+      const updated = prev.filter((t) => t.id !== tourId);
+      saveToursToStorage(updated);
+      return updated;
+    });
   };
 
   const handleSaveHotspot = async (hotspotData) => {
     if (!editingTour || !editingScene) return;
     const res = await apiAddOwnerHotspot(editingTour.id, editingScene.id, hotspotData);
-    setTours((prev) =>
-      prev.map((t) => {
+    setTours((prev) => {
+      const updated = prev.map((t) => {
         if (t.id !== editingTour.id) return t;
         return {
           ...t,
@@ -327,8 +359,10 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             };
           }),
         };
-      })
-    );
+      });
+      saveToursToStorage(updated);
+      return updated;
+    });
     setEditingScene(null);
     setEditingTour(null);
   };
@@ -884,7 +918,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                       </div>
 
                       {/* Scene Action Buttons: Upload 360 File & Set Cover & Delete */}
-                      <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
+                      <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
                         {/* Hidden File Input */}
                         <input
                           type="file"
@@ -894,25 +928,41 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                              const imageUrl = URL.createObjectURL(file);
-                              setNewTourScenesList((prev) =>
-                                prev.map((item) =>
-                                  item.id === sc.id
-                                    ? { ...item, panoramaUrl: imageUrl, thumbnailUrl: imageUrl }
-                                    : item
-                                )
-                              );
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const base64Data = event.target?.result;
+                                if (base64Data) {
+                                  setNewTourScenesList((prev) =>
+                                    prev.map((item) =>
+                                      item.id === sc.id
+                                        ? {
+                                            ...item,
+                                            panoramaUrl: base64Data,
+                                            thumbnailUrl: base64Data,
+                                            fileName: file.name,
+                                            isCustomUploaded: true,
+                                          }
+                                        : item
+                                    )
+                                  );
+                                }
+                              };
+                              reader.readAsDataURL(file);
                             }
                           }}
                         />
 
                         <label
                           htmlFor={`file_input_${sc.id}`}
-                          className="px-3 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 border border-base-content/10 text-xs font-semibold text-base-content flex items-center gap-1.5 cursor-pointer transition-colors"
+                          className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors ${
+                            sc.isCustomUploaded
+                              ? "bg-success/15 text-success border-success/30 font-bold"
+                              : "bg-base-200 hover:bg-base-300 border-base-content/10 text-base-content"
+                          }`}
                           title="Upload 360° Panorama Image file from your device"
                         >
-                          <FontAwesomeIcon icon={faCloudArrowUp} className="text-base-content/70" />
-                          <span>Upload 360 Image</span>
+                          <FontAwesomeIcon icon={sc.isCustomUploaded ? faCheckCircle : faCloudArrowUp} />
+                          <span>{sc.isCustomUploaded ? "360 Image Uploaded ✓" : "Upload 360 Image"}</span>
                         </label>
 
                         <button

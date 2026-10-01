@@ -19,7 +19,9 @@ import Button from "../reuseable/Button";
 
 const getHotspotIcon = (type) => {
   switch (type) {
-    case "arrow": return "⬆️";
+    case "arrow": return "∧";
+    case "door": return "🚪";
+    case "puck": return "⭕";
     case "bathroom": return "🛁";
     case "stairs": return "🪜";
     case "dining": return "🍽️";
@@ -29,17 +31,50 @@ const getHotspotIcon = (type) => {
   }
 };
 
-const createPreviewPuckHtml = (label, type = "arrow") => `
-  <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
-    <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-1.5 shadow-2xl flex items-center gap-1.5">
-      <span>${getHotspotIcon(type)}</span>
-      <span>${label || "NEW HOTSPOT"}</span>
+const createPreviewPuckHtml = (label, type = "arrow") => {
+  if (type === "arrow") {
+    // Image 2: Perspective Animated Floor Chevron Arrow
+    return `
+      <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
+        <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl">
+          <span>${label || "WALK FORWARD"}</span>
+        </div>
+        <div style="transform: perspective(400px) rotateX(60deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
+          <div class="w-12 h-6 border-t-[5px] border-l-[5px] border-white/70 rotate-45 -mb-3 animate-ping opacity-70"></div>
+          <div class="w-10 h-5 border-t-[6px] border-l-[6px] border-white rotate-45 shadow-[0_0_20px_rgba(255,255,255,1)]"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (type === "door") {
+    // Image 3: Circular Doorway Ring Icon
+    return `
+      <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
+        <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl">
+          <span>${label || "ENTER ROOM"}</span>
+        </div>
+        <div class="w-13 h-13 rounded-full border-[3px] border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 group-hover:bg-white text-white group-hover:text-black">
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/></svg>
+        </div>
+      </div>
+    `;
+  }
+
+  // Image 1: Concentric Circular Floor Target Puck
+  return `
+    <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
+      <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl flex items-center gap-1">
+        <span>${getHotspotIcon(type)}</span>
+        <span>${label || "HOTSPOT"}</span>
+      </div>
+      <div style="transform: perspective(500px) rotateX(65deg);" class="relative w-14 h-14 rounded-full border-2 border-white bg-white/30 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115">
+        <div class="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-60"></div>
+        <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,1)]"></div>
+      </div>
     </div>
-    <div style="transform: perspective(500px) rotateX(65deg);" class="w-14 h-14 rounded-full border-2 border-white bg-white/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] animate-pulse">
-      <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,1)]"></div>
-    </div>
-  </div>
-`;
+  `;
+};
 
 export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDeleteHotspot }) {
   const [title, setTitle] = useState("NEW ROOM CONNECTOR");
@@ -281,7 +316,9 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
                   onChange={(e) => handleTypeChange(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
-                  <option value="arrow">⬆️ Directional Arrow (Walk Forward)</option>
+                  <option value="arrow">∧ 3D Floor Animated Chevron Arrow (Directional Walk)</option>
+                  <option value="door">🚪 Circular Doorway Ring (Room Entrance Portal)</option>
+                  <option value="puck">⭕ Concentric Floor Target Puck</option>
                   <option value="bathroom">🛁 Master Bathroom Puck</option>
                   <option value="stairs">🪜 Stairs / Upper Floor Puck</option>
                   <option value="dining">🍽️ Dining & Kitchen Puck</option>
