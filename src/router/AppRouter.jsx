@@ -8,6 +8,7 @@ import Home from "../pages/Home/Home";
 const Explore = lazy(() => import("../pages/Explore/Explore"));
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 const VirtualTour360 = lazy(() => import("../pages/VirtualTour/VirtualTour360"));
+const VirtualTourPublicViewer = lazy(() => import("../pages/VirtualTour/VirtualTourPublicViewer"));
 const Product360 = lazy(() => import("../pages/Product360/Product360"));
 const Video360 = lazy(() => import("../pages/Video360/Video360"));
 const Matterport = lazy(() => import("../pages/Matterport/Matterport"));
@@ -39,8 +40,10 @@ function AppRouter() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/recruiter-sandbox" element={<Dashboard />} />
+        <Route path="/virtual-tour/:tourId" element={<VirtualTourPublicViewer />} />
+        <Route path="/virtualtour/:tourId" element={<VirtualTourPublicViewer />} />
         <Route path="/360-virtual-tour" element={<VirtualTour360 />} />
-        <Route path="/tour/:tourId" element={<VirtualTour360 />} />
+        <Route path="/tour/:tourId" element={<VirtualTourPublicViewer />} />
         <Route path="/360-product" element={<Product360 />} />
         <Route path="/360-video" element={<Video360 />} />
         <Route path="/matterport" element={<Matterport />} />

@@ -452,10 +452,10 @@ const TOUR_NODES = [
   },
 ];
 
-function VirtualTourViewer() {
+function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const [searchParams] = useSearchParams();
   const { tourId } = useParams();
-  const targetTourId = searchParams.get("id") || tourId;
+  const targetTourId = overrideTourId || searchParams.get("id") || tourId;
 
   const [tourNodes, setTourNodes] = useState(TOUR_NODES);
   const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
@@ -785,14 +785,16 @@ function VirtualTourViewer() {
   ];
 
   return (
-    <div className="w-full flex flex-col items-center select-none">
+    <div className={`w-full flex flex-col items-center select-none ${fullScreenMode ? "h-screen overflow-hidden" : ""}`}>
       {/* 360 VIEWPORT CONTAINER */}
       <div
         ref={viewportRef}
         onClick={() => {
           if (!isMuted) spatialAudio.play();
         }}
-        className="relative w-full h-[520px] sm:h-[640px] lg:h-[720px] overflow-hidden shadow-2xl bg-black group"
+        className={`relative w-full overflow-hidden shadow-2xl bg-black group ${
+          fullScreenMode ? "h-screen w-screen" : "h-[520px] sm:h-[640px] lg:h-[720px]"
+        }`}
       >
         {/* Photo Sphere Viewer Renderer */}
         <ReactPhotoSphereViewer

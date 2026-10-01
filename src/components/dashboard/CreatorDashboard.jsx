@@ -162,7 +162,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   ]);
 
   const handleCopyShareableLink = (tourId) => {
-    const shareUrl = `${window.location.origin}/360-virtual-tour?id=${tourId}`;
+    const shareUrl = `${window.location.origin}/virtual-tour/${tourId}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl);
     }
@@ -497,7 +497,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Link to={`/360-virtual-tour?id=${tour.id}`} className="flex-1">
+                    <Link to={`/virtual-tour/${tour.id}`} className="flex-1">
                       <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-1.5">
                         <FontAwesomeIcon icon={faEye} className="mr-1.5" />
                         View 360°
@@ -607,7 +607,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   >
                     + Add Scene
                   </button>
-                  <Link to={`/360-virtual-tour?id=${tour.id}`}>
+                  <Link to={`/virtual-tour/${tour.id}`}>
                     <Button variant="secondary" className="!text-xs !py-1.5 !px-3.5 !rounded-xl">
                       <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-1.5" />
                       View 360°
