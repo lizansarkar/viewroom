@@ -3,7 +3,7 @@
 
 const API_BASE_URL = "http://localhost:5000/api/v1";
 
-const fetchWithTimeout = async (url, options = {}, timeoutMs = 3000) => {
+const fetchWithTimeout = async (url, options = {}, timeoutMs = 15000) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {

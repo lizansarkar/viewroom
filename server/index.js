@@ -28,7 +28,9 @@ app.use(
   })
 );
 
-app.use(express.json());
+// Express JSON & URLencoded payload limit set to 100MB for 8K equirectangular 360 panoramas
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 // Performance Cache-Control Header Middleware for API responses
 app.use((req, res, next) => {

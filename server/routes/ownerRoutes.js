@@ -93,13 +93,13 @@ router.get("/tours", (req, res) => {
 // POST /api/v1/owner/tours - Create a new 360 Virtual Tour
 router.post("/tours", (req, res) => {
   try {
-    const { title, description, category, price, coverImage } = req.body;
+    const { id, title, description, category, price, coverImage, scenes } = req.body;
     if (!title) {
       return res.status(400).json({ success: false, error: "Title is required" });
     }
 
     const newTour = {
-      id: `tour_${Date.now()}`,
+      id: id || `tour_${Date.now()}`,
       title,
       description: description || "",
       category: category || "General",
@@ -107,7 +107,7 @@ router.post("/tours", (req, res) => {
       coverImage: coverImage || "/panoramas/panorama_aerial.jpg",
       isPublished: true,
       viewsCount: 0,
-      scenes: [],
+      scenes: scenes || [],
     };
 
     mockOwnerTours.unshift(newTour);
