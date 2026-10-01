@@ -17,10 +17,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 
-const createPreviewPuckHtml = (label) => `
+const getHotspotIcon = (type) => {
+  switch (type) {
+    case "arrow": return "⬆️";
+    case "bathroom": return "🛁";
+    case "stairs": return "🪜";
+    case "dining": return "🍽️";
+    case "bedroom": return "🛏️";
+    case "info": return "ℹ️";
+    default: return "➔";
+  }
+};
+
+const createPreviewPuckHtml = (label, type = "arrow") => `
   <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
-    <div class="px-3.5 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-1.5 shadow-2xl">
-      ${label || "NEW HOTSPOT"}
+    <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-1.5 shadow-2xl flex items-center gap-1.5">
+      <span>${getHotspotIcon(type)}</span>
+      <span>${label || "NEW HOTSPOT"}</span>
     </div>
     <div style="transform: perspective(500px) rotateX(65deg);" class="w-14 h-14 rounded-full border-2 border-white bg-white/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] animate-pulse">
       <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,1)]"></div>
@@ -35,7 +48,7 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
   const [targetId, setTargetId] = useState(
     tour?.scenes?.find((s) => s.id !== scene?.id)?.id || ""
   );
-  const [hotspotType, setHotspotType] = useState("portal");
+  const [hotspotType, setHotspotType] = useState("arrow");
 
   // Local list of existing scene hotspots for interactive management
   const [existingHotspots, setExistingHotspots] = useState(scene?.hotspots || []);
@@ -74,14 +87,14 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
           markersPlugin.addMarker({
             id: "temp_preview_marker",
             position: { yaw: yawDeg, pitch: pitchDeg },
-            html: createPreviewPuckHtml(title),
+            html: createPreviewPuckHtml(title, hotspotType),
           });
         }
       }
     });
   };
 
-  const handleTitleChange = (newTitle) => {
+  const handleTitleChange = (newTitle, newType = hotspotType) => {
     setTitle(newTitle);
     if (psvRef.current) {
       const markersPlugin = psvRef.current.getPlugin(MarkersPlugin);
@@ -92,10 +105,15 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
         markersPlugin.addMarker({
           id: "temp_preview_marker",
           position: { yaw, pitch },
-          html: createPreviewPuckHtml(newTitle),
+          html: createPreviewPuckHtml(newTitle, newType),
         });
       }
     }
+  };
+
+  const handleTypeChange = (newType) => {
+    setHotspotType(newType);
+    handleTitleChange(title, newType);
   };
 
   const handleSubmit = (e) => {
@@ -131,12 +149,12 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
     {
       id: "temp_preview_marker",
       position: { yaw, pitch },
-      html: createPreviewPuckHtml(title),
+      html: createPreviewPuckHtml(title, hotspotType),
     },
     ...existingHotspots.map((hp) => ({
       id: hp.id,
       position: { yaw: hp.yaw || "0deg", pitch: hp.pitch || "-20deg" },
-      html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT"),
+      html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT", hp.type || "arrow"),
     })),
   ];
 
@@ -252,6 +270,24 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
                     className="w-full px-3 py-2.5 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
+                  Hotspot Icon & Style
+                </label>
+                <select
+                  value={hotspotType}
+                  onChange={(e) => handleTypeChange(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                >
+                  <option value="arrow">⬆️ Directional Arrow (Walk Forward)</option>
+                  <option value="bathroom">🛁 Master Bathroom Puck</option>
+                  <option value="stairs">🪜 Stairs / Upper Floor Puck</option>
+                  <option value="dining">🍽️ Dining & Kitchen Puck</option>
+                  <option value="bedroom">🛏️ Bedroom / Suite Puck</option>
+                  <option value="info">ℹ️ Spatial Info Badge</option>
+                </select>
               </div>
 
               <div>

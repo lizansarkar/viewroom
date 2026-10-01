@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useSearchParams, useParams } from "react-router-dom";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import "@photo-sphere-viewer/core/index.css";
@@ -206,13 +207,25 @@ const spatialAudio = new SpatialAmbientAudio();
 // 3D FLOOR PUCK & DRONE HOTSPOT HELPERS
 // ==========================================
 
-// Double Concentric Ring Floor Target (Puck) - Clean UI without persistent static text badge
-const createFloorPuckMarkerHtml = (label) => `
+const getHotspotIcon = (type) => {
+  switch (type) {
+    case "arrow": return "⬆️";
+    case "bathroom": return "🛁";
+    case "stairs": return "🪜";
+    case "dining": return "🍽️";
+    case "bedroom": return "🛏️";
+    case "info": return "ℹ️";
+    default: return "➔";
+  }
+};
+
+// Double Concentric Ring Floor Target (Puck) - Clean UI with circular puck geometry
+const createFloorPuckMarkerHtml = (label, iconType = "arrow") => `
   <div class="cursor-pointer group relative flex flex-col items-center justify-center p-3 select-none">
-    <!-- Hover Pill Badge (Fades in on hover rgba(0,0,0,0.75), white typography, arrow indicator) -->
-    <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
+    <!-- Hover Pill Badge (Fades in on hover rgba(0,0,0,0.85), white typography, icon indicator) -->
+    <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
+      <span class="text-xs">${getHotspotIcon(iconType)}</span>
       <span>${label}</span>
-      <span class="text-xs">➔</span>
     </div>
 
     <!-- Minimal Circular Floor Target Puck (XZ Floor Plane Perspective Tilt, scales 1.0x to 1.15x) -->
@@ -412,6 +425,10 @@ const TOUR_NODES = [
 ];
 
 function VirtualTourViewer() {
+  const [searchParams] = useSearchParams();
+  const { tourId } = useParams();
+  const targetTourId = searchParams.get("id") || tourId;
+
   const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -433,6 +450,17 @@ function VirtualTourViewer() {
   const recognitionRef = useRef(null);
 
   const activeNode = TOUR_NODES.find((s) => s.id === currentPanoramaId) || TOUR_NODES[0];
+
+  // Dynamic Markers Generation from Connected Node Graph
+  const activeMarkers = (activeNode.connections || []).map((conn, idx) => ({
+    id: `m_${activeNode.id}_to_${conn.targetNodeId}_${idx}`,
+    position: conn.position,
+    html:
+      conn.type === "drone_badge"
+        ? createDroneHotspotHtml(conn.label)
+        : createFloorPuckMarkerHtml(conn.label, conn.iconType || "arrow"),
+    targetId: conn.targetNodeId,
+  }));
 
   // Speech Synthesis Helper
   const speakResponse = (text) => {
@@ -531,16 +559,7 @@ function VirtualTourViewer() {
     }
   };
 
-  // Dynamic Markers Generation from Connected Node Graph
-  const activeMarkers = activeNode.connections.map((conn, idx) => ({
-    id: `m_${activeNode.id}_to_${conn.targetNodeId}_${idx}`,
-    position: conn.position,
-    html:
-      conn.type === "drone_badge"
-        ? createDroneHotspotHtml(conn.label)
-        : createFloorPuckMarkerHtml(conn.label),
-    targetId: conn.targetNodeId,
-  }));
+
 
   // GSAP Smooth Fade Transition on Panorama Node Change
   const changePanoramaWithGsap = (targetId) => {

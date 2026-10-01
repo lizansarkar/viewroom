@@ -17,6 +17,11 @@ import {
   faLayerGroup,
   faCloudArrowUp,
   faWrench,
+  faShareNodes,
+  faCopy,
+  faCheck,
+  faLink,
+  faImage,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import HotspotEditorModal from "./HotspotEditorModal";
@@ -59,7 +64,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         },
         {
           id: "entrance",
-          name: "ENTRANCE",
+          name: "ENTRANCE LOBBY",
           floorLevel: "Main Building",
           thumbnailUrl: "/panoramas/panorama_entrance.jpg",
           panoramaUrl: "/panoramas/panorama_entrance.jpg",
@@ -141,6 +146,30 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const [editingScene, setEditingScene] = useState(null);
   const [editingTour, setEditingTour] = useState(null);
 
+  // Share Link State
+  const [copiedTourId, setCopiedTourId] = useState(null);
+
+  // Multi-Scene Builder State
+  const [newTourScenesList, setNewTourScenesList] = useState([
+    {
+      id: `scene_init_1`,
+      name: "ENTRANCE LOBBY",
+      floorLevel: "Ground Floor",
+      panoramaUrl: "/panoramas/panorama_aerial.jpg",
+      thumbnailUrl: "/panoramas/panorama_aerial.jpg",
+      isCover: true,
+    },
+  ]);
+
+  const handleCopyShareableLink = (tourId) => {
+    const shareUrl = `${window.location.origin}/360-virtual-tour?id=${tourId}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl);
+    }
+    setCopiedTourId(tourId);
+    setTimeout(() => setCopiedTourId(null), 2500);
+  };
+
   useEffect(() => {
     loadDashboardData();
   }, []);
@@ -158,9 +187,53 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     }
   };
 
+  const handleAddBuilderScene = () => {
+    const sceneNum = newTourScenesList.length + 1;
+    const presets = [
+      "/panoramas/panorama_entrance.jpg",
+      "/panoramas/panorama_floor1.jpg",
+      "/panoramas/panorama_aerial.jpg",
+    ];
+    const pickedPanorama = presets[sceneNum % presets.length];
+
+    setNewTourScenesList((prev) => [
+      ...prev,
+      {
+        id: `scene_${Date.now()}_${sceneNum}`,
+        name: `ROOM SCENE ${sceneNum}`,
+        floorLevel: `${sceneNum}st Floor`,
+        panoramaUrl: pickedPanorama,
+        thumbnailUrl: pickedPanorama,
+        isCover: false,
+      },
+    ]);
+  };
+
+  const handleRemoveBuilderScene = (sceneId) => {
+    if (newTourScenesList.length <= 1) return;
+    setNewTourScenesList((prev) => prev.filter((s) => s.id !== sceneId));
+  };
+
+  const handleSetCoverScene = (sceneId) => {
+    setNewTourScenesList((prev) =>
+      prev.map((s) => ({ ...s, isCover: s.id === sceneId }))
+    );
+  };
+
   const handleCreateTour = async (e) => {
     e.preventDefault();
     if (!newTourTitle) return;
+
+    const coverScene = newTourScenesList.find((s) => s.isCover) || newTourScenesList[0];
+
+    const formattedScenes = newTourScenesList.map((s) => ({
+      id: s.id,
+      name: s.name,
+      floorLevel: s.floorLevel,
+      thumbnailUrl: s.thumbnailUrl || s.panoramaUrl,
+      panoramaUrl: s.panoramaUrl,
+      hotspots: [],
+    }));
 
     const tourData = {
       id: `tour_${Date.now()}`,
@@ -168,18 +241,9 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       category: newTourCategory,
       price: newTourPrice,
       description: newTourDesc,
-      coverImage: "/panoramas/panorama_aerial.jpg",
+      coverImage: coverScene ? (coverScene.thumbnailUrl || coverScene.panoramaUrl) : "/panoramas/panorama_aerial.jpg",
       viewsCount: 0,
-      scenes: [
-        {
-          id: `scene_${Date.now()}`,
-          name: "MAIN PANORAMA",
-          floorLevel: "Ground Floor",
-          thumbnailUrl: "/panoramas/panorama_aerial.jpg",
-          panoramaUrl: "/panoramas/panorama_aerial.jpg",
-          hotspots: [],
-        },
-      ],
+      scenes: formattedScenes,
     };
 
     const res = await apiCreateOwnerTour(tourData);
@@ -187,6 +251,16 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setTours((prev) => [created, ...prev]);
     setNewTourTitle("");
     setNewTourDesc("");
+    setNewTourScenesList([
+      {
+        id: `scene_init_1`,
+        name: "ENTRANCE LOBBY",
+        floorLevel: "Ground Floor",
+        panoramaUrl: "/panoramas/panorama_aerial.jpg",
+        thumbnailUrl: "/panoramas/panorama_aerial.jpg",
+        isCover: true,
+      },
+    ]);
     if (setActiveTab) setActiveTab("tours");
   };
 
@@ -389,12 +463,20 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Link to="/360-virtual-tour" className="flex-1">
+                    <Link to={`/360-virtual-tour?id=${tour.id}`} className="flex-1">
                       <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-1.5">
                         <FontAwesomeIcon icon={faEye} className="mr-1.5" />
                         View 360°
                       </Button>
                     </Link>
+                    <button
+                      onClick={() => handleCopyShareableLink(tour.id)}
+                      className="px-2.5 py-1.5 rounded-xl border border-base-content/20 bg-base-200 hover:bg-base-300 text-xs text-base-content font-bold cursor-pointer transition-colors flex items-center gap-1"
+                      title="Copy Shareable 360° Link"
+                    >
+                      <FontAwesomeIcon icon={copiedTourId === tour.id ? faCheck : faShareNodes} className={copiedTourId === tour.id ? "text-success" : ""} />
+                      <span className="hidden sm:inline">{copiedTourId === tour.id ? "Copied" : "Share"}</span>
+                    </button>
                     <button
                       onClick={() => handleAddSceneToTour(tour.id)}
                       className="p-2 rounded-xl border border-base-content/20 bg-base-200 hover:bg-base-300 text-xs text-base-content font-bold cursor-pointer transition-colors"
@@ -478,12 +560,20 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     </button>
                   )}
                   <button
+                    onClick={() => handleCopyShareableLink(tour.id)}
+                    className="px-3 py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border border-base-content/10"
+                    title="Copy Shareable 360° Link"
+                  >
+                    <FontAwesomeIcon icon={copiedTourId === tour.id ? faCheck : faShareNodes} className={copiedTourId === tour.id ? "text-success" : ""} />
+                    <span>{copiedTourId === tour.id ? "Copied Link!" : "Copy Share Link"}</span>
+                  </button>
+                  <button
                     onClick={() => handleAddSceneToTour(tour.id)}
                     className="px-3.5 py-2 rounded-xl border border-base-content/20 text-base-content text-xs font-semibold hover:bg-base-200 transition-all cursor-pointer"
                   >
                     + Add Scene
                   </button>
-                  <Link to="/360-virtual-tour">
+                  <Link to={`/360-virtual-tour?id=${tour.id}`}>
                     <Button variant="secondary" className="!text-xs !py-1.5 !px-3.5 !rounded-xl">
                       <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-1.5" />
                       View 360°
@@ -702,7 +792,105 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
               />
             </div>
 
-            <div className="pt-2">
+            {/* Multi-Scene Room Scenes Manager */}
+            <div className="pt-2 space-y-4 border-t border-base-content/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
+                    <FontAwesomeIcon icon={faLayerGroup} className="text-base-content/60" />
+                    360° Property Scenes ({newTourScenesList.length})
+                  </h4>
+                  <p className="text-[11px] text-base-content/60">
+                    Add room scenes, assign floor levels, and choose which scene acts as the cover thumbnail
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddBuilderScene}
+                  className="px-3.5 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer border border-base-content/10 flex items-center gap-1.5"
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Add Room Scene</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {newTourScenesList.map((sc, idx) => (
+                  <div
+                    key={sc.id}
+                    className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+                      sc.isCover
+                        ? "bg-base-200/70 border-base-content/30 shadow-xs"
+                        : "bg-base-100 border-base-content/10"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5 w-full sm:w-auto flex-1">
+                      <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
+                        <img src={sc.panoramaUrl} alt={sc.name} className="w-full h-full object-cover" />
+                        {sc.isCover && (
+                          <span className="absolute bottom-0 left-0 right-0 bg-base-content text-base-100 text-[8px] font-extrabold uppercase text-center py-0.5">
+                            COVER
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                        <input
+                          type="text"
+                          value={sc.name}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setNewTourScenesList((prev) =>
+                              prev.map((item) => (item.id === sc.id ? { ...item, name: val } : item))
+                            );
+                          }}
+                          placeholder="Scene Title (e.g. Living Room)"
+                          className="px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={sc.floorLevel}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setNewTourScenesList((prev) =>
+                              prev.map((item) => (item.id === sc.id ? { ...item, floorLevel: val } : item))
+                            );
+                          }}
+                          placeholder="Floor Level (e.g. Ground Floor)"
+                          className="px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => handleSetCoverScene(sc.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
+                          sc.isCover
+                            ? "bg-base-content text-base-100 border-base-content"
+                            : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
+                        }`}
+                      >
+                        {sc.isCover ? "★ Main Cover" : "Set Cover"}
+                      </button>
+                      {newTourScenesList.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBuilderScene(sc.id)}
+                          className="p-2 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 text-xs cursor-pointer transition-colors"
+                          title="Remove Room Scene"
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-base-content/10 flex items-center justify-end">
               <Button type="submit" variant="primary" className="!px-8 !py-3 !rounded-2xl cursor-pointer">
                 Save & Publish 360° Space
               </Button>
