@@ -818,72 +818,126 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 {newTourScenesList.map((sc, idx) => (
                   <div
                     key={sc.id}
-                    className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+                    className={`p-4 rounded-2xl border transition-all flex flex-col gap-3 ${
                       sc.isCover
                         ? "bg-base-200/70 border-base-content/30 shadow-xs"
                         : "bg-base-100 border-base-content/10"
                     }`}
                   >
-                    <div className="flex items-center gap-3.5 w-full sm:w-auto flex-1">
-                      <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10">
-                        <img src={sc.panoramaUrl} alt={sc.name} className="w-full h-full object-cover" />
-                        {sc.isCover && (
-                          <span className="absolute bottom-0 left-0 right-0 bg-base-content text-base-100 text-[8px] font-extrabold uppercase text-center py-0.5">
-                            COVER
-                          </span>
-                        )}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3.5 w-full sm:w-auto flex-1">
+                        {/* Interactive Thumbnail & Cover Badge */}
+                        <div className="relative w-20 h-14 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/15 shadow-xs">
+                          <img src={sc.panoramaUrl} alt={sc.name} className="w-full h-full object-cover" />
+                          {sc.isCover ? (
+                            <span className="absolute bottom-0 left-0 right-0 bg-base-content text-base-100 text-[8px] font-extrabold uppercase text-center py-0.5 tracking-wider">
+                              ★ COVER
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleSetCoverScene(sc.id)}
+                              className="absolute inset-0 bg-black/40 hover:bg-black/20 text-white text-[9px] font-bold opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-center px-1"
+                            >
+                              Make Cover
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Title & Floor Level Inputs */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-0.5">
+                              Room Scene Title
+                            </label>
+                            <input
+                              type="text"
+                              value={sc.name}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setNewTourScenesList((prev) =>
+                                  prev.map((item) => (item.id === sc.id ? { ...item, name: val } : item))
+                                );
+                              }}
+                              placeholder="Scene Title (e.g. Living Room)"
+                              className="w-full px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-0.5">
+                              Floor Level
+                            </label>
+                            <input
+                              type="text"
+                              value={sc.floorLevel}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setNewTourScenesList((prev) =>
+                                  prev.map((item) => (item.id === sc.id ? { ...item, floorLevel: val } : item))
+                                );
+                              }}
+                              placeholder="Floor Level (e.g. Ground Floor)"
+                              className="w-full px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                            />
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                      {/* Scene Action Buttons: Upload 360 File & Set Cover & Delete */}
+                      <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
+                        {/* Hidden File Input */}
                         <input
-                          type="text"
-                          value={sc.name}
+                          type="file"
+                          accept="image/*"
+                          id={`file_input_${sc.id}`}
+                          className="hidden"
                           onChange={(e) => {
-                            const val = e.target.value;
-                            setNewTourScenesList((prev) =>
-                              prev.map((item) => (item.id === sc.id ? { ...item, name: val } : item))
-                            );
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const imageUrl = URL.createObjectURL(file);
+                              setNewTourScenesList((prev) =>
+                                prev.map((item) =>
+                                  item.id === sc.id
+                                    ? { ...item, panoramaUrl: imageUrl, thumbnailUrl: imageUrl }
+                                    : item
+                                )
+                              );
+                            }
                           }}
-                          placeholder="Scene Title (e.g. Living Room)"
-                          className="px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                         />
-                        <input
-                          type="text"
-                          value={sc.floorLevel}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setNewTourScenesList((prev) =>
-                              prev.map((item) => (item.id === sc.id ? { ...item, floorLevel: val } : item))
-                            );
-                          }}
-                          placeholder="Floor Level (e.g. Ground Floor)"
-                          className="px-3 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-                        />
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                      <button
-                        type="button"
-                        onClick={() => handleSetCoverScene(sc.id)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
-                          sc.isCover
-                            ? "bg-base-content text-base-100 border-base-content"
-                            : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
-                        }`}
-                      >
-                        {sc.isCover ? "★ Main Cover" : "Set Cover"}
-                      </button>
-                      {newTourScenesList.length > 1 && (
+                        <label
+                          htmlFor={`file_input_${sc.id}`}
+                          className="px-3 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 border border-base-content/10 text-xs font-semibold text-base-content flex items-center gap-1.5 cursor-pointer transition-colors"
+                          title="Upload 360° Panorama Image file from your device"
+                        >
+                          <FontAwesomeIcon icon={faCloudArrowUp} className="text-base-content/70" />
+                          <span>Upload 360 Image</span>
+                        </label>
+
                         <button
                           type="button"
-                          onClick={() => handleRemoveBuilderScene(sc.id)}
-                          className="p-2 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 text-xs cursor-pointer transition-colors"
-                          title="Remove Room Scene"
+                          onClick={() => handleSetCoverScene(sc.id)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
+                            sc.isCover
+                              ? "bg-base-content text-base-100 border-base-content"
+                              : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
+                          }`}
                         >
-                          <FontAwesomeIcon icon={faTrash} />
+                          {sc.isCover ? "★ Main Cover" : "Set Cover"}
                         </button>
-                      )}
+
+                        {newTourScenesList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveBuilderScene(sc.id)}
+                            className="p-2 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 text-xs cursor-pointer transition-colors"
+                            title="Remove Room Scene"
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
