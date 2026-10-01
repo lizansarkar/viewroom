@@ -196,19 +196,28 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                     key={b.id}
                     className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
                   >
-                    <div className="relative h-40 rounded-2xl overflow-hidden mb-3 bg-base-200">
-                      <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
-                      <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
-                        {b.category}
-                      </span>
+                    <div>
+                      <div className="relative h-40 rounded-2xl overflow-hidden mb-3 bg-base-200">
+                        <img
+                          src={b.image}
+                          alt={b.title}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/panoramas/panorama_aerial.jpg";
+                          }}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
+                          {b.category}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-xs text-base-content mb-3 line-clamp-1">{b.title}</h4>
                     </div>
-                    <h4 className="font-bold text-xs text-base-content mb-3 line-clamp-1">{b.title}</h4>
-                    <Link
-                      to={b.link}
-                      className="w-full py-2.5 rounded-xl bg-base-content text-base-100 text-xs font-semibold text-center flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90"
-                    >
-                      <FontAwesomeIcon icon={faEye} className="text-[10px]" />
-                      Launch 360°
+                    <Link to={b.link} className="w-full">
+                      <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-1.5">
+                        <FontAwesomeIcon icon={faEye} className="mr-1.5" />
+                        Launch 360°
+                      </Button>
                     </Link>
                   </div>
                 ))}

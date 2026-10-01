@@ -389,15 +389,15 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Link
-                      to="/360-virtual-tour"
-                      className="flex-1 py-2.5 rounded-xl bg-base-content text-base-100 text-xs font-semibold text-center transition-opacity hover:opacity-90"
-                    >
-                      View 360°
+                    <Link to="/360-virtual-tour" className="flex-1">
+                      <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-1.5">
+                        <FontAwesomeIcon icon={faEye} className="mr-1.5" />
+                        View 360°
+                      </Button>
                     </Link>
                     <button
                       onClick={() => handleAddSceneToTour(tour.id)}
-                      className="p-2.5 rounded-xl border border-base-content/15 text-xs hover:bg-base-200 cursor-pointer text-base-content"
+                      className="p-2 rounded-xl border border-base-content/20 bg-base-200 hover:bg-base-300 text-xs text-base-content font-bold cursor-pointer transition-colors"
                       title="Add Room Scene"
                     >
                       <FontAwesomeIcon icon={faPlus} />
@@ -483,12 +483,11 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   >
                     + Add Scene
                   </button>
-                  <Link
-                    to="/360-virtual-tour"
-                    className="px-3.5 py-2 rounded-xl bg-base-content text-base-100 text-xs font-semibold flex items-center gap-1.5 transition-opacity hover:opacity-90"
-                  >
-                    <FontAwesomeIcon icon={faExternalLinkAlt} />
-                    View 360°
+                  <Link to="/360-virtual-tour">
+                    <Button variant="secondary" className="!text-xs !py-1.5 !px-3.5 !rounded-xl">
+                      <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-1.5" />
+                      View 360°
+                    </Button>
                   </Link>
                   <button
                     onClick={() => handleDeleteTour(tour.id)}

@@ -236,7 +236,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-[calc(100vh-7rem)] w-64 shrink-0 bg-base-100 border border-base-content/10 rounded-[28px] p-4 flex flex-col justify-between transition-all duration-300 shadow-xs ${
+        className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-[calc(100vh-7rem)] w-64 shrink-0 bg-base-100 border border-base-content/10 rounded-md p-4 flex flex-col justify-between transition-all duration-300 shadow-xs ${
           isOpen ? "translate-x-0 !fixed !inset-y-0 !z-50 bg-base-100 shadow-2xl rounded-none w-72" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -255,13 +255,13 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
           </div>
 
           {/* Active Role Indicator Badge - Prominently displayed above Overview */}
-          <div className="p-3 rounded-2xl bg-base-200/80 border border-base-content/10 flex items-center justify-between">
+          <div className="p-3 rounded-md bg-base-200/80 flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium text-base-content/50 uppercase tracking-wider">
-                Current Role
-              </span>
               <span className="text-xs font-bold text-base-content truncate">
                 {user?.name || "ViewRoom User"}
+              </span>
+              <span className="text-[10px] font-medium text-base-content/50 uppercase tracking-wider">
+                Current Role
               </span>
             </div>
             <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-base-content text-base-100 shadow-xs tracking-wider">
