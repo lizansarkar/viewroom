@@ -150,21 +150,21 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-[96vw] max-w-7xl h-[92vh] rounded-[28px] bg-base-100 border border-base-content/10 shadow-2xl overflow-hidden text-base-content flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-3 md:p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full h-full sm:w-[98vw] sm:h-[96vh] sm:max-w-[1600px] rounded-none sm:rounded-[28px] bg-base-100 border-0 sm:border border-base-content/10 shadow-2xl overflow-hidden text-base-content flex flex-col">
         {/* Modal Header */}
-        <div className="px-6 py-4 bg-base-200/80 border-b border-base-content/10 flex items-center justify-between shrink-0">
+        <div className="px-5 py-3.5 sm:px-6 sm:py-4 bg-base-200/80 border-b border-base-content/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-base-100 border border-base-content/10 text-base-content flex items-center justify-center text-sm shadow-xs">
+            <div className="w-9 h-9 rounded-2xl bg-base-100 border border-base-content/10 text-base-content flex items-center justify-center text-sm shadow-xs shrink-0">
               <FontAwesomeIcon icon={faCrosshairs} />
             </div>
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-base-content/50 block">
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-base-content/50 block truncate">
                 Visual 360° Hotspot Studio
               </span>
-              <h3 className="font-bold text-sm sm:text-base text-base-content flex items-center gap-2">
-                <span>Point & Click Room Hotspot Editor</span>
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-base-content text-base-100">
+              <h3 className="font-bold text-xs sm:text-sm md:text-base text-base-content flex items-center gap-2 truncate">
+                <span className="truncate">Point & Click Room Hotspot Editor</span>
+                <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-base-content text-base-100 shrink-0">
                   {scene?.name || "Panorama Scene"}
                 </span>
               </h3>
@@ -175,16 +175,16 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
             type="button"
             onClick={onClose}
             title="Close Editor"
-            className="w-9 h-9 rounded-2xl bg-base-100 hover:bg-base-200 border border-base-content/10 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer shadow-xs"
+            className="w-9 h-9 rounded-2xl bg-base-100 hover:bg-base-200 border border-base-content/10 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer shadow-xs shrink-0"
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
 
-        {/* Content Layout: Left 360 Viewport, Right Studio Controls */}
-        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-          {/* 360 Interactive Viewport (Expands near full screen) */}
-          <div className="relative w-full lg:w-2/3 h-72 sm:h-96 lg:h-auto bg-black shrink-0 border-r border-base-content/10">
+        {/* Content Layout: Left 360 Viewport (75-80% Width), Right Studio Controls (20-25% Width) */}
+        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden h-full min-h-0">
+          {/* 360 Interactive Viewport (Expanded to Full Width / 80% Screen Real Estate) */}
+          <div className="relative w-full lg:w-3/4 xl:w-4/5 h-[50vh] sm:h-[60vh] lg:h-full bg-black shrink-0 border-b lg:border-b-0 lg:border-r border-base-content/10 flex-1">
             <ReactPhotoSphereViewer
               src={panoramaUrl}
               height="100%"
@@ -198,14 +198,14 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
               onReady={handlePsvReady}
             />
 
-            <div className="absolute top-4 left-4 z-20 bg-base-100/90 backdrop-blur-md border border-base-content/15 px-4 py-2 rounded-2xl text-xs font-bold text-base-content uppercase tracking-wider flex items-center gap-2.5 shadow-md">
-              <FontAwesomeIcon icon={faCompass} className="animate-spin text-base-content" />
-              <span>CLICK ANYWHERE ON PANORAMA TO PLACE PUCK</span>
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-base-100/90 backdrop-blur-md border border-base-content/15 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-base-content uppercase tracking-wider flex items-center gap-2 sm:gap-2.5 shadow-md max-w-[90%]">
+              <FontAwesomeIcon icon={faCompass} className="animate-spin text-base-content shrink-0" />
+              <span className="truncate">CLICK ANYWHERE ON PANORAMA TO PLACE PUCK</span>
             </div>
           </div>
 
           {/* Right Studio Form Panel */}
-          <form onSubmit={handleSubmit} className="w-full lg:w-1/3 p-6 bg-base-100 space-y-5 overflow-y-auto flex flex-col justify-between">
+          <form onSubmit={handleSubmit} className="w-full lg:w-1/4 xl:w-1/5 p-4 sm:p-6 bg-base-100 space-y-4 overflow-y-auto flex flex-col justify-between shrink-0">
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10">
                 <span className="text-[10px] font-bold text-base-content/50 uppercase tracking-wider block mb-1">
