@@ -632,6 +632,159 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     }
   };
 
+  // Client-Side Ultra-Fast 50ms Fuzzy Intent Matcher & Action Dispatcher
+  const processVoiceCommand = async (rawTranscript) => {
+    const q = rawTranscript.toLowerCase().trim();
+    setIsAiThinking(true);
+
+    // 1. Check Tour Action Controls
+    if (q.includes("mute") && !q.includes("unmute")) {
+      setIsMuted(true);
+      spatialAudio.pause();
+      const msg = "Audio muted.";
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
+      setIsAiThinking(false);
+      return;
+    }
+
+    if (q.includes("unmute") || q.includes("play music") || q.includes("sound on")) {
+      setIsMuted(false);
+      spatialAudio.play();
+      const msg = "Audio unmuted.";
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
+      setIsAiThinking(false);
+      return;
+    }
+
+    if (q.includes("fullscreen") || q.includes("full screen")) {
+      if (q.includes("exit") || q.includes("close") || q.includes("off")) {
+        if (document.fullscreenElement) toggleFullscreen();
+        const msg = "Exited fullscreen.";
+        setAiSpokenResponse(msg);
+        speakResponse(msg);
+      } else {
+        if (!document.fullscreenElement) toggleFullscreen();
+        const msg = "Entered fullscreen.";
+        setAiSpokenResponse(msg);
+        speakResponse(msg);
+      }
+      setIsAiThinking(false);
+      return;
+    }
+
+    if (q.includes("hotspot") || q.includes("portal") || q.includes("icon")) {
+      if (q.includes("hide") || q.includes("disable") || q.includes("turn off")) {
+        setShowHotspots(false);
+        const msg = "Hotspots hidden.";
+        setAiSpokenResponse(msg);
+        speakResponse(msg);
+      } else {
+        setShowHotspots(true);
+        const msg = "Hotspots displayed.";
+        setAiSpokenResponse(msg);
+        speakResponse(msg);
+      }
+      setIsAiThinking(false);
+      return;
+    }
+
+    if (q.includes("menu")) {
+      if (q.includes("close") || q.includes("hide")) {
+        setIsMenuOpen(false);
+      } else {
+        setIsMenuOpen(true);
+      }
+      const msg = "Toggled action menu.";
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
+      setIsAiThinking(false);
+      return;
+    }
+
+    if (q.includes("share") || q.includes("embed")) {
+      setShowShareModal(true);
+      const msg = "Opened share and embed modal.";
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
+      setIsAiThinking(false);
+      return;
+    }
+
+    // 2. Check Room / Floor Navigation Matches (50ms Client-Side Instant Intent)
+    let targetNode = null;
+    if (q.includes("aerial") || q.includes("sky") || q.includes("bird") || q.includes("top") || q.includes("outside")) {
+      targetNode = TOUR_NODES.find((n) => n.id === "aerial_view");
+    } else if (q.includes("entrance") || q.includes("ground") || q.includes("lobby") || q.includes("door") || q.includes("floor 0")) {
+      targetNode = TOUR_NODES.find((n) => n.id === "entrance");
+    } else if (q.includes("1st") || q.includes("first") || q.includes("showroom 1") || (q.includes("floor") && q.includes("1"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_1");
+    } else if (q.includes("2nd") || q.includes("second") || q.includes("workspace") || q.includes("office") || q.includes("lounge") || (q.includes("floor") && q.includes("2"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_2");
+    } else if (q.includes("3rd") || q.includes("third") || q.includes("lab") || q.includes("r&d") || (q.includes("floor") && q.includes("3"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_3");
+    } else if (q.includes("4th") || q.includes("fourth") || q.includes("gallery") || q.includes("fashion") || (q.includes("floor") && q.includes("4"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_4");
+    } else if (q.includes("5th") || q.includes("fifth") || q.includes("cafeteria") || q.includes("dining") || q.includes("restaurant") || (q.includes("floor") && q.includes("5"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_5");
+    } else if (q.includes("6th") || q.includes("sixth") || q.includes("penthouse") || q.includes("suite") || q.includes("executive") || (q.includes("floor") && q.includes("6"))) {
+      targetNode = TOUR_NODES.find((n) => n.id === "floor_6");
+    }
+
+    if (targetNode) {
+      setIsAiThinking(false);
+      const msg = `Navigating to ${targetNode.name}.`;
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
+      if (targetNode.id !== currentPanoramaId) {
+        uiSound.playCameraSwoosh();
+        changePanoramaWithGsap(targetNode.id);
+      }
+      return;
+    }
+
+    // 3. Fallback to Server Gemini AI Agent (/api/v1/ai/spatial-voice)
+    try {
+      let res;
+      try {
+        res = await fetch("/api/v1/ai/spatial-voice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: TOUR_NODES }),
+        });
+      } catch (netErr) {
+        res = await fetch("http://localhost:5000/api/v1/ai/spatial-voice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: TOUR_NODES }),
+        });
+      }
+
+      if (res && res.ok) {
+        const data = await res.json();
+        setIsAiThinking(false);
+        if (data.success && data.spokenResponse) {
+          setAiSpokenResponse(data.spokenResponse);
+          speakResponse(data.spokenResponse);
+          if (data.targetNodeId && data.targetNodeId !== currentPanoramaId) {
+            uiSound.playCameraSwoosh();
+            changePanoramaWithGsap(data.targetNodeId);
+          }
+          return;
+        }
+      }
+    } catch (apiErr) {
+      console.warn("Backend Gemini AI Voice Assistant fallback:", apiErr);
+    }
+
+    // 4. Intelligent Fallback if query wasn't matched and API couldn't be reached
+    setIsAiThinking(false);
+    const fallbackMsg = `I heard "${rawTranscript}". You can ask me to navigate to Ground Floor, 1st Floor, 2nd Floor, 3rd Floor, 4th Floor, 5th Floor, 6th Floor, or Aerial View!`;
+    setAiSpokenResponse(fallbackMsg);
+    speakResponse(fallbackMsg);
+  };
+
   // Web Speech API Microphone Handler
   const toggleVoiceAssistant = () => {
     uiSound.playHoverClick();
@@ -645,8 +798,9 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setAiSpokenResponse("Web Speech API is not supported in this browser. Try Chrome or Edge!");
-      speakResponse("Web Speech API is not supported in your browser.");
+      const msg = "Web Speech API is not supported in this browser. Please use Google Chrome or Microsoft Edge!";
+      setAiSpokenResponse(msg);
+      speakResponse(msg);
       return;
     }
 
@@ -661,46 +815,25 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
         setAiTranscript("Listening for your voice command...");
       };
 
-      recognition.onresult = async (event) => {
+      recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         setAiTranscript(`"${transcript}"`);
         setIsListening(false);
-        setIsAiThinking(true);
-
-        try {
-          const res = await fetch("/api/v1/ai/spatial-voice", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              prompt: transcript,
-              currentPanoramaId,
-              nodes: TOUR_NODES,
-            }),
-          });
-          const data = await res.json();
-          setIsAiThinking(false);
-
-          if (data.success) {
-            setAiSpokenResponse(data.spokenResponse || "Navigating room view.");
-            speakResponse(data.spokenResponse);
-
-            if (data.targetNodeId && data.targetNodeId !== currentPanoramaId) {
-              uiSound.playCameraSwoosh();
-              changePanoramaWithGsap(data.targetNodeId);
-            }
-          }
-        } catch (err) {
-          setIsAiThinking(false);
-          const errorMsg = "I couldn't process that voice command. Please try again.";
-          setAiSpokenResponse(errorMsg);
-          speakResponse(errorMsg);
-        }
+        processVoiceCommand(transcript);
       };
 
       recognition.onerror = (event) => {
         console.warn("Speech recognition error:", event.error);
         setIsListening(false);
-        setAiTranscript("");
+        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+          const msg = "Microphone permission is blocked in your browser. Please allow microphone access in your browser settings!";
+          setAiSpokenResponse(msg);
+          speakResponse(msg);
+        } else if (event.error === "no-speech") {
+          const msg = "I didn't hear anything. Please click the microphone icon and speak again!";
+          setAiSpokenResponse(msg);
+          speakResponse(msg);
+        }
       };
 
       recognition.onend = () => {
@@ -710,7 +843,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       recognitionRef.current = recognition;
       recognition.start();
     } catch (err) {
-      console.warn("Speech recognition failed:", err);
+      console.warn("Speech recognition start failed:", err);
       setIsListening(false);
     }
   };
