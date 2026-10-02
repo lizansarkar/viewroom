@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import DashboardSidebar from "../../components/dashboard/DashboardSidebar";
 import AdminDashboard from "../../components/dashboard/AdminDashboard";
 import CreatorDashboard from "../../components/dashboard/CreatorDashboard";
 import ClientDashboard from "../../components/dashboard/ClientDashboard";
 import VisitorDashboard from "../../components/dashboard/VisitorDashboard";
+import HelpPage from "../../components/dashboard/HelpPage";
+import NotificationsPage from "../../components/dashboard/NotificationsPage";
+import UserSettingsPage from "../../components/dashboard/UserSettingsPage";
 import Button from "../../components/reuseable/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faEye, faCrown } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCrown } from "@fortawesome/free-solid-svg-icons";
 
-export default function Dashboard() {
+export default function Dashboard({ defaultTab }) {
   const { user, isLoggedIn, login, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const tabQueryParam = searchParams.get("tab");
 
   // Admin Preview Override State
   const [adminPreviewRole, setAdminPreviewRole] = useState(null);
@@ -29,12 +35,18 @@ export default function Dashboard() {
     }
   };
 
-  const [activeTab, setActiveTab] = useState(getDefaultTab(effectiveRole));
+  const [activeTab, setActiveTab] = useState(
+    tabQueryParam || defaultTab || getDefaultTab(effectiveRole)
+  );
 
-  // Sync default tab when effective role changes
+  // Sync tab when URL search parameter or defaultTab prop changes
   useEffect(() => {
-    setActiveTab(getDefaultTab(effectiveRole));
-  }, [effectiveRole]);
+    if (tabQueryParam) {
+      setActiveTab(tabQueryParam);
+    } else if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [tabQueryParam, defaultTab]);
 
   return (
     <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-sans">
@@ -81,41 +93,51 @@ export default function Dashboard() {
 
           {/* Dynamic Role-Based Content View & Sub-Routing */}
           <main className="w-full">
-            {/* 1. ADMIN ROLE DASHBOARD */}
-            {effectiveRole === "ADMIN" && (
-              <AdminDashboard
-                user={user}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                onPreviewModeChange={(roleToPreview) => setAdminPreviewRole(roleToPreview)}
-              />
-            )}
+            {/* Universal Shared Tab Views: Help, Notifications, User Settings */}
+            {activeTab === "help" && <HelpPage />}
+            {activeTab === "notifications" && <NotificationsPage />}
+            {activeTab === "settings" && <UserSettingsPage />}
 
-            {/* 2. CREATOR ROLE DASHBOARD */}
-            {effectiveRole === "CREATOR" && (
-              <CreatorDashboard
-                user={user}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-              />
-            )}
+            {/* Role Specific Views (only rendered when not viewing universal tabs) */}
+            {activeTab !== "help" && activeTab !== "notifications" && activeTab !== "settings" && (
+              <>
+                {/* 1. ADMIN ROLE DASHBOARD */}
+                {effectiveRole === "ADMIN" && (
+                  <AdminDashboard
+                    user={user}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    onPreviewModeChange={(roleToPreview) => setAdminPreviewRole(roleToPreview)}
+                  />
+                )}
 
-            {/* 3. CLIENT ROLE DASHBOARD */}
-            {effectiveRole === "CLIENT" && (
-              <ClientDashboard
-                user={user}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                onUpgradeSuccess={() => login({ ...user, role: "CREATOR" })}
-              />
-            )}
+                {/* 2. CREATOR ROLE DASHBOARD */}
+                {effectiveRole === "CREATOR" && (
+                  <CreatorDashboard
+                    user={user}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                  />
+                )}
 
-            {/* 4. VISITOR GUEST VIEW */}
-            {effectiveRole === "VISITOR" && (
-              <VisitorDashboard
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-              />
+                {/* 3. CLIENT ROLE DASHBOARD */}
+                {effectiveRole === "CLIENT" && (
+                  <ClientDashboard
+                    user={user}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    onUpgradeSuccess={() => login({ ...user, role: "CREATOR" })}
+                  />
+                )}
+
+                {/* 4. VISITOR GUEST VIEW */}
+                {effectiveRole === "VISITOR" && (
+                  <VisitorDashboard
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                  />
+                )}
+              </>
             )}
           </main>
 
@@ -125,3 +147,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

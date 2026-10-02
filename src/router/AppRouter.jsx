@@ -50,6 +50,7 @@ function AppRouter() {
         <Route path="/photography" element={<Photography />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/help" element={<Dashboard defaultTab="help" />} />
         <Route path="/sign-in" element={<Auth />} />
         <Route path="/sign-up" element={<Auth />} />
       </Routes>

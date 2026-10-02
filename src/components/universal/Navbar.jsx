@@ -335,7 +335,7 @@ function Navbar() {
 
                     {/* 2. Notifications (Exclamation Circle Icon matching reference image) */}
                     <Link
-                      to="/dashboard"
+                      to="/dashboard?tab=notifications"
                       onClick={() => setProfileOpen(false)}
                       className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-base-content hover:bg-base-200 transition-colors"
                     >
@@ -349,7 +349,7 @@ function Navbar() {
 
                     {/* 3. User Settings (User Gear Badge Icon matching reference image) */}
                     <Link
-                      to="/dashboard"
+                      to="/dashboard?tab=settings"
                       onClick={() => setProfileOpen(false)}
                       className="px-3.5 py-2.5 rounded-xl font-medium text-sm flex items-center gap-3 text-base-content/90 hover:text-base-content hover:bg-base-200 transition-colors"
                     >

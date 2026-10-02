@@ -62,7 +62,7 @@ function Footer() {
         { label: 'Explore 360°', to: '/explore' },
         { label: 'Create a tour', to: '/create' },
         { label: 'Sign in', to: '/sign-in' },
-        { label: 'Help center', to: '/help' },
+        { label: 'Help center', to: '/dashboard?tab=help' },
         { label: 'Contact', to: '/contact' },
       ],
     },
