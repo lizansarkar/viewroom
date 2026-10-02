@@ -194,7 +194,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 {bookmarks.slice(0, 2).map((b) => (
                   <div
                     key={b.id}
-                    className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
+                    className="p-4 sm:p-5 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-3"
                   >
                     <div>
                       <div className="relative h-40 rounded-2xl overflow-hidden mb-3 bg-base-200">
@@ -211,10 +211,10 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                           {b.category}
                         </span>
                       </div>
-                      <h4 className="font-bold text-xs text-base-content mb-3 line-clamp-1">{b.title}</h4>
+                      <h4 className="font-bold text-xs sm:text-sm text-base-content leading-snug line-clamp-1 mt-1 mb-2">{b.title}</h4>
                     </div>
-                    <Link to={b.link} className="w-full">
-                      <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-1.5">
+                    <Link to={b.link} className="w-full block mt-3">
+                      <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-2">
                         <FontAwesomeIcon icon={faEye} className="mr-1.5" />
                         Launch 360°
                       </Button>
@@ -294,10 +294,10 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
             {filteredBookmarks.map((b) => (
               <div
                 key={b.id}
-                className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
+                className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-4"
               >
                 <div>
-                  <div className="relative h-44 rounded-2xl overflow-hidden mb-4 bg-base-200">
+                  <div className="relative h-44 rounded-2xl overflow-hidden mb-3 bg-base-200">
                     <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
                     <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                       {b.category}
@@ -311,12 +311,12 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                     </button>
                   </div>
 
-                  <h4 className="font-bold text-base text-base-content mb-1">{b.title}</h4>
-                  <span className="text-xs text-base-content/50 block mb-4">Saved {b.savedAt}</span>
+                  <h4 className="font-bold text-sm text-base-content mt-1 leading-snug">{b.title}</h4>
+                  <span className="text-xs text-base-content/50 block mt-1">Saved {b.savedAt}</span>
                 </div>
 
-                <Link to={b.link} className="w-full">
-                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
+                <Link to={b.link} className="w-full block mt-3">
+                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs !py-2">
                     <FontAwesomeIcon icon={faEye} className="mr-2" />
                     Launch 360° Interactive
                   </Button>

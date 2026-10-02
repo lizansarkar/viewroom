@@ -917,18 +917,18 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
 
         {/* TOP CENTER GLASSMORPHIC VOICE AI TOAST & TRANSCRIPT */}
         <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 max-w-md w-[90%] sm:w-auto pointer-events-auto">
-          <div className="bg-black/80 backdrop-blur-xl border border-white/30 rounded-2xl px-4 py-2.5 shadow-2xl flex items-center gap-3 text-white">
+          <div className="bg-white/95 backdrop-blur-md border border-black/15 rounded-2xl px-4.5 py-2.5 shadow-xl flex items-center gap-3 text-black">
             <div className="relative shrink-0 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCommentDots} className="text-white text-base animate-pulse" />
+              <FontAwesomeIcon icon={faCommentDots} className="text-black text-base animate-pulse" />
               {isAiThinking && (
-                <div className="absolute inset-0 rounded-full border border-white animate-spin"></div>
+                <div className="absolute inset-0 rounded-full border border-black animate-spin"></div>
               )}
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/70">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-zinc-500">
                 VOICE AI SPATIAL ASSISTANT
               </span>
-              <p className="text-xs sm:text-sm font-medium leading-tight text-white drop-shadow">
+              <p className="text-xs sm:text-sm font-semibold leading-tight text-black">
                 {isListening ? aiTranscript : isAiThinking ? "Analyzing spatial intent..." : aiSpokenResponse}
               </p>
             </div>
@@ -1141,26 +1141,26 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
 
       {/* SHARE & EMBED MODAL */}
       {showShareModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white/95 backdrop-blur-xl border border-black/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative text-black">
             <button
               type="button"
               onClick={() => setShowShareModal(false)}
-              className="absolute top-5 right-5 text-zinc-400 hover:text-white transition-colors text-xl font-bold cursor-pointer"
+              className="absolute top-5 right-5 text-zinc-400 hover:text-black transition-colors text-xl font-bold cursor-pointer"
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
 
-            <h3 className="text-2xl font-black uppercase tracking-tight mb-1 text-white">
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-1 text-black">
               Share 360° Virtual Tour
             </h3>
-            <p className="text-xs text-zinc-400 mb-6">
+            <p className="text-xs text-zinc-600 mb-6 font-medium">
               Share this interactive multi-floor 3D tour link or embed directly on external real estate listings.
             </p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-300">
+                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-700">
                   Direct Shareable Link
                 </label>
                 <div className="flex items-center gap-2">
@@ -1168,7 +1168,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                     type="text"
                     readOnly
                     value={`${window.location.origin}/tour/${activeNode.id}`}
-                    className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-4 py-2.5 text-xs font-mono text-zinc-200 focus:outline-none"
+                    className="w-full bg-zinc-100 border border-zinc-300 rounded-xl px-4 py-2.5 text-xs font-mono text-zinc-800 focus:outline-none focus:ring-2 focus:ring-black"
                   />
                   <Button
                     variant="primary"
@@ -1185,14 +1185,14 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
               </div>
 
               <div>
-                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-300">
+                <label className="block text-xs font-extrabold uppercase tracking-wider mb-2 text-zinc-700">
                   iFrame Embed Code
                 </label>
                 <textarea
                   readOnly
                   rows={3}
                   value={`<iframe src="${window.location.origin}/tour/${activeNode.id}" width="100%" height="600px" frameborder="0" allowfullscreen></iframe>`}
-                  className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl p-3 text-[11px] font-mono text-zinc-200 focus:outline-none resize-none"
+                  className="w-full bg-zinc-100 border border-zinc-300 rounded-xl p-3 text-[11px] font-mono text-zinc-800 focus:outline-none focus:ring-2 focus:ring-black resize-none"
                 />
               </div>
             </div>
