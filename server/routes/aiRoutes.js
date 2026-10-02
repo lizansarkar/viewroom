@@ -187,32 +187,39 @@ router.post("/spatial-voice", async (req, res) => {
     const q = prompt.toLowerCase();
     const currentApiKey = process.env.GEMINI_API_KEY;
 
-    // Smart Intent Parser Fallback
+    // Smart Dynamic Intent Parser Fallback (works for any creator's tour)
     const parseIntentFallback = (userQuery, tourNodes) => {
       let targetNode = null;
       let speech = "";
+      const qClean = userQuery.toLowerCase().trim();
+      const qWords = qClean.split(/\s+/).filter(w => w.length > 2);
 
-      // Match floor levels or room keywords
-      if (userQuery.includes("aerial") || userQuery.includes("sky") || userQuery.includes("outside") || userQuery.includes("bird") || userQuery.includes("top")) {
-        targetNode = tourNodes.find((n) => n.id === "aerial_view");
-      } else if (userQuery.includes("ground") || userQuery.includes("entrance") || userQuery.includes("lobby") && (userQuery.includes("main") || userQuery.includes("0"))) {
-        targetNode = tourNodes.find((n) => n.id === "entrance");
-      } else if (userQuery.includes("1st") || userQuery.includes("first") || (userQuery.includes("floor") && userQuery.includes("1"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_1");
-      } else if (userQuery.includes("2nd") || userQuery.includes("second") || userQuery.includes("workspace") || userQuery.includes("lounge") || (userQuery.includes("floor") && userQuery.includes("2"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_2");
-      } else if (userQuery.includes("3rd") || userQuery.includes("third") || userQuery.includes("lab") || userQuery.includes("r&d") || (userQuery.includes("floor") && userQuery.includes("3"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_3");
-      } else if (userQuery.includes("4th") || userQuery.includes("fourth") || userQuery.includes("gallery") || userQuery.includes("fashion") || (userQuery.includes("floor") && userQuery.includes("4"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_4");
-      } else if (userQuery.includes("5th") || userQuery.includes("fifth") || userQuery.includes("cafeteria") || userQuery.includes("dining") || (userQuery.includes("floor") && userQuery.includes("5"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_5");
-      } else if (userQuery.includes("6th") || userQuery.includes("sixth") || userQuery.includes("suite") || userQuery.includes("executive") || (userQuery.includes("floor") && userQuery.includes("6"))) {
-        targetNode = tourNodes.find((n) => n.id === "floor_6");
+      // Direct match
+      targetNode = tourNodes.find((n) => {
+        const nameLower = (n.name || "").toLowerCase();
+        const idLower = (n.id || "").toLowerCase();
+        return nameLower === qClean || idLower === qClean || qClean.includes(nameLower);
+      });
+
+      // Word token overlap match
+      if (!targetNode && qWords.length > 0) {
+        targetNode = tourNodes.find((n) => {
+          const nameLower = (n.name || "").toLowerCase();
+          return qWords.some((word) => nameLower.includes(word));
+        });
+      }
+
+      // Synonym fallback
+      if (!targetNode) {
+        if (qClean.includes("aerial") || qClean.includes("sky") || qClean.includes("outside") || qClean.includes("bird") || qClean.includes("top")) {
+          targetNode = tourNodes.find((n) => n.id === "aerial_view" || n.name.toLowerCase().includes("aerial"));
+        } else if (qClean.includes("ground") || qClean.includes("entrance") || qClean.includes("lobby") || qClean.includes("door")) {
+          targetNode = tourNodes.find((n) => n.id === "entrance" || n.name.toLowerCase().includes("entrance"));
+        }
       }
 
       if (targetNode) {
-        speech = `Navigating to ${targetNode.name}. Enjoy your spatial tour!`;
+        speech = `Navigating to ${targetNode.name}.`;
         return {
           targetNodeId: targetNode.id,
           targetYaw: "0deg",
@@ -222,11 +229,12 @@ router.post("/spatial-voice", async (req, res) => {
         };
       }
 
+      const availableNames = tourNodes.map((n) => n.name).join(", ");
       return {
         targetNodeId: null,
         targetYaw: "0deg",
         targetPitch: "0deg",
-        spokenResponse: `I heard "${userQuery}". You can ask me to navigate to Ground Floor, 1st Floor, 2nd Floor, 3rd Floor, 4th Floor, 5th Floor, 6th Floor, or Aerial View!`,
+        spokenResponse: `I heard "${userQuery}". You can navigate to: ${availableNames || "any available room scene"}.`,
         matchedName: null,
       };
     };
@@ -235,8 +243,9 @@ router.post("/spatial-voice", async (req, res) => {
     if (currentApiKey && currentApiKey !== "YOUR_GEMINI_API_KEY" && currentApiKey !== "your_google_gemini_api_key_here") {
       try {
         const client = new GoogleGenerativeAI(currentApiKey);
-        const model = client.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+        const modelNames = ["gemini-1.5-flash-latest", "gemini-2.5-flash", "gemini-1.5-pro-latest", "gemini-1.5-flash"];
+        
+        let resultText = null;
         const promptInstruction = `You are ViewRoom AI Voice Tour Guide. The user is exploring a 360° virtual tour.
 Available tour nodes JSON: ${JSON.stringify(nodes.map((n) => ({ id: n.id, name: n.name, floorLevel: n.floorLevel })))}
 Current scene: ${currentPanoramaId}
@@ -251,12 +260,23 @@ Return ONLY a JSON object with this structure:
   "matchedName": "Name of matched room or null"
 }`;
 
-        const result = await model.generateContent(promptInstruction);
-        const text = result.response.text();
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          return res.json({ success: true, ...parsed });
+        for (const mName of modelNames) {
+          try {
+            const model = client.getGenerativeModel({ model: mName });
+            const genRes = await model.generateContent(promptInstruction);
+            resultText = genRes.response.text();
+            if (resultText) break;
+          } catch (e) {
+            // Try next model name
+          }
+        }
+
+        if (resultText) {
+          const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            return res.json({ success: true, ...parsed });
+          }
         }
       } catch (err) {
         console.warn("Gemini AI voice navigation fallback:", err.message);

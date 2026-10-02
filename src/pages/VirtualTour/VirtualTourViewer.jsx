@@ -529,6 +529,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const viewportRef = useRef(null);
   const thumbnailScrollRef = useRef(null);
   const recognitionRef = useRef(null);
+  const silenceTimerRef = useRef(null);
 
   // Load dynamic custom tour uploaded by creator from backend API or localStorage
   useEffect(() => {
@@ -632,7 +633,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     }
   };
 
-  // Client-Side Ultra-Fast 50ms Fuzzy Intent Matcher & Action Dispatcher
+  // Client-Side Ultra-Fast Dynamic Intent Matcher & Action Dispatcher
   const processVoiceCommand = async (rawTranscript) => {
     const q = rawTranscript.toLowerCase().trim();
     setIsAiThinking(true);
@@ -712,24 +713,27 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    // 2. Check Room / Floor Navigation Matches (50ms Client-Side Instant Intent)
-    let targetNode = null;
-    if (q.includes("aerial") || q.includes("sky") || q.includes("bird") || q.includes("top") || q.includes("outside")) {
-      targetNode = TOUR_NODES.find((n) => n.id === "aerial_view");
-    } else if (q.includes("entrance") || q.includes("ground") || q.includes("lobby") || q.includes("door") || q.includes("floor 0")) {
-      targetNode = TOUR_NODES.find((n) => n.id === "entrance");
-    } else if (q.includes("1st") || q.includes("first") || q.includes("showroom 1") || (q.includes("floor") && q.includes("1"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_1");
-    } else if (q.includes("2nd") || q.includes("second") || q.includes("workspace") || q.includes("office") || q.includes("lounge") || (q.includes("floor") && q.includes("2"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_2");
-    } else if (q.includes("3rd") || q.includes("third") || q.includes("lab") || q.includes("r&d") || (q.includes("floor") && q.includes("3"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_3");
-    } else if (q.includes("4th") || q.includes("fourth") || q.includes("gallery") || q.includes("fashion") || (q.includes("floor") && q.includes("4"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_4");
-    } else if (q.includes("5th") || q.includes("fifth") || q.includes("cafeteria") || q.includes("dining") || q.includes("restaurant") || (q.includes("floor") && q.includes("5"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_5");
-    } else if (q.includes("6th") || q.includes("sixth") || q.includes("penthouse") || q.includes("suite") || q.includes("executive") || (q.includes("floor") && q.includes("6"))) {
-      targetNode = TOUR_NODES.find((n) => n.id === "floor_6");
+    // 2. Dynamic Room Scene Navigation Matcher (works for ANY creator's tour)
+    let targetNode = tourNodes.find((n) => {
+      const nameLower = (n.name || "").toLowerCase();
+      const idLower = (n.id || "").toLowerCase();
+      return nameLower === q || idLower === q || q.includes(nameLower);
+    });
+
+    if (!targetNode && q.length > 3) {
+      const words = q.split(/\s+/).filter((w) => w.length > 2);
+      targetNode = tourNodes.find((n) => {
+        const nameLower = (n.name || "").toLowerCase();
+        return words.some((word) => nameLower.includes(word));
+      });
+    }
+
+    if (!targetNode) {
+      if (q.includes("aerial") || q.includes("sky") || q.includes("bird") || q.includes("top") || q.includes("outside")) {
+        targetNode = tourNodes.find((n) => n.id === "aerial_view" || n.name.toLowerCase().includes("aerial"));
+      } else if (q.includes("entrance") || q.includes("ground") || q.includes("lobby") || q.includes("door")) {
+        targetNode = tourNodes.find((n) => n.id === "entrance" || n.name.toLowerCase().includes("entrance"));
+      }
     }
 
     if (targetNode) {
@@ -751,13 +755,13 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
         res = await fetch("/api/v1/ai/spatial-voice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: TOUR_NODES }),
+          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: tourNodes }),
         });
       } catch (netErr) {
         res = await fetch("http://localhost:5000/api/v1/ai/spatial-voice", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: TOUR_NODES }),
+          body: JSON.stringify({ prompt: rawTranscript, currentPanoramaId, nodes: tourNodes }),
         });
       }
 
@@ -778,19 +782,24 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       console.warn("Backend Gemini AI Voice Assistant fallback:", apiErr);
     }
 
-    // 4. Intelligent Fallback if query wasn't matched and API couldn't be reached
+    // 4. Intelligent Guidance Fallback
     setIsAiThinking(false);
-    const fallbackMsg = `I heard "${rawTranscript}". You can ask me to navigate to Ground Floor, 1st Floor, 2nd Floor, 3rd Floor, 4th Floor, 5th Floor, 6th Floor, or Aerial View!`;
+    const availableRoomNames = tourNodes.map((n) => n.name).join(", ");
+    const fallbackMsg = `I heard "${rawTranscript}". You can navigate to: ${availableRoomNames || "any room scene"}!`;
     setAiSpokenResponse(fallbackMsg);
     speakResponse(fallbackMsg);
   };
 
-  // Web Speech API Microphone Handler
+  // Web Speech API Microphone Handler with Silence Debounce
   const toggleVoiceAssistant = () => {
     uiSound.playHoverClick();
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+    }
+
     if (isListening) {
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try { recognitionRef.current.stop(); } catch (e) {}
       }
       setIsListening(false);
       return;
@@ -806,31 +815,59 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognition.interimResults = true;
       recognition.lang = "en-US";
+
+      let accumulatedText = "";
 
       recognition.onstart = () => {
         setIsListening(true);
-        setAiTranscript("Listening for your voice command...");
+        setAiTranscript("Listening... Speak your command");
       };
 
       recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setAiTranscript(`"${transcript}"`);
-        setIsListening(false);
-        processVoiceCommand(transcript);
+        let interimText = "";
+        let finalChunk = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const trans = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalChunk += " " + trans;
+          } else {
+            interimText += trans;
+          }
+        }
+
+        if (finalChunk) {
+          accumulatedText += finalChunk;
+        }
+
+        const currentFullSpeech = (accumulatedText + " " + interimText).trim();
+        if (currentFullSpeech) {
+          setAiTranscript(`"${currentFullSpeech}"`);
+
+          // 1.2s Silence Debounce: Wait until the user finishes talking before processing
+          if (silenceTimerRef.current) {
+            clearTimeout(silenceTimerRef.current);
+          }
+          silenceTimerRef.current = setTimeout(() => {
+            if (recognitionRef.current) {
+              try { recognitionRef.current.stop(); } catch (e) {}
+            }
+            setIsListening(false);
+            processVoiceCommand(currentFullSpeech);
+          }, 1200);
+        }
       };
 
       recognition.onerror = (event) => {
         console.warn("Speech recognition error:", event.error);
-        setIsListening(false);
+        if (event.error !== "no-speech") {
+          setIsListening(false);
+        }
         if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-          const msg = "Microphone permission is blocked in your browser. Please allow microphone access in your browser settings!";
-          setAiSpokenResponse(msg);
-          speakResponse(msg);
-        } else if (event.error === "no-speech") {
-          const msg = "I didn't hear anything. Please click the microphone icon and speak again!";
+          const msg = "Microphone permission is blocked. Please allow mic access in your browser settings!";
           setAiSpokenResponse(msg);
           speakResponse(msg);
         }
