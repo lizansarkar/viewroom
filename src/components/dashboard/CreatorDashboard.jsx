@@ -32,6 +32,7 @@ import {
   apiCreateOwnerTour,
   apiAddOwnerScene,
   apiAddOwnerHotspot,
+  apiUploadImage,
 } from "../../services/api";
 
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
@@ -343,28 +344,51 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
+  const handleAddNewSceneFromModal = async (sceneData) => {
+    if (!editingTour) return null;
+    const res = await apiAddOwnerScene(editingTour.id, sceneData);
+    const createdScene = (res && res.data) || sceneData;
+
+    let updatedTourObj = null;
+    setTours((prev) => {
+      const updated = prev.map((t) => {
+        if (t.id !== editingTour.id) return t;
+        const newScenes = [...(t.scenes || []), createdScene];
+        updatedTourObj = { ...t, scenes: newScenes };
+        return updatedTourObj;
+      });
+      saveToursToStorage(updated);
+      return updated;
+    });
+
+    if (updatedTourObj) {
+      setEditingTour(updatedTourObj);
+    }
+    return createdScene;
+  };
+
   const handleSaveHotspot = async (hotspotData) => {
     if (!editingTour || !editingScene) return;
     const res = await apiAddOwnerHotspot(editingTour.id, editingScene.id, hotspotData);
     setTours((prev) => {
       const updated = prev.map((t) => {
         if (t.id !== editingTour.id) return t;
-        return {
-          ...t,
-          scenes: t.scenes.map((s) => {
-            if (s.id !== editingScene.id) return s;
-            return {
-              ...s,
-              hotspots: [...(s.hotspots || []), (res && res.data) || hotspotData],
-            };
-          }),
-        };
+        const updatedScenes = t.scenes.map((s) => {
+          if (s.id !== editingScene.id) return s;
+          return {
+            ...s,
+            hotspots: [...(s.hotspots || []), (res && res.data) || hotspotData],
+          };
+        });
+        const tourObj = { ...t, scenes: updatedScenes };
+        if (editingTour && editingTour.id === t.id) {
+          setEditingTour(tourObj);
+        }
+        return tourObj;
       });
       saveToursToStorage(updated);
       return updated;
     });
-    setEditingScene(null);
-    setEditingTour(null);
   };
 
   const currentRoute = activeTab || "creator_overview";
@@ -564,62 +588,114 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           </div>
 
           {/* Tours List */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {filteredTours.map((tour) => (
               <div
                 key={tour.id}
-                className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs hover:border-base-content/20 transition-all"
+                className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col gap-5 shadow-xs hover:border-base-content/20 transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <img src={tour.coverImage} alt={tour.title} className="w-24 h-18 rounded-2xl object-cover bg-base-200 border border-base-content/10" />
-                  <div>
-                    <h4 className="font-bold text-base text-base-content">{tour.title}</h4>
-                    <p className="text-xs text-base-content/60 mt-0.5">
-                      {tour.category} • {tour.scenes?.length || 0} Scenes • {tour.viewsCount || 0} Views
-                    </p>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-base-content/10 pb-4">
+                  <div className="flex items-center gap-4">
+                    <img src={tour.coverImage} alt={tour.title} className="w-24 h-18 rounded-2xl object-cover bg-base-200 border border-base-content/10 shrink-0" />
+                    <div>
+                      <h4 className="font-extrabold text-base text-base-content">{tour.title}</h4>
+                      <p className="text-xs text-base-content/60 mt-0.5">
+                        {tour.category} • {tour.scenes?.length || 0} Room Scenes • {tour.viewsCount || 0} Views
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap w-full md:w-auto justify-end">
+                    <button
+                      onClick={() => handleAddSceneToTour(tour.id)}
+                      className="px-3.5 py-2 rounded-xl bg-primary text-primary-content text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                    >
+                      <FontAwesomeIcon icon={faPlus} />
+                      <span>+ Add Room Scene</span>
+                    </button>
+                    <button
+                      onClick={() => handleCopyShareableLink(tour.id)}
+                      className="px-3 py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border border-base-content/10"
+                      title="Copy Shareable 360° Link"
+                    >
+                      <FontAwesomeIcon icon={copiedTourId === tour.id ? faCheck : faShareNodes} className={copiedTourId === tour.id ? "text-success" : ""} />
+                      <span>{copiedTourId === tour.id ? "Copied Link!" : "Copy Share Link"}</span>
+                    </button>
+                    <Link to={`/virtual-tour/${tour.id}`}>
+                      <Button variant="secondary" className="!text-xs !py-1.5 !px-3.5 !rounded-xl">
+                        <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-1.5" />
+                        View 360°
+                      </Button>
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteTour(tour.id)}
+                      className="p-2.5 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 transition-colors cursor-pointer text-xs"
+                      title="Delete Tour"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap w-full md:w-auto justify-end">
-                  {tour.scenes?.[0] && (
-                    <button
-                      onClick={() => {
-                        setEditingTour(tour);
-                        setEditingScene(tour.scenes[0]);
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <FontAwesomeIcon icon={faCompass} />
-                      Add Pitch/Yaw Hotspot
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleCopyShareableLink(tour.id)}
-                    className="px-3 py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border border-base-content/10"
-                    title="Copy Shareable 360° Link"
-                  >
-                    <FontAwesomeIcon icon={copiedTourId === tour.id ? faCheck : faShareNodes} className={copiedTourId === tour.id ? "text-success" : ""} />
-                    <span>{copiedTourId === tour.id ? "Copied Link!" : "Copy Share Link"}</span>
-                  </button>
-                  <button
-                    onClick={() => handleAddSceneToTour(tour.id)}
-                    className="px-3.5 py-2 rounded-xl border border-base-content/20 text-base-content text-xs font-semibold hover:bg-base-200 transition-all cursor-pointer"
-                  >
-                    + Add Scene
-                  </button>
-                  <Link to={`/virtual-tour/${tour.id}`}>
-                    <Button variant="secondary" className="!text-xs !py-1.5 !px-3.5 !rounded-xl">
-                      <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-1.5" />
-                      View 360°
-                    </Button>
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteTour(tour.id)}
-                    className="p-2.5 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 transition-colors cursor-pointer text-xs"
-                    title="Delete Tour"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                {/* Property Scenes List & Hotspot Manager for this Tour */}
+                <div className="space-y-3">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/60 block">
+                    Property Room Scenes & Hotspot Links ({tour.scenes?.length || 0})
+                  </span>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {tour.scenes?.map((sc) => (
+                      <div
+                        key={sc.id}
+                        className="p-3.5 rounded-2xl bg-base-200/50 border border-base-content/10 flex flex-col justify-between gap-3 hover:border-base-content/25 transition-all"
+                      >
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={sc.panoramaUrl || sc.thumbnailUrl || "/panoramas/panorama_aerial.jpg"}
+                            alt={sc.name}
+                            className="w-16 h-12 rounded-xl object-cover bg-base-300 shrink-0 border border-base-content/10"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <h5 className="font-extrabold text-xs text-base-content truncate">{sc.name}</h5>
+                            <p className="text-[10px] text-base-content/60">
+                              {sc.hotspots?.length || 0} Hotspots Attached
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Connected Hotspot Destination Badges */}
+                        {sc.hotspots && sc.hotspots.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {sc.hotspots.map((hp) => {
+                              const destScene = tour.scenes.find((dest) => dest.id === hp.targetId);
+                              return (
+                                <span
+                                  key={hp.id}
+                                  className="px-2 py-0.5 rounded-md bg-base-100 border border-base-content/15 text-[9px] font-bold text-base-content/80 truncate max-w-full"
+                                >
+                                  ➔ {hp.title} {destScene ? `(${destScene.name})` : ""}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-1.5 pt-1 border-t border-base-content/10">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingTour(tour);
+                              setEditingScene(sc);
+                            }}
+                            className="flex-1 py-1.5 px-2.5 rounded-xl bg-base-100 hover:bg-base-200 border border-base-content/15 text-base-content text-[11px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
+                          >
+                            <FontAwesomeIcon icon={faCompass} className="text-xs" />
+                            <span>Add Hotspots</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
@@ -919,7 +995,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
                       {/* Scene Action Buttons: Upload 360 File & Set Cover & Delete */}
                       <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
-                        {/* Hidden File Input */}
                         <input
                           type="file"
                           accept="image/*"
@@ -929,16 +1004,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                             const file = e.target.files?.[0];
                             if (file) {
                               const reader = new FileReader();
-                              reader.onload = (event) => {
+                              reader.onload = async (event) => {
                                 const base64Data = event.target?.result;
                                 if (base64Data) {
+                                  // Attempt backend upload to get static URL
+                                  const uploadedUrl = await apiUploadImage(base64Data, file.name);
+                                  const finalUrl = uploadedUrl || base64Data;
                                   setNewTourScenesList((prev) =>
                                     prev.map((item) =>
                                       item.id === sc.id
                                         ? {
                                             ...item,
-                                            panoramaUrl: base64Data,
-                                            thumbnailUrl: base64Data,
+                                            panoramaUrl: finalUrl,
+                                            thumbnailUrl: finalUrl,
                                             fileName: file.name,
                                             isCustomUploaded: true,
                                           }
@@ -1115,6 +1193,8 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             setEditingTour(null);
           }}
           onSave={handleSaveHotspot}
+          onAddNewScene={handleAddNewSceneFromModal}
+          onSwitchEditingScene={(sc) => setEditingScene(sc)}
         />
       )}
     </div>

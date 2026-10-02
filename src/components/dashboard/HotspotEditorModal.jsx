@@ -11,11 +11,13 @@ import {
   faCrosshairs,
   faTrash,
   faLocationDot,
-  faRoute,
-  faSliders,
-  faEye,
+  faPlus,
+  faCloudArrowUp,
+  faCheckCircle,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
+import { apiUploadImage } from "../../services/api";
 
 const getHotspotIcon = (type) => {
   switch (type) {
@@ -32,58 +34,81 @@ const getHotspotIcon = (type) => {
 };
 
 const createPreviewPuckHtml = (label, type = "arrow") => {
+  const displayLabel = label || "HOTSPOT";
   if (type === "arrow") {
-    // Image 2: Perspective Animated Floor Chevron Arrow
+    // Ultra-crisp 3D Perspective SVG Road Chevron Arrow with Floor Shadow & Pulse Animation
     return `
-      <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
-        <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl">
-          <span>${label || "WALK FORWARD"}</span>
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs font-black">➔</span>
+          <span>${displayLabel}</span>
         </div>
-        <div style="transform: perspective(400px) rotateX(60deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
-          <div class="w-12 h-6 border-t-[5px] border-l-[5px] border-white/70 rotate-45 -mb-3 animate-ping opacity-70"></div>
-          <div class="w-10 h-5 border-t-[6px] border-l-[6px] border-white rotate-45 shadow-[0_0_20px_rgba(255,255,255,1)]"></div>
+        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
+          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
+          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
       </div>
     `;
   }
 
   if (type === "door") {
-    // Image 3: Circular Doorway Ring Icon
     return `
-      <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
-        <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl">
-          <span>${label || "ENTER ROOM"}</span>
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs">🚪</span>
+          <span>${displayLabel}</span>
         </div>
-        <div class="w-13 h-13 rounded-full border-[3px] border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 group-hover:bg-white text-white group-hover:text-black">
-          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/></svg>
+        <div class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-50"></div>
+          <svg class="w-6 h-6 fill-current transition-transform duration-500 group-hover:scale-110" viewBox="0 0 24 24">
+            <path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/>
+          </svg>
         </div>
       </div>
     `;
   }
 
-  // Image 1: Concentric Circular Floor Target Puck
   return `
-    <div class="cursor-pointer group flex flex-col items-center justify-center select-none">
-      <div class="px-3 py-1 rounded-full bg-black/90 backdrop-blur-md border border-white text-white text-[11px] font-extrabold uppercase tracking-wider mb-2 shadow-2xl flex items-center gap-1">
-        <span>${getHotspotIcon(type)}</span>
-        <span>${label || "HOTSPOT"}</span>
+    <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+      <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+        <span class="text-xs">${getHotspotIcon(type)}</span>
+        <span>${displayLabel}</span>
       </div>
-      <div style="transform: perspective(500px) rotateX(65deg);" class="relative w-14 h-14 rounded-full border-2 border-white bg-white/30 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115">
-        <div class="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-60"></div>
-        <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_12px_rgba(255,255,255,1)]"></div>
+      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-13 h-13 sm:w-15 sm:h-15 rounded-full border-2 border-white bg-white/30 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120">
+        <div class="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-70"></div>
+        <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
       </div>
     </div>
   `;
 };
 
-export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDeleteHotspot }) {
-  const [title, setTitle] = useState("NEW ROOM CONNECTOR");
+export default function HotspotEditorModal({
+  scene,
+  tour,
+  onClose,
+  onSave,
+  onDeleteHotspot,
+  onAddNewScene,
+  onSwitchEditingScene,
+}) {
+  const [title, setTitle] = useState("");
   const [yaw, setYaw] = useState("0deg");
   const [pitch, setPitch] = useState("-25deg");
   const [targetId, setTargetId] = useState(
     tour?.scenes?.find((s) => s.id !== scene?.id)?.id || ""
   );
   const [hotspotType, setHotspotType] = useState("arrow");
+
+  // Inline New Linked Room Creator State
+  const [showNewSceneForm, setShowNewSceneForm] = useState(false);
+  const [newRoomName, setNewRoomName] = useState("");
+  const [newRoomImageUrl, setNewRoomImageUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Local list of existing scene hotspots for interactive management
   const [existingHotspots, setExistingHotspots] = useState(scene?.hotspots || []);
@@ -100,6 +125,16 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
       setExistingHotspots(scene.hotspots);
     }
   }, [scene]);
+
+  // Set default title when target scene changes if title is empty
+  useEffect(() => {
+    if (targetId && !title) {
+      const targetScene = tour?.scenes?.find((s) => s.id === targetId);
+      if (targetScene) {
+        setTitle(targetScene.name);
+      }
+    }
+  }, [targetId]);
 
   const handlePsvReady = (instance) => {
     psvRef.current = instance;
@@ -122,7 +157,7 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
           markersPlugin.addMarker({
             id: "temp_preview_marker",
             position: { yaw: yawDeg, pitch: pitchDeg },
-            html: createPreviewPuckHtml(title, hotspotType),
+            html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
           });
         }
       }
@@ -140,7 +175,7 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
         markersPlugin.addMarker({
           id: "temp_preview_marker",
           position: { yaw, pitch },
-          html: createPreviewPuckHtml(newTitle, newType),
+          html: createPreviewPuckHtml(newTitle || "HOTSPOT", newType),
         });
       }
     }
@@ -151,12 +186,56 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
     handleTitleChange(title, newType);
   };
 
+  const handleFileUploadForNewScene = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingImage(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target?.result;
+        if (base64) {
+          const uploadedUrl = await apiUploadImage(base64, file.name);
+          setNewRoomImageUrl(uploadedUrl || base64);
+        }
+        setIsUploadingImage(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleCreateAndLinkNewScene = async () => {
+    if (!newRoomName) return;
+    const finalPanorama = newRoomImageUrl || "/panoramas/panorama_floor1.jpg";
+    const newSceneObj = {
+      id: `scene_${Date.now()}`,
+      name: newRoomName,
+      panoramaUrl: finalPanorama,
+      thumbnailUrl: finalPanorama,
+      hotspots: [],
+    };
+
+    if (onAddNewScene) {
+      const created = await onAddNewScene(newSceneObj);
+      const targetSceneId = created?.id || newSceneObj.id;
+      setTargetId(targetSceneId);
+      if (!title) {
+        handleTitleChange(newRoomName);
+      }
+      setShowNewSceneForm(false);
+      setNewRoomName("");
+      setNewRoomImageUrl("");
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title) return;
+    const finalTitle = title.trim() || (tour?.scenes?.find((s) => s.id === targetId)?.name) || "LINK";
     const newHotspot = {
       id: `hp_${Date.now()}`,
-      title,
+      title: finalTitle,
       yaw: yaw.includes("deg") ? yaw : `${yaw}deg`,
       pitch: pitch.includes("deg") ? pitch : `${pitch}deg`,
       targetId,
@@ -184,7 +263,7 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
     {
       id: "temp_preview_marker",
       position: { yaw, pitch },
-      html: createPreviewPuckHtml(title, hotspotType),
+      html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
     },
     ...existingHotspots.map((hp) => ({
       id: hp.id,
@@ -216,8 +295,8 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
                 Visual 360° Hotspot Studio
               </span>
               <h3 className="font-bold text-xs sm:text-sm md:text-base text-base-content flex items-center gap-2 truncate">
-                <span className="truncate">Point & Click Room Hotspot Editor</span>
-                <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-base-content text-base-100 shrink-0">
+                <span className="truncate">Editing Hotspots for:</span>
+                <span className="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-base-content text-base-100 shrink-0">
                   {scene?.name || "Panorama Scene"}
                 </span>
               </h3>
@@ -234,11 +313,12 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
           </button>
         </div>
 
-        {/* Content Layout: Left 360 Viewport (75-80% Width), Right Studio Controls (20-25% Width) */}
+        {/* Content Layout */}
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden h-full min-h-0">
-          {/* 360 Interactive Viewport (Expanded to Full Width / 80% Screen Real Estate) */}
+          {/* 360 Viewport */}
           <div className="relative w-full lg:w-3/4 xl:w-4/5 h-[50vh] sm:h-[60vh] lg:h-full bg-black shrink-0 border-b lg:border-b-0 lg:border-r border-base-content/10 flex-1">
             <ReactPhotoSphereViewer
+              key={`${scene?.id}_${panoramaUrl}`}
               src={panoramaUrl}
               height="100%"
               width="100%"
@@ -251,34 +331,53 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
               onReady={handlePsvReady}
             />
 
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-base-100/90 backdrop-blur-md border border-base-content/15 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-base-content uppercase tracking-wider flex items-center gap-2 sm:gap-2.5 shadow-md max-w-[90%]">
-              <FontAwesomeIcon icon={faCompass} className="animate-spin text-base-content shrink-0" />
-              <span className="truncate">CLICK ANYWHERE ON PANORAMA TO PLACE PUCK</span>
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-white flex items-center gap-2 shadow-md max-w-[90%]">
+              <FontAwesomeIcon icon={faCompass} className="text-white shrink-0 animate-spin" />
+              <span className="truncate font-semibold">Click panorama to position hotspot</span>
             </div>
+
+            {/* Quick Switch Scene Bar inside Viewport Header */}
+            {tour?.scenes && tour.scenes.length > 1 && (
+              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 max-w-[90%] overflow-x-auto py-1.5 px-2.5 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20">
+                <span className="text-[10px] font-bold text-white/70 uppercase px-1">Switch Room:</span>
+                {tour.scenes.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => onSwitchEditingScene && onSwitchEditingScene(s)}
+                    className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                      s.id === scene?.id
+                        ? "bg-white text-black font-extrabold shadow-md"
+                        : "bg-white/10 hover:bg-white/25 text-white"
+                    }`}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Studio Form Panel */}
           <form onSubmit={handleSubmit} className="w-full lg:w-1/4 xl:w-1/5 p-4 sm:p-6 bg-base-100 space-y-4 overflow-y-auto flex flex-col justify-between shrink-0">
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10">
-                <span className="text-[10px] font-bold text-base-content/50 uppercase tracking-wider block mb-1">
-                  Active Scene Metadata
+              <div className="p-3.5 rounded-2xl bg-base-200/50 border border-base-content/10">
+                <span className="text-[10px] font-bold text-base-content/50 uppercase tracking-wider block mb-0.5">
+                  Current Room Scene
                 </span>
-                <p className="font-bold text-xs text-base-content">{scene?.name || "Ground Floor Lobby"}</p>
-                <p className="text-[10px] text-base-content/60">{tour?.title || "360° Virtual Tour"}</p>
+                <p className="font-extrabold text-sm text-base-content">{scene?.name || "Main Scene"}</p>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
-                  Hotspot Label / Room Title*
+                  Hotspot Label / Button Text
                 </label>
                 <input
                   type="text"
-                  required
-                  placeholder="e.g. 2ND FLOOR EXECUTIVE LOUNGE"
+                  placeholder="e.g. Dining Room or Bedroom"
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                 />
               </div>
 
@@ -291,7 +390,7 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
                     type="text"
                     readOnly
                     value={yaw}
-                    className="w-full px-3 py-2.5 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
+                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
                 <div>
@@ -302,93 +401,169 @@ export default function HotspotEditorModal({ scene, tour, onClose, onSave, onDel
                     type="text"
                     readOnly
                     value={pitch}
-                    className="w-full px-3 py-2.5 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
+                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
-                  Hotspot Icon & Style
+                  Hotspot Icon & Design
                 </label>
                 <select
                   value={hotspotType}
                   onChange={(e) => handleTypeChange(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
-                  <option value="arrow">∧ 3D Floor Animated Chevron Arrow (Directional Walk)</option>
-                  <option value="door">🚪 Circular Doorway Ring (Room Entrance Portal)</option>
+                  <option value="arrow">∧ 3D Floor Animated Chevron Arrow</option>
+                  <option value="door">🚪 Circular Doorway Ring</option>
                   <option value="puck">⭕ Concentric Floor Target Puck</option>
-                  <option value="bathroom">🛁 Master Bathroom Puck</option>
-                  <option value="stairs">🪜 Stairs / Upper Floor Puck</option>
-                  <option value="dining">🍽️ Dining & Kitchen Puck</option>
-                  <option value="bedroom">🛏️ Bedroom / Suite Puck</option>
+                  <option value="bathroom">🛁 Bathroom Puck</option>
+                  <option value="stairs">🪜 Stairs / Upper Level</option>
+                  <option value="dining">🍽️ Dining & Kitchen</option>
+                  <option value="bedroom">🛏️ Bedroom / Suite</option>
                   <option value="info">ℹ️ Spatial Info Badge</option>
                 </select>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-base-content/70 mb-1.5">
-                  Target Scene Portal Destination
-                </label>
+              {/* Target Scene Portal Destination Selector & Inline Creator */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-1">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-base-content/70">
+                    Target Scene Destination
+                  </label>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowNewSceneForm(!showNewSceneForm)}
+                    className="!text-[10px] !py-1 !px-2.5 !h-auto font-bold flex items-center gap-1"
+                  >
+                    <FontAwesomeIcon icon={faPlus} />
+                    <span>+ New Room Scene</span>
+                  </Button>
+                </div>
+
                 <select
                   value={targetId}
-                  onChange={(e) => setTargetId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                  onChange={(e) => {
+                    const newTargetId = e.target.value;
+                    setTargetId(newTargetId);
+                    const targetObj = tour?.scenes?.find((s) => s.id === newTargetId);
+                    if (targetObj && !title) {
+                      handleTitleChange(targetObj.name);
+                    }
+                  }}
+                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
-                  <option value="">None (Information Puck Only)</option>
+                  <option value="">None (Info Puck)</option>
                   {tour?.scenes?.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.floorLevel !== undefined ? `FL ${s.floorLevel}` : "Floor"})
+                      {s.name}
                     </option>
                   ))}
                 </select>
+
+                {/* Inline New Linked Scene Creator Card */}
+                {showNewSceneForm && (
+                  <div className="p-3.5 rounded-2xl bg-base-200/60 border border-base-content/15 space-y-3 animate-in fade-in duration-200 mt-2 shadow-xs">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-base-content/70 block">
+                      Add & Link New 360° Room Scene
+                    </span>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="e.g. Dining Room or Kitchen"
+                        value={newRoomName}
+                        onChange={(e) => setNewRoomName(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="inline_scene_image_input"
+                        className="hidden"
+                        onChange={handleFileUploadForNewScene}
+                      />
+                      <label
+                        htmlFor="inline_scene_image_input"
+                        className={`flex-1 px-3 py-2 rounded-xl border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                          newRoomImageUrl
+                            ? "bg-base-300 text-base-content border-base-content/30"
+                            : "bg-base-100 hover:bg-base-200 border-base-content/15 text-base-content"
+                        }`}
+                      >
+                        <FontAwesomeIcon icon={newRoomImageUrl ? faCheckCircle : faCloudArrowUp} />
+                        <span>{isUploadingImage ? "Uploading..." : newRoomImageUrl ? "360 Image Uploaded ✓" : "Upload 360 Image"}</span>
+                      </label>
+                    </div>
+
+                    <Button
+                      variant="primary"
+                      onClick={handleCreateAndLinkNewScene}
+                      disabled={!newRoomName}
+                      className="w-full !text-xs !py-2.5"
+                    >
+                      <FontAwesomeIcon icon={faPlus} className="mr-1.5" />
+                      Create Scene & Select Destination
+                    </Button>
+                  </div>
+                )}
               </div>
 
-              {/* Existing Hotspots Manager in Current Scene */}
+              {/* Existing Hotspots Manager */}
               {existingHotspots.length > 0 && (
                 <div className="space-y-2 pt-2 border-t border-base-content/10">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-base-content/60 flex items-center justify-between">
-                    <span>Existing Scene Hotspots ({existingHotspots.length})</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-base-content/60">
+                    Existing Hotspots in this Room ({existingHotspots.length})
                   </span>
-                  <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
-                    {existingHotspots.map((hp) => (
-                      <div
-                        key={hp.id}
-                        className="p-2.5 rounded-xl bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
-                      >
-                        <div className="flex items-center gap-2">
-                          <FontAwesomeIcon icon={faLocationDot} className="text-base-content/60 text-xs" />
-                          <span className="font-bold text-base-content truncate max-w-[140px]">{hp.title}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteLocalHotspot(hp.id)}
-                          className="p-1 rounded-lg text-base-content/60 hover:text-error hover:bg-error/10 cursor-pointer text-xs"
-                          title="Delete Hotspot"
+                  <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
+                    {existingHotspots.map((hp) => {
+                      const linkedScene = tour?.scenes?.find((s) => s.id === hp.targetId);
+                      return (
+                        <div
+                          key={hp.id}
+                          className="p-2.5 rounded-xl bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
                         >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                      </div>
-                    ))}
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FontAwesomeIcon icon={faLocationDot} className="text-base-content/60 text-xs shrink-0" />
+                            <div className="min-w-0">
+                              <p className="font-bold text-base-content truncate">{hp.title}</p>
+                              {linkedScene && (
+                                <p className="text-[9px] text-base-content/70 font-semibold truncate">➔ Links to {linkedScene.name}</p>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteLocalHotspot(hp.id)}
+                            className="p-1 rounded-lg text-base-content/60 hover:text-error hover:bg-error/10 cursor-pointer text-xs shrink-0"
+                            title="Delete Hotspot"
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="pt-4 flex items-center justify-end gap-3 border-t border-base-content/10">
+            {/* Action Buttons using Reusable App Button Component */}
+            <div className="pt-4 flex items-center justify-end gap-2 border-t border-base-content/10">
               <Button
                 variant="secondary"
                 onClick={onClose}
-                className="!text-xs !py-2.5 !px-5 !rounded-xl"
+                className="!text-xs !py-2.5 !px-4"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="primary"
-                className="!text-xs !py-2.5 !px-6 !rounded-xl"
+                className="!text-xs !py-2.5 !px-5"
               >
                 <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
                 Save Hotspot

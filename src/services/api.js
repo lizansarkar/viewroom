@@ -199,6 +199,22 @@ export const apiAddOwnerScene = async (tourId, sceneData) => {
   }
 };
 
+export const apiUploadImage = async (imageBase64, fileName = "360_image.jpg") => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageBase64, fileName }),
+    });
+    const data = await res.json();
+    if (data.success) return data.url;
+    return null;
+  } catch (err) {
+    console.warn("Upload API failed, using base64 fallback:", err);
+    return null;
+  }
+};
+
 export const apiAddOwnerHotspot = async (tourId, sceneId, hotspotData) => {
   try {
     const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours/${tourId}/scenes/${sceneId}/hotspots`, {

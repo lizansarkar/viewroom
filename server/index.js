@@ -11,6 +11,7 @@ import ownerRoutes from "./routes/ownerRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 dotenv.config();
 
@@ -31,6 +32,9 @@ app.use(
 // Express JSON & URLencoded payload limit set to 100MB for 8K equirectangular 360 panoramas
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
+
+// Serve static uploaded 360 images
+app.use("/uploads", express.static("uploads"));
 
 // Performance Cache-Control Header Middleware for API responses
 app.use((req, res, next) => {
@@ -61,6 +65,7 @@ app.use("/api/v1/owner", ownerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/contact", contactRoutes);
+app.use("/api/v1/upload", uploadRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {

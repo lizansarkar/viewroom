@@ -1,50 +1,7 @@
 import express from "express";
+import { toursStore, addTour, getTourById, deleteTour } from "../data/toursData.js";
 
 const router = express.Router();
-
-// Mock Owner KPI stats & tours data fallback
-let mockOwnerTours = [
-  {
-    id: "tour_skyline_headquarters",
-    title: "Skyline Innovation Campus 360°",
-    description: "Explore our futuristic multi-story campus featuring state-of-the-art labs, open workspaces, and panoramic aerial views.",
-    category: "Commercial Real Estate",
-    price: "$4,500,000",
-    coverImage: "/panoramas/panorama_aerial.jpg",
-    isPublished: true,
-    viewsCount: 1420,
-    scenes: [
-      {
-        id: "aerial_view",
-        name: "AERIAL VIEW",
-        floorLevel: "Campus Aerial",
-        thumbnailUrl: "/panoramas/panorama_aerial.jpg",
-        panoramaUrl: "/panoramas/panorama_aerial.jpg",
-        hotspots: [
-          { id: "hp1", yaw: "0deg", pitch: "-15deg", title: "Main Entrance", targetId: "entrance" },
-        ],
-      },
-      {
-        id: "entrance",
-        name: "ENTRANCE",
-        floorLevel: "Main Building",
-        thumbnailUrl: "/panoramas/panorama_entrance.jpg",
-        panoramaUrl: "/panoramas/panorama_entrance.jpg",
-        hotspots: [
-          { id: "hp2", yaw: "30deg", pitch: "-5deg", title: "1ST FLOOR LOBBY", targetId: "floor_1" },
-        ],
-      },
-      {
-        id: "floor_1",
-        name: "1ST FLOOR",
-        floorLevel: "Reception Lobby",
-        thumbnailUrl: "/panoramas/panorama_floor1.jpg",
-        panoramaUrl: "/panoramas/panorama_floor1.jpg",
-        hotspots: [],
-      },
-    ],
-  },
-];
 
 let mockOwnerProducts = [
   {
@@ -61,9 +18,9 @@ let mockOwnerProducts = [
 // GET /api/v1/owner/stats - Fetch owner KPI overview metrics
 router.get("/stats", (req, res) => {
   try {
-    const totalTours = mockOwnerTours.length;
+    const totalTours = toursStore.length;
     const totalProducts = mockOwnerProducts.length;
-    const totalViews = mockOwnerTours.reduce((acc, t) => acc + (t.viewsCount || 0), 0) + 890;
+    const totalViews = toursStore.reduce((acc, t) => acc + (t.viewsCount || 0), 0) + 890;
     const aiConversations = 124;
 
     res.json({
@@ -84,7 +41,7 @@ router.get("/stats", (req, res) => {
 // GET /api/v1/owner/tours - Fetch all tours belonging to the owner
 router.get("/tours", (req, res) => {
   try {
-    res.json({ success: true, data: mockOwnerTours });
+    res.json({ success: true, data: toursStore });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -110,7 +67,7 @@ router.post("/tours", (req, res) => {
       scenes: scenes || [],
     };
 
-    mockOwnerTours.unshift(newTour);
+    addTour(newTour);
     res.status(201).json({ success: true, data: newTour });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -120,7 +77,7 @@ router.post("/tours", (req, res) => {
 // POST /api/v1/owner/tours/:id/scenes - Add an 8K equirectangular scene to a tour
 router.post("/tours/:id/scenes", (req, res) => {
   try {
-    const tour = mockOwnerTours.find((t) => t.id === req.params.id);
+    const tour = getTourById(req.params.id);
     if (!tour) {
       return res.status(404).json({ success: false, error: "Tour not found" });
     }
@@ -132,6 +89,8 @@ router.post("/tours/:id/scenes", (req, res) => {
       floorLevel: floorLevel || "Interior",
       panoramaUrl: panoramaUrl || "/panoramas/panorama_aerial.jpg",
       thumbnailUrl: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
+      panorama: panoramaUrl || "/panoramas/panorama_aerial.jpg",
+      thumbnail: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
       hotspots: [],
     };
 
@@ -145,19 +104,20 @@ router.post("/tours/:id/scenes", (req, res) => {
 // POST /api/v1/owner/tours/:tourId/scenes/:sceneId/hotspots - Save pitch/yaw hotspot coordinates
 router.post("/tours/:tourId/scenes/:sceneId/hotspots", (req, res) => {
   try {
-    const tour = mockOwnerTours.find((t) => t.id === req.params.tourId);
+    const tour = getTourById(req.params.tourId);
     if (!tour) return res.status(404).json({ success: false, error: "Tour not found" });
 
     const scene = tour.scenes.find((s) => s.id === req.params.sceneId);
     if (!scene) return res.status(404).json({ success: false, error: "Scene not found" });
 
-    const { pitch, yaw, title, targetId } = req.body;
+    const { pitch, yaw, title, targetId, type } = req.body;
     const newHotspot = {
       id: `hp_${Date.now()}`,
       pitch: pitch || "0deg",
       yaw: yaw || "0deg",
       title: title || "New Marker",
       targetId: targetId || null,
+      type: type || "arrow",
     };
 
     scene.hotspots.push(newHotspot);
@@ -170,10 +130,9 @@ router.post("/tours/:tourId/scenes/:sceneId/hotspots", (req, res) => {
 // DELETE /api/v1/owner/tours/:id - Delete tour
 router.delete("/tours/:id", (req, res) => {
   try {
-    const index = mockOwnerTours.findIndex((t) => t.id === req.params.id);
-    if (index === -1) return res.status(404).json({ success: false, error: "Tour not found" });
+    const deleted = deleteTour(req.params.id);
+    if (!deleted) return res.status(404).json({ success: false, error: "Tour not found" });
 
-    mockOwnerTours.splice(index, 1);
     res.json({ success: true, message: "Tour deleted successfully" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

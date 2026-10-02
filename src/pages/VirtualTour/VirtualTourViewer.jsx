@@ -7,6 +7,7 @@ import "@photo-sphere-viewer/markers-plugin/index.css";
 import gsap from "gsap";
 import Button from "../../components/reuseable/Button";
 import { trackEvent } from "../../services/analyticsService";
+import { apiGetTourById, apiGetOwnerTours } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -25,6 +26,8 @@ import {
   faShareNodes,
   faCopy,
   faCheck,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 // ==========================================
@@ -222,45 +225,55 @@ const getHotspotIcon = (type) => {
 };
 
 const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
+  const displayLabel = label || "NAVIGATE";
+
   if (iconType === "arrow") {
-    // Image 2: Perspective Animated Floor Chevron Arrow
+    // Ultra-crisp 3D Perspective SVG Road Chevron Arrow with Floor Shadow & Pulse Animation
     return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-3 select-none">
-        <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
-          <span>${label}</span>
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs font-black">➔</span>
+          <span>${displayLabel}</span>
         </div>
-        <div style="transform: perspective(400px) rotateX(60deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
-          <div class="w-12 h-6 border-t-[5px] border-l-[5px] border-white/70 rotate-45 -mb-3 animate-ping opacity-70"></div>
-          <div class="w-10 h-5 border-t-[6px] border-l-[6px] border-white rotate-45 shadow-[0_0_20px_rgba(255,255,255,1)]"></div>
+        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
+          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
+          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
       </div>
     `;
   }
 
   if (iconType === "door") {
-    // Image 3: Circular Doorway Ring Icon
     return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-3 select-none">
-        <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
-          <span>${label}</span>
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs">🚪</span>
+          <span>${displayLabel}</span>
         </div>
-        <div class="w-13 h-13 rounded-full border-[3px] border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 group-hover:bg-white text-white group-hover:text-black">
-          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/></svg>
+        <div class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-50"></div>
+          <svg class="w-6 h-6 fill-current transition-transform duration-500 group-hover:scale-110" viewBox="0 0 24 24">
+            <path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/>
+          </svg>
         </div>
       </div>
     `;
   }
 
-  // Image 1: Minimal Circular Floor Target Puck
   return `
-    <div class="cursor-pointer group relative flex flex-col items-center justify-center p-3 select-none">
-      <div class="absolute -top-11 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/50 text-white text-[11px] sm:text-xs font-extrabold uppercase tracking-wider whitespace-nowrap shadow-2xl group-hover:-translate-y-1">
+    <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+      <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
         <span class="text-xs">${getHotspotIcon(iconType)}</span>
-        <span>${label}</span>
+        <span>${displayLabel}</span>
       </div>
-      <div style="transform: perspective(500px) rotateX(70deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white/80 bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-115 group-hover:border-white group-hover:bg-white/40 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.95)]">
-        <div class="absolute inset-0 rounded-full border border-white/50 animate-ping opacity-60"></div>
-        <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)] transition-transform duration-300 group-hover:scale-110"></div>
+      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-13 h-13 sm:w-15 sm:h-15 rounded-full border-2 border-white bg-white/30 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120">
+        <div class="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-70"></div>
+        <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
       </div>
     </div>
   `;
@@ -478,39 +491,76 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const thumbnailScrollRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  // Load dynamic custom tour uploaded by creator from localStorage if available
+  // Load dynamic custom tour uploaded by creator from backend API or localStorage
   useEffect(() => {
-    try {
-      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-      if (savedLocalTours) {
-        const parsedTours = JSON.parse(savedLocalTours);
-        const matchedTour = targetTourId
-          ? parsedTours.find((t) => t.id === targetTourId)
-          : parsedTours[0];
+    let isMounted = true;
 
-        if (matchedTour && matchedTour.scenes && matchedTour.scenes.length > 0) {
+    const loadTourData = async () => {
+      try {
+        let matchedTour = null;
+
+        // 1. Check localStorage first
+        const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+        if (savedLocalTours) {
+          const parsedTours = JSON.parse(savedLocalTours);
+          if (Array.isArray(parsedTours) && parsedTours.length > 0) {
+            matchedTour = targetTourId
+              ? parsedTours.find((t) => t.id === targetTourId)
+              : parsedTours[0];
+          }
+        }
+
+        // 2. Fetch specific tour by ID from backend API if missing from localStorage
+        if (!matchedTour && targetTourId) {
+          try {
+            const fetched = await apiGetTourById(targetTourId);
+            if (fetched && fetched.scenes && fetched.scenes.length > 0) {
+              matchedTour = fetched;
+            }
+          } catch (e) {}
+        }
+
+        // 3. Fallback to owner tours list from backend API
+        if (!matchedTour) {
+          try {
+            const ownerTours = await apiGetOwnerTours();
+            if (ownerTours && ownerTours.length > 0) {
+              matchedTour = targetTourId
+                ? ownerTours.find((t) => t.id === targetTourId) || ownerTours[0]
+                : ownerTours[0];
+            }
+          } catch (e) {}
+        }
+
+        if (isMounted && matchedTour && matchedTour.scenes && matchedTour.scenes.length > 0) {
           const mappedNodes = matchedTour.scenes.map((s, idx) => ({
             id: s.id,
             name: s.name || `Room Scene ${idx + 1}`,
             category: matchedTour.category || "Virtual Tour",
             floorLevel: s.floorLevel || idx,
-            thumbnail: s.thumbnailUrl || s.panoramaUrl,
-            panorama: s.panoramaUrl,
-            connections: (s.hotspots || []).map((hp) => ({
+            thumbnail: s.thumbnailUrl || s.panoramaUrl || s.thumbnail || s.panorama || "/panoramas/panorama_aerial.jpg",
+            panorama: s.panoramaUrl || s.panorama || "/panoramas/panorama_aerial.jpg",
+            connections: (s.hotspots || s.markers || []).map((hp) => ({
               targetNodeId: hp.targetId,
               label: hp.title,
               type: hp.type === "drone" ? "drone_badge" : "floor_puck",
               iconType: hp.type || "arrow",
-              position: { yaw: hp.yaw || "0deg", pitch: hp.pitch || "-25deg" },
+              position: { yaw: hp.yaw || hp.position?.yaw || "0deg", pitch: hp.pitch || hp.position?.pitch || "-25deg" },
             })),
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);
         }
+      } catch (err) {
+        console.warn("Error loading custom tour nodes:", err);
       }
-    } catch (err) {
-      console.warn("Error loading custom tour nodes:", err);
-    }
+    };
+
+    loadTourData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [targetTourId]);
 
   const activeNode = tourNodes.find((s) => s.id === currentPanoramaId) || tourNodes[0];
@@ -785,19 +835,18 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   ];
 
   return (
-    <div className={`w-full flex flex-col items-center select-none ${fullScreenMode ? "h-screen overflow-hidden" : ""}`}>
+    <div className="w-full h-screen relative bg-black select-none overflow-hidden">
       {/* 360 VIEWPORT CONTAINER */}
       <div
         ref={viewportRef}
         onClick={() => {
           if (!isMuted) spatialAudio.play();
         }}
-        className={`relative w-full overflow-hidden shadow-2xl bg-black group ${
-          fullScreenMode ? "h-screen w-screen" : "h-[520px] sm:h-[640px] lg:h-[720px]"
-        }`}
+        className="relative w-full h-full bg-black group overflow-hidden"
       >
         {/* Photo Sphere Viewer Renderer */}
         <ReactPhotoSphereViewer
+          key={`${activeNode.id}_${activeNode.panorama}`}
           src={activeNode.panorama}
           height="100%"
           width="100%"
@@ -816,11 +865,11 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
           <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
         )}
 
-        {/* TOP-LEFT MULTI-FLOOR BRANDING & LEVEL BADGE */}
+        {/* TOP-LEFT BRANDING & SCENE BADGE */}
         <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-black/75 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
           <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
           <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase">
-            FLOOR {activeNode.floorLevel} • {activeNode.name}
+            {activeNode.name}
           </span>
         </div>
 
@@ -877,6 +926,24 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                 {isListening && (
                   <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
                 )}
+              </button>
+
+              {/* TOGGLE HOTSPOTS VISIBILITY BUTTON */}
+              <button
+                type="button"
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  setShowHotspots(!showHotspots);
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
+                title={showHotspots ? "Hide Hotspots" : "Show Hotspots"}
+                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
+                  showHotspots
+                    ? "bg-white/25 hover:bg-white/40 border-white/40 text-white"
+                    : "bg-amber-500/80 text-white border-amber-400 font-bold"
+                }`}
+              >
+                <FontAwesomeIcon icon={showHotspots ? faEye : faEyeSlash} className="text-base" />
               </button>
 
               {/* SHARE & EMBED BUTTON */}
@@ -1008,7 +1075,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                         isActive ? "text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" : "text-white/75 group-hover:text-white"
                       }`}
                     >
-                      {node.name.split(" ")[0]} FL {node.floorLevel}
+                      {node.name}
                     </span>
                   </button>
                 );
@@ -1027,30 +1094,6 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* METADATA FOOTER BELOW VIEWER */}
-      <div className="max-w-7xl w-full mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-8">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[var(--app-text-secondary)]">
-            CURRENT NODE • {activeNode.category} (FLOOR {activeNode.floorLevel})
-          </span>
-          <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[var(--app-text-primary)]">
-            {activeNode.name}
-          </h3>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="primary" onClick={toggleFullscreen}>
-            Launch Fullscreen 360
-          </Button>
-          <Button variant="secondary" onClick={() => setShowHotspots(!showHotspots)}>
-            {showHotspots ? "Hide Hotspots" : "Show Hotspots"}
-          </Button>
-          <Button variant="secondary" onClick={() => setShowShareModal(true)}>
-            Share Tour
-          </Button>
         </div>
       </div>
 
