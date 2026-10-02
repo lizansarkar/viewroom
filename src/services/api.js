@@ -215,6 +215,22 @@ export const apiUploadImage = async (imageBase64, fileName = "360_image.jpg") =>
   }
 };
 
+export const apiUploadAudio = async (audioBase64, fileName = "ambient_track.mp3") => {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageBase64: audioBase64, fileName, isAudio: true }),
+    });
+    const data = await res.json();
+    if (data.success) return data.url;
+    return null;
+  } catch (err) {
+    console.warn("Audio upload API failed, using base64 fallback:", err);
+    return null;
+  }
+};
+
 export const apiAddOwnerHotspot = async (tourId, sceneId, hotspotData) => {
   try {
     const res = await fetchWithTimeout(`${API_BASE_URL}/owner/tours/${tourId}/scenes/${sceneId}/hotspots`, {

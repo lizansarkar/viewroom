@@ -115,7 +115,7 @@ class UISoundEngine {
   }
 }
 
-class SpatialAmbientAudio {
+class MultiTrackAudioEngine {
   constructor() {
     this.ctx = null;
     this.masterGain = null;
@@ -123,7 +123,17 @@ class SpatialAmbientAudio {
     this.lfo = null;
     this.lfoGain = null;
     this.oscillators = [];
+    this.audioElement = null;
     this.isPlaying = false;
+    this.isMuted = false;
+    this.currentConfig = null;
+  }
+
+  configure(config) {
+    this.currentConfig = config;
+    if (this.isPlaying && !this.isMuted) {
+      this.play(config);
+    }
   }
 
   init() {
@@ -135,13 +145,11 @@ class SpatialAmbientAudio {
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
 
-    // Warm Analog Lowpass Filter for soft soothing ambient pad
     this.filter = this.ctx.createBiquadFilter();
     this.filter.type = "lowpass";
     this.filter.frequency.setValueAtTime(450, this.ctx.currentTime);
     this.filter.Q.setValueAtTime(1.2, this.ctx.currentTime);
 
-    // LFO for slow organic breathing / swell effect (0.08 Hz)
     this.lfo = this.ctx.createOscillator();
     this.lfoGain = this.ctx.createGain();
     this.lfo.type = "sine";
@@ -153,58 +161,89 @@ class SpatialAmbientAudio {
 
     this.filter.connect(this.masterGain);
     this.masterGain.connect(this.ctx.destination);
-
-    // Deep soothing ambient chord (F2, C3, F3, A3, C4)
-    const chord = [87.31, 130.81, 174.61, 220.0, 261.63];
-    this.oscillators = chord.map((freq) => {
-      const osc = this.ctx.createOscillator();
-      const oscGain = this.ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      oscGain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-
-      osc.connect(oscGain);
-      oscGain.connect(this.filter);
-      return osc;
-    });
   }
 
-  play() {
+  play(config = this.currentConfig) {
+    if (config) this.currentConfig = config;
+    const activeConfig = this.currentConfig || {};
+
+    if (activeConfig.enabled === false) {
+      this.mute();
+      return;
+    }
+
+    const vol = activeConfig.volume !== undefined ? activeConfig.volume : 0.3;
+
+    // Custom MP3 Audio File
+    if (activeConfig.sourceType === "custom" && activeConfig.customAudioUrl) {
+      if (!this.audioElement || this.audioElement.src !== activeConfig.customAudioUrl) {
+        if (this.audioElement) {
+          try { this.audioElement.pause(); } catch (e) {}
+        }
+        this.audioElement = new Audio(activeConfig.customAudioUrl);
+        this.audioElement.loop = true;
+      }
+      this.audioElement.volume = this.isMuted ? 0 : vol;
+      this.audioElement.play().catch(() => {});
+      this.isPlaying = true;
+      return;
+    }
+
+    // Preset Audio Synthesizer
     this.init();
     if (!this.ctx) return;
     if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
+
+    const presetId = activeConfig.presetId || "luxury_piano";
+    let freqs = [174.61, 220.0, 261.63, 329.63];
+    if (presetId === "hotel_lounge") freqs = [138.59, 174.61, 207.65, 261.63];
+    if (presetId === "ocean_breeze") freqs = [110.0, 164.81, 220.0, 246.94];
+    if (presetId === "nature_birds") freqs = [220.0, 277.18, 329.63, 440.0];
+    if (presetId === "lofi_chill") freqs = [146.83, 174.61, 220.0, 261.63];
+
     if (!this.isPlaying) {
       try {
-        this.oscillators.forEach((osc) => osc.start());
+        this.oscillators = freqs.map((freq) => {
+          const osc = this.ctx.createOscillator();
+          const oscGain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          oscGain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+          osc.connect(oscGain);
+          oscGain.connect(this.filter);
+          osc.start();
+          return osc;
+        });
         this.lfo.start();
       } catch (e) {}
       this.isPlaying = true;
     }
-    // Set gentle relaxing background volume (15%)
-    this.masterGain.gain.setTargetAtTime(0.15, this.ctx.currentTime, 0.5);
+
+    if (!this.isMuted) {
+      this.masterGain.gain.setTargetAtTime(vol * 0.4, this.ctx.currentTime, 0.3);
+    }
   }
 
   mute() {
+    this.isMuted = true;
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.2);
+    }
+    if (this.audioElement) {
+      try { this.audioElement.pause(); } catch (e) {}
     }
   }
 
   unmute() {
-    if (this.masterGain && this.ctx) {
-      if (this.ctx.state === "suspended") {
-        this.ctx.resume();
-      }
-      this.masterGain.gain.setTargetAtTime(0.15, this.ctx.currentTime, 0.3);
-    }
+    this.isMuted = false;
+    this.play();
   }
 }
 
 const uiSound = new UISoundEngine();
-const spatialAudio = new SpatialAmbientAudio();
+const spatialAudio = new MultiTrackAudioEngine();
 
 // ==========================================
 // 3D FLOOR PUCK & DRONE HOTSPOT HELPERS
@@ -550,6 +589,9 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);
+          if (matchedTour.audioConfig) {
+            spatialAudio.configure(matchedTour.audioConfig);
+          }
         }
       } catch (err) {
         console.warn("Error loading custom tour nodes:", err);

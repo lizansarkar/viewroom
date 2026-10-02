@@ -22,10 +22,13 @@ import {
   faCheck,
   faLink,
   faImage,
+  faMusic,
+  faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import HotspotEditorModal from "./HotspotEditorModal";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import TourSoundModal from "./TourSoundModal";
 import {
   apiGetOwnerStats,
   apiGetOwnerTours,
@@ -149,6 +152,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   // Share Link State
   const [copiedTourId, setCopiedTourId] = useState(null);
+
+  // Tour Spatial Sound Modal State
+  const [soundModalTour, setSoundModalTour] = useState(null);
+
+  const handleSaveSoundConfig = (audioConfig) => {
+    if (!soundModalTour) return;
+    const updatedTours = tours.map((t) =>
+      t.id === soundModalTour.id ? { ...t, audioConfig } : t
+    );
+    setTours(updatedTours);
+    localStorage.setItem("viewroom_custom_tours", JSON.stringify(updatedTours));
+    setSoundModalTour(null);
+  };
 
   // Multi-Scene Builder State
   const [newTourScenesList, setNewTourScenesList] = useState([
@@ -612,6 +628,14 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     >
                       <FontAwesomeIcon icon={faPlus} />
                       <span>+ Add Room Scene</span>
+                    </button>
+                    <button
+                      onClick={() => setSoundModalTour(tour)}
+                      className="px-3 py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border border-base-content/10"
+                      title="Configure Background Sound & Spatial Ambient Track"
+                    >
+                      <FontAwesomeIcon icon={faMusic} className="text-base-content/80 text-xs" />
+                      <span>Sound ({tour.audioConfig?.enabled ?? true ? "ON" : "OFF"})</span>
                     </button>
                     <button
                       onClick={() => handleCopyShareableLink(tour.id)}
@@ -1195,6 +1219,15 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           onSave={handleSaveHotspot}
           onAddNewScene={handleAddNewSceneFromModal}
           onSwitchEditingScene={(sc) => setEditingScene(sc)}
+        />
+      )}
+
+      {/* Tour Sound Studio Modal Overlay */}
+      {soundModalTour && (
+        <TourSoundModal
+          tour={soundModalTour}
+          onClose={() => setSoundModalTour(null)}
+          onSave={handleSaveSoundConfig}
         />
       )}
     </div>

@@ -9,25 +9,33 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// POST /api/v1/upload - Receive Base64 image and save to disk
+// POST /api/v1/upload - Receive Base64 image/audio and save to disk
 router.post("/", (req, res) => {
   try {
-    const { imageBase64, fileName } = req.body;
+    const { imageBase64, fileName, isAudio } = req.body;
     if (!imageBase64) {
-      return res.status(400).json({ success: false, error: "imageBase64 is required" });
+      return res.status(400).json({ success: false, error: "imageBase64 / audio payload is required" });
     }
 
     // Extract base64 format & data
-    const matches = imageBase64.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
-    let ext = "jpg";
+    let ext = isAudio ? "mp3" : "jpg";
     let base64Data = imageBase64;
 
+    const matches = imageBase64.match(/^data:(image|audio)\/([a-zA-Z0-9]+);base64,(.+)$/);
+
     if (matches) {
-      ext = matches[1] === "jpeg" ? "jpg" : matches[1];
-      base64Data = matches[2];
+      const type = matches[1];
+      const subtype = matches[2];
+      if (type === "audio") {
+        ext = subtype === "mpeg" ? "mp3" : subtype;
+      } else {
+        ext = subtype === "jpeg" ? "jpg" : subtype;
+      }
+      base64Data = matches[3];
     }
 
-    const uniqueName = `360_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
+    const prefix = isAudio || imageBase64.startsWith("data:audio") ? "audio" : "360";
+    const uniqueName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
     const filePath = path.join(uploadDir, uniqueName);
     const buffer = Buffer.from(base64Data, "base64");
 
