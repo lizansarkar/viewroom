@@ -619,11 +619,17 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     targetId: conn.targetNodeId,
   }));
 
-  // Speech Synthesis Helper
+  // Speech Synthesis Helper with acoustic auto-pause
   const speakResponse = (text) => {
     if (!("speechSynthesis" in window)) return;
     try {
       window.speechSynthesis.cancel();
+      // Auto-pause microphone so TTS speech output isn't heard back by mic
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch (e) {}
+      }
+      setIsListening(false);
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
@@ -633,13 +639,66 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     }
   };
 
+  // Helper to normalize and strip filler words for high-accuracy intent matching
+  const normalizeSpeechText = (raw) => {
+    let text = raw.toLowerCase().trim();
+
+    // Map common number words to digits and ordinals
+    text = text
+      .replace(/\bone\b/g, "1")
+      .replace(/\btwo\b/g, "2")
+      .replace(/\bthree\b/g, "3")
+      .replace(/\bfour\b/g, "4")
+      .replace(/\bfive\b/g, "5")
+      .replace(/\bsix\b/g, "6")
+      .replace(/\bfirst\b/g, "1st")
+      .replace(/\bsecond\b/g, "2nd")
+      .replace(/\bthird\b/g, "3rd")
+      .replace(/\bfourth\b/g, "4th")
+      .replace(/\bfifth\b/g, "5th")
+      .replace(/\bsixth\b/g, "6th");
+
+    // Strip common command prefix fillers
+    const fillers = [
+      "can you please",
+      "could you please",
+      "please",
+      "take me to the",
+      "take me to",
+      "go to the",
+      "go to",
+      "show me the",
+      "show me",
+      "move to the",
+      "move to",
+      "open the",
+      "open",
+      "switch to the",
+      "switch to",
+      "i want to see the",
+      "i want to see",
+      "let's go to",
+      "navigate to the",
+      "navigate to"
+    ];
+
+    for (const filler of fillers) {
+      if (text.startsWith(filler + " ")) {
+        text = text.substring(filler.length).trim();
+      }
+    }
+
+    return text;
+  };
+
   // Client-Side Ultra-Fast Dynamic Intent Matcher & Action Dispatcher
   const processVoiceCommand = async (rawTranscript) => {
-    const q = rawTranscript.toLowerCase().trim();
+    const rawClean = rawTranscript.toLowerCase().trim();
+    const q = normalizeSpeechText(rawTranscript);
     setIsAiThinking(true);
 
     // 1. Check Tour Action Controls
-    if (q.includes("mute") && !q.includes("unmute")) {
+    if (rawClean.includes("mute") && !rawClean.includes("unmute")) {
       setIsMuted(true);
       spatialAudio.pause();
       const msg = "Audio muted.";
@@ -649,7 +708,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    if (q.includes("unmute") || q.includes("play music") || q.includes("sound on")) {
+    if (rawClean.includes("unmute") || rawClean.includes("play music") || rawClean.includes("sound on")) {
       setIsMuted(false);
       spatialAudio.play();
       const msg = "Audio unmuted.";
@@ -659,8 +718,8 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    if (q.includes("fullscreen") || q.includes("full screen")) {
-      if (q.includes("exit") || q.includes("close") || q.includes("off")) {
+    if (rawClean.includes("fullscreen") || rawClean.includes("full screen")) {
+      if (rawClean.includes("exit") || rawClean.includes("close") || rawClean.includes("off")) {
         if (document.fullscreenElement) toggleFullscreen();
         const msg = "Exited fullscreen.";
         setAiSpokenResponse(msg);
@@ -675,8 +734,8 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    if (q.includes("hotspot") || q.includes("portal") || q.includes("icon")) {
-      if (q.includes("hide") || q.includes("disable") || q.includes("turn off")) {
+    if (rawClean.includes("hotspot") || rawClean.includes("portal") || rawClean.includes("icon")) {
+      if (rawClean.includes("hide") || rawClean.includes("disable") || rawClean.includes("turn off")) {
         setShowHotspots(false);
         const msg = "Hotspots hidden.";
         setAiSpokenResponse(msg);
@@ -691,8 +750,8 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    if (q.includes("menu")) {
-      if (q.includes("close") || q.includes("hide")) {
+    if (rawClean.includes("menu")) {
+      if (rawClean.includes("close") || rawClean.includes("hide")) {
         setIsMenuOpen(false);
       } else {
         setIsMenuOpen(true);
@@ -704,7 +763,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       return;
     }
 
-    if (q.includes("share") || q.includes("embed")) {
+    if (rawClean.includes("share") || rawClean.includes("embed")) {
       setShowShareModal(true);
       const msg = "Opened share and embed modal.";
       setAiSpokenResponse(msg);
@@ -717,11 +776,11 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     let targetNode = tourNodes.find((n) => {
       const nameLower = (n.name || "").toLowerCase();
       const idLower = (n.id || "").toLowerCase();
-      return nameLower === q || idLower === q || q.includes(nameLower);
+      return nameLower === q || idLower === q || q.includes(nameLower) || nameLower.includes(q);
     });
 
-    if (!targetNode && q.length > 3) {
-      const words = q.split(/\s+/).filter((w) => w.length > 2);
+    if (!targetNode && q.length >= 2) {
+      const words = q.split(/\s+/).filter((w) => w.length >= 2);
       targetNode = tourNodes.find((n) => {
         const nameLower = (n.name || "").toLowerCase();
         return words.some((word) => nameLower.includes(word));
