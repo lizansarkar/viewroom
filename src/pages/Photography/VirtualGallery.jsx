@@ -135,7 +135,7 @@ function VirtualGallery() {
 
   return (
     <section className="relative w-full min-h-screen bg-base-100 text-base-content transition-colors duration-250 py-16 px-4 sm:px-8 select-none">
-      
+
       {/* 1. TOP CATEGORY BUTTONS */}
       <div className="max-w-7xl mx-auto mb-10">
         <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3">
@@ -145,11 +145,10 @@ function VirtualGallery() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 rounded-md border ${
-                  isActive
+                className={`px-4 py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 rounded-md border ${isActive
                     ? 'bg-primary text-white border-primary shadow-md scale-105'
                     : 'bg-base-200/80 text-base-content/70 border-base-content/15 hover:border-primary hover:text-base-content hover:bg-base-200'
-                }`}
+                  }`}
                 style={{ cursor: 'pointer' }}
               >
                 {cat}
@@ -176,21 +175,21 @@ function VirtualGallery() {
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
-              {/* SLEEK GLASSMORPHIC HOVER CAPTION BADGE WITH HIGH CONTRAST LIGHT TEXT */}
-              <div className="absolute inset-x-3 bottom-3 z-10 p-3.5 rounded-2xl bg-black/85 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-2xl">
-                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 inline-block mb-1">
+              {/* SLEEK GLASSMORPHIC HOVER CAPTION BADGE WITH ALL-WHITE HIGH CONTRAST TEXT */}
+              <div className="absolute inset-x-3 bottom-3 z-10 p-3.5 rounded-2xl bg-black/80 backdrop-blur-sm border border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-2xl">
+                <span className="text-[10px] font-black uppercase tracking-widest block mb-1" style={{ color: '#ffffff' }}>
                   {item.category}
                 </span>
-                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight text-white truncate mb-1">
+                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight truncate mb-1" style={{ color: '#ffffff' }}>
                   {item.title}
                 </h3>
-                <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-200 mt-1.5 border-t border-white/20 pt-1.5">
-                  <span className="flex items-center gap-1.5 text-white truncate">
-                    <FontAwesomeIcon icon={faLocationDot} className="text-amber-400 text-[10px]" />
+                <div className="flex items-center justify-between text-[11px] font-semibold mt-1.5 border-t border-white/20 pt-1.5" style={{ color: '#ffffff' }}>
+                  <span className="flex items-center gap-1.5 truncate" style={{ color: '#ffffff' }}>
+                    <FontAwesomeIcon icon={faLocationDot} className="text-[10px]" style={{ color: '#ffffff' }} />
                     {item.location}
                   </span>
-                  <span className="shrink-0 flex items-center gap-1 font-extrabold text-white">
-                    <FontAwesomeIcon icon={faExpand} className="text-[10px]" /> View
+                  <span className="shrink-0 flex items-center gap-1 font-extrabold" style={{ color: '#ffffff' }}>
+                    <FontAwesomeIcon icon={faExpand} className="text-[10px]" style={{ color: '#ffffff' }} /> View
                   </span>
                 </div>
               </div>
@@ -202,7 +201,7 @@ function VirtualGallery() {
       {/* 3. LIGHT/DARK THEME COMPATIBLE LUXURY MODAL */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-all duration-300 animate-in fade-in">
-          
+
           {/* CLOSE BUTTON */}
           <button
             onClick={() => setSelectedItem(null)}
@@ -214,7 +213,7 @@ function VirtualGallery() {
 
           {/* MODAL CONTENT CONTAINER */}
           <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col md:flex-row bg-white/95 dark:bg-base-200/95 backdrop-blur-2xl border border-white/40 dark:border-base-content/20 rounded-3xl shadow-2xl overflow-hidden text-base-content">
-            
+
             {/* LARGE IMAGE PREVIEW */}
             <div className="w-full md:w-2/3 h-[45vh] md:h-auto bg-black relative flex items-center justify-center overflow-hidden">
               <img
