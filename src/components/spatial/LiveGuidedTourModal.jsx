@@ -15,10 +15,7 @@ import {
   faComments,
   faUserTie,
   faUserGroup,
-  faLock,
-  faLockOpen,
   faSignOutAlt,
-  faVideo,
   faHeadset,
 } from "@fortawesome/free-solid-svg-icons";
 

@@ -7,15 +7,10 @@ import {
   faClock,
   faBullseye,
   faRobot,
-  faDesktop,
-  faMobileScreen,
-  faVrCardboard,
   faRotateRight,
   faArrowTrendUp,
   faFire,
   faGlobe,
-  faChartPie,
-  faCompass,
   faHandPointer,
 } from "@fortawesome/free-solid-svg-icons";
 import {

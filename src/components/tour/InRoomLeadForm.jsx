@@ -11,7 +11,6 @@ import {
   faPhone,
   faCalendarDays,
   faCheck,
-  faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function InRoomLeadForm({ isOpen, onClose, tourTitle, sceneName }) {
