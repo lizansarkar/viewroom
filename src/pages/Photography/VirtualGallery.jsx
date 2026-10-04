@@ -145,9 +145,9 @@ function VirtualGallery() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 rounded-full border ${
+                className={`px-4 py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 rounded-md border ${
                   isActive
-                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30 scale-105'
+                    ? 'bg-primary text-white border-primary shadow-md scale-105'
                     : 'bg-base-200/80 text-base-content/70 border-base-content/15 hover:border-primary hover:text-base-content hover:bg-base-200'
                 }`}
                 style={{ cursor: 'pointer' }}
@@ -176,20 +176,20 @@ function VirtualGallery() {
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
-              {/* SLEEK GLASSMORPHIC HOVER CAPTION BADGE */}
-              <div className="absolute inset-x-3 bottom-3 z-10 p-3 rounded-2xl bg-black/60 dark:bg-base-200/80 backdrop-blur-md border border-white/20 dark:border-base-content/20 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-lg">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary inline-block mb-0.5">
+              {/* SLEEK GLASSMORPHIC HOVER CAPTION BADGE WITH HIGH CONTRAST LIGHT TEXT */}
+              <div className="absolute inset-x-3 bottom-3 z-10 p-3.5 rounded-2xl bg-black/85 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-2xl">
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 inline-block mb-1">
                   {item.category}
                 </span>
-                <h3 className="text-xs sm:text-sm font-extrabold uppercase tracking-tight text-white truncate">
+                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight text-white truncate mb-1">
                   {item.title}
                 </h3>
-                <div className="flex items-center justify-between text-[11px] font-medium text-white/80 mt-1 border-t border-white/10 pt-1.5">
-                  <span className="flex items-center gap-1 truncate">
-                    <FontAwesomeIcon icon={faLocationDot} className="text-primary text-[10px]" />
+                <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-200 mt-1.5 border-t border-white/20 pt-1.5">
+                  <span className="flex items-center gap-1.5 text-white truncate">
+                    <FontAwesomeIcon icon={faLocationDot} className="text-amber-400 text-[10px]" />
                     {item.location}
                   </span>
-                  <span className="shrink-0 flex items-center gap-1 font-bold text-primary">
+                  <span className="shrink-0 flex items-center gap-1 font-extrabold text-white">
                     <FontAwesomeIcon icon={faExpand} className="text-[10px]" /> View
                   </span>
                 </div>

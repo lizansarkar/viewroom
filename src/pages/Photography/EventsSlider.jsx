@@ -263,7 +263,7 @@ function EventsSlider() {
         {/* SECTION 2: EVENT SCHEDULE LIST (Matching User Reference Image 2) */}
         <div className="pt-8 border-t border-base-content/15">
           
-          {/* CATEGORY FILTER PILLS */}
+          {/* CATEGORY FILTER PILLS (rounded-md per user request) */}
           <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto pb-4 mb-8 scrollbar-none">
             {scheduleCategories.map((cat) => {
               const isActive = activeTab === cat;
@@ -271,7 +271,7 @@ function EventsSlider() {
                 <button
                   key={cat}
                   onClick={() => setActiveTab(cat)}
-                  className={`px-5 py-2.5 rounded-full text-xs font-extrabold uppercase tracking-wider transition-all duration-300 border ${
+                  className={`px-5 py-2.5 rounded-md text-xs font-extrabold uppercase tracking-wider transition-all duration-300 border ${
                     isActive
                       ? 'bg-base-content text-base-100 border-base-content shadow-md scale-105'
                       : 'bg-base-200/80 text-base-content/70 border-base-content/20 hover:border-base-content hover:text-base-content'
