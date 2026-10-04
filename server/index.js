@@ -1,3 +1,4 @@
+import http from "http";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -12,11 +13,13 @@ import adminRoutes from "./routes/adminRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import { initTourSockets } from "./sockets/tourSocket.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
 
 // Express Gzip/Brotli response payload compression
 app.use(compression());
@@ -50,7 +53,7 @@ app.use((req, res, next) => {
 app.get("/health", (req, res) => {
   res.json({
     status: "online",
-    service: "ViewRoom 360 API Server",
+    service: "ViewRoom 360 API Server with Socket.io Realtime Engine",
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || "development",
   });
@@ -93,6 +96,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: err.message || "Internal Server Error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 ViewRoom 360° Backend Engine running on http://localhost:${PORT}`);
+// Initialize Socket.io real-time engine
+initTourSockets(server);
+
+server.listen(PORT, () => {
+  console.log(`🚀 ViewRoom 360° Backend & Socket.io Engine running on http://localhost:${PORT}`);
 });
+

@@ -9,6 +9,8 @@ import Button from "../../components/reuseable/Button";
 import { trackEvent } from "../../services/analyticsService";
 import { apiGetTourById, apiGetOwnerTours } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LiveGuidedTourModal from "../../components/spatial/LiveGuidedTourModal";
+import { tourSocket } from "../../services/tourSocketService";
 import {
   faBars,
   faXmark,
@@ -28,6 +30,8 @@ import {
   faCheck,
   faEye,
   faEyeSlash,
+  faUsers,
+  faHeadset,
 } from "@fortawesome/free-solid-svg-icons";
 
 // ==========================================
@@ -524,6 +528,9 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const [aiSpokenResponse, setAiSpokenResponse] = useState("Hi! I'm your Voice AI Spatial Guide. Click the mic icon and speak!");
   const [showShareModal, setShowShareModal] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showLiveTourModal, setShowLiveTourModal] = useState(() => {
+    return !!searchParams.get("sessionId");
+  });
 
   const psvRef = useRef(null);
   const viewportRef = useRef(null);
@@ -951,6 +958,9 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
     if (targetId === currentPanoramaId) return;
 
     trackEvent("tour_viewed", "Skyline Campus 360°", `Switched to node ${targetId}`);
+    try {
+      tourSocket.syncScene({ sceneId: targetId });
+    } catch (e) {}
 
     if (viewportRef.current) {
       gsap.to(viewportRef.current, {
@@ -1042,6 +1052,17 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   // Photo Sphere Viewer Instance Callback with Raycast & SFX Handling
   const handleReady = (instance) => {
     psvRef.current = instance;
+
+    let lastEmit = 0;
+    instance.addEventListener("position-updated", (e) => {
+      const now = Date.now();
+      if (now - lastEmit > 120) {
+        lastEmit = now;
+        try {
+          tourSocket.syncViewport({ pitch: e.position.pitch, yaw: e.position.yaw, zoom: instance.getZoomLevel() });
+        } catch (err) {}
+      }
+    });
 
     const markersPlugin = instance.getPlugin(MarkersPlugin);
     if (markersPlugin) {
@@ -1215,6 +1236,20 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                 }`}
               >
                 <FontAwesomeIcon icon={showHotspots ? faEye : faEyeSlash} className="text-base" />
+              </button>
+
+              {/* LIVE GUIDED TOUR CO-PRESENCE BUTTON */}
+              <button
+                type="button"
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  setShowLiveTourModal(true);
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
+                title="Start Live Co-Presence Guided Tour"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-primary to-secondary text-white border-2 border-white/80 flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.6)] transition-transform hover:scale-115 cursor-pointer animate-pulse"
+              >
+                <FontAwesomeIcon icon={faUsers} className="text-base" />
               </button>
 
               {/* SHARE & EMBED BUTTON */}
@@ -1426,7 +1461,16 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex items-center justify-between">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowShareModal(false);
+                  setShowLiveTourModal(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faUsers} className="mr-2" /> Host Live Guided Tour
+              </Button>
               <Button variant="secondary" onClick={() => setShowShareModal(false)}>
                 Close
               </Button>
@@ -1434,6 +1478,24 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
           </div>
         </div>
       )}
+
+      {/* LIVE GUIDED CO-PRESENCE TOUR MODAL */}
+      <LiveGuidedTourModal
+        isOpen={showLiveTourModal}
+        onClose={() => setShowLiveTourModal(false)}
+        tourId={targetTourId}
+        currentSceneId={currentPanoramaId}
+        onSceneChange={(targetSceneId) => {
+          changePanoramaWithGsap(targetSceneId);
+        }}
+        onViewportSync={(pitch, yaw, zoom) => {
+          if (psvRef.current) {
+            try {
+              psvRef.current.animate({ pitch, yaw, zoom, speed: "5rpm" });
+            } catch (err) {}
+          }
+        }}
+      />
     </div>
   );
 }
