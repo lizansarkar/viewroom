@@ -3,9 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faXmark,
   faExpand,
-  faBuilding,
+  faLocationDot,
   faLayerGroup,
+  faUser,
+  faCamera,
 } from '@fortawesome/free-solid-svg-icons';
+import Button from '../../components/reuseable/Button';
 
 function VirtualGallery() {
   const [activeCategory, setActiveCategory] = useState('ALL');
@@ -28,6 +31,7 @@ function VirtualGallery() {
       category: 'HOTEL & RESORTS',
       title: 'Grand Dome Lobby & Interior',
       location: 'Cox’s Bazar, Bangladesh',
+      client: 'Sayeman Beach Resort',
       image:
         'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80',
       span: 'row-span-2',
@@ -37,6 +41,7 @@ function VirtualGallery() {
       category: 'PRODUCT',
       title: 'Flatlay Collection Showcase',
       location: 'Dhaka, Bangladesh',
+      client: 'Aarong Leather Studio',
       image:
         'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -46,6 +51,7 @@ function VirtualGallery() {
       category: 'AERIAL',
       title: 'Commercial Zone Top View',
       location: 'Sylhet, Bangladesh',
+      client: 'North East Horizon',
       image:
         'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -55,6 +61,7 @@ function VirtualGallery() {
       category: 'INDUSTRIAL',
       title: 'Architectural Brick Samples',
       location: 'Chittagong, Bangladesh',
+      client: 'KSRM Steel Industry',
       image:
         'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -64,6 +71,7 @@ function VirtualGallery() {
       category: 'INDUSTRIAL',
       title: 'Garments Production Floor',
       location: 'Gazipur, Bangladesh',
+      client: 'Ha-Meem Group Ltd.',
       image:
         'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -73,6 +81,7 @@ function VirtualGallery() {
       category: 'PRODUCT',
       title: 'Product Packaging Shoot',
       location: 'Studio Session',
+      client: 'Shajgoj Beauty Bar',
       image:
         'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -82,6 +91,7 @@ function VirtualGallery() {
       category: 'LIFESTYLE',
       title: 'Handcrafted Earring Editorial',
       location: 'Dhaka, Bangladesh',
+      client: 'Crafts of Bengal',
       image:
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80',
       span: 'row-span-2',
@@ -91,6 +101,7 @@ function VirtualGallery() {
       category: 'HOTEL & RESORTS',
       title: 'Night View Poolside Experience',
       location: 'Cox’s Bazar, Bangladesh',
+      client: 'Ocean Paradise Hotel',
       image:
         'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -100,6 +111,7 @@ function VirtualGallery() {
       category: 'REAL ESTATE',
       title: 'Modern Terrace Garden Architecture',
       location: 'Dhaka, Bangladesh',
+      client: 'Shanta Holdings Ltd.',
       image:
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -109,6 +121,7 @@ function VirtualGallery() {
       category: 'HOTEL & RESORTS',
       title: 'Sunset Beach Frontage',
       location: 'Cox’s Bazar, Bangladesh',
+      client: 'Long Beach Resort',
       image:
         'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
       span: 'row-span-1',
@@ -121,7 +134,7 @@ function VirtualGallery() {
       : galleryData.filter((item) => item.category === activeCategory);
 
   return (
-    <section className="relative w-full min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-16 px-4 sm:px-8 select-none">
+    <section className="relative w-full min-h-screen bg-base-100 text-base-content transition-colors duration-250 py-16 px-4 sm:px-8 select-none">
       
       {/* 1. TOP CATEGORY BUTTONS */}
       <div className="max-w-7xl mx-auto mb-10">
@@ -132,10 +145,10 @@ function VirtualGallery() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 border rounded-md ${
+                className={`px-4 py-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-wider transition-all duration-300 rounded-full border ${
                   isActive
-                    ? 'bg-[var(--app-text-primary)] text-[var(--app-background)] border-[var(--app-text-primary)] shadow-md scale-105'
-                    : 'bg-[var(--app-text-primary)]/5 text-[var(--app-text-secondary)] border-[var(--app-text-secondary)]/20 hover:border-[var(--app-text-primary)]/50 hover:text-[var(--app-text-primary)]'
+                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30 scale-105'
+                    : 'bg-base-200/80 text-base-content/70 border-base-content/15 hover:border-primary hover:text-base-content hover:bg-base-200'
                 }`}
                 style={{ cursor: 'pointer' }}
               >
@@ -148,36 +161,37 @@ function VirtualGallery() {
 
       {/* 2. GALLERY GRID SECTION */}
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[220px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 auto-rows-[240px]">
           {filteredItems.map((item) => (
             <div
               key={item.id}
               onClick={() => setSelectedItem(item)}
-              className={`group relative overflow-hidden cursor-pointer ${item.span}`}
+              className={`group relative overflow-hidden rounded-3xl border border-base-content/10 shadow-md cursor-pointer ${item.span} transition-all duration-300 hover:shadow-2xl hover:border-primary/40`}
               style={{ cursor: 'pointer' }}
             >
-              {/* IMAGE */}
+              {/* VIBRANT CRISP IMAGE */}
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
 
-              {/* HOVER OVERLAY WITH DATA */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">
+              {/* SLEEK GLASSMORPHIC HOVER CAPTION BADGE */}
+              <div className="absolute inset-x-3 bottom-3 z-10 p-3 rounded-2xl bg-black/60 dark:bg-base-200/80 backdrop-blur-md border border-white/20 dark:border-base-content/20 text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 shadow-lg">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary inline-block mb-0.5">
                   {item.category}
                 </span>
-                <h3 className="text-sm font-extrabold uppercase tracking-tight text-white mb-1">
+                <h3 className="text-xs sm:text-sm font-extrabold uppercase tracking-tight text-white truncate">
                   {item.title}
                 </h3>
-                <p className="text-[11px] font-medium text-zinc-300 flex items-center gap-1.5 mb-3">
-                  {item.location}
-                </p>
-
-                <div className="flex items-center gap-2 text-[10px] font-bold text-white tracking-wider border-t border-white/20 pt-2">
-                  <FontAwesomeIcon icon={faExpand} className="text-xs" />
-                  <span>VIEW DETAILS</span>
+                <div className="flex items-center justify-between text-[11px] font-medium text-white/80 mt-1 border-t border-white/10 pt-1.5">
+                  <span className="flex items-center gap-1 truncate">
+                    <FontAwesomeIcon icon={faLocationDot} className="text-primary text-[10px]" />
+                    {item.location}
+                  </span>
+                  <span className="shrink-0 flex items-center gap-1 font-bold text-primary">
+                    <FontAwesomeIcon icon={faExpand} className="text-[10px]" /> View
+                  </span>
                 </div>
               </div>
             </div>
@@ -185,24 +199,24 @@ function VirtualGallery() {
         </div>
       </div>
 
-      {/* 3. BLUR MODAL FOR DETAILS */}
+      {/* 3. LIGHT/DARK THEME COMPATIBLE LUXURY MODAL */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-all duration-300">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 transition-all duration-300 animate-in fade-in">
           
           {/* CLOSE BUTTON */}
           <button
             onClick={() => setSelectedItem(null)}
-            className="absolute top-6 right-6 text-white text-xl p-3 bg-white/10 hover:bg-white/20 border border-white/20 transition-all z-50"
+            className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-lg transition-all z-50 cursor-pointer shadow-xl"
             style={{ cursor: 'pointer' }}
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
 
-          {/* MODAL CONTENT BOX */}
-          <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col md:flex-row bg-zinc-950 border border-zinc-800 shadow-2xl overflow-hidden">
+          {/* MODAL CONTENT CONTAINER */}
+          <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col md:flex-row bg-white/95 dark:bg-base-200/95 backdrop-blur-2xl border border-white/40 dark:border-base-content/20 rounded-3xl shadow-2xl overflow-hidden text-base-content">
             
             {/* LARGE IMAGE PREVIEW */}
-            <div className="w-full md:w-2/3 h-[45vh] md:h-auto bg-black relative flex items-center justify-center">
+            <div className="w-full md:w-2/3 h-[45vh] md:h-auto bg-black relative flex items-center justify-center overflow-hidden">
               <img
                 src={selectedItem.image}
                 alt={selectedItem.title}
@@ -211,39 +225,51 @@ function VirtualGallery() {
             </div>
 
             {/* DETAILS PANEL */}
-            <div className="w-full md:w-1/3 p-6 sm:p-8 flex flex-col justify-between bg-zinc-900 text-white border-t md:border-t-0 md:border-l border-zinc-800">
+            <div className="w-full md:w-1/3 p-6 sm:p-8 flex flex-col justify-between bg-base-100/80 dark:bg-base-200/80 backdrop-blur-md text-base-content border-t md:border-t-0 md:border-l border-base-content/15">
               <div>
-                <span className="inline-block px-3 py-1 bg-white/10 border border-white/15 text-[9px] font-black uppercase tracking-widest text-zinc-300 mb-4">
+                <span className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black uppercase tracking-widest text-primary mb-4">
                   {selectedItem.category}
                 </span>
 
-                <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-2">
+                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-base-content mb-2">
                   {selectedItem.title}
                 </h2>
 
-                <div className="space-y-3 my-6 text-xs text-zinc-300 border-y border-zinc-800 py-4">
+                <div className="space-y-3 my-6 text-xs text-base-content/80 border-y border-base-content/15 py-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-zinc-400 font-medium">Client Name:</span>
-                    <span className="font-bold text-white">{selectedItem.client}</span>
+                    <span className="opacity-70 font-medium flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faUser} className="text-primary text-[11px]" /> Client Name:
+                    </span>
+                    <span className="font-extrabold text-base-content">{selectedItem.client}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-zinc-400 font-medium">Location:</span>
-                    <span className="font-bold text-white">{selectedItem.location}</span>
+                    <span className="opacity-70 font-medium flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faLocationDot} className="text-primary text-[11px]" /> Location:
+                    </span>
+                    <span className="font-extrabold text-base-content">{selectedItem.location}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="opacity-70 font-medium flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faCamera} className="text-primary text-[11px]" /> Format:
+                    </span>
+                    <span className="font-extrabold text-base-content">Ultra HD 8K Spatial Capture</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-zinc-400 leading-relaxed font-normal">
-                  High-resolution spatial capture providing full visual coverage and structural clarity for visual documentation.
+                <p className="text-xs text-base-content/70 leading-relaxed font-normal">
+                  High-resolution spatial capture providing full visual coverage and structural clarity for visual documentation and virtual showcases.
                 </p>
               </div>
 
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="w-full py-3 mt-6 bg-white text-black font-extrabold text-xs uppercase tracking-widest hover:bg-zinc-200 transition-colors"
-                style={{ cursor: 'pointer' }}
-              >
-                Close Details
-              </button>
+              <div className="mt-6 flex gap-3">
+                <Button
+                  variant="primary"
+                  onClick={() => setSelectedItem(null)}
+                  className="w-full py-3 text-xs"
+                >
+                  Close Details
+                </Button>
+              </div>
             </div>
 
           </div>

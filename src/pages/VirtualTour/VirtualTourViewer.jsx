@@ -1258,7 +1258,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                 }}
                 onMouseEnter={() => uiSound.playHoverClick()}
                 title="Start Live Co-Presence Guided Tour"
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-primary to-secondary text-white border-2 border-white/80 flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.6)] transition-transform hover:scale-115 cursor-pointer animate-pulse"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={faUsers} className="text-base" />
               </button>
@@ -1272,7 +1272,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                 }}
                 onMouseEnter={() => uiSound.playHoverClick()}
                 title="Schedule Private Tour / Inquire Price"
-                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white border-2 border-white/80 flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
               >
                 <FontAwesomeIcon icon={faCalendarCheck} className="text-base" />
               </button>
