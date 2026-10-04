@@ -11,6 +11,7 @@ import { apiGetTourById, apiGetOwnerTours } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import LiveGuidedTourModal from "../../components/spatial/LiveGuidedTourModal";
 import InRoomLeadForm from "../../components/tour/InRoomLeadForm";
+import MetaSEO from "../../components/seo/MetaSEO";
 import { tourSocket } from "../../services/tourSocketService";
 import {
   faBars,
@@ -1131,6 +1132,13 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
 
   return (
     <div className="w-full h-screen relative bg-black select-none overflow-hidden">
+      {/* Dynamic OpenGraph & Twitter Card SEO Meta Tags */}
+      <MetaSEO
+        title={activeNode?.name ? `${activeNode.name} - 360° Virtual Tour` : "ViewRoom 360° Virtual Tour"}
+        description={`Take an interactive 360° spatial walkthrough of ${activeNode?.name || "this virtual property"}.`}
+        image={activeNode?.thumbnail || activeNode?.panorama}
+      />
+
       {/* 360 VIEWPORT CONTAINER */}
       <div
         ref={viewportRef}
