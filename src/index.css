@@ -151,8 +151,19 @@ a {
 }
 
 /* =========================================================
-   BUTTONS — pill outline default
+   BUTTONS & CLICKABLE ELEMENTS — cursor pointer mandate
    ========================================================= */
+
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+select,
+.cursor-pointer {
+  cursor: pointer !important;
+}
 
 button,
 input,

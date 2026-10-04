@@ -67,6 +67,7 @@ export default function InRoomLeadForm({ isOpen, onClose, tourTitle, sceneName }
         <button
           onClick={onClose}
           className="absolute top-5 right-5 w-9 h-9 rounded-full bg-base-200 hover:bg-base-300 flex items-center justify-center text-base-content/70 hover:text-base-content transition-all cursor-pointer"
+          style={{ cursor: 'pointer' }}
         >
           <FontAwesomeIcon icon={faXmark} />
         </button>
@@ -91,22 +92,24 @@ export default function InRoomLeadForm({ isOpen, onClose, tourTitle, sceneName }
           <button
             type="button"
             onClick={() => setLeadType("visit")}
-            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               leadType === "visit"
                 ? "bg-white dark:bg-base-100 text-primary shadow-md"
                 : "text-base-content/70 hover:text-base-content"
             }`}
+            style={{ cursor: 'pointer' }}
           >
             <FontAwesomeIcon icon={faCalendarCheck} /> In-Person Visit
           </button>
           <button
             type="button"
             onClick={() => setLeadType("pricing")}
-            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               leadType === "pricing"
                 ? "bg-white dark:bg-base-100 text-primary shadow-md"
                 : "text-base-content/70 hover:text-base-content"
             }`}
+            style={{ cursor: 'pointer' }}
           >
             <FontAwesomeIcon icon={faEnvelopeOpenText} /> Request Pricing
           </button>

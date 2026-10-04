@@ -339,7 +339,8 @@ export default function LiveGuidedTourModal({
             {/* Close Modal */}
             <button
               onClick={onClose}
-              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-base-200 hover:bg-base-300 flex items-center justify-center text-base-content/70 hover:text-base-content transition-all"
+              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-base-200 hover:bg-base-300 flex items-center justify-center text-base-content/70 hover:text-base-content transition-all cursor-pointer"
+              style={{ cursor: 'pointer' }}
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
@@ -358,22 +359,26 @@ export default function LiveGuidedTourModal({
             {/* Host vs Join Tabs */}
             <div className="grid grid-cols-2 p-1 mb-6 rounded-2xl bg-base-300/50 text-xs font-extrabold">
               <button
+                type="button"
                 onClick={() => setMode("host")}
-                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   mode === "host"
                     ? "bg-white dark:bg-base-100 text-primary shadow-md"
                     : "text-base-content/70 hover:text-base-content"
                 }`}
+                style={{ cursor: 'pointer' }}
               >
                 <FontAwesomeIcon icon={faUserTie} /> Host Walkthrough
               </button>
               <button
+                type="button"
                 onClick={() => setMode("join")}
-                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+                className={`py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   mode === "join"
                     ? "bg-white dark:bg-base-100 text-primary shadow-md"
                     : "text-base-content/70 hover:text-base-content"
                 }`}
+                style={{ cursor: 'pointer' }}
               >
                 <FontAwesomeIcon icon={faUserGroup} /> Join Walkthrough
               </button>
@@ -410,7 +415,8 @@ export default function LiveGuidedTourModal({
                     type="button"
                     onClick={handleCopyInviteLink}
                     title="Copy Invitation Link"
-                    className="px-4 py-3 rounded-xl bg-base-200 hover:bg-base-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                    className="px-4 py-3 rounded-xl bg-base-200 hover:bg-base-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                    style={{ cursor: 'pointer' }}
                   >
                     <FontAwesomeIcon icon={copied ? faCheck : faCopy} className={copied ? "text-emerald-500" : ""} />
                     <span>{copied ? "Copied" : "Copy Link"}</span>
@@ -436,14 +442,14 @@ export default function LiveGuidedTourModal({
               <Button
                 variant="neutral"
                 onClick={onClose}
-                className="flex-1 py-3"
+                className="flex-1 py-3 cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 variant="primary"
                 onClick={() => handleStartSession(mode === "host" ? "host" : "client")}
-                className="flex-1 py-3"
+                className="flex-1 py-3 cursor-pointer"
               >
                 {mode === "host" ? "Host Session" : "Join Session"}
               </Button>
