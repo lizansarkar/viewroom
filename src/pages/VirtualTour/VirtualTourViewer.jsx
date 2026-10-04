@@ -10,6 +10,7 @@ import { trackEvent } from "../../services/analyticsService";
 import { apiGetTourById, apiGetOwnerTours } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import LiveGuidedTourModal from "../../components/spatial/LiveGuidedTourModal";
+import InRoomLeadForm from "../../components/tour/InRoomLeadForm";
 import { tourSocket } from "../../services/tourSocketService";
 import {
   faBars,
@@ -32,6 +33,7 @@ import {
   faEyeSlash,
   faUsers,
   faHeadset,
+  faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 // ==========================================
@@ -528,6 +530,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const [aiSpokenResponse, setAiSpokenResponse] = useState("Hi! I'm your Voice AI Spatial Guide. Click the mic icon and speak!");
   const [showShareModal, setShowShareModal] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showLeadForm, setShowLeadForm] = useState(false);
   const [showLiveTourModal, setShowLiveTourModal] = useState(() => {
     return !!searchParams.get("sessionId");
   });
@@ -1252,6 +1255,20 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
                 <FontAwesomeIcon icon={faUsers} className="text-base" />
               </button>
 
+              {/* IN-ROOM LEAD CAPTURE BUTTON */}
+              <button
+                type="button"
+                onClick={() => {
+                  uiSound.playHoverClick();
+                  setShowLeadForm(true);
+                }}
+                onMouseEnter={() => uiSound.playHoverClick()}
+                title="Schedule Private Tour / Inquire Price"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white border-2 border-white/80 flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faCalendarCheck} className="text-base" />
+              </button>
+
               {/* SHARE & EMBED BUTTON */}
               <button
                 type="button"
@@ -1478,6 +1495,14 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
           </div>
         </div>
       )}
+
+      {/* IN-ROOM LEAD CAPTURE MODAL */}
+      <InRoomLeadForm
+        isOpen={showLeadForm}
+        onClose={() => setShowLeadForm(false)}
+        tourTitle={activeNode?.name}
+        sceneName={activeNode?.name}
+      />
 
       {/* LIVE GUIDED CO-PRESENCE TOUR MODAL */}
       <LiveGuidedTourModal

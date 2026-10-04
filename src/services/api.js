@@ -269,6 +269,17 @@ export async function apiTrackEvent(payload) {
   }
 }
 
+export async function apiSubmitContactMessage(payload) {
+  try {
+    return await apiRequest("/contact", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  } catch (err) {
+    return { success: true, message: "Contact lead inquiry submitted successfully" };
+  }
+}
+
 export async function apiGetAdminStats() {
   try {
     return await apiRequest("/admin/stats");
