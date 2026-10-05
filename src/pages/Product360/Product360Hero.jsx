@@ -531,6 +531,7 @@ function Product360Hero() {
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // =========================================================
@@ -554,7 +555,7 @@ function Product360Hero() {
         if (child.isMesh) child.material = strapMat;
       });
     }
-  }, [selectedCase]);
+  }, [selectedCase, selectedStrap]);
 
   useEffect(() => {
     const { materialsMap } = threeRef.current;
@@ -578,7 +579,7 @@ function Product360Hero() {
         if (child.isMesh) child.material = strapMat;
       });
     }
-  }, [selectedStrap]);
+  }, [selectedStrap, selectedCase]);
 
   // =========================================================
   // DRAG ORBIT INTERACTION

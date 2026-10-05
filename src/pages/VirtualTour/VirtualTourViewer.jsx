@@ -25,7 +25,6 @@ import {
   faVrCardboard,
   faLayerGroup,
   faMicrophone,
-  faMicrophoneSlash,
   faCommentDots,
   faShareNodes,
   faCopy,
@@ -33,7 +32,6 @@ import {
   faEye,
   faEyeSlash,
   faUsers,
-  faHeadset,
   faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -511,7 +509,7 @@ const TOUR_NODES = [
   },
 ];
 
-function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
+function VirtualTourViewer({ _fullScreenMode = false, overrideTourId }) {
   const [searchParams] = useSearchParams();
   const { tourId } = useParams();
   const targetTourId = overrideTourId || searchParams.get("id") || tourId;
@@ -522,7 +520,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
-  const [snapshotEffect, setSnapshotEffect] = useState(false);
+  const [snapshotEffect, _setSnapshotEffect] = useState(false);
 
   // Voice AI Spatial Tour Guide State
   const [isListening, setIsListening] = useState(false);

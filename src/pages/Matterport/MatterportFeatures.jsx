@@ -4,40 +4,11 @@ import {
   faLocationDot,
   faBorderAll,
   faStairs,
-  faXmark,
-  faInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/reuseable/Button";
 
 function MatterportFeatures() {
   const [activeTab, setActiveTab] = useState("enter");
-  const [activeSpot, setActiveSpot] = useState(null);
-
-  // Live 3D Experience hotspots data
-  const hotspots = [
-    {
-      id: 1,
-      top: "35%",
-      left: "25%",
-      title: "Living Space Area",
-      description:
-        "Ceiling height: 3.2m. Spatial distance measured accurately.",
-    },
-    {
-      id: 2,
-      top: "55%",
-      left: "65%",
-      title: "Panoramic Glass Window",
-      description: "Natural sunlight entry tracked across midday hours.",
-    },
-    {
-      id: 3,
-      top: "70%",
-      left: "42%",
-      title: "Hardwood Flooring",
-      description: "Premium finish material verified via spatial twin scan.",
-    },
-  ];
 
   return (
     <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-16 overflow-hidden">

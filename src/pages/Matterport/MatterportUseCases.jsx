@@ -5,82 +5,80 @@ import Button from "../../components/reuseable/Button";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ৬টি এলোমেলো (scattered/offset) কার্ডের ডাটা
+const CARDS_DATA = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+    initX: "-18%",
+    initY: "-15%",
+    spreadXDesktop: -420,
+    spreadYDesktop: -280,
+    spreadXMobile: -150,
+    spreadYMobile: -240,
+  },
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=80",
+    initX: "15%",
+    initY: "-18%",
+    spreadXDesktop: 420,
+    spreadYDesktop: -280,
+    spreadXMobile: 150,
+    spreadYMobile: -240,
+  },
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80",
+    initX: "-22%",
+    initY: "12%",
+    spreadXDesktop: -460,
+    spreadYDesktop: 220,
+    spreadXMobile: -160,
+    spreadYMobile: 240,
+  },
+  {
+    id: 4,
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80",
+    initX: "0%",
+    initY: "18%",
+    spreadXDesktop: 0,
+    spreadYDesktop: 340,
+    spreadXMobile: 0,
+    spreadYMobile: 300,
+  },
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80",
+    initX: "25%",
+    initY: "10%",
+    spreadXDesktop: 440,
+    spreadYDesktop: 240,
+    spreadXMobile: 160,
+    spreadYMobile: 250,
+  },
+  {
+    id: 6,
+    image:
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=80",
+    initX: "2%",
+    initY: "-8%",
+    spreadXDesktop: 0,
+    spreadYDesktop: -340,
+    spreadXMobile: 0,
+    spreadYMobile: -300,
+  },
+];
+
 function MatterportUseCases() {
   const containerRef = useRef(null);
   const cardsRef = useRef([]);
   const [activeTab, setActiveTab] = useState("enter");
-
-  // ৬টি এলোমেলো (scattered/offset) কার্ডের ডাটা
-  const cardsData = [
-    {
-      id: 1,
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
-      // Initial Position (এলোমেলো অফসেট)
-      initX: "-18%",
-      initY: "-15%",
-      // Scroll Spread Position
-      spreadXDesktop: -420,
-      spreadYDesktop: -280,
-      spreadXMobile: -150,
-      spreadYMobile: -240,
-    },
-    {
-      id: 2,
-      image:
-        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1000&q=80",
-      initX: "15%",
-      initY: "-18%",
-      spreadXDesktop: 420,
-      spreadYDesktop: -280,
-      spreadXMobile: 150,
-      spreadYMobile: -240,
-    },
-    {
-      id: 3,
-      image:
-        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80",
-      initX: "-22%",
-      initY: "12%",
-      spreadXDesktop: -460,
-      spreadYDesktop: 220,
-      spreadXMobile: -160,
-      spreadYMobile: 240,
-    },
-    {
-      id: 4,
-      image:
-        "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80",
-      initX: "0%",
-      initY: "18%",
-      spreadXDesktop: 0,
-      spreadYDesktop: 340,
-      spreadXMobile: 0,
-      spreadYMobile: 300,
-    },
-    {
-      id: 5,
-      image:
-        "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80",
-      initX: "25%",
-      initY: "10%",
-      spreadXDesktop: 440,
-      spreadYDesktop: 240,
-      spreadXMobile: 160,
-      spreadYMobile: 250,
-    },
-    {
-      id: 6,
-      image:
-        "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1000&q=80",
-      initX: "2%",
-      initY: "-8%",
-      spreadXDesktop: 0,
-      spreadYDesktop: -340,
-      spreadXMobile: 0,
-      spreadYMobile: -300,
-    },
-  ];
 
   useEffect(() => {
     const isMobile = window.innerWidth < 640;
@@ -97,7 +95,7 @@ function MatterportUseCases() {
         },
       });
 
-      cardsData.forEach((card, index) => {
+      CARDS_DATA.forEach((card, index) => {
         const el = cardsRef.current[index];
         if (el) {
           const targetX = isMobile ? card.spreadXMobile : card.spreadXDesktop;
@@ -161,7 +159,7 @@ function MatterportUseCases() {
 
       {/* 2. OVERLAPPING & SCATTERED IMAGES (Sharpe Edges - No Rounded Corners) */}
       <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center">
-        {cardsData.map((card, index) => (
+        {CARDS_DATA.map((card, index) => (
           <div
             key={card.id}
             ref={(el) => (cardsRef.current[index] = el)}

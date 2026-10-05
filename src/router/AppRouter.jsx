@@ -16,6 +16,7 @@ const Photography = lazy(() => import("../pages/Photography/Photography"));
 const About = lazy(() => import("../pages/About/About"));
 const Contact = lazy(() => import("../pages/Contact/Contact"));
 const Auth = lazy(() => import("../pages/Auth/Auth"));
+const NotFound = lazy(() => import("../pages/NotFound/NotFound"));
 
 // Spatial Loading Spinner Fallback Component
 function RouteLoadingFallback() {
@@ -53,6 +54,7 @@ function AppRouter() {
         <Route path="/help" element={<Dashboard defaultTab="help" />} />
         <Route path="/sign-in" element={<Auth />} />
         <Route path="/sign-up" element={<Auth />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );

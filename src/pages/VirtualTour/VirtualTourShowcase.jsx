@@ -70,30 +70,30 @@ function VirtualTourShowcase() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchTours = async () => {
+      setLoading(true);
+      try {
+        const data = await apiGetTours({
+          search: searchQuery,
+          category: activeTab === "ALL" ? "" : activeTab,
+          sortBy,
+        });
+
+        if (data && data.length > 0) {
+          setTours(data);
+        } else {
+          setTours(null);
+        }
+      } catch (err) {
+        console.warn("VirtualTourShowcase fetch error:", err);
+        setTours(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTours();
   }, [searchQuery, activeTab, sortBy]);
-
-  const fetchTours = async () => {
-    setLoading(true);
-    try {
-      const data = await apiGetTours({
-        search: searchQuery,
-        category: activeTab === "ALL" ? "" : activeTab,
-        sortBy,
-      });
-
-      if (data && data.length > 0) {
-        setTours(data);
-      } else {
-        setTours(null);
-      }
-    } catch (err) {
-      console.warn("VirtualTourShowcase fetch error:", err);
-      setTours(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const dataSource = tours !== null ? tours : DEFAULT_TOURS;
 

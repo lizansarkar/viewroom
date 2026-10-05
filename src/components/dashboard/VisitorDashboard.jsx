@@ -10,11 +10,10 @@ import {
   faRobot,
   faCompass,
   faArrowRight,
-  faFilter,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 
-export default function VisitorDashboard({ activeTab, setActiveTab }) {
+export default function VisitorDashboard({ activeTab, _setActiveTab }) {
   const [categoryFilter, setCategoryFilter] = useState("All");
 
   const featuredSpaces = [

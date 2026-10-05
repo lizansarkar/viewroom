@@ -23,7 +23,7 @@ export default function LiveGuidedTourModal({
   isOpen,
   onClose,
   tourId,
-  currentSceneId,
+  _currentSceneId,
   onSceneChange,
   onViewportSync,
 }) {
@@ -31,7 +31,7 @@ export default function LiveGuidedTourModal({
   const [roomIdInput, setRoomIdInput] = useState("");
   const [userNameInput, setUserNameInput] = useState("");
   const [isConnectedRoom, setIsConnectedRoom] = useState(false);
-  const [activeRoomState, setActiveRoomState] = useState(null);
+  const [_activeRoomState, setActiveRoomState] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [userRole, setUserRole] = useState("client");
   const [followHost, setFollowHost] = useState(true);

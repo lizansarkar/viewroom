@@ -112,53 +112,53 @@ export default function Explore() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchExploreData = async () => {
+      setLoading(true);
+      try {
+        const [tours, products] = await Promise.all([
+          apiGetTours({ search: searchQuery, sortBy }),
+          apiGetProducts({ search: searchQuery, sortBy }),
+        ]);
+
+        if (tours || products) {
+          const mappedTours = (tours || []).map((t) => ({
+            id: t.id,
+            title: t.title,
+            tag: `360° Tour • ${t.totalScenes || 1} Scenes`,
+            price: t.price || "Free",
+            category: "SPACES",
+            type: "tour",
+            image: t.coverImage,
+            link: `/360-virtual-tour`,
+          }));
+
+          const mappedProducts = (products || []).map((p) => ({
+            id: p.id,
+            title: p.title,
+            tag: `360° Spin • ${p.subtitle || "3D Model"}`,
+            price: typeof p.price === "number" ? `$${p.price}` : p.price,
+            category: "PRODUCTS",
+            type: "product",
+            image: p.coverFrame,
+            link: `/360-product`,
+          }));
+
+          const combined = [...mappedTours, ...mappedProducts];
+          if (combined.length >= 9) {
+            setApiData(combined);
+          } else {
+            setApiData(null);
+          }
+        }
+      } catch (err) {
+        console.warn("Explore page live API fetch fallback:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchExploreData();
   }, [searchQuery, activeCategory, sortBy]);
-
-  const fetchExploreData = async () => {
-    setLoading(true);
-    try {
-      const [tours, products] = await Promise.all([
-        apiGetTours({ search: searchQuery, sortBy }),
-        apiGetProducts({ search: searchQuery, sortBy }),
-      ]);
-
-      if (tours || products) {
-        const mappedTours = (tours || []).map((t) => ({
-          id: t.id,
-          title: t.title,
-          tag: `360° Tour • ${t.totalScenes || 1} Scenes`,
-          price: t.price || "Free",
-          category: "SPACES",
-          type: "tour",
-          image: t.coverImage,
-          link: `/360-virtual-tour`,
-        }));
-
-        const mappedProducts = (products || []).map((p) => ({
-          id: p.id,
-          title: p.title,
-          tag: `360° Spin • ${p.subtitle || "3D Model"}`,
-          price: typeof p.price === "number" ? `$${p.price}` : p.price,
-          category: "PRODUCTS",
-          type: "product",
-          image: p.coverFrame,
-          link: `/360-product`,
-        }));
-
-        const combined = [...mappedTours, ...mappedProducts];
-        if (combined.length >= 9) {
-          setApiData(combined);
-        } else {
-          setApiData(null);
-        }
-      }
-    } catch (err) {
-      console.warn("Explore page live API fetch fallback:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const dataSource = apiData !== null ? apiData : exploreItems;
 

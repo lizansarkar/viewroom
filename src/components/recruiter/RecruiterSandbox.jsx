@@ -9,7 +9,6 @@ import {
   faXmark,
   faShieldHalved,
   faCrosshairs,
-  faCode,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { useAuth } from "../../context/AuthContext";

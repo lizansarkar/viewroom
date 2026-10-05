@@ -7,12 +7,8 @@ import {
   faMinus,
   faQuestionCircle,
   faEnvelope,
-  faLayerGroup,
   faShieldHalved,
   faCamera,
-  faGlobe,
-  faUserTie,
-  faSliders
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function HelpPage() {

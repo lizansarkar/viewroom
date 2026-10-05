@@ -14,7 +14,6 @@ import {
   faPlus,
   faCloudArrowUp,
   faCheckCircle,
-  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { apiUploadImage } from "../../services/api";
@@ -134,6 +133,7 @@ export default function HotspotEditorModal({
         setTitle(targetScene.name);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetId]);
 
   const handlePsvReady = (instance) => {

@@ -1,25 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-
-const hotspotsData = [
-  { id: 1, label: "Kitchen", top: "28%", left: "32%", active: true },
-  { id: 2, label: "Master Bedroom", top: "22%", left: "46%" },
-  { id: 3, label: "Balcony View", top: "25%", left: "68%" },
-  { id: 4, label: "Living Space", top: "65%", left: "52%" },
-  { id: 5, label: "Bathroom", top: "48%", left: "74%" },
-];
-
-const categories = [
-  "Apartments",
-  "Villas",
-  "Commercial",
-  "Lofts",
-  "Studio",
-  "Modern",
-];
+import React, { useEffect, useRef } from "react";
 
 function Hero() {
-  const [activeCategory, setActiveCategory] = useState("Apartments");
-  const [selectedHotspot, setSelectedHotspot] = useState("Kitchen");
   const videoRef = useRef(null);
 
   useEffect(() => {

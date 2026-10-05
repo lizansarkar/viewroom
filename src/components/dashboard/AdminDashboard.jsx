@@ -11,7 +11,6 @@ import {
   faServer,
   faRobot,
   faMagnifyingGlass,
-  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import AnalyticsDashboard from "./AnalyticsDashboard";
@@ -23,7 +22,7 @@ import {
   apiAdminDeleteTour,
 } from "../../services/api";
 
-export default function AdminDashboard({ user, activeTab, setActiveTab: parentSetActiveTab, onPreviewModeChange }) {
+export default function AdminDashboard({ _user, activeTab, setActiveTab: parentSetActiveTab, onPreviewModeChange }) {
   const [stats, setStats] = useState({
     totalUsers: 3,
     totalTours: 2,
@@ -98,6 +97,15 @@ export default function AdminDashboard({ user, activeTab, setActiveTab: parentSe
       t.title.toLowerCase().includes(contentSearch.toLowerCase()) ||
       (t.category && t.category.toLowerCase().includes(contentSearch.toLowerCase()))
   );
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-base-content/60">
+        <div className="w-10 h-10 rounded-full border-4 border-base-content/20 border-t-base-content animate-spin mb-3" />
+        <span className="text-xs font-semibold tracking-wider uppercase">Loading Admin Data...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">

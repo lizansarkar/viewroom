@@ -6,7 +6,6 @@ import React, { useState, useEffect } from "react";
  */
 export default function LQIPBlurUpPanorama({ src, alt = "360 Panorama", className = "" }) {
   const [isHighResLoaded, setIsHighResLoaded] = useState(false);
-  const [lowResSrc, setLowResSrc] = useState("");
 
   useEffect(() => {
     setIsHighResLoaded(false);

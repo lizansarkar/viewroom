@@ -4,7 +4,6 @@ import {
   faXmark,
   faExpand,
   faLocationDot,
-  faLayerGroup,
   faUser,
   faCamera,
 } from '@fortawesome/free-solid-svg-icons';

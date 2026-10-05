@@ -9,7 +9,6 @@ import {
   faRocket,
   faTrash,
   faMagnifyingGlass,
-  faBuilding,
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
@@ -47,7 +46,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
     },
   ]);
 
-  const [aiHistory, setAiHistory] = useState([
+  const [aiHistory] = useState([
     {
       id: "q1",
       query: "How to navigate between room floors?",

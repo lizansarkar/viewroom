@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFire,
-  faEye,
   faBullseye,
-  faLayerGroup,
   faSliders,
   faDownload,
   faChartPie,
@@ -95,7 +93,7 @@ const GAZE_HEATMAP_DATA = {
   },
 };
 
-export default function SpatialHeatmapViewer({ tourId }) {
+export default function SpatialHeatmapViewer({ _tourId }) {
   const [selectedRoomId, setSelectedRoomId] = useState("aerial_view");
   const [heatRadius, setHeatRadius] = useState(45);
   const [heatOpacity, setHeatOpacity] = useState(0.75);

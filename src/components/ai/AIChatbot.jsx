@@ -6,7 +6,6 @@ import {
   faRobot,
   faUser,
   faChevronDown,
-  faCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { apiAskSpatialConcierge } from "../../services/api";
 import { trackEvent } from "../../services/analyticsService";
