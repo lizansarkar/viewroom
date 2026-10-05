@@ -94,9 +94,45 @@ export async function apiGetTourById(id) {
 // -------------------------------------------------------------
 // 3. 3D PRODUCTS APIS (PostgreSQL Product360 Table)
 // -------------------------------------------------------------
-export async function apiGetProducts() {
+export async function apiGetProducts(params = {}) {
   try {
-    return await apiRequest("/products");
+    const query = new URLSearchParams(params).toString();
+    return await apiRequest(`/products${query ? `?${query}` : ""}`);
+  } catch (err) {
+    return { success: true, data: [] };
+  }
+}
+
+export async function apiGetProductById(id) {
+  try {
+    return await apiRequest(`/products/${id}`);
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function apiCreateProduct(productData) {
+  try {
+    return await apiRequest("/products", {
+      method: "POST",
+      body: JSON.stringify(productData),
+    });
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function apiDeleteProduct(productId) {
+  try {
+    return await apiRequest(`/products/${productId}`, { method: "DELETE" });
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function apiGetOwnerProducts() {
+  try {
+    return await apiRequest("/owner/products");
   } catch (err) {
     return { success: true, data: [] };
   }
@@ -199,6 +235,14 @@ export async function apiSaveTourAudio(tourId, audioConfig) {
     });
   } catch (err) {
     return { success: true, message: "Audio saved locally" };
+  }
+}
+
+export async function apiDeleteOwnerTour(tourId) {
+  try {
+    return await apiRequest(`/owner/tours/${tourId}`, { method: "DELETE" });
+  } catch (err) {
+    return { success: false, error: err.message };
   }
 }
 
@@ -370,6 +414,10 @@ export default {
   apiGetTours,
   apiGetTourById,
   apiGetProducts,
+  apiGetProductById,
+  apiCreateProduct,
+  apiDeleteProduct,
+  apiGetOwnerProducts,
   apiAskSpatialConcierge,
   apiGetOwnerStats,
   apiGetOwnerTours,
@@ -377,6 +425,8 @@ export default {
   apiAddOwnerScene,
   apiAddOwnerHotspot,
   apiPromoteToCreator,
+  apiSaveTourAudio,
+  apiDeleteOwnerTour,
   apiUploadImage,
   apiUploadAudio,
   apiGetAnalyticsOverview,

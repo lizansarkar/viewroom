@@ -64,10 +64,104 @@ async function main() {
     },
   });
 
+  // 4. Seed Interactive 3D Product Spins
+  const spinFramesChair = Array.from(
+    { length: 36 },
+    (_, i) => `https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800&frame=${i + 1}`
+  );
+
+  const productChair = await prisma.product360.upsert({
+    where: { id: "prod_aero_chair" },
+    update: {},
+    create: {
+      id: "prod_aero_chair",
+      title: "Ergonomic Spatial Chair X1",
+      category: "Modern Furniture",
+      status: "Studio Ready",
+      model3DUrl: "/models/chair.glb",
+      authorId: adminUser.id,
+      variants: {
+        create: [
+          {
+            name: "Matte Black",
+            colorHex: "#1a1a1a",
+            accentHex: "#3b82f6",
+            imageSequence: spinFramesChair,
+          },
+          {
+            name: "Cyber Cyan",
+            colorHex: "#06b6d4",
+            accentHex: "#0891b2",
+            imageSequence: spinFramesChair,
+          },
+        ],
+      },
+      specHotspots: {
+        create: [
+          {
+            angle: 45,
+            xPercent: 50,
+            yPercent: 45,
+            title: "Lumbar Support",
+            description: "Adjustable height dynamic spine curve protection",
+          },
+          {
+            angle: 120,
+            xPercent: 48,
+            yPercent: 15,
+            title: "3D Headrest",
+            description: "Multi-angle rotational neck relief",
+          },
+        ],
+      },
+    },
+  });
+
+  const spinFramesWatch = Array.from(
+    { length: 36 },
+    (_, i) => `https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1000&frame=${i + 1}`
+  );
+
+  const productWatch = await prisma.product360.upsert({
+    where: { id: "prod_watch_aero" },
+    update: {},
+    create: {
+      id: "prod_watch_aero",
+      title: "Aero Chronograph 360",
+      category: "Luxury Timepiece",
+      status: "Studio Ready",
+      model3DUrl: "/models/watch.glb",
+      authorId: adminUser.id,
+      variants: {
+        create: [
+          {
+            name: "Onyx Black",
+            colorHex: "#0d0d0f",
+            accentHex: "#3b82f6",
+            imageSequence: spinFramesWatch,
+          },
+        ],
+      },
+      specHotspots: {
+        create: [
+          {
+            angle: 45,
+            xPercent: 65,
+            yPercent: 35,
+            title: "Sapphire Crystal Lens",
+            description: "Scratch-resistant anti-reflective dual coating",
+          },
+        ],
+      },
+    },
+  });
+
   console.log("✅ Seeding completed successfully!");
   console.log(`- Created Admin User: ${adminUser.email}`);
   console.log(`- Created Client User: ${clientUser.email}`);
   console.log(`- Created Tour: ${tour.title}`);
+  console.log(`- Created Product: ${productChair.title}`);
+  console.log(`- Created Product: ${productWatch.title}`);
 }
 
 main()

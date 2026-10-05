@@ -1,139 +1,233 @@
 import express from "express";
+import prisma from "../prismaClient.js";
+import { verifyToken, requireRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Mock Product 360 seed dataset
-const mockProducts = [
-  {
-    id: "prod_aero_chair",
-    title: "Ergonomic Spatial Chair X1",
-    subtitle: "360° Interactive Product Spin & AR Preview",
-    price: 499,
-    category: "Modern Furniture",
-    rating: 4.9,
-    reviewsCount: 128,
-    spinFrames: Array.from({ length: 36 }, (_, i) => `https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800&frame=${i + 1}`),
-    model3DUrl: "/models/aero_chair.gltf",
-    description: "Designed for immersive virtual spatial visualization. High-density breathable mesh, 4D armrests, and dynamic posture calibration.",
-    variants: [
-      { id: "v1", color: "Matte Black", hex: "#1a1a1a", price: 499 },
-      { id: "v2", color: "Cyber Cyan", hex: "#06b6d4", price: 549 },
-      { id: "v3", color: "Titanium White", hex: "#f8fafc", price: 529 },
-    ],
-    hotspots: [
-      { id: "hp_lumbar", frameIndex: 4, x: 50, y: 45, title: "Lumbar Support", description: "Adjustable height dynamic spine curve protection" },
-      { id: "hp_headrest", frameIndex: 12, x: 48, y: 15, title: "3D Headrest", description: "Multi-angle rotational neck relief" },
-    ],
-  },
-  {
-    id: "prod_lunar_lamp",
-    title: "Lunar Halo Ambient Light 360",
-    subtitle: "Smart 3D Architectural Lighting",
-    price: 249,
-    category: "Smart Home",
-    rating: 4.8,
-    reviewsCount: 84,
-    spinFrames: Array.from({ length: 36 }, (_, i) => `https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=800&frame=${i + 1}`),
-    model3DUrl: "/models/lunar_lamp.gltf",
-    description: "360° light dispersion with voice control and smart color ambient synchronization.",
-    variants: [
-      { id: "vl1", color: "Warm Gold", hex: "#eab308", price: 249 },
-      { id: "vl2", color: "Obsidian Black", hex: "#0f172a", price: 249 },
-    ],
-    hotspots: [
-      { id: "hp_sensor", frameIndex: 1, x: 52, y: 80, title: "Touch Dimmer Sensor", description: "Capacitive touch brightness slider" },
-    ],
-  },
-];
+// Fallback seed products for edge cases
+const DEFAULT_SPIN_FRAMES = Array.from(
+  { length: 36 },
+  (_, i) => `https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800&frame=${i + 1}`
+);
 
-// GET /api/v1/products - List 360 products with search, category & sortBy support
-router.get("/", (req, res) => {
+// GET /api/v1/products - List 360 products with search, category & sorting from Prisma PostgreSQL
+router.get("/", async (req, res) => {
   try {
     const { search, category, sortBy } = req.query;
 
-    let result = [...mockProducts];
+    const where = {};
 
-    // Search filter
-    if (search && search.trim()) {
-      const q = search.toLowerCase().trim();
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-      );
-    }
-
-    // Category filter
     if (category && category !== "ALL" && category !== "All") {
-      const catQuery = category.toLowerCase().trim();
-      result = result.filter((p) => p.category.toLowerCase().includes(catQuery));
+      where.category = { contains: category, mode: "insensitive" };
     }
 
-    // Sorting
-    if (sortBy === "price_asc") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "price_desc") {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === "rating") {
-      result.sort((a, b) => b.rating - a.rating);
-    } else if (sortBy === "title") {
-      result.sort((a, b) => a.title.localeCompare(b.title));
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { category: { contains: q, mode: "insensitive" } },
+      ];
     }
 
-    const list = result.map((p) => ({
-      id: p.id,
-      title: p.title,
-      subtitle: p.subtitle,
-      price: p.price,
-      category: p.category,
-      rating: p.rating,
-      coverFrame: p.spinFrames[0],
-      variantCount: p.variants.length,
-    }));
+    const orderBy =
+      sortBy === "title"
+        ? { title: "asc" }
+        : { createdAt: "desc" };
+
+    const dbProducts = await prisma.product360.findMany({
+      where,
+      include: {
+        variants: true,
+        specHotspots: true,
+        author: { select: { id: true, name: true, email: true } },
+      },
+      orderBy,
+    });
+
+    const list = dbProducts.map((p) => {
+      const primaryVariant = p.variants[0];
+      const coverFrame =
+        primaryVariant && primaryVariant.imageSequence && primaryVariant.imageSequence.length > 0
+          ? primaryVariant.imageSequence[0]
+          : DEFAULT_SPIN_FRAMES[0];
+
+      return {
+        id: p.id,
+        title: p.title,
+        subtitle: "360° Interactive Product Spin",
+        price: 499,
+        category: p.category,
+        rating: 4.9,
+        status: p.status,
+        model3DUrl: p.model3DUrl || "/models/chair.glb",
+        coverFrame,
+        spinFrames: primaryVariant?.imageSequence || DEFAULT_SPIN_FRAMES,
+        variants: p.variants.map((v) => ({
+          id: v.id,
+          name: v.name,
+          color: v.name,
+          hex: v.colorHex,
+          accent: v.accentHex,
+          price: 499,
+        })),
+        variantCount: p.variants.length,
+        hotspots: p.specHotspots.map((h) => ({
+          id: h.id,
+          angle: h.angle,
+          x: h.xPercent,
+          y: h.yPercent,
+          title: h.title,
+          description: h.description,
+        })),
+        author: p.author,
+        createdAt: p.createdAt,
+      };
+    });
 
     res.json({ success: true, count: list.length, data: list });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Fetch products error:", err);
+    res.status(500).json({ success: false, error: "Failed to fetch products from database" });
   }
 });
 
-// GET /api/v1/products/:id - Get single product details with spin frames and 3D model
-router.get("/:id", (req, res) => {
+// GET /api/v1/products/:id - Get single product details with spin frames and 3D model from PostgreSQL
+router.get("/:id", async (req, res) => {
   try {
-    const product = mockProducts.find((p) => p.id === req.params.id) || mockProducts[0];
-    res.json({ success: true, data: product });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+    const product = await prisma.product360.findUnique({
+      where: { id: req.params.id },
+      include: {
+        variants: true,
+        specHotspots: true,
+        author: { select: { id: true, name: true, email: true } },
+      },
+    });
 
-// POST /api/v1/products - Create a 360 product spin
-router.post("/", (req, res) => {
-  try {
-    const { title, price, category, description, spinFrames } = req.body;
-    if (!title || !price) {
-      return res.status(400).json({ success: false, error: "Title and price are required" });
+    if (!product) {
+      return res.status(404).json({ success: false, error: "Product not found" });
     }
 
-    const newProduct = {
-      id: `prod_${Date.now()}`,
-      title,
-      subtitle: "360° Product Spin",
-      price: Number(price),
-      category: category || "General",
-      rating: 5.0,
-      reviewsCount: 1,
-      spinFrames: spinFrames || [],
-      description: description || "",
-      variants: [],
-      hotspots: [],
+    const primaryVariant = product.variants[0];
+    const spinFrames =
+      primaryVariant && primaryVariant.imageSequence && primaryVariant.imageSequence.length > 0
+        ? primaryVariant.imageSequence
+        : DEFAULT_SPIN_FRAMES;
+
+    const formatted = {
+      id: product.id,
+      title: product.title,
+      subtitle: "360° Interactive Product Spin & AR Preview",
+      price: 499,
+      category: product.category,
+      rating: 4.9,
+      reviewsCount: 128,
+      status: product.status,
+      model3DUrl: product.model3DUrl || "/models/chair.glb",
+      coverFrame: spinFrames[0],
+      spinFrames,
+      variants: product.variants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        color: v.name,
+        hex: v.colorHex,
+        accent: v.accentHex,
+        price: 499,
+        imageSequence: v.imageSequence,
+      })),
+      hotspots: product.specHotspots.map((h) => ({
+        id: h.id,
+        frameIndex: Math.round(h.angle / 10),
+        angle: h.angle,
+        x: h.xPercent,
+        y: h.yPercent,
+        title: h.title,
+        description: h.description,
+      })),
+      author: product.author,
+      createdAt: product.createdAt,
     };
 
-    mockProducts.push(newProduct);
+    res.json({ success: true, data: formatted });
+  } catch (err) {
+    console.error("Fetch product by ID error:", err);
+    res.status(500).json({ success: false, error: "Failed to fetch product details" });
+  }
+});
+
+// POST /api/v1/products - Create a new 360 product spin in PostgreSQL (Protected: CREATOR / ADMIN)
+router.post("/", verifyToken, requireRole("CREATOR", "ADMIN"), async (req, res) => {
+  try {
+    const { title, category, model3DUrl, spinFrames, variants = [] } = req.body;
+    if (!title) {
+      return res.status(400).json({ success: false, error: "Title is required" });
+    }
+
+    const framesToSave = Array.isArray(spinFrames) && spinFrames.length > 0
+      ? spinFrames
+      : DEFAULT_SPIN_FRAMES;
+
+    const newProduct = await prisma.product360.create({
+      data: {
+        title,
+        category: category || "General",
+        status: "Studio Ready",
+        model3DUrl: model3DUrl || "/models/chair.glb",
+        authorId: req.user.id,
+        variants: {
+          create: variants.length > 0
+            ? variants.map((v) => ({
+                name: v.name || "Default Variant",
+                colorHex: v.hex || v.colorHex || "#1a1a1a",
+                accentHex: v.accent || v.accentHex || "#3b82f6",
+                imageSequence: framesToSave,
+              }))
+            : [
+                {
+                  name: "Default Variant",
+                  colorHex: "#1a1a1a",
+                  accentHex: "#3b82f6",
+                  imageSequence: framesToSave,
+                },
+              ],
+        },
+      },
+      include: {
+        variants: true,
+        specHotspots: true,
+      },
+    });
+
     res.status(201).json({ success: true, data: newProduct });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Create product error:", err);
+    res.status(500).json({ success: false, error: "Failed to create product in database" });
+  }
+});
+
+// DELETE /api/v1/products/:id - Delete a 360 product from PostgreSQL (Protected: CREATOR / ADMIN)
+router.delete("/:id", verifyToken, requireRole("CREATOR", "ADMIN"), async (req, res) => {
+  try {
+    const product = await prisma.product360.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: "Product not found" });
+    }
+
+    // Ensure only author or ADMIN can delete
+    if (product.authorId !== req.user.id && req.user.role !== "ADMIN") {
+      return res.status(403).json({ success: false, error: "Access denied. You can only delete your own products." });
+    }
+
+    await prisma.product360.delete({
+      where: { id: req.params.id },
+    });
+
+    res.json({ success: true, message: "Product deleted successfully from PostgreSQL" });
+  } catch (err) {
+    console.error("Delete product error:", err);
+    res.status(500).json({ success: false, error: "Failed to delete product" });
   }
 });
 

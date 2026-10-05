@@ -20,10 +20,16 @@ let mockOwnerProducts = [
 router.get("/stats", async (req, res) => {
   try {
     let totalTours = toursStore.length;
+    let totalProducts = 0;
     let totalViews = 2450;
 
     try {
-      totalTours = await prisma.virtualTour.count();
+      const isGlobalAdmin = req.user?.role === "ADMIN";
+      const filter = isGlobalAdmin || !req.user ? {} : { authorId: req.user.id };
+
+      totalTours = await prisma.virtualTour.count({ where: filter });
+      totalProducts = await prisma.product360.count({ where: filter });
+      
       const analyticsCount = await prisma.analytics.aggregate({
         _sum: { viewsCount: true },
       });
@@ -38,12 +44,33 @@ router.get("/stats", async (req, res) => {
       success: true,
       data: {
         totalTours,
-        totalProducts: mockOwnerProducts.length,
+        totalProducts,
         totalViews,
         aiConversations: 124,
         engagementRate: "94.2%",
       },
     });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/v1/owner/products - Fetch owner 3D products from PostgreSQL
+router.get("/products", async (req, res) => {
+  try {
+    const isGlobalAdmin = req.user?.role === "ADMIN";
+    const filter = isGlobalAdmin || !req.user ? {} : { authorId: req.user.id };
+
+    const products = await prisma.product360.findMany({
+      where: filter,
+      include: {
+        variants: true,
+        specHotspots: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json({ success: true, data: products });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

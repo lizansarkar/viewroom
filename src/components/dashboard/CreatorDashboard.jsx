@@ -37,6 +37,10 @@ import {
   apiAddOwnerHotspot,
   apiUploadImage,
   apiSaveTourAudio,
+  apiDeleteOwnerTour,
+  apiGetProducts,
+  apiCreateProduct,
+  apiDeleteProduct,
 } from "../../services/api";
 
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
@@ -206,12 +210,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   const loadDashboardData = async () => {
     try {
-      const [fetchedStats, fetchedToursRes] = await Promise.all([
+      const [fetchedStats, fetchedToursRes, fetchedProdsRes] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(),
+        apiGetProducts(),
       ]);
       const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
-      if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
+      if (fetchedStats) setStats((prev) => ({ ...prev, ...(fetchedStats.data || fetchedStats) }));
       if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
         setTours(fetchedTours);
         saveToursToStorage(fetchedTours);
@@ -223,6 +228,21 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             setTours(parsed);
           }
         }
+      }
+
+      const fetchedProds = fetchedProdsRes && (fetchedProdsRes.data || fetchedProdsRes);
+      if (Array.isArray(fetchedProds) && fetchedProds.length > 0) {
+        setProducts(
+          fetchedProds.map((p) => ({
+            id: p.id,
+            title: p.title,
+            category: p.category,
+            price: `$${p.price || 499}`,
+            image: p.coverFrame || (p.spinFrames && p.spinFrames[0]) || "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
+            modelFormat: p.model3DUrl ? "GLTF / GLB" : "360° SPIN",
+            viewsCount: p.viewsCount || 120,
+          }))
+        );
       }
     } catch (err) {
       console.warn("Creator dashboard data loading error:", err);
@@ -312,14 +332,28 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     if (setActiveTab) setActiveTab("tours");
   };
 
-  const handleCreateProduct = (e) => {
+  const handleCreateProduct = async (e) => {
     e.preventDefault();
     if (!newProdTitle) return;
 
-    const newProd = {
-      id: `prod_${Date.now()}`,
+    const prodPayload = {
       title: newProdTitle,
       category: newProdCategory,
+      model3DUrl: "/models/chair.glb",
+    };
+
+    let created = null;
+    try {
+      const res = await apiCreateProduct(prodPayload);
+      created = res && (res.data || res);
+    } catch (err) {
+      console.warn("Product create API warning:", err);
+    }
+
+    const newProd = {
+      id: created?.id || `prod_${Date.now()}`,
+      title: created?.title || newProdTitle,
+      category: created?.category || newProdCategory,
       price: newProdPrice,
       image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
       modelFormat: "GLTF / GLB",
@@ -329,6 +363,16 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setProducts((prev) => [newProd, ...prev]);
     setNewProdTitle("");
     setShowAddProductModal(false);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm("Are you sure you want to delete this 3D product?")) return;
+    try {
+      await apiDeleteProduct(productId);
+    } catch (err) {
+      console.warn("Delete product API warning:", err);
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
   const handleAddSceneToTour = async (tourId) => {
@@ -845,12 +889,21 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   </span>
                 </div>
 
-                <Link to="/360-product" className="w-full">
-                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
-                    <FontAwesomeIcon icon={faCube} className="mr-2" />
-                    Launch 3D Product Spin
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2 w-full">
+                  <Link to="/360-product" className="flex-1">
+                    <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
+                      <FontAwesomeIcon icon={faCube} className="mr-2" />
+                      Launch 3D Product Spin
+                    </Button>
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteProduct(p.id)}
+                    className="p-2.5 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/70 transition-colors cursor-pointer text-xs"
+                    title="Delete 3D Product"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
