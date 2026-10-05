@@ -136,30 +136,18 @@ export default function HotspotEditorModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetId]);
 
-  const handleViewerClick = (event, instanceParam) => {
-    const instance = instanceParam || psvRef.current;
-    const clickData = event?.data || event;
-    let p = clickData?.pitch ?? event?.pitch;
-    let y = clickData?.yaw ?? event?.yaw;
+  const handlePsvReady = (instance) => {
+    psvRef.current = instance;
 
-    // Fallback to viewer camera position if click event coordinates not directly parsed
-    if (typeof p !== "number" || typeof y !== "number") {
-      try {
-        if (instance && typeof instance.getPosition === "function") {
-          const pos = instance.getPosition();
-          p = pos.pitch;
-          y = pos.yaw;
-        }
-      } catch (err) {}
-    }
+    instance.addEventListener("click", (e) => {
+      const p = e.data.pitch;
+      const y = e.data.yaw;
+      if (p !== undefined && y !== undefined) {
+        const pitchDeg = `${Math.round((p * 180) / Math.PI)}deg`;
+        const yawDeg = `${Math.round((y * 180) / Math.PI)}deg`;
+        setPitch(pitchDeg);
+        setYaw(yawDeg);
 
-    if (typeof p === "number" && typeof y === "number") {
-      const pitchDeg = `${Math.round((p * 180) / Math.PI)}deg`;
-      const yawDeg = `${Math.round((y * 180) / Math.PI)}deg`;
-      setPitch(pitchDeg);
-      setYaw(yawDeg);
-
-      if (instance) {
         const markersPlugin = instance.getPlugin(MarkersPlugin);
         if (markersPlugin) {
           try {
@@ -173,14 +161,6 @@ export default function HotspotEditorModal({
           });
         }
       }
-    }
-  };
-
-  const handlePsvReady = (instance) => {
-    psvRef.current = instance;
-
-    instance.addEventListener("click", (e) => {
-      handleViewerClick(e, instance);
     });
   };
 
@@ -274,9 +254,6 @@ export default function HotspotEditorModal({
       }
     } catch (err) {
       console.error("Failed to save hotspot:", err);
-      if (onClose) {
-        onClose();
-      }
     } finally {
       setIsSaving(false);
     }
@@ -360,18 +337,18 @@ export default function HotspotEditorModal({
               src={panoramaUrl}
               height="100%"
               width="100%"
+              container="psv-editor-container"
               navbar={false}
               mousewheel={true}
               defaultYaw={yaw}
               defaultPitch={pitch}
               plugins={plugins}
-              onClick={(e) => handleViewerClick(e, psvRef.current)}
               onReady={handlePsvReady}
             />
 
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 pointer-events-none bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-white flex items-center gap-2 shadow-md max-w-[90%]">
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-white flex items-center gap-2 shadow-md max-w-[90%]">
               <FontAwesomeIcon icon={faCompass} className="text-white shrink-0 animate-spin" />
-              <span className="truncate font-semibold">Click panorama to position hotspot ({yaw}, {pitch})</span>
+              <span className="truncate font-semibold">Click panorama to position hotspot</span>
             </div>
 
             {/* Quick Switch Scene Bar inside Viewport Header */}
@@ -426,24 +403,9 @@ export default function HotspotEditorModal({
                   </label>
                   <input
                     type="text"
+                    readOnly
                     value={yaw}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setYaw(val);
-                      if (psvRef.current) {
-                        const markersPlugin = psvRef.current.getPlugin(MarkersPlugin);
-                        if (markersPlugin) {
-                          try { markersPlugin.removeMarker("temp_preview_marker"); } catch (err) {}
-                          markersPlugin.addMarker({
-                            id: "temp_preview_marker",
-                            position: { yaw: val, pitch },
-                            html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
-                          });
-                        }
-                      }
-                    }}
-                    placeholder="0deg"
-                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
                 <div>
@@ -452,24 +414,9 @@ export default function HotspotEditorModal({
                   </label>
                   <input
                     type="text"
+                    readOnly
                     value={pitch}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setPitch(val);
-                      if (psvRef.current) {
-                        const markersPlugin = psvRef.current.getPlugin(MarkersPlugin);
-                        if (markersPlugin) {
-                          try { markersPlugin.removeMarker("temp_preview_marker"); } catch (err) {}
-                          markersPlugin.addMarker({
-                            id: "temp_preview_marker",
-                            position: { yaw, pitch: val },
-                            html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
-                          });
-                        }
-                      }
-                    }}
-                    placeholder="-25deg"
-                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
               </div>
