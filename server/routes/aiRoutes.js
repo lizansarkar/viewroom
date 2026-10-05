@@ -93,12 +93,33 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
         return `Welcome to ViewRoom 3D Showcase! Here are some of our top featured products:\n\n1. Aero Chronograph 360 ($4,850) - Swiss Luxury Timepiece\n2. Minimalist Black T-Shirt ($85) - Organic Cotton Streetwear\n3. AirPods Pro Spatial ($249) - Wireless Audio\n4. Horizon Ultra Smartphone ($999) - Flagship 5G Tech\n\nWhich category would you like to explore in 3D?`;
       }
 
+      // Handle simple math queries in fallback (e.g., 5+5=?)
+      const mathMatch = userQuery.match(/(\d+)\s*([+\-*/])\s*(\d+)/);
+      if (mathMatch) {
+        const a = parseFloat(mathMatch[1]);
+        const op = mathMatch[2];
+        const b = parseFloat(mathMatch[3]);
+        let ans = 0;
+        if (op === "+") ans = a + b;
+        else if (op === "-") ans = a - b;
+        else if (op === "*") ans = a * b;
+        else if (op === "/") ans = b !== 0 ? a / b : "undefined";
+        return `${a} ${op} ${b} = ${ans}`;
+      }
+
       return `Hello! I'm ViewRoom AI Concierge. I can help you search for 3D products, explore virtual tours, or find recommendations. Try asking me "Show me watches", "Suggest audio gear", or "What tech products do you have?"`;
     };
 
     // Try Google Gemini API call if API key is present
     if (currentApiKey && currentApiKey !== "your_google_gemini_api_key_here" && currentApiKey !== "YOUR_GEMINI_API_KEY") {
-      const candidateModels = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"];
+      const candidateModels = [
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash-lite",
+        "gemini-3.1-flash-lite",
+        "gemini-flash-latest",
+        "gemini-3.8-flash",
+        "gemini-2.5-flash-lite",
+      ];
       const client = new GoogleGenerativeAI(currentApiKey);
 
       let formattedHistory = history.map((msg) => ({
@@ -128,7 +149,7 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
           if (replyText) {
             return res.json({
               success: true,
-              reply: replyText,
+              reply: replyText.trim(),
               source: modelName,
               products: CATALOG_PRODUCTS,
             });

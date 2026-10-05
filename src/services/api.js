@@ -145,6 +145,20 @@ export function getLocalAiFallbackReply(query) {
   if (!query) return "Hello! How can I help you explore ViewRoom 360° today?";
   const q = query.toLowerCase().trim();
 
+  // Math solver (e.g. 5+5, 10*2, 5+5=?)
+  const mathMatch = query.match(/(\d+)\s*([+\-*/])\s*(\d+)/);
+  if (mathMatch) {
+    const a = parseFloat(mathMatch[1]);
+    const op = mathMatch[2];
+    const b = parseFloat(mathMatch[3]);
+    let ans = 0;
+    if (op === "+") ans = a + b;
+    else if (op === "-") ans = a - b;
+    else if (op === "*") ans = a * b;
+    else if (op === "/") ans = b !== 0 ? a / b : "undefined";
+    return `${a} ${op} ${b} = ${ans}`;
+  }
+
   if (q.includes("hello") || q.includes("hi") || q.includes("hey") || q.includes("salam") || q.includes("halo")) {
     return "Hello! I am your ViewRoom AI Spatial Concierge. I can help you navigate 360° virtual tours, inspect 3D interactive products, or answer questions about spatial scenes. How can I assist you today?";
   }
