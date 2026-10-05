@@ -264,7 +264,13 @@ router.post("/spatial-voice", async (req, res) => {
     if (currentApiKey && currentApiKey !== "YOUR_GEMINI_API_KEY" && currentApiKey !== "your_google_gemini_api_key_here") {
       try {
         const client = new GoogleGenerativeAI(currentApiKey);
-        const modelNames = ["gemini-1.5-flash-latest", "gemini-2.5-flash", "gemini-1.5-pro-latest", "gemini-1.5-flash"];
+        const modelNames = [
+          "gemini-flash-lite-latest",
+          "gemini-3.5-flash-lite",
+          "gemini-3.1-flash-lite",
+          "gemini-flash-latest",
+          "gemini-3.8-flash",
+        ];
         
         let resultText = null;
         const promptInstruction = `You are ViewRoom AI Voice Tour Guide. The user is exploring a 360° virtual tour.
