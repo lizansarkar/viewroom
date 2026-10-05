@@ -141,17 +141,52 @@ export async function apiGetOwnerProducts() {
 // -------------------------------------------------------------
 // 4. SPATIAL AI CONCIERGE & VOICE AI
 // -------------------------------------------------------------
-export async function apiAskSpatialConcierge(prompt) {
+export function getLocalAiFallbackReply(query) {
+  if (!query) return "Hello! How can I help you explore ViewRoom 360° today?";
+  const q = query.toLowerCase().trim();
+
+  if (q.includes("hello") || q.includes("hi") || q.includes("hey") || q.includes("salam") || q.includes("halo")) {
+    return "Hello! I am your ViewRoom AI Spatial Concierge. I can help you navigate 360° virtual tours, inspect 3D interactive products, or answer questions about spatial scenes. How can I assist you today?";
+  }
+
+  if (q.includes("tour") || q.includes("room") || q.includes("house") || q.includes("virtual") || q.includes("360") || q.includes("scene")) {
+    return "ViewRoom provides high-definition 360° virtual property tours! You can explore rooms in full spherical perspective, teleport through hotspots, or publish your own custom spaces from the Creator Dashboard.";
+  }
+
+  if (q.includes("chair") || q.includes("furniture") || q.includes("desk") || q.includes("sofa")) {
+    return "Our interactive 3D showcase features the 'Ergonomic Spatial Chair X1' ($499) and 'Executive Minimalist Desk' ($1,400). You can inspect and rotate them in 360° directly on the 3D Products page!";
+  }
+
+  if (q.includes("watch") || q.includes("timepiece") || q.includes("luxury")) {
+    return "Check out the luxury 'Aero Chronograph 360' ($4,850) in our 3D product showcase! It features high-precision mechanics and interactive 3D zoom.";
+  }
+
+  if (q.includes("headphone") || q.includes("audio") || q.includes("airpod") || q.includes("sound") || q.includes("music")) {
+    return "Experience spatial sound with the 'AirPods Pro Spatial Audio' ($249) in full 3D interactive preview, or enable ambient sound inside your virtual tours!";
+  }
+
+  if (q.includes("price") || q.includes("cost") || q.includes("free") || q.includes("buy")) {
+    return "All 360° virtual tours on ViewRoom are free to explore! Interactive 3D products range from $85 to $4,850, and creating your own 360° tours is free.";
+  }
+
+  return "I'm your ViewRoom AI Spatial Guide! Feel free to ask about 360° virtual tours, floor plans, interactive 3D product models, or creator tools. What would you like to know?";
+}
+
+export async function apiAskSpatialConcierge(prompt, context = {}, history = []) {
   try {
-    return await apiRequest("/ai/spatial-concierge", {
+    const res = await apiRequest("/ai/spatial-concierge", {
       method: "POST",
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt, sceneContext: context, history }),
     });
+
+    if (typeof res === "string") return res;
+    if (res && typeof res === "object") {
+      return res.reply || res.message || res.text || getLocalAiFallbackReply(prompt);
+    }
+    return getLocalAiFallbackReply(prompt);
   } catch (err) {
-    return {
-      success: true,
-      reply: "I am your ViewRoom AI Spatial Guide! Feel free to ask about room dimensions, floor portals, or 360° navigation.",
-    };
+    console.warn("apiAskSpatialConcierge fallback to smart local AI engine:", err.message);
+    return getLocalAiFallbackReply(prompt);
   }
 }
 

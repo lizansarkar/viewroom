@@ -50,10 +50,10 @@ export default function AIChatbot() {
     try {
       const historyPayload = updatedMessages.map((m) => ({
         sender: m.sender,
-        text: m.text,
+        text: typeof m.text === "string" ? m.text : (m.text?.reply || ""),
       }));
 
-      const replyText = await apiAskSpatialConcierge(
+      const response = await apiAskSpatialConcierge(
         query,
         {
           page: window.location.pathname,
@@ -62,10 +62,21 @@ export default function AIChatbot() {
         historyPayload
       );
 
+      let cleanText = "";
+      if (typeof response === "string") {
+        cleanText = response;
+      } else if (response && typeof response === "object") {
+        cleanText = response.reply || response.message || response.text || "";
+      }
+
+      if (!cleanText) {
+        cleanText = "Hello! I am your ViewRoom AI Spatial Concierge. How can I help you explore our 360° virtual spaces today?";
+      }
+
       const aiMsg = {
         id: Date.now() + 1,
         sender: "ai",
-        text: replyText,
+        text: cleanText,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
 
@@ -76,7 +87,7 @@ export default function AIChatbot() {
         {
           id: Date.now() + 1,
           sender: "ai",
-          text: "I am currently updating spatial connections. How else can I assist your tour today?",
+          text: "Hello! I am your ViewRoom AI Spatial Concierge. Feel free to ask about room dimensions, floor portals, or 360° navigation.",
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -153,7 +164,9 @@ export default function AIChatbot() {
                       : "bg-base-200/90 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] rounded-tl-none"
                   }`}
                 >
-                  <p className="whitespace-pre-line">{msg.text}</p>
+                  <p className="whitespace-pre-line">
+                    {typeof msg.text === "string" ? msg.text : (msg.text?.reply || msg.text?.message || JSON.stringify(msg.text))}
+                  </p>
                   <span
                     className={`block text-[9px] mt-1 text-right ${
                       msg.sender === "user" ? "opacity-75" : "text-[var(--app-text-secondary)]"
