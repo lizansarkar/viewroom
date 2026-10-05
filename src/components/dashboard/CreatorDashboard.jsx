@@ -36,6 +36,7 @@ import {
   apiAddOwnerScene,
   apiAddOwnerHotspot,
   apiUploadImage,
+  apiSaveTourAudio,
 } from "../../services/api";
 
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
@@ -156,13 +157,17 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   // Tour Spatial Sound Modal State
   const [soundModalTour, setSoundModalTour] = useState(null);
 
-  const handleSaveSoundConfig = (audioConfig) => {
+  const handleSaveSoundConfig = async (audioConfig) => {
     if (!soundModalTour) return;
-    const updatedTours = tours.map((t) =>
-      t.id === soundModalTour.id ? { ...t, audioConfig } : t
-    );
-    setTours(updatedTours);
-    localStorage.setItem("viewroom_custom_tours", JSON.stringify(updatedTours));
+    await apiSaveTourAudio(soundModalTour.id, audioConfig);
+    setTours((prev) => {
+      const updated = prev.map((t) => {
+        if (t.id !== soundModalTour.id) return t;
+        return { ...t, audioConfig };
+      });
+      saveToursToStorage(updated);
+      return updated;
+    });
     setSoundModalTour(null);
   };
 
@@ -201,23 +206,23 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   const loadDashboardData = async () => {
     try {
-      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-      if (savedLocalTours) {
-        const parsed = JSON.parse(savedLocalTours);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setTours(parsed);
-          return;
-        }
-      }
-
-      const [fetchedStats, fetchedTours] = await Promise.all([
+      const [fetchedStats, fetchedToursRes] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(),
       ]);
+      const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
-      if (fetchedTours && fetchedTours.length > 0) {
+      if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
         setTours(fetchedTours);
         saveToursToStorage(fetchedTours);
+      } else {
+        const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+        if (savedLocalTours) {
+          const parsed = JSON.parse(savedLocalTours);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setTours(parsed);
+          }
+        }
       }
     } catch (err) {
       console.warn("Creator dashboard data loading error:", err);

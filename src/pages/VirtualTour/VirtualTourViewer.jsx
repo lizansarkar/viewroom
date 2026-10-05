@@ -542,7 +542,7 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
   const recognitionRef = useRef(null);
   const silenceTimerRef = useRef(null);
 
-  // Load dynamic custom tour uploaded by creator from backend API or localStorage
+  // Load dynamic custom tour uploaded by creator from PostgreSQL backend API or localStorage fallback
   useEffect(() => {
     let isMounted = true;
 
@@ -550,37 +550,41 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
       try {
         let matchedTour = null;
 
-        // 1. Check localStorage first
-        const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-        if (savedLocalTours) {
-          const parsedTours = JSON.parse(savedLocalTours);
-          if (Array.isArray(parsedTours) && parsedTours.length > 0) {
-            matchedTour = targetTourId
-              ? parsedTours.find((t) => t.id === targetTourId)
-              : parsedTours[0];
-          }
-        }
-
-        // 2. Fetch specific tour by ID from backend API if missing from localStorage
-        if (!matchedTour && targetTourId) {
+        // 1. Fetch specific tour by ID from backend PostgreSQL API first
+        if (targetTourId) {
           try {
             const fetched = await apiGetTourById(targetTourId);
-            if (fetched && fetched.scenes && fetched.scenes.length > 0) {
-              matchedTour = fetched;
+            const tourData = fetched && (fetched.data || fetched);
+            if (tourData && tourData.scenes && tourData.scenes.length > 0) {
+              matchedTour = tourData;
             }
           } catch (e) {}
         }
 
-        // 3. Fallback to owner tours list from backend API
+        // 2. Fallback to owner tours list from backend API
         if (!matchedTour) {
           try {
-            const ownerTours = await apiGetOwnerTours();
-            if (ownerTours && ownerTours.length > 0) {
+            const ownerRes = await apiGetOwnerTours();
+            const ownerTours = ownerRes && (ownerRes.data || ownerRes);
+            if (Array.isArray(ownerTours) && ownerTours.length > 0) {
               matchedTour = targetTourId
                 ? ownerTours.find((t) => t.id === targetTourId) || ownerTours[0]
                 : ownerTours[0];
             }
           } catch (e) {}
+        }
+
+        // 3. Fallback to localStorage if API is unreachable
+        if (!matchedTour) {
+          const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+          if (savedLocalTours) {
+            const parsedTours = JSON.parse(savedLocalTours);
+            if (Array.isArray(parsedTours) && parsedTours.length > 0) {
+              matchedTour = targetTourId
+                ? parsedTours.find((t) => t.id === targetTourId)
+                : parsedTours[0];
+            }
+          }
         }
 
         if (isMounted && matchedTour && matchedTour.scenes && matchedTour.scenes.length > 0) {
@@ -592,8 +596,8 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
             thumbnail: s.thumbnailUrl || s.panoramaUrl || s.thumbnail || s.panorama || "/panoramas/panorama_aerial.jpg",
             panorama: s.panoramaUrl || s.panorama || "/panoramas/panorama_aerial.jpg",
             connections: (s.hotspots || s.markers || []).map((hp) => ({
-              targetNodeId: hp.targetId,
-              label: hp.title,
+              targetNodeId: hp.targetSceneId || hp.targetId,
+              label: hp.label || hp.title,
               type: hp.type === "drone" ? "drone_badge" : "floor_puck",
               iconType: hp.type || "arrow",
               position: { yaw: hp.yaw || hp.position?.yaw || "0deg", pitch: hp.pitch || hp.position?.pitch || "-25deg" },
@@ -601,8 +605,16 @@ function VirtualTourViewer({ fullScreenMode = false, overrideTourId }) {
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);
+
           if (matchedTour.audioConfig) {
-            spatialAudio.configure(matchedTour.audioConfig);
+            try {
+              const cfg = typeof matchedTour.audioConfig === "string" 
+                ? JSON.parse(matchedTour.audioConfig) 
+                : matchedTour.audioConfig;
+              spatialAudio.configure(cfg);
+            } catch (cfgErr) {
+              console.warn("Failed to parse audioConfig:", cfgErr);
+            }
           }
         }
       } catch (err) {

@@ -167,8 +167,11 @@ function Auth() {
     }
   };
 
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setIsSubmitting(true);
     try {
       if (isSignUp) {
@@ -179,12 +182,14 @@ function Auth() {
       navigate("/");
     } catch (err) {
       console.error("Auth submit error:", err);
+      setError(err.message || "Authentication failed. Please check your inputs.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleGoogleSubmit = async () => {
+    setError("");
     setIsSubmitting(true);
     try {
       if (isSignUp) {
@@ -200,6 +205,7 @@ function Auth() {
       navigate("/");
     } catch (err) {
       console.error("Google Auth error:", err);
+      setError(err.message || "Google Authentication failed.");
     } finally {
       setIsSubmitting(false);
     }
@@ -234,6 +240,13 @@ function Auth() {
                 ? "Create your account and select your platform role to begin"
                 : "Your 360° spatial session is waiting. Step back inside."}
             </p>
+
+            {/* Error Notification Alert */}
+            {error && (
+              <div className="w-full p-3 mb-4 rounded-xl bg-error/10 border border-error/20 text-error text-xs font-semibold text-center">
+                {error}
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 text-left">

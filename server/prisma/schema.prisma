@@ -33,6 +33,8 @@ model VirtualTour {
   title         String
   description   String?
   category      String
+  coverImage    String?
+  audioConfig   String?        // JSON string containing ambient audio track preferences & custom URL
   floorPlanUrl  String?
   sqft          Int?
   isPublished   Boolean        @default(true)

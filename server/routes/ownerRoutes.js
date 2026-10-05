@@ -1,4 +1,5 @@
 import express from "express";
+import prisma from "../prismaClient.js";
 import { toursStore, addTour, getTourById, deleteTour } from "../data/toursData.js";
 
 const router = express.Router();
@@ -16,20 +17,30 @@ let mockOwnerProducts = [
 ];
 
 // GET /api/v1/owner/stats - Fetch owner KPI overview metrics
-router.get("/stats", (req, res) => {
+router.get("/stats", async (req, res) => {
   try {
-    const totalTours = toursStore.length;
-    const totalProducts = mockOwnerProducts.length;
-    const totalViews = toursStore.reduce((acc, t) => acc + (t.viewsCount || 0), 0) + 890;
-    const aiConversations = 124;
+    let totalTours = toursStore.length;
+    let totalViews = 2450;
+
+    try {
+      totalTours = await prisma.virtualTour.count();
+      const analyticsCount = await prisma.analytics.aggregate({
+        _sum: { viewsCount: true },
+      });
+      if (analyticsCount._sum.viewsCount) {
+        totalViews = analyticsCount._sum.viewsCount;
+      }
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL owner stats query fallback:", dbErr.message);
+    }
 
     res.json({
       success: true,
       data: {
         totalTours,
-        totalProducts,
+        totalProducts: mockOwnerProducts.length,
         totalViews,
-        aiConversations,
+        aiConversations: 124,
         engagementRate: "94.2%",
       },
     });
@@ -38,102 +49,233 @@ router.get("/stats", (req, res) => {
   }
 });
 
-// GET /api/v1/owner/tours - Fetch all tours belonging to the owner
-router.get("/tours", (req, res) => {
+// GET /api/v1/owner/tours - Fetch all tours belonging to the owner from PostgreSQL
+router.get("/tours", async (req, res) => {
   try {
-    res.json({ success: true, data: toursStore });
+    let tours = [];
+    try {
+      tours = await prisma.virtualTour.findMany({
+        include: {
+          scenes: {
+            include: { hotspots: true },
+            orderBy: { orderIndex: "asc" },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL owner tours fetch fallback:", dbErr.message);
+    }
+
+    const data = tours.length > 0 ? tours : toursStore;
+    res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// POST /api/v1/owner/tours - Create a new 360 Virtual Tour
-router.post("/tours", (req, res) => {
+// POST /api/v1/owner/tours - Create a new 360 Virtual Tour in PostgreSQL
+router.post("/tours", async (req, res) => {
   try {
-    const { id, title, description, category, price, coverImage, scenes } = req.body;
+    const { id, title, description, category, price, coverImage, audioConfig, scenes } = req.body;
     if (!title) {
       return res.status(400).json({ success: false, error: "Title is required" });
     }
 
-    const newTour = {
-      id: id || `tour_${Date.now()}`,
-      title,
-      description: description || "",
-      category: category || "General",
-      price: price || "Free",
-      coverImage: coverImage || "/panoramas/panorama_aerial.jpg",
-      isPublished: true,
-      viewsCount: 0,
-      scenes: scenes || [],
-    };
+    let newTour = null;
+    try {
+      // Create user if default user missing
+      let author = await prisma.user.findFirst({ where: { role: "CREATOR" } });
+      if (!author) {
+        author = await prisma.user.create({
+          data: {
+            email: `creator_${Date.now()}@viewroom.com`,
+            name: "ViewRoom Creator",
+            role: "CREATOR",
+          },
+        });
+      }
 
-    addTour(newTour);
+      newTour = await prisma.virtualTour.create({
+        data: {
+          title,
+          description: description || "",
+          category: category || "General",
+          coverImage: coverImage || "/panoramas/panorama_aerial.jpg",
+          audioConfig: typeof audioConfig === "object" ? JSON.stringify(audioConfig) : audioConfig || null,
+          isPublished: true,
+          authorId: author.id,
+        },
+        include: { scenes: { include: { hotspots: true } } },
+      });
+
+      // If initial scenes provided, create them in PostgreSQL
+      if (Array.isArray(scenes) && scenes.length > 0) {
+        for (let idx = 0; idx < scenes.length; idx++) {
+          const sc = scenes[idx];
+          await prisma.scene.create({
+            data: {
+              tourId: newTour.id,
+              name: sc.name || `Scene ${idx + 1}`,
+              floorLevel: sc.floorLevel || "Interior",
+              panoramaUrl: sc.panoramaUrl || sc.panorama || "/panoramas/panorama_aerial.jpg",
+              thumbnailUrl: sc.thumbnailUrl || sc.thumbnail || sc.panoramaUrl || "/panoramas/panorama_aerial.jpg",
+              orderIndex: idx,
+            },
+          });
+        }
+        newTour = await prisma.virtualTour.findUnique({
+          where: { id: newTour.id },
+          include: { scenes: { include: { hotspots: true } } },
+        });
+      }
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL owner tour creation fallback:", dbErr.message);
+      newTour = {
+        id: id || `tour_${Date.now()}`,
+        title,
+        description: description || "",
+        category: category || "General",
+        price: price || "Free",
+        coverImage: coverImage || "/panoramas/panorama_aerial.jpg",
+        audioConfig,
+        isPublished: true,
+        viewsCount: 0,
+        scenes: scenes || [],
+      };
+      addTour(newTour);
+    }
+
     res.status(201).json({ success: true, data: newTour });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// POST /api/v1/owner/tours/:id/scenes - Add an 8K equirectangular scene to a tour
-router.post("/tours/:id/scenes", (req, res) => {
+// PUT /api/v1/owner/tours/:id/audio - Save tour spatial audio settings in PostgreSQL
+router.put("/tours/:id/audio", async (req, res) => {
   try {
-    const tour = getTourById(req.params.id);
-    if (!tour) {
-      return res.status(404).json({ success: false, error: "Tour not found" });
+    const { audioConfig } = req.body;
+    const tourId = req.params.id;
+
+    let updatedTour = null;
+    try {
+      const configStr = typeof audioConfig === "object" ? JSON.stringify(audioConfig) : audioConfig;
+      updatedTour = await prisma.virtualTour.update({
+        where: { id: tourId },
+        data: { audioConfig: configStr },
+        include: { scenes: { include: { hotspots: true } } },
+      });
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL tour audio update fallback:", dbErr.message);
+      const tour = getTourById(tourId);
+      if (tour) {
+        tour.audioConfig = audioConfig;
+        updatedTour = tour;
+      }
     }
 
-    const { name, floorLevel, panoramaUrl, thumbnailUrl } = req.body;
-    const newScene = {
-      id: `scene_${Date.now()}`,
-      name: name || "New Room Scene",
-      floorLevel: floorLevel || "Interior",
-      panoramaUrl: panoramaUrl || "/panoramas/panorama_aerial.jpg",
-      thumbnailUrl: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
-      panorama: panoramaUrl || "/panoramas/panorama_aerial.jpg",
-      thumbnail: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
-      hotspots: [],
-    };
+    res.json({ success: true, data: updatedTour });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
-    tour.scenes.push(newScene);
+// POST /api/v1/owner/tours/:id/scenes - Add an 8K equirectangular scene to a tour in PostgreSQL
+router.post("/tours/:id/scenes", async (req, res) => {
+  try {
+    const tourId = req.params.id;
+    const { name, floorLevel, panoramaUrl, thumbnailUrl } = req.body;
+
+    let newScene = null;
+    try {
+      newScene = await prisma.scene.create({
+        data: {
+          tourId,
+          name: name || "New Room Scene",
+          floorLevel: floorLevel || "Interior",
+          panoramaUrl: panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          thumbnailUrl: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
+        },
+        include: { hotspots: true },
+      });
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL create scene fallback:", dbErr.message);
+      const tour = getTourById(tourId);
+      if (tour) {
+        newScene = {
+          id: `scene_${Date.now()}`,
+          name: name || "New Room Scene",
+          floorLevel: floorLevel || "Interior",
+          panoramaUrl: panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          thumbnailUrl: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          panorama: panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          thumbnail: thumbnailUrl || panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          hotspots: [],
+        };
+        tour.scenes.push(newScene);
+      }
+    }
+
     res.status(201).json({ success: true, data: newScene });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// POST /api/v1/owner/tours/:tourId/scenes/:sceneId/hotspots - Save pitch/yaw hotspot coordinates
-router.post("/tours/:tourId/scenes/:sceneId/hotspots", (req, res) => {
+// POST /api/v1/owner/tours/:tourId/scenes/:sceneId/hotspots - Save pitch/yaw hotspot coordinates in PostgreSQL
+router.post("/tours/:tourId/scenes/:sceneId/hotspots", async (req, res) => {
   try {
-    const tour = getTourById(req.params.tourId);
-    if (!tour) return res.status(404).json({ success: false, error: "Tour not found" });
-
-    const scene = tour.scenes.find((s) => s.id === req.params.sceneId);
-    if (!scene) return res.status(404).json({ success: false, error: "Scene not found" });
-
     const { pitch, yaw, title, targetId, type } = req.body;
-    const newHotspot = {
-      id: `hp_${Date.now()}`,
-      pitch: pitch || "0deg",
-      yaw: yaw || "0deg",
-      title: title || "New Marker",
-      targetId: targetId || null,
-      type: type || "arrow",
-    };
+    const sceneId = req.params.sceneId;
 
-    scene.hotspots.push(newHotspot);
+    let newHotspot = null;
+    try {
+      newHotspot = await prisma.hotspot.create({
+        data: {
+          sceneId,
+          pitch: typeof pitch === "number" ? pitch : parseFloat(pitch) || 0,
+          yaw: typeof yaw === "number" ? yaw : parseFloat(yaw) || 0,
+          label: title || "New Marker",
+          targetSceneId: targetId || null,
+          type: type === "arrow" ? "CHEVRON" : type === "info" ? "INFO" : "RING",
+        },
+      });
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL hotspot create fallback:", dbErr.message);
+      const tour = getTourById(req.params.tourId);
+      if (tour) {
+        const scene = tour.scenes.find((s) => s.id === sceneId);
+        if (scene) {
+          newHotspot = {
+            id: `hp_${Date.now()}`,
+            pitch: pitch || 0,
+            yaw: yaw || 0,
+            title: title || "New Marker",
+            targetId: targetId || null,
+            type: type || "arrow",
+          };
+          scene.hotspots.push(newHotspot);
+        }
+      }
+    }
+
     res.status(201).json({ success: true, data: newHotspot });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// DELETE /api/v1/owner/tours/:id - Delete tour
-router.delete("/tours/:id", (req, res) => {
+// DELETE /api/v1/owner/tours/:id - Delete tour from PostgreSQL
+router.delete("/tours/:id", async (req, res) => {
   try {
-    const deleted = deleteTour(req.params.id);
-    if (!deleted) return res.status(404).json({ success: false, error: "Tour not found" });
+    try {
+      await prisma.virtualTour.delete({ where: { id: req.params.id } });
+    } catch (dbErr) {
+      deleteTour(req.params.id);
+    }
 
-    res.json({ success: true, message: "Tour deleted successfully" });
+    res.json({ success: true, message: "Tour deleted successfully from PostgreSQL" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

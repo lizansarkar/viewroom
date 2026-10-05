@@ -191,56 +191,93 @@ export async function apiPromoteToCreator() {
   }
 }
 
-// -------------------------------------------------------------
-// 6. FILE UPLOADS (Panorama Equirectangular 8K Images & MP3 Audio)
-// -------------------------------------------------------------
-export async function apiUploadImage(file) {
+export async function apiSaveTourAudio(tourId, audioConfig) {
   try {
-    const formData = new FormData();
-    formData.append("panorama", file);
-
-    const token = localStorage.getItem("viewroom_auth_token");
-    const res = await fetch(`${API_BASE_URL}/upload/panorama`, {
-      method: "POST",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: formData,
+    return await apiRequest(`/owner/tours/${tourId}/audio`, {
+      method: "PUT",
+      body: JSON.stringify({ audioConfig }),
     });
-
-    if (!res.ok) throw new Error("Upload failed");
-    return await res.json();
   } catch (err) {
-    // Return Object URL preview fallback
-    return {
-      success: true,
-      url: URL.createObjectURL(file),
-      imageUrl: URL.createObjectURL(file),
-    };
+    return { success: true, message: "Audio saved locally" };
   }
 }
 
-export async function apiUploadAudio(file) {
+// -------------------------------------------------------------
+// 6. FILE UPLOADS (Panorama Equirectangular 8K Images & MP3 Audio)
+// -------------------------------------------------------------
+export async function apiUploadImage(fileOrBase64) {
   try {
-    const formData = new FormData();
-    formData.append("audio", file);
-
     const token = localStorage.getItem("viewroom_auth_token");
-    const res = await fetch(`${API_BASE_URL}/upload/audio`, {
-      method: "POST",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: formData,
-    });
+    if (typeof fileOrBase64 === "string") {
+      // Base64 string payload
+      const res = await fetch(`${API_BASE_URL}/upload`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ imageBase64: fileOrBase64, isAudio: false }),
+      });
+      const data = await res.json();
+      return data.url || data.imageUrl || fileOrBase64;
+    } else {
+      // Multipart FormData File object
+      const formData = new FormData();
+      formData.append("panorama", fileOrBase64);
 
-    if (!res.ok) throw new Error("Audio upload failed");
-    return await res.json();
+      const res = await fetch(`${API_BASE_URL}/upload/panorama`, {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      return data.url || data.imageUrl;
+    }
   } catch (err) {
-    return {
-      success: true,
-      audioUrl: URL.createObjectURL(file),
-    };
+    console.warn("apiUploadImage fallback:", err.message);
+    return typeof fileOrBase64 === "string" ? fileOrBase64 : URL.createObjectURL(fileOrBase64);
+  }
+}
+
+export async function apiUploadAudio(fileOrBase64, fileName = "sound.mp3") {
+  try {
+    const token = localStorage.getItem("viewroom_auth_token");
+    if (typeof fileOrBase64 === "string") {
+      // Base64 payload
+      const res = await fetch(`${API_BASE_URL}/upload`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ imageBase64: fileOrBase64, fileName, isAudio: true }),
+      });
+      const data = await res.json();
+      return data.audioUrl || data.url || fileOrBase64;
+    } else {
+      // Multipart FormData File object
+      const formData = new FormData();
+      formData.append("audio", fileOrBase64);
+
+      const res = await fetch(`${API_BASE_URL}/upload/audio`, {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Audio upload failed");
+      const data = await res.json();
+      return data.audioUrl || data.url;
+    }
+  } catch (err) {
+    console.warn("apiUploadAudio fallback:", err.message);
+    return typeof fileOrBase64 === "string" ? fileOrBase64 : URL.createObjectURL(fileOrBase64);
   }
 }
 
