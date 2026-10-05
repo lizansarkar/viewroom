@@ -230,18 +230,33 @@ export default function HotspotEditorModal({
     }
   };
 
-  const handleSubmit = (e) => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const finalTitle = title.trim() || (tour?.scenes?.find((s) => s.id === targetId)?.name) || "LINK";
-    const newHotspot = {
-      id: `hp_${Date.now()}`,
-      title: finalTitle,
-      yaw: yaw.includes("deg") ? yaw : `${yaw}deg`,
-      pitch: pitch.includes("deg") ? pitch : `${pitch}deg`,
-      targetId,
-      type: hotspotType,
-    };
-    onSave(newHotspot);
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const finalTitle = title.trim() || (tour?.scenes?.find((s) => s.id === targetId)?.name) || "LINK";
+      const newHotspot = {
+        id: `hp_${Date.now()}`,
+        title: finalTitle,
+        yaw: yaw.includes("deg") ? yaw : `${yaw}deg`,
+        pitch: pitch.includes("deg") ? pitch : `${pitch}deg`,
+        targetId,
+        type: hotspotType,
+      };
+      if (onSave) {
+        await onSave(newHotspot);
+      }
+      if (onClose) {
+        onClose();
+      }
+    } catch (err) {
+      console.error("Failed to save hotspot:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteLocalHotspot = (hpId) => {
@@ -563,10 +578,11 @@ export default function HotspotEditorModal({
               <Button
                 type="submit"
                 variant="primary"
+                disabled={isSaving}
                 className="!text-xs !py-2.5 !px-5"
               >
                 <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
-                Save Hotspot
+                {isSaving ? "Saving..." : "Save Hotspot"}
               </Button>
             </div>
           </form>

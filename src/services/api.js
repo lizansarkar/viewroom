@@ -184,9 +184,26 @@ export async function apiCreateOwnerTour(tourData) {
       body: JSON.stringify(tourData),
     });
   } catch (err) {
+    const fallbackScenes =
+      tourData.scenes && tourData.scenes.length > 0
+        ? tourData.scenes
+        : [
+            {
+              id: `scene_${Date.now()}_main`,
+              name: tourData.title || "Main Scene",
+              floorLevel: "Ground Floor",
+              panoramaUrl: tourData.coverImage || "/panoramas/panorama_aerial.jpg",
+              thumbnailUrl: tourData.coverImage || "/panoramas/panorama_aerial.jpg",
+              hotspots: [],
+            },
+          ];
     return {
       success: true,
-      data: { id: `tour_${Date.now()}`, ...tourData, scenes: [] },
+      data: {
+        id: tourData.id || `tour_${Date.now()}`,
+        ...tourData,
+        scenes: fallbackScenes,
+      },
     };
   }
 }

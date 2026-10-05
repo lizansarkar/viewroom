@@ -190,6 +190,30 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const ensureTourScenes = (tourList) => {
+    if (!Array.isArray(tourList)) return [];
+    return tourList.map((t) => {
+      const existingScenes = Array.isArray(t.scenes) ? t.scenes : [];
+      if (existingScenes.length === 0) {
+        const cover = t.coverImage || "/panoramas/panorama_aerial.jpg";
+        return {
+          ...t,
+          scenes: [
+            {
+              id: `scene_${t.id}_main`,
+              name: `${t.title || "Room"} - Main Scene`,
+              floorLevel: "Ground Floor",
+              panoramaUrl: cover,
+              thumbnailUrl: cover,
+              hotspots: [],
+            },
+          ],
+        };
+      }
+      return t;
+    });
+  };
+
   const saveToursToStorage = (updatedTours) => {
     try {
       localStorage.setItem("viewroom_custom_tours", JSON.stringify(updatedTours));
@@ -206,18 +230,30 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       ]);
       const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
-      if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
-        setTours(fetchedTours);
-        saveToursToStorage(fetchedTours);
-      } else {
-        const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-        if (savedLocalTours) {
+
+      let combinedTours = [];
+      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+      let localToursParsed = [];
+      if (savedLocalTours) {
+        try {
           const parsed = JSON.parse(savedLocalTours);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setTours(parsed);
+          if (Array.isArray(parsed)) {
+            localToursParsed = parsed;
           }
-        }
+        } catch (e) {}
       }
+
+      if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
+        const backendIds = new Set(fetchedTours.map((t) => t.id));
+        const extraLocal = localToursParsed.filter((t) => !backendIds.has(t.id));
+        combinedTours = [...extraLocal, ...fetchedTours];
+      } else {
+        combinedTours = localToursParsed.length > 0 ? localToursParsed : tours;
+      }
+
+      const healedTours = ensureTourScenes(combinedTours);
+      setTours(healedTours);
+      saveToursToStorage(healedTours);
     } catch (err) {
       console.warn("Creator dashboard data loading error:", err);
     }
@@ -283,10 +319,26 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     };
 
     const res = await apiCreateOwnerTour(tourData);
-    const created = (res && res.data) || tourData;
+    let created = (res && res.data) || tourData;
+
+    if (!created.scenes || created.scenes.length === 0) {
+      created = {
+        ...created,
+        scenes: formattedScenes.length > 0 ? formattedScenes : [
+          {
+            id: `scene_${created.id}_main`,
+            name: `${created.title} - Main Scene`,
+            floorLevel: "Ground Floor",
+            panoramaUrl: created.coverImage,
+            thumbnailUrl: created.coverImage,
+            hotspots: [],
+          },
+        ],
+      };
+    }
     
     setTours((prev) => {
-      const updated = [created, ...prev];
+      const updated = ensureTourScenes([created, ...prev]);
       saveToursToStorage(updated);
       return updated;
     });
@@ -326,15 +378,17 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   };
 
   const handleAddSceneToTour = async (tourId) => {
+    const targetTour = tours.find((t) => t.id === tourId);
     const sceneName = prompt("Enter Scene / Room Name (e.g. 2ND FLOOR EXECUTIVE SUITE):", "2ND FLOOR ROOM");
     if (!sceneName) return;
 
+    const defaultImg = targetTour?.coverImage || "/panoramas/panorama_entrance.jpg";
     const sceneData = {
       id: `scene_${Date.now()}`,
       name: sceneName,
-      floorLevel: "2nd Floor",
-      panoramaUrl: "/panoramas/panorama_floor1.jpg",
-      thumbnailUrl: "/panoramas/panorama_floor1.jpg",
+      floorLevel: `${(targetTour?.scenes?.length || 1) + 1}st Floor`,
+      panoramaUrl: defaultImg,
+      thumbnailUrl: defaultImg,
       hotspots: [],
     };
 
@@ -393,6 +447,29 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           return {
             ...s,
             hotspots: [...(s.hotspots || []), (res && res.data) || hotspotData],
+          };
+        });
+        const tourObj = { ...t, scenes: updatedScenes };
+        if (editingTour && editingTour.id === t.id) {
+          setEditingTour(tourObj);
+        }
+        return tourObj;
+      });
+      saveToursToStorage(updated);
+      return updated;
+    });
+  };
+
+  const handleDeleteHotspot = async (hotspotId) => {
+    if (!editingTour || !editingScene) return;
+    setTours((prev) => {
+      const updated = prev.map((t) => {
+        if (t.id !== editingTour.id) return t;
+        const updatedScenes = t.scenes.map((s) => {
+          if (s.id !== editingScene.id) return s;
+          return {
+            ...s,
+            hotspots: (s.hotspots || []).filter((h) => h.id !== hotspotId),
           };
         });
         const tourObj = { ...t, scenes: updatedScenes };
@@ -1216,6 +1293,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             setEditingTour(null);
           }}
           onSave={handleSaveHotspot}
+          onDeleteHotspot={handleDeleteHotspot}
           onAddNewScene={handleAddNewSceneFromModal}
           onSwitchEditingScene={(sc) => setEditingScene(sc)}
         />

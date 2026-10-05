@@ -116,45 +116,79 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
       try {
         let matchedTour = null;
 
-        // 1. Fetch specific tour by ID
+        // 1. If targetTourId is specified, search localStorage first then backend
         if (targetTourId) {
-          try {
-            const fetched = await apiGetTourById(targetTourId);
-            const tourData = fetched && (fetched.data || fetched);
-            if (tourData && tourData.scenes && tourData.scenes.length > 0) {
-              matchedTour = tourData;
-            }
-          } catch (e) {}
-        }
-
-        // 2. Fallback to owner tours list
-        if (!matchedTour) {
-          try {
-            const ownerRes = await apiGetOwnerTours();
-            const ownerTours = ownerRes && (ownerRes.data || ownerRes);
-            if (Array.isArray(ownerTours) && ownerTours.length > 0) {
-              matchedTour = targetTourId
-                ? ownerTours.find((t) => t.id === targetTourId) || ownerTours[0]
-                : ownerTours[0];
-            }
-          } catch (e) {}
-        }
-
-        // 3. Fallback to localStorage
-        if (!matchedTour) {
           const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
           if (savedLocalTours) {
-            const parsedTours = JSON.parse(savedLocalTours);
-            if (Array.isArray(parsedTours) && parsedTours.length > 0) {
-              matchedTour = targetTourId
-                ? parsedTours.find((t) => t.id === targetTourId)
-                : parsedTours[0];
-            }
+            try {
+              const parsedTours = JSON.parse(savedLocalTours);
+              if (Array.isArray(parsedTours)) {
+                matchedTour = parsedTours.find((t) => t.id === targetTourId);
+              }
+            } catch (e) {}
+          }
+
+          if (!matchedTour) {
+            try {
+              const fetched = await apiGetTourById(targetTourId);
+              const tourData = fetched && (fetched.data || fetched);
+              if (tourData && tourData.id === targetTourId) {
+                matchedTour = tourData;
+              }
+            } catch (e) {}
+          }
+
+          if (!matchedTour) {
+            try {
+              const ownerRes = await apiGetOwnerTours();
+              const ownerTours = ownerRes && (ownerRes.data || ownerRes);
+              if (Array.isArray(ownerTours)) {
+                matchedTour = ownerTours.find((t) => t.id === targetTourId);
+              }
+            } catch (e) {}
           }
         }
 
-        if (isMounted && matchedTour && matchedTour.scenes && matchedTour.scenes.length > 0) {
-          const mappedNodes = matchedTour.scenes.map((s, idx) => ({
+        // 2. If NO targetTourId was specified in URL, fallback to first available tour
+        if (!matchedTour && !targetTourId) {
+          const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+          if (savedLocalTours) {
+            try {
+              const parsedTours = JSON.parse(savedLocalTours);
+              if (Array.isArray(parsedTours) && parsedTours.length > 0) {
+                matchedTour = parsedTours[0];
+              }
+            } catch (e) {}
+          }
+          if (!matchedTour) {
+            try {
+              const ownerRes = await apiGetOwnerTours();
+              const ownerTours = ownerRes && (ownerRes.data || ownerRes);
+              if (Array.isArray(ownerTours) && ownerTours.length > 0) {
+                matchedTour = ownerTours[0];
+              }
+            } catch (e) {}
+          }
+        }
+
+        // 3. Map matchedTour scenes into tourNodes (auto-generating scene from coverImage if empty)
+        if (isMounted && matchedTour) {
+          let scenesList = matchedTour.scenes;
+          if (!Array.isArray(scenesList) || scenesList.length === 0) {
+            const fallbackImg = matchedTour.coverImage || "/panoramas/panorama_aerial.jpg";
+            scenesList = [
+              {
+                id: `scene_${matchedTour.id}_main`,
+                name: matchedTour.title ? `${matchedTour.title} - Main Scene` : "Main Scene",
+                floorLevel: "Ground Floor",
+                thumbnailUrl: fallbackImg,
+                panoramaUrl: fallbackImg,
+                hotspots: [],
+              },
+            ];
+          }
+
+          const mappedNodes = scenesList.map((s, idx) => ({
             id: s.id,
             name: s.name || `Room Scene ${idx + 1}`,
             category: matchedTour.category || "Virtual Tour",
@@ -164,8 +198,13 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
               s.panoramaUrl ||
               s.thumbnail ||
               s.panorama ||
+              matchedTour.coverImage ||
               "/panoramas/panorama_aerial.jpg",
-            panorama: s.panoramaUrl || s.panorama || "/panoramas/panorama_aerial.jpg",
+            panorama:
+              s.panoramaUrl ||
+              s.panorama ||
+              matchedTour.coverImage ||
+              "/panoramas/panorama_aerial.jpg",
             connections: (s.hotspots || s.markers || []).map((hp) => ({
               targetNodeId: hp.targetSceneId || hp.targetId,
               label: hp.label || hp.title,

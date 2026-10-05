@@ -89,7 +89,11 @@ router.get("/:id", async (req, res) => {
     }
 
     if (!tour) {
-      tour = getTourById(tourId) || toursStore[0];
+      tour = getTourById(tourId);
+    }
+
+    if (!tour) {
+      return res.status(404).json({ success: false, error: "Tour not found" });
     }
 
     res.json({ success: true, data: tour });

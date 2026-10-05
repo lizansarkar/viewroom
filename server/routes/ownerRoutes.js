@@ -136,28 +136,49 @@ router.post("/tours", async (req, res) => {
         include: { scenes: { include: { hotspots: true } } },
       });
 
-      // If initial scenes provided, create them in PostgreSQL
-      if (Array.isArray(scenes) && scenes.length > 0) {
-        for (let idx = 0; idx < scenes.length; idx++) {
-          const sc = scenes[idx];
-          await prisma.scene.create({
-            data: {
-              tourId: newTour.id,
-              name: sc.name || `Scene ${idx + 1}`,
-              floorLevel: sc.floorLevel || "Interior",
-              panoramaUrl: sc.panoramaUrl || sc.panorama || "/panoramas/panorama_aerial.jpg",
-              thumbnailUrl: sc.thumbnailUrl || sc.thumbnail || sc.panoramaUrl || "/panoramas/panorama_aerial.jpg",
-              orderIndex: idx,
+      // If initial scenes provided, create them in PostgreSQL; otherwise create default scene from coverImage
+      const scenesToCreate = (Array.isArray(scenes) && scenes.length > 0)
+        ? scenes
+        : [
+            {
+              name: `${title} - Main Scene`,
+              floorLevel: "Ground Floor",
+              panoramaUrl: coverImage || "/panoramas/panorama_aerial.jpg",
+              thumbnailUrl: coverImage || "/panoramas/panorama_aerial.jpg",
             },
-          });
-        }
-        newTour = await prisma.virtualTour.findUnique({
-          where: { id: newTour.id },
-          include: { scenes: { include: { hotspots: true } } },
+          ];
+
+      for (let idx = 0; idx < scenesToCreate.length; idx++) {
+        const sc = scenesToCreate[idx];
+        await prisma.scene.create({
+          data: {
+            tourId: newTour.id,
+            name: sc.name || `Scene ${idx + 1}`,
+            floorLevel: sc.floorLevel || "Ground Floor",
+            panoramaUrl: sc.panoramaUrl || sc.panorama || coverImage || "/panoramas/panorama_aerial.jpg",
+            thumbnailUrl: sc.thumbnailUrl || sc.thumbnail || sc.panoramaUrl || coverImage || "/panoramas/panorama_aerial.jpg",
+            orderIndex: idx,
+          },
         });
       }
+      newTour = await prisma.virtualTour.findUnique({
+        where: { id: newTour.id },
+        include: { scenes: { include: { hotspots: true } } },
+      });
     } catch (dbErr) {
       console.warn("Prisma PostgreSQL owner tour creation fallback:", dbErr.message);
+      const fallbackScenes = (Array.isArray(scenes) && scenes.length > 0)
+        ? scenes
+        : [
+            {
+              id: `scene_${Date.now()}_main`,
+              name: `${title} - Main Scene`,
+              floorLevel: "Ground Floor",
+              panoramaUrl: coverImage || "/panoramas/panorama_aerial.jpg",
+              thumbnailUrl: coverImage || "/panoramas/panorama_aerial.jpg",
+              hotspots: [],
+            },
+          ];
       newTour = {
         id: id || `tour_${Date.now()}`,
         title,
@@ -168,7 +189,7 @@ router.post("/tours", async (req, res) => {
         audioConfig,
         isPublished: true,
         viewsCount: 0,
-        scenes: scenes || [],
+        scenes: fallbackScenes,
       };
       addTour(newTour);
     }
