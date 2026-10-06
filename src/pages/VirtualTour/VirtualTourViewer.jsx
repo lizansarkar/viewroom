@@ -211,8 +211,22 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
               type: hp.type === "drone" ? "drone_badge" : "floor_puck",
               iconType: hp.type || "arrow",
               position: {
-                yaw: hp.yaw || hp.position?.yaw || "0deg",
-                pitch: hp.pitch || hp.position?.pitch || "-25deg",
+                yaw:
+                  typeof hp.yaw === "number"
+                    ? `${hp.yaw}deg`
+                    : hp.yaw
+                    ? String(hp.yaw).endsWith("deg") || String(hp.yaw).endsWith("rad")
+                      ? String(hp.yaw)
+                      : `${hp.yaw}deg`
+                    : hp.position?.yaw || "0deg",
+                pitch:
+                  typeof hp.pitch === "number"
+                    ? `${hp.pitch}deg`
+                    : hp.pitch
+                    ? String(hp.pitch).endsWith("deg") || String(hp.pitch).endsWith("rad")
+                      ? String(hp.pitch)
+                      : `${hp.pitch}deg`
+                    : hp.position?.pitch || "-25deg",
               },
             })),
           }));

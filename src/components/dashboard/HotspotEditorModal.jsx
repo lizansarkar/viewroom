@@ -32,6 +32,13 @@ const getHotspotIcon = (type) => {
   }
 };
 
+const toDeg = (val, fallback = "0deg") => {
+  if (val === undefined || val === null || val === "") return fallback;
+  if (typeof val === "number") return `${val}deg`;
+  const str = String(val).trim();
+  return str.endsWith("deg") || str.endsWith("rad") ? str : `${str}deg`;
+};
+
 const createPreviewPuckHtml = (label, type = "arrow") => {
   const displayLabel = label || "HOTSPOT";
   if (type === "arrow") {
@@ -282,7 +289,7 @@ export default function HotspotEditorModal({
     },
     ...existingHotspots.map((hp) => ({
       id: hp.id,
-      position: { yaw: hp.yaw || "0deg", pitch: hp.pitch || "-20deg" },
+      position: { yaw: toDeg(hp.yaw, "0deg"), pitch: toDeg(hp.pitch, "-20deg") },
       html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT", hp.type || "arrow"),
     })),
   ];
