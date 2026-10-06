@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../../components/reuseable/Button';
 
 function Cta() {
@@ -19,14 +20,18 @@ function Cta() {
         {/* Action Buttons */}
         <div className="flex items-center justify-center gap-4">
           {/* Explore Button */}
-          <Button variant="primary">
-            Explore
-          </Button>
+          <Link to="/explore">
+            <Button variant="primary">
+              Explore
+            </Button>
+          </Link>
 
           {/* Create Button */}
-          <Button variant="secondary">
-            Create
-          </Button>
+          <Link to="/dashboard">
+            <Button variant="secondary">
+              Create
+            </Button>
+          </Link>
         </div>
 
       </div>

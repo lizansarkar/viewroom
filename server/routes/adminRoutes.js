@@ -1,4 +1,6 @@
 import express from "express";
+import prisma from "../prismaClient.js";
+import { deleteTour } from "../data/toursData.js";
 
 const router = express.Router();
 
@@ -107,15 +109,26 @@ router.get("/content", (req, res) => {
   }
 });
 
-// DELETE /api/v1/admin/tours/:id - Admin global delete tour
-router.delete("/tours/:id", (req, res) => {
+// DELETE /api/v1/admin/tours/:id - Admin global delete tour permanently
+router.delete("/tours/:id", async (req, res) => {
   try {
-    const index = mockAdminTours.findIndex((t) => t.id === req.params.id);
-    if (index === -1) {
-      return res.status(404).json({ success: false, error: "Tour not found" });
+    const tourId = req.params.id;
+    try {
+      await prisma.analytics.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.hotspot.deleteMany({ where: { scene: { tourId } } }).catch(() => {});
+      await prisma.scene.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.virtualTour.delete({ where: { id: tourId } }).catch(() => {});
+    } catch (dbErr) {
+      console.warn("Admin delete tour db note:", dbErr.message);
     }
 
-    mockAdminTours.splice(index, 1);
+    deleteTour(tourId);
+
+    const index = mockAdminTours.findIndex((t) => t.id === tourId);
+    if (index !== -1) {
+      mockAdminTours.splice(index, 1);
+    }
+
     res.json({ success: true, message: "Tour deleted platform-wide by Admin" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -120,35 +120,53 @@ export default function Explore() {
           apiGetProducts({ search: searchQuery, sortBy }),
         ]);
 
-        if (tours || products) {
-          const mappedTours = (tours || []).map((t) => ({
-            id: t.id,
-            title: t.title,
-            tag: `360° Tour • ${t.totalScenes || 1} Scenes`,
-            price: t.price || "Free",
-            category: "SPACES",
-            type: "tour",
-            image: t.coverImage,
-            link: `/360-virtual-tour`,
-          }));
+        const toursList = (tours && (tours.data || tours)) || [];
+        const productsList = (products && (products.data || products)) || [];
 
-          const mappedProducts = (products || []).map((p) => ({
-            id: p.id,
-            title: p.title,
-            tag: `360° Spin • ${p.subtitle || "3D Model"}`,
-            price: typeof p.price === "number" ? `$${p.price}` : p.price,
-            category: "PRODUCTS",
-            type: "product",
-            image: p.coverFrame,
-            link: `/360-product`,
-          }));
-
-          const combined = [...mappedTours, ...mappedProducts];
-          if (combined.length >= 9) {
-            setApiData(combined);
-          } else {
-            setApiData(null);
+        // Check local storage for any custom creator tours
+        let localTours = [];
+        try {
+          const saved = localStorage.getItem("viewroom_custom_tours");
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) localTours = parsed;
           }
+        } catch (e) {}
+
+        const backendList = Array.isArray(toursList) ? toursList : [];
+        const backendIds = new Set(backendList.map((t) => t.id));
+        const extraLocal = localTours.filter((t) => !backendIds.has(t.id));
+        const allTours = [...backendList, ...extraLocal];
+
+        const mappedTours = allTours.map((t) => ({
+          id: t.id,
+          title: t.title,
+          tag: `360° Tour • ${t.totalScenes || t.scenes?.length || 1} Scenes`,
+          price: t.price || "Free",
+          category: "SPACES",
+          type: "tour",
+          image: t.coverImage || t.scenes?.[0]?.panoramaUrl || "/panoramas/panorama_aerial.jpg",
+          link: `/virtual-tour/${t.id}`,
+        }));
+
+        const mappedProducts = (Array.isArray(productsList) ? productsList : []).map((p) => ({
+          id: p.id,
+          title: p.title,
+          tag: `360° Spin • ${p.subtitle || p.category || "3D Model"}`,
+          price: typeof p.price === "number" ? `$${p.price}` : p.price || "$499",
+          category: "PRODUCTS",
+          type: "product",
+          image: p.coverFrame || p.image || "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
+          link: `/360-product`,
+        }));
+
+        const combined = [...mappedTours, ...mappedProducts];
+        if (combined.length > 0) {
+          const liveIds = new Set(combined.map((x) => x.id));
+          const remainingDemo = exploreItems.filter((x) => !liveIds.has(x.id));
+          setApiData([...combined, ...remainingDemo]);
+        } else {
+          setApiData(exploreItems);
         }
       } catch (err) {
         console.warn("Explore page live API fetch fallback:", err);

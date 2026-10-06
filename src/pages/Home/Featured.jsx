@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 /* Simple inline mark icons standing in for the two brand badges in the design */
 const IconMarkSquare = (props) => (
@@ -57,16 +58,17 @@ function Featured() {
 
           {/* CTA row */}
           <div className="mt-9 flex items-center gap-6">
-            {/* TODO: swap in your <Button /> component here — see note below */}
-            <button
-              type="button"
-              className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
-            >
-              Enter
-            </button>
-            <a
-              href="#"
-              className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
+            <Link to="/explore">
+              <button
+                type="button"
+                className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90 cursor-pointer"
+              >
+                Enter
+              </button>
+            </Link>
+            <Link
+              to="/360-virtual-tour"
+              className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity cursor-pointer"
             >
               Tour
               <svg
@@ -82,7 +84,7 @@ function Featured() {
                   strokeLinejoin="round"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

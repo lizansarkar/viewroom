@@ -32,6 +32,7 @@ import {
   apiAddOwnerHotspot,
   apiUploadImage,
   apiSaveTourAudio,
+  apiDeleteOwnerTour,
 } from "../../services/api";
 
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
@@ -248,7 +249,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         const extraLocal = localToursParsed.filter((t) => !backendIds.has(t.id));
         combinedTours = [...extraLocal, ...fetchedTours];
       } else {
-        combinedTours = localToursParsed.length > 0 ? localToursParsed : tours;
+        combinedTours = savedLocalTours !== null ? localToursParsed : tours;
       }
 
       const healedTours = ensureTourScenes(combinedTours);
@@ -404,8 +405,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
-  const handleDeleteTour = (tourId) => {
+  const handleDeleteTour = async (tourId) => {
     if (!window.confirm("Are you sure you want to delete this 360° tour?")) return;
+    try {
+      await apiDeleteOwnerTour(tourId);
+    } catch (err) {
+      console.warn("Failed to delete tour from backend:", err);
+    }
     setTours((prev) => {
       const updated = prev.filter((t) => t.id !== tourId);
       saveToursToStorage(updated);

@@ -314,16 +314,22 @@ router.post("/tours/:tourId/scenes/:sceneId/hotspots", async (req, res) => {
   }
 });
 
-// DELETE /api/v1/owner/tours/:id - Delete tour from PostgreSQL
+// DELETE /api/v1/owner/tours/:id - Delete tour permanently from PostgreSQL & memory store
 router.delete("/tours/:id", async (req, res) => {
   try {
+    const tourId = req.params.id;
     try {
-      await prisma.virtualTour.delete({ where: { id: req.params.id } });
+      await prisma.analytics.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.hotspot.deleteMany({ where: { scene: { tourId } } }).catch(() => {});
+      await prisma.scene.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.virtualTour.delete({ where: { id: tourId } }).catch(() => {});
     } catch (dbErr) {
-      deleteTour(req.params.id);
+      console.warn("Prisma PostgreSQL tour delete note:", dbErr.message);
     }
 
-    res.json({ success: true, message: "Tour deleted successfully from PostgreSQL" });
+    deleteTour(tourId);
+
+    res.json({ success: true, message: "Tour deleted successfully" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
