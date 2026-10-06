@@ -67,3 +67,4 @@ export default function Scene({ autoRotate = true, modelChildren }) {
     </>
   );
 }
+

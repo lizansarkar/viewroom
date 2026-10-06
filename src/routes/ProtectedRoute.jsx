@@ -25,3 +25,4 @@ export default function ProtectedRoute({ children, allowGuest = false, requiredR
 
   return children;
 }
+

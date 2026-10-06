@@ -15,3 +15,4 @@ export default function Camera({ fov = 45, position = [0, 1.5, 4] }) {
     />
   );
 }
+
