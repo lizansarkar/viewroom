@@ -3,9 +3,14 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
 
+// Helper to retrieve auth token from either key convention
+function getAuthToken() {
+  return localStorage.getItem("viewroom_auth_token") || localStorage.getItem("viewroom-jwt") || "";
+}
+
 // Helper for HTTP Fetch requests with JWT bearer tokens and JSON handling
 async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem("viewroom_auth_token");
+  const token = getAuthToken();
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -191,6 +196,7 @@ export async function apiAskSpatialConcierge(prompt, context = {}, history = [])
     const res = await apiRequest("/ai/spatial-concierge", {
       method: "POST",
       body: JSON.stringify({ prompt, sceneContext: context, history }),
+      signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(6000) : undefined,
     });
 
     if (typeof res === "string") return res;
@@ -317,7 +323,7 @@ export async function apiDeleteOwnerTour(tourId) {
 // -------------------------------------------------------------
 export async function apiUploadImage(fileOrBase64) {
   try {
-    const token = localStorage.getItem("viewroom_auth_token");
+    const token = getAuthToken();
     if (typeof fileOrBase64 === "string") {
       // Base64 string payload
       const res = await fetch(`${API_BASE_URL}/upload`, {
@@ -355,7 +361,7 @@ export async function apiUploadImage(fileOrBase64) {
 
 export async function apiUploadAudio(fileOrBase64, fileName = "sound.mp3") {
   try {
-    const token = localStorage.getItem("viewroom_auth_token");
+    const token = getAuthToken();
     if (typeof fileOrBase64 === "string") {
       // Base64 payload
       const res = await fetch(`${API_BASE_URL}/upload`, {

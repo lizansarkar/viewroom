@@ -438,45 +438,55 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   const handleSaveHotspot = async (hotspotData) => {
     if (!editingTour || !editingScene) return;
-    const res = await apiAddOwnerHotspot(editingTour.id, editingScene.id, hotspotData);
+    const currentTourId = editingTour.id;
+    const currentSceneId = editingScene.id;
+
+    let res = null;
+    try {
+      res = await apiAddOwnerHotspot(currentTourId, currentSceneId, hotspotData);
+    } catch (err) {
+      console.warn("apiAddOwnerHotspot error, falling back locally:", err);
+    }
+
+    const savedHotspot = (res && res.data) || hotspotData;
+
     setTours((prev) => {
       const updated = prev.map((t) => {
-        if (t.id !== editingTour.id) return t;
+        if (t.id !== currentTourId) return t;
         const updatedScenes = t.scenes.map((s) => {
-          if (s.id !== editingScene.id) return s;
+          if (s.id !== currentSceneId) return s;
           return {
             ...s,
-            hotspots: [...(s.hotspots || []), (res && res.data) || hotspotData],
+            hotspots: [...(s.hotspots || []), savedHotspot],
           };
         });
-        const tourObj = { ...t, scenes: updatedScenes };
-        if (editingTour && editingTour.id === t.id) {
-          setEditingTour(tourObj);
-        }
-        return tourObj;
+        return { ...t, scenes: updatedScenes };
       });
       saveToursToStorage(updated);
       return updated;
     });
+
+    // Close the hotspot editor modal immediately
+    setEditingScene(null);
+    setEditingTour(null);
   };
 
   const handleDeleteHotspot = async (hotspotId) => {
     if (!editingTour || !editingScene) return;
+    const currentTourId = editingTour.id;
+    const currentSceneId = editingScene.id;
+
     setTours((prev) => {
       const updated = prev.map((t) => {
-        if (t.id !== editingTour.id) return t;
+        if (t.id !== currentTourId) return t;
         const updatedScenes = t.scenes.map((s) => {
-          if (s.id !== editingScene.id) return s;
+          if (s.id !== currentSceneId) return s;
           return {
             ...s,
             hotspots: (s.hotspots || []).filter((h) => h.id !== hotspotId),
           };
         });
-        const tourObj = { ...t, scenes: updatedScenes };
-        if (editingTour && editingTour.id === t.id) {
-          setEditingTour(tourObj);
-        }
-        return tourObj;
+        return { ...t, scenes: updatedScenes };
       });
       saveToursToStorage(updated);
       return updated;

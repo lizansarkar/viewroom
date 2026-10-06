@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
     setIsLoggedIn(true);
     if (res.token) {
       localStorage.setItem("viewroom-jwt", res.token);
+      localStorage.setItem("viewroom_auth_token", res.token);
     }
     return res;
   };
@@ -58,6 +59,7 @@ export function AuthProvider({ children }) {
     setIsLoggedIn(true);
     if (res.token) {
       localStorage.setItem("viewroom-jwt", res.token);
+      localStorage.setItem("viewroom_auth_token", res.token);
     }
     return res;
   };
@@ -68,6 +70,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem("viewroom-logged-in");
     localStorage.removeItem("viewroom-jwt");
+    localStorage.removeItem("viewroom_auth_token");
     localStorage.removeItem("viewroom-user");
   };
 

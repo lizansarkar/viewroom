@@ -18,6 +18,9 @@ const Contact = lazy(() => import("../pages/Contact/Contact"));
 const Auth = lazy(() => import("../pages/Auth/Auth"));
 const NotFound = lazy(() => import("../pages/NotFound/NotFound"));
 
+import ProtectedRoute from "../routes/ProtectedRoute";
+import ErrorBoundary from "../components/reuseable/ErrorBoundary";
+
 // Spatial Loading Spinner Fallback Component
 function RouteLoadingFallback() {
   return (
@@ -35,28 +38,37 @@ function RouteLoadingFallback() {
 
 function AppRouter() {
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/recruiter-sandbox" element={<Dashboard />} />
-        <Route path="/virtual-tour/:tourId" element={<VirtualTourPublicViewer />} />
-        <Route path="/virtualtour/:tourId" element={<VirtualTourPublicViewer />} />
-        <Route path="/360-virtual-tour" element={<VirtualTour360 />} />
-        <Route path="/tour/:tourId" element={<VirtualTourPublicViewer />} />
-        <Route path="/360-product" element={<Product360 />} />
-        <Route path="/360-video" element={<Video360 />} />
-        <Route path="/matterport" element={<Matterport />} />
-        <Route path="/photography" element={<Photography />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/help" element={<Dashboard defaultTab="help" />} />
-        <Route path="/sign-in" element={<Auth />} />
-        <Route path="/sign-up" element={<Auth />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowGuest={true}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/recruiter-sandbox" element={<Dashboard />} />
+          <Route path="/virtual-tour/:tourId" element={<VirtualTourPublicViewer />} />
+          <Route path="/virtualtour/:tourId" element={<VirtualTourPublicViewer />} />
+          <Route path="/360-virtual-tour" element={<VirtualTour360 />} />
+          <Route path="/tour/:tourId" element={<VirtualTourPublicViewer />} />
+          <Route path="/360-product" element={<Product360 />} />
+          <Route path="/360-video" element={<Video360 />} />
+          <Route path="/matterport" element={<Matterport />} />
+          <Route path="/photography" element={<Photography />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/help" element={<Dashboard defaultTab="help" />} />
+          <Route path="/sign-in" element={<Auth />} />
+          <Route path="/sign-up" element={<Auth />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 

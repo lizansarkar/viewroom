@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Button from "../../components/reuseable/Button";
+import Experience from "../../components/three/Experience";
 
 // Product datasets with rotation frames and hotspots
 const PRODUCTS = [
@@ -55,6 +56,7 @@ function Product360Viewer() {
   const [activeHotspot, setActiveHotspot] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
+  const [viewMode, setViewMode] = useState("spin"); // "spin" | "canvas3d"
   
   const containerRef = useRef(null);
   const dragStartRef = useRef(0);
@@ -150,78 +152,89 @@ function Product360Viewer() {
           }}
         />
 
-        {/* Simulated 360 Product Image with Dynamic Rotation Perspective */}
-        <div
-          className="relative w-full h-full flex items-center justify-center p-6 transition-transform duration-100 ease-out"
-          style={{
-            transform: `scale(${zoomLevel})`,
-          }}
-        >
-          <img
-            src={variant.image}
-            alt={product.name}
-            className="max-h-[85%] max-w-[85%] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-none transition-all duration-300"
+        {/* Interactive Viewport: 3D WebGL Canvas OR Simulated 360 Spin Photo */}
+        {viewMode === "canvas3d" ? (
+          <div className="w-full h-full relative z-10 flex flex-col items-center justify-center">
+            <Experience autoRotate={isAutoSpin} className="w-full h-full" />
+            <div className="absolute top-4 left-4 z-20 px-3.5 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-xl">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Real-Time Three.js 3D Studio</span>
+            </div>
+          </div>
+        ) : (
+          /* Simulated 360 Product Image with Dynamic Rotation Perspective */
+          <div
+            className="relative w-full h-full flex items-center justify-center p-6 transition-transform duration-100 ease-out"
             style={{
-              transform: `rotateY(${angle}deg) rotateZ(${Math.sin((angle * Math.PI) / 180) * 3}deg)`,
-              filter: `brightness(${1 + Math.sin((angle * Math.PI) / 180) * 0.08})`,
+              transform: `scale(${zoomLevel})`,
             }}
-          />
+          >
+            <img
+              src={variant.image}
+              alt={product.name}
+              className="max-h-[85%] max-w-[85%] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-none transition-all duration-300"
+              style={{
+                transform: `rotateY(${angle}deg) rotateZ(${Math.sin((angle * Math.PI) / 180) * 3}deg)`,
+                filter: `brightness(${1 + Math.sin((angle * Math.PI) / 180) * 0.08})`,
+              }}
+            />
 
-          {/* Interactive Hotspots Overlay */}
-          {showHotspots &&
-            product.hotspots.map((hs) => {
-              // Calculate visibility based on rotation proximity
-              const angleDiff = Math.abs(((angle - hs.angle + 540) % 360) - 180);
-              const isVisible = angleDiff < 75;
-              const isActive = activeHotspot === hs.id;
+            {/* Interactive Hotspots Overlay */}
+            {showHotspots &&
+              product.hotspots.map((hs) => {
+                // Calculate visibility based on rotation proximity
+                const angleDiff = Math.abs(((angle - hs.angle + 540) % 360) - 180);
+                const isVisible = angleDiff < 75;
+                const isActive = activeHotspot === hs.id;
 
-              if (!isVisible) return null;
+                if (!isVisible) return null;
 
-              return (
-                <div
-                  key={hs.id}
-                  style={{ top: `${hs.y}%`, left: `${hs.x}%` }}
-                  className="absolute z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
-                >
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveHotspot(isActive ? null : hs.id);
-                    }}
-                    className="relative group flex items-center justify-center"
+                return (
+                  <div
+                    key={hs.id}
+                    style={{ top: `${hs.y}%`, left: `${hs.x}%` }}
+                    className="absolute z-20 -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
                   >
-                    <span className="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-cyan-400 opacity-60" />
-                    <span className="relative inline-flex rounded-full h-7 w-7 bg-black/80 border-2 border-cyan-400 text-cyan-300 text-xs font-bold items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      +
-                    </span>
-                  </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveHotspot(isActive ? null : hs.id);
+                      }}
+                      className="relative group flex items-center justify-center"
+                    >
+                      <span className="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-cyan-400 opacity-60" />
+                      <span className="relative inline-flex rounded-full h-7 w-7 bg-black/80 border-2 border-cyan-400 text-cyan-300 text-xs font-bold items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        +
+                      </span>
+                    </button>
 
-                  {/* Hotspot Card Popover */}
-                  {isActive && (
-                    <div className="absolute top-9 left-1/2 -translate-x-1/2 w-56 sm:w-64 bg-base-100/95 backdrop-blur-md text-base-content border border-[var(--app-border)]/30 p-3.5 rounded-xl shadow-2xl z-30 animate-in fade-in zoom-in duration-200">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)]">
-                          {hs.title}
-                        </h4>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveHotspot(null);
-                          }}
-                          className="text-xs text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
-                        >
-                          ✕
-                        </button>
+                    {/* Hotspot Card Popover */}
+                    {isActive && (
+                      <div className="absolute top-9 left-1/2 -translate-x-1/2 w-56 sm:w-64 bg-base-100/95 backdrop-blur-md text-base-content border border-[var(--app-border)]/30 p-3.5 rounded-xl shadow-2xl z-30 animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)]">
+                            {hs.title}
+                          </h4>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveHotspot(null);
+                            }}
+                            className="text-xs text-[var(--app-text-secondary)] hover:text-[var(--app-text-primary)]"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <p className="text-xs text-[var(--app-text-secondary)] leading-relaxed">
+                          {hs.desc}
+                        </p>
                       </div>
-                      <p className="text-xs text-[var(--app-text-secondary)] leading-relaxed">
-                        {hs.desc}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-        </div>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        )}
 
         {/* Angle & Drag Indicator Tag */}
         <div className="absolute top-4 left-4 z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-3.5 py-1.5 flex items-center gap-2">
@@ -260,6 +273,22 @@ function Product360Viewer() {
 
         {/* Floating Controls Bar at Bottom */}
         <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-black/70 backdrop-blur-md border border-white/15 p-1.5 rounded-full shadow-2xl">
+          {/* Mode Switcher Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewMode(viewMode === "spin" ? "canvas3d" : "spin");
+            }}
+            title={viewMode === "spin" ? "Switch to 3D WebGL Canvas" : "Switch to 360° Photo Spin"}
+            className={`px-3 h-8 rounded-full flex items-center justify-center text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+              viewMode === "canvas3d"
+                ? "bg-emerald-400 text-black shadow-lg scale-105"
+                : "bg-white/10 hover:bg-white/20 text-white"
+            }`}
+          >
+            {viewMode === "canvas3d" ? "3D WEBGL" : "360° SPIN"}
+          </button>
+
           {/* Rotate Left */}
           <button
             onClick={(e) => {

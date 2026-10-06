@@ -3,6 +3,7 @@ import Product360Hero from "./Product360Hero";
 import Product360Features from "./Product360Features";
 import Product360Grid from "./Product360Grid";
 import SEOHead from "../../components/seo/SEOHead";
+import ErrorBoundary from "../../components/reuseable/ErrorBoundary";
 
 function Product360() {
   return (
@@ -14,7 +15,9 @@ function Product360() {
       />
       <Product360Hero />
       <Product360Features />
-      <Product360Grid />
+      <ErrorBoundary>
+        <Product360Grid />
+      </ErrorBoundary>
     </main>
   );
 }
