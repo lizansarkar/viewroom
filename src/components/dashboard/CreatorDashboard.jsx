@@ -663,14 +663,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         View 360°
                       </Button>
                     </Link>
-                    <button
-                      onClick={() => handleCopyShareableLink(tour.id)}
-                      className="px-2.5 py-1.5 rounded-xl border border-base-content/20 bg-base-200 hover:bg-base-300 text-xs text-base-content font-bold cursor-pointer transition-colors flex items-center gap-1"
-                      title="Copy Shareable 360° Link"
-                    >
-                      <FontAwesomeIcon icon={copiedTourId === tour.id ? faCheck : faShareNodes} className={copiedTourId === tour.id ? "text-success" : ""} />
-                      <span className="hidden sm:inline">{copiedTourId === tour.id ? "Copied" : "Share"}</span>
-                    </button>
+
                     <button
                       onClick={() => handleAddSceneToTour(tour.id)}
                       className="p-2 rounded-xl border border-base-content/20 bg-base-200 hover:bg-base-300 text-xs text-base-content font-bold cursor-pointer transition-colors"
