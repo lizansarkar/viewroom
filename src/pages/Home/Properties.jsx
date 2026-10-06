@@ -93,6 +93,8 @@ function Properties() {
           const liveIds = new Set(liveProperties.map((p) => p.id));
           const remainingSample = initialSampleProperties.filter((s) => !liveIds.has(s.id));
           setProperties([...liveProperties, ...remainingSample].slice(0, 6));
+        } else if (isMounted) {
+          setProperties(initialSampleProperties);
         }
       } catch (err) {
         console.warn("Properties data loading note:", err);

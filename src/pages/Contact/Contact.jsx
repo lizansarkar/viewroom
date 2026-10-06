@@ -107,7 +107,7 @@ function Contact() {
 
         {/* Success Confirmation Alert Banner */}
         {status.successMsg && (
-          <div className="mb-8 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="mb-8 p-5 rounded-2xl bg-primary/5 border border-primary text-emerald-400 font-bold text-sm flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-300">
             <div className="flex items-center gap-3">
               <svg className="w-6 h-6 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

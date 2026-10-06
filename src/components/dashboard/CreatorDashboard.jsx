@@ -419,6 +419,22 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
+  const handleDeleteAllTours = async () => {
+    if (!window.confirm("Are you sure you want to delete ALL 360° virtual tours? This will permanently remove all test tours.")) return;
+    try {
+      for (const t of tours) {
+        if (t.id) {
+          await apiDeleteOwnerTour(t.id).catch(() => {});
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to delete tours from backend:", err);
+    }
+    localStorage.removeItem("viewroom_custom_tours");
+    localStorage.setItem("viewroom_custom_tours", JSON.stringify([]));
+    setTours([]);
+  };
+
   const handleAddNewSceneFromModal = async (sceneData) => {
     if (!editingTour) return null;
     const res = await apiAddOwnerScene(editingTour.id, sceneData);
@@ -600,12 +616,24 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
                 Published 360° Virtual Tours ({tours.length})
               </h3>
-              <button
-                onClick={() => setActiveTab && setActiveTab("tours")}
-                className="text-xs font-semibold text-base-content/70 hover:text-base-content cursor-pointer"
-              >
-                Manage All Tours →
-              </button>
+              <div className="flex items-center gap-3">
+                {tours.length > 0 && (
+                  <button
+                    onClick={handleDeleteAllTours}
+                    className="px-2.5 py-1 rounded-xl bg-error/10 hover:bg-error hover:text-white text-error text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-error/20"
+                    title="Delete all test tours permanently"
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="text-[10px]" />
+                    <span>Clear All Tours</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setActiveTab && setActiveTab("tours")}
+                  className="text-xs font-semibold text-base-content/70 hover:text-base-content cursor-pointer"
+                >
+                  Manage All Tours →
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -650,6 +678,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     >
                       <FontAwesomeIcon icon={faPlus} />
                     </button>
+                    <button
+                      onClick={() => handleDeleteTour(tour.id)}
+                      className="p-2 rounded-xl border border-base-content/20 bg-base-200 hover:bg-error hover:text-white text-xs text-base-content/70 font-bold cursor-pointer transition-colors"
+                      title="Delete Tour"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -684,6 +719,16 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 />
                 <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
               </div>
+              {tours.length > 0 && (
+                <button
+                  onClick={handleDeleteAllTours}
+                  className="px-3 py-2 rounded-xl bg-error/10 hover:bg-error hover:text-white text-error text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-error/20 whitespace-nowrap"
+                  title="Delete all tours permanently"
+                >
+                  <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                  <span>Clear All</span>
+                </button>
+              )}
               <Button
                 variant="primary"
                 onClick={() => setActiveTab && setActiveTab("uploader")}
