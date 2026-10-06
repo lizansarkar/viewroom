@@ -1,121 +1,125 @@
 import express from "express";
-import fs from "fs";
-import path from "path";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = express.Router();
 
-const uploadDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Initialize Cloudinary Cloud Object Storage
+const isCloudinaryConfigured = Boolean(
+  (process.env.CLOUDINARY_CLOUD_NAME || "qm6jykgj") &&
+  (process.env.CLOUDINARY_API_KEY || "193988474583824") &&
+  (process.env.CLOUDINARY_API_SECRET || "cNiXK8EkhASmisAHMZwepwhac2o")
+);
+
+if (isCloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "qm6jykgj",
+    api_key: process.env.CLOUDINARY_API_KEY || "193988474583824",
+    api_secret: process.env.CLOUDINARY_API_SECRET || "cNiXK8EkhASmisAHMZwepwhac2o",
+    secure: true,
+  });
 }
 
-// Storage engine configuration for 8K Equirectangular Panoramas & MP3 Audio tracks
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || (file.mimetype.includes("audio") ? ".mp3" : ".jpg");
-    const prefix = file.mimetype.includes("audio") ? "audio" : "panorama_360";
-    const uniqueName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}${ext}`;
-    cb(null, uniqueName);
-  },
-});
-
+// Memory Storage: Files are streamed directly to Cloudinary without touching local hard disk
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for high-res 8K panoramas & high-quality audio
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for ultra-high-res 8K panoramas & audio
 });
 
-// Helper to return full public URL
-const getPublicUrl = (req, filename) => {
-  const host = req.get("host") || "localhost:5000";
-  const protocol = req.protocol || "http";
-  return `${protocol}://${host}/uploads/${filename}`;
+// Helper: Stream memory buffer to Cloudinary
+const uploadBufferToCloudinary = (buffer, options = {}) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "viewroom_360",
+        resource_type: "auto",
+        ...options,
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
 };
 
-// 1. POST /api/v1/upload/panorama - Multipart/FormData file upload for 360° Equirectangular Images
-router.post("/panorama", upload.single("panorama"), (req, res) => {
+// 1. POST /api/v1/upload/panorama - Multipart/FormData 360° Equirectangular Images
+router.post("/panorama", upload.single("panorama"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: "No panorama image file provided" });
     }
-    const publicUrl = getPublicUrl(req, req.file.filename);
+
+    const result = await uploadBufferToCloudinary(req.file.buffer, {
+      folder: "viewroom_360/panoramas",
+      resource_type: "image",
+    });
+
     res.json({
       success: true,
-      url: publicUrl,
-      imageUrl: publicUrl,
-      fileName: req.file.filename,
+      url: result.secure_url,
+      imageUrl: result.secure_url,
+      publicId: result.public_id,
+      format: result.format,
+      bytes: result.bytes,
     });
   } catch (err) {
-    console.error("Panorama upload error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Cloudinary Panorama upload error:", err);
+    res.status(500).json({ success: false, error: err.message || "Cloud upload failed" });
   }
 });
 
-// 2. POST /api/v1/upload/audio - Multipart/FormData file upload for Custom MP3 Audio Tracks
-router.post("/audio", upload.single("audio"), (req, res) => {
+// 2. POST /api/v1/upload/audio - Multipart/FormData Custom MP3 Ambient Tracks
+router.post("/audio", upload.single("audio"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: "No audio file provided" });
     }
-    const publicUrl = getPublicUrl(req, req.file.filename);
+
+    const result = await uploadBufferToCloudinary(req.file.buffer, {
+      folder: "viewroom_360/audio",
+      resource_type: "video", // Cloudinary treats audio files under the video resource_type
+    });
+
     res.json({
       success: true,
-      url: publicUrl,
-      audioUrl: publicUrl,
-      fileName: req.file.filename,
+      url: result.secure_url,
+      audioUrl: result.secure_url,
+      publicId: result.public_id,
+      format: result.format,
     });
   } catch (err) {
-    console.error("Audio upload error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Cloudinary Audio upload error:", err);
+    res.status(500).json({ success: false, error: err.message || "Audio upload failed" });
   }
 });
 
-// 3. POST /api/v1/upload - Fallback Base64 payload receiver
-router.post("/", (req, res) => {
+// 3. POST /api/v1/upload - Base64 Payload Uploader
+router.post("/", async (req, res) => {
   try {
-    const { imageBase64, fileName, isAudio } = req.body;
+    const { imageBase64, isAudio } = req.body;
     if (!imageBase64) {
       return res.status(400).json({ success: false, error: "imageBase64 / audio payload is required" });
     }
 
-    let ext = isAudio ? "mp3" : "jpg";
-    let base64Data = imageBase64;
-
-    const matches = imageBase64.match(/^data:(image|audio)\/([a-zA-Z0-9]+);base64,(.+)$/);
-
-    if (matches) {
-      const type = matches[1];
-      const subtype = matches[2];
-      if (type === "audio") {
-        ext = subtype === "mpeg" ? "mp3" : subtype;
-      } else {
-        ext = subtype === "jpeg" ? "jpg" : subtype;
-      }
-      base64Data = matches[3];
-    }
-
-    const prefix = isAudio || imageBase64.startsWith("data:audio") ? "audio" : "panorama_360";
-    const uniqueName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const filePath = path.join(uploadDir, uniqueName);
-    const buffer = Buffer.from(base64Data, "base64");
-
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = getPublicUrl(req, uniqueName);
+    const result = await cloudinary.uploader.upload(imageBase64, {
+      folder: isAudio ? "viewroom_360/audio" : "viewroom_360/panoramas",
+      resource_type: isAudio ? "video" : "image",
+    });
 
     res.json({
       success: true,
-      url: publicUrl,
-      imageUrl: publicUrl,
-      audioUrl: publicUrl,
-      fileName: uniqueName,
+      url: result.secure_url,
+      imageUrl: result.secure_url,
+      audioUrl: result.secure_url,
+      publicId: result.public_id,
+      format: result.format,
     });
   } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Cloudinary Base64 upload error:", err);
+    res.status(500).json({ success: false, error: err.message || "Cloud upload failed" });
   }
 });
 
