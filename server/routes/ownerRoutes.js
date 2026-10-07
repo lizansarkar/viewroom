@@ -91,11 +91,11 @@ router.get("/tours", async (req, res) => {
         orderBy: { createdAt: "desc" },
       });
     } catch (dbErr) {
-      console.warn("Prisma PostgreSQL owner tours fetch fallback:", dbErr.message);
+      console.warn("Prisma PostgreSQL owner tours fetch error:", dbErr.message);
+      tours = toursStore;
     }
 
-    const data = tours.length > 0 ? tours : toursStore;
-    res.json({ success: true, data });
+    res.json({ success: true, data: tours });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

@@ -44,52 +44,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     engagementRate: "96.4%",
   });
 
-  const [tours, setTours] = useState([
-    {
-      id: "tour_skyline_headquarters",
-      title: "Skyline Innovation Campus 360°",
-      category: "Commercial Real Estate",
-      price: "Free",
-      coverImage: "/panoramas/panorama_aerial.jpg",
-      viewsCount: 2450,
-      scenes: [
-        {
-          id: "aerial_view",
-          name: "AERIAL VIEW",
-          floorLevel: "Campus Aerial",
-          thumbnailUrl: "/panoramas/panorama_aerial.jpg",
-          panoramaUrl: "/panoramas/panorama_aerial.jpg",
-          hotspots: [{ id: "hp1", title: "Main Entrance" }],
-        },
-        {
-          id: "entrance",
-          name: "ENTRANCE LOBBY",
-          floorLevel: "Main Building",
-          thumbnailUrl: "/panoramas/panorama_entrance.jpg",
-          panoramaUrl: "/panoramas/panorama_entrance.jpg",
-          hotspots: [],
-        },
-      ],
-    },
-    {
-      id: "tour_penthouse",
-      title: "Glass Pavilion Penthouse 360°",
-      category: "Luxury Residential",
-      price: "$3,200,000",
-      coverImage: "/panoramas/panorama_entrance.jpg",
-      viewsCount: 1820,
-      scenes: [
-        {
-          id: "main_hall",
-          name: "MAIN HALL",
-          floorLevel: "Penthouse Level 1",
-          thumbnailUrl: "/panoramas/panorama_entrance.jpg",
-          panoramaUrl: "/panoramas/panorama_entrance.jpg",
-          hotspots: [],
-        },
-      ],
-    },
-  ]);
+  const [tours, setTours] = useState([]);
 
   const [products, setProducts] = useState([
     {
@@ -244,12 +199,12 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         } catch (e) {}
       }
 
-      if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
-        const backendIds = new Set(fetchedTours.map((t) => t.id));
-        const extraLocal = localToursParsed.filter((t) => !backendIds.has(t.id));
-        combinedTours = [...extraLocal, ...fetchedTours];
+      if (Array.isArray(fetchedTours)) {
+        combinedTours = fetchedTours;
+      } else if (savedLocalTours !== null && Array.isArray(localToursParsed)) {
+        combinedTours = localToursParsed;
       } else {
-        combinedTours = savedLocalTours !== null ? localToursParsed : tours;
+        combinedTours = [];
       }
 
       const healedTours = ensureTourScenes(combinedTours);

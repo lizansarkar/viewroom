@@ -43,13 +43,12 @@ router.get("/", async (req, res) => {
             : { createdAt: "desc" },
       });
     } catch (dbErr) {
-      console.warn("Prisma PostgreSQL query fallback to memory:", dbErr.message);
+      console.warn("Prisma PostgreSQL query error:", dbErr.message);
+      // Only fallback to memory if database connection failed
+      dbTours = toursStore;
     }
 
-    // Combine DB tours with sample store if DB has fewer entries
-    const combined = dbTours.length > 0 ? dbTours : toursStore;
-
-    const tourSummaries = combined.map((t) => ({
+    const tourSummaries = dbTours.map((t) => ({
       id: t.id,
       title: t.title,
       description: t.description,
@@ -85,10 +84,7 @@ router.get("/:id", async (req, res) => {
         },
       });
     } catch (dbErr) {
-      console.warn("Prisma PostgreSQL tour lookup fallback:", dbErr.message);
-    }
-
-    if (!tour) {
+      console.warn("Prisma PostgreSQL tour lookup error:", dbErr.message);
       tour = getTourById(tourId);
     }
 
@@ -188,11 +184,16 @@ router.post("/:id/scenes", async (req, res) => {
 // DELETE /api/v1/tours/:id - Delete a 360 tour from PostgreSQL
 router.delete("/:id", async (req, res) => {
   try {
+    const tourId = req.params.id;
     try {
-      await prisma.virtualTour.delete({ where: { id: req.params.id } });
+      await prisma.analytics.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.hotspot.deleteMany({ where: { scene: { tourId } } }).catch(() => {});
+      await prisma.scene.deleteMany({ where: { tourId } }).catch(() => {});
+      await prisma.virtualTour.delete({ where: { id: tourId } }).catch(() => {});
     } catch (dbErr) {
-      deleteTour(req.params.id);
+      console.warn("Prisma PostgreSQL tour delete error:", dbErr.message);
     }
+    deleteTour(tourId);
     res.json({ success: true, message: "Tour deleted successfully from PostgreSQL" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -4,59 +4,21 @@ import { deleteTour } from "../data/toursData.js";
 
 const router = express.Router();
 
-// Mock in-memory Admin Users dataset (Syncs with seed data)
-let mockAdminUsers = [
-  {
-    id: "dd08a141-21ce-46ad-9a6b-812a915a8cfe",
-    email: "admin@viewroom.com",
-    name: "ViewRoom Admin",
-    role: "ADMIN",
-    createdAt: "2026-09-18T14:00:00.000Z",
-  },
-  {
-    id: "e07c3905-51ce-46ad-9a6b-812a915a8cfd",
-    email: "client@viewroom.com",
-    name: "John Client",
-    role: "CLIENT",
-    createdAt: "2026-09-19T10:30:00.000Z",
-  },
-  {
-    id: "creator_demo_user",
-    email: "creator@viewroom.com",
-    name: "Sarah Studio Creator",
-    role: "CREATOR",
-    createdAt: "2026-09-20T08:15:00.000Z",
-  },
-];
-
-let mockAdminTours = [
-  {
-    id: "tour_skyline_headquarters",
-    title: "Skyline Innovation Campus 360°",
-    authorEmail: "admin@viewroom.com",
-    category: "Commercial Real Estate",
-    viewsCount: 1420,
-    isPublished: true,
-  },
-  {
-    id: "tour_horizon_villa",
-    title: "Horizon Coastal Villa 360°",
-    authorEmail: "creator@viewroom.com",
-    category: "Residential Villa",
-    viewsCount: 890,
-    isPublished: true,
-  },
-];
-
 // GET /api/v1/admin/stats - Admin system statistics & server health
-router.get("/stats", (req, res) => {
+router.get("/stats", async (req, res) => {
   try {
+    const [totalUsers, totalTours, viewsAgg] = await Promise.all([
+      prisma.user.count().catch(() => 0),
+      prisma.virtualTour.count().catch(() => 0),
+      prisma.analytics.aggregate({ _sum: { viewsCount: true } }).catch(() => ({ _sum: { viewsCount: 0 } })),
+    ]);
+
     res.json({
       success: true,
       data: {
-        totalUsers: mockAdminUsers.length,
-        totalTours: mockAdminTours.length,
-        totalViews: 2310,
+        totalUsers,
+        totalTours,
+        totalViews: viewsAgg._sum?.viewsCount || 0,
         serverStatus: "Online (Healthy)",
         databaseEngine: "Neon PostgreSQL",
         geminiAiStatus: "Connected (Gemini 1.5 Flash)",
@@ -67,49 +29,108 @@ router.get("/stats", (req, res) => {
   }
 });
 
-// GET /api/v1/admin/users - List all registered users
-router.get("/users", (req, res) => {
+// GET /api/v1/admin/users - List all registered users from PostgreSQL
+router.get("/users", async (req, res) => {
   try {
-    res.json({ success: true, data: mockAdminUsers });
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json({ success: true, data: users });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// PUT /api/v1/admin/users/:id/role - Admin update user role (CLIENT ↔ CREATOR ↔ ADMIN)
-router.put("/users/:id/role", (req, res) => {
+// PUT /api/v1/admin/users/:id/role - Admin update user role (CLIENT ↔ CREATOR ↔ ADMIN) in PostgreSQL
+router.put("/users/:id/role", async (req, res) => {
   try {
     const { role } = req.body;
     if (!role || !["ADMIN", "CREATOR", "CLIENT", "VISITOR"].includes(role)) {
       return res.status(400).json({ success: false, error: "Invalid role value" });
     }
 
-    const user = mockAdminUsers.find((u) => u.id === req.params.id);
-    if (!user) {
-      return res.status(404).json({ success: false, error: "User not found" });
-    }
+    const updatedUser = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { role },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+      },
+    });
 
-    user.role = role;
     res.json({
       success: true,
-      message: `User ${user.email} promoted to ${role}`,
-      data: user,
+      message: `User ${updatedUser.email} promoted to ${role}`,
+      data: updatedUser,
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// GET /api/v1/admin/content - List all platform tours for global moderation
-router.get("/content", (req, res) => {
+// DELETE /api/v1/admin/users/:id - Admin delete a user from PostgreSQL
+router.delete("/users/:id", async (req, res) => {
   try {
-    res.json({ success: true, data: mockAdminTours });
+    const userId = req.params.id;
+    // Remove user's tours and related items
+    const userTours = await prisma.virtualTour.findMany({
+      where: { authorId: userId },
+      select: { id: true },
+    });
+
+    for (const t of userTours) {
+      await prisma.analytics.deleteMany({ where: { tourId: t.id } }).catch(() => {});
+      await prisma.hotspot.deleteMany({ where: { scene: { tourId: t.id } } }).catch(() => {});
+      await prisma.scene.deleteMany({ where: { tourId: t.id } }).catch(() => {});
+      await prisma.virtualTour.delete({ where: { id: t.id } }).catch(() => {});
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
+    res.json({ success: true, message: "User deleted successfully from database" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// DELETE /api/v1/admin/tours/:id - Admin global delete tour permanently
+// GET /api/v1/admin/content - List all platform tours for global moderation from PostgreSQL
+router.get("/content", async (req, res) => {
+  try {
+    const tours = await prisma.virtualTour.findMany({
+      include: {
+        author: { select: { id: true, name: true, email: true } },
+        scenes: { select: { id: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const formattedTours = tours.map((t) => ({
+      id: t.id,
+      title: t.title,
+      authorEmail: t.author?.email || "Unknown Author",
+      category: t.category,
+      viewsCount: t.viewsCount || 0,
+      isPublished: t.isPublished,
+      scenesCount: (t.scenes || []).length,
+      createdAt: t.createdAt,
+    }));
+
+    res.json({ success: true, data: formattedTours });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/admin/tours/:id - Admin global delete tour permanently from PostgreSQL
 router.delete("/tours/:id", async (req, res) => {
   try {
     const tourId = req.params.id;
@@ -124,12 +145,7 @@ router.delete("/tours/:id", async (req, res) => {
 
     deleteTour(tourId);
 
-    const index = mockAdminTours.findIndex((t) => t.id === tourId);
-    if (index !== -1) {
-      mockAdminTours.splice(index, 1);
-    }
-
-    res.json({ success: true, message: "Tour deleted platform-wide by Admin" });
+    res.json({ success: true, message: "Tour deleted platform-wide by Admin from database" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
