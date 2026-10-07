@@ -182,7 +182,7 @@ export default function RecruiterSandbox() {
               className="!text-[10px] !px-3 !py-1 uppercase cursor-pointer !rounded-xl"
             >
               <FontAwesomeIcon icon={faCrosshairs} className="mr-1" />
-              Try Hotspot Studio
+              Try Hotspot
             </Button>
 
             {/* Architecture Inspector Modal Trigger */}

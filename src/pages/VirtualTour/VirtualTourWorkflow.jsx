@@ -44,7 +44,7 @@ function VirtualTourWorkflow() {
           {steps.map((s) => (
             <div
               key={s.step}
-              className="bg-base-200/50 border border-[var(--app-border)]/20 p-8 rounded-2xl flex flex-col justify-between shadow-md hover:border-[var(--app-border)]/60 transition-all duration-300 group hover:scale-[1.02]"
+              className="bg-base-100 border border-primary/10 p-8 rounded-2xl flex flex-col justify-between shadow-md hover:border-[var(--app-border)]/60 transition-all duration-300 group hover:scale-[1.02]"
             >
               <div>
                 <span className="font-heading text-3xl font-black text-[var(--app-text-secondary)] opacity-40 block mb-4 group-hover:opacity-80 transition-opacity">

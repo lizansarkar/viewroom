@@ -7,9 +7,9 @@ function MatterportHero() {
       {/* Background Image with Blur & Dark Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7gwd70FfB1f6edFASCx6vFjPKkOHbKKe3GmE_d70uxluiOM8quO0Ah4w&s=10"
           alt="Blurred Interior Background"
-          className="w-full h-full object-cover scale-110 blur-md opacity-40 brightness-75"
+          className="w-full h-full object-cover scale-110 blur-[2px] opacity-40 brightness-75"
         />
         {/* Dark overlay to match image background tone */}
         <div className="absolute inset-0" />

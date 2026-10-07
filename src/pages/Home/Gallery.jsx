@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const galleryItems = [
   // Left Column
@@ -15,7 +15,7 @@ const galleryItems = [
   { id: 7, title: 'Home Office', colSpan: 'col-span-12 md:col-span-4', aspect: 'aspect-square', img: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800' },
 ];
 
-// Lucide React-এর বদলে Pure SVG Icon Component
+// Pure SVG Icon Components
 function ImageIcon({ className }) {
   return (
     <svg
@@ -35,8 +35,105 @@ function ImageIcon({ className }) {
   );
 }
 
+function CloseIcon({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function ChevronLeftIcon({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon({ className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
 
 function Gallery() {
+  const [activeItem, setActiveItem] = useState(null);
+
+  // Keyboard navigation & body scroll lock
+  useEffect(() => {
+    if (!activeItem) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveItem(null);
+      } else if (e.key === 'ArrowLeft') {
+        const currentIndex = galleryItems.findIndex((i) => i.id === activeItem.id);
+        const prevIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+        setActiveItem(galleryItems[prevIndex]);
+      } else if (e.key === 'ArrowRight') {
+        const currentIndex = galleryItems.findIndex((i) => i.id === activeItem.id);
+        const nextIndex = (currentIndex + 1) % galleryItems.length;
+        setActiveItem(galleryItems[nextIndex]);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [activeItem]);
+
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    if (!activeItem) return;
+    const currentIndex = galleryItems.findIndex((i) => i.id === activeItem.id);
+    const prevIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    setActiveItem(galleryItems[prevIndex]);
+  };
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    if (!activeItem) return;
+    const currentIndex = galleryItems.findIndex((i) => i.id === activeItem.id);
+    const nextIndex = (currentIndex + 1) % galleryItems.length;
+    setActiveItem(galleryItems[nextIndex]);
+  };
+
   return (
     <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-16 px-4 sm:px-8 lg:px-16">
       <div className="max-w-6xl mx-auto flex flex-col items-center">
@@ -59,7 +156,8 @@ function Gallery() {
             {[galleryItems[0], galleryItems[1]].map((item) => (
               <div
                 key={item.id}
-                className="group relative w-full aspect-square rounded-2xl overflow-hidden"
+                onClick={() => setActiveItem(item)}
+                className="group relative w-full aspect-square rounded-2xl overflow-hidden bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl"
               >
                 <img
                   src={item.img}
@@ -79,6 +177,7 @@ function Gallery() {
             {[galleryItems[2], galleryItems[3]].map((item) => (
               <div
                 key={item.id}
+                onClick={() => setActiveItem(item)}
                 className="group relative w-full aspect-[16/10] sm:aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl"
               >
                 <img
@@ -93,7 +192,10 @@ function Gallery() {
             ))}
 
             {/* Bottom Card in Center Column */}
-            <div className="group relative w-full aspect-square sm:aspect-[4/4.5] rounded-2xl overflow-hidden bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl">
+            <div
+              onClick={() => setActiveItem(galleryItems[4])}
+              className="group relative w-full aspect-square sm:aspect-[4/4.5] rounded-2xl overflow-hidden bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl"
+            >
               <img
                 src={galleryItems[4].img}
                 alt={galleryItems[4].title}
@@ -110,6 +212,7 @@ function Gallery() {
             {[galleryItems[5], galleryItems[6]].map((item) => (
               <div
                 key={item.id}
+                onClick={() => setActiveItem(item)}
                 className="group relative w-full aspect-square rounded-2xl overflow-hidden bg-zinc-800/80 dark:bg-zinc-800/90 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl"
               >
                 <img
@@ -127,6 +230,65 @@ function Gallery() {
         </div>
 
       </div>
+
+      {/* Lightbox Image Preview Modal */}
+      {activeItem && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setActiveItem(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+        >
+          {/* Top Bar / Close Button */}
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-3">
+            <button
+              onClick={() => setActiveItem(null)}
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border border-white/20 shadow-lg hover:scale-105 active:scale-95"
+              aria-label="Close Preview"
+            >
+              <CloseIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Previous Arrow */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-2 sm:left-6 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border border-white/20 shadow-lg hover:scale-105 active:scale-95"
+            aria-label="Previous Image"
+          >
+            <ChevronLeftIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Next Arrow */}
+          <button
+            onClick={handleNext}
+            className="absolute right-2 sm:right-6 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm border border-white/20 shadow-lg hover:scale-105 active:scale-95"
+            aria-label="Next Image"
+          >
+            <ChevronRightIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Center Image Container */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-5xl max-h-[88vh] w-full flex flex-col items-center justify-center"
+          >
+            <img
+              src={activeItem.img}
+              alt={activeItem.title}
+              className="max-h-[74vh] sm:max-h-[80vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl border border-white/15"
+            />
+            {/* Title & Counter */}
+            <div className="mt-4 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white flex items-center gap-3 text-xs sm:text-sm font-semibold tracking-wide shadow-md">
+              <span className="uppercase">{activeItem.title}</span>
+              <span className="opacity-40">•</span>
+              <span className="text-white/70 text-xs">
+                {galleryItems.findIndex((i) => i.id === activeItem.id) + 1} / {galleryItems.length}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

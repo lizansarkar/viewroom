@@ -185,7 +185,7 @@ function Hotspots() {
         {/* Bottom: full-width image */}
         <div className="w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[16/6]">
           <img
-            src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=1600&auto=format&fit=crop"
+            src="https://www.luxuryroof.in/blog-assets/uploads/IOD%20Full%20Form%20in%20Real%20Estate%20Process%20%26%20Documents%20Guide.webp"
             alt="Couple sharing coffee at a cafe table"
             className="h-full w-full object-cover rounded-none"
           />

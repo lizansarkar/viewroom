@@ -59,7 +59,7 @@ export default function VirtualTourJournal() {
 
   return (
     <article className="w-full py-16 sm:py-24 bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 select-text border-t border-[var(--app-border)]/15">
-      <div className="max-w-3xl mx-auto px-5 sm:px-8">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
         
         {/* Top Header Navigation & Social Actions */}
         <div className="flex items-center justify-between pb-10 sm:pb-14 text-sm">

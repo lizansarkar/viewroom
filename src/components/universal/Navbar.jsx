@@ -198,7 +198,7 @@ function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
-        <nav className="w-full max-w-7xl mx-auto px-4 lg:px-6 h-[72px] flex items-center justify-between">
+        <nav className="w-full max-w-7xl mx-auto h-[72px] flex items-center justify-between">
           {/* Logo */}
           <Logo size="md" />
 
@@ -276,7 +276,7 @@ function Navbar() {
                   aria-label="Toggle user profile menu"
                   className="btn btn-ghost btn-circle avatar cursor-pointer hover:ring-2 hover:ring-base-content/40 transition-all focus:outline-none flex items-center justify-center p-0 border-0 bg-transparent"
                 >
-                  <div className="w-10 h-10 rounded-full ring-2 ring-base-content/30 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-200 text-base-content font-black shadow-sm">
+                  <div className="w-8 h-8 rounded-full ring-2 ring-base-content/30 ring-offset-base-100 ring-offset-2 overflow-hidden flex items-center justify-center bg-base-200 text-base-content font-black shadow-sm">
                     {user?.avatar || user?.image ? (
                       <img
                         src={user.avatar || user.image}

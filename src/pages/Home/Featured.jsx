@@ -92,7 +92,7 @@ function Featured() {
       {/* Bottom: full-width image */}
       <div className="w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[16/6]">
         <img
-          src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=1600&auto=format&fit=crop"
+          src="https://media.licdn.com/dms/image/v2/D4E12AQGn5iOuSfzR0g/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1698674398769?e=2147483647&v=beta&t=bvXEc6IP9G-f5JZyWV3Dil7twZ-oyKBYPVe1Mici218"
           alt="Couple sharing coffee at a cafe table"
           className="h-full w-full object-cover rounded-none"
         />

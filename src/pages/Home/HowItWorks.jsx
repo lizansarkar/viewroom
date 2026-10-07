@@ -12,14 +12,14 @@ const steps = [
     title: "Enter the 360° Experience",
     description: "Step through the door and into the full panorama.",
     image:
-      "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800&auto=format&fit=crop",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTqg1QfD_q1qXp3Zsn0CTAPZkPxvhxUWY5yOopEtFc7l--Ug-yp81ovCc&s=10",
     offset: "lg:mt-14",
   },
   {
     title: "Explore Every Corner",
     description: "Move room to room using hotspots placed in the space.",
     image:
-      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop",
+      "https://i.ytimg.com/vi/sZGMwXc6T2Y/maxresdefault.jpg",
     offset: "lg:mt-28",
   },
 ];
