@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,48 +12,37 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
+import { apiGetTours } from "../../services/api";
 
 export default function VisitorDashboard({ activeTab, _setActiveTab }) {
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [featuredSpaces, setFeaturedSpaces] = useState([]);
 
-  const featuredSpaces = [
-    {
-      id: "tour_skyline_headquarters",
-      title: "Skyline Innovation Campus 360°",
-      category: "Real Estate",
-      image: "/panoramas/panorama_aerial.jpg",
-      scenesCount: 5,
-      link: "/360-virtual-tour",
-      description: "Aerial & interior 360° walkthrough of commercial tech campus.",
-    },
-    {
-      id: "prod_aero_chair",
-      title: "Ergonomic Spatial Chair X1",
-      category: "3D Products",
-      image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
-      scenesCount: 360,
-      link: "/360-product",
-      description: "Full 360° interactive product spin with PBR material shaders.",
-    },
-    {
-      id: "tour_penthouse",
-      title: "Glass Pavilion Penthouse",
-      category: "Real Estate",
-      image: "/panoramas/panorama_entrance.jpg",
-      scenesCount: 4,
-      link: "/360-virtual-tour",
-      description: "Luxury penthouse 360° virtual tour with panoramic glass view.",
-    },
-    {
-      id: "matterport_lab",
-      title: "Spatial Robotics Lab 3D",
-      category: "Matterport",
-      image: "/panoramas/panorama_floor1.jpg",
-      scenesCount: 6,
-      link: "/matterport",
-      description: "High-density Matterport spatial scan of R&D robotics facility.",
-    },
-  ];
+  useEffect(() => {
+    async function loadSpaces() {
+      try {
+        const res = await apiGetTours();
+        const tours = res?.data || res || [];
+        if (Array.isArray(tours) && tours.length > 0) {
+          const mapped = tours.map((t) => ({
+            id: t.id,
+            title: t.title,
+            category: t.category || "Real Estate",
+            image: t.coverImage || "/panoramas/panorama_aerial.jpg",
+            scenesCount: t.totalScenes || t.scenes?.length || 1,
+            link: "/360-virtual-tour",
+            description: t.description || "Aerial & interior 360° walkthrough.",
+          }));
+          setFeaturedSpaces(mapped);
+        } else {
+          setFeaturedSpaces([]);
+        }
+      } catch (err) {
+        console.warn("Failed to load visitor spaces:", err);
+      }
+    }
+    loadSpaces();
+  }, []);
 
   const filteredSpaces =
     categoryFilter === "All"

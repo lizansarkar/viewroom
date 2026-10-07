@@ -33,48 +33,22 @@ import {
   apiUploadImage,
   apiSaveTourAudio,
   apiDeleteOwnerTour,
+  apiGetOwnerProducts,
+  apiCreateOwnerProduct,
+  apiDeleteOwnerProduct,
 } from "../../services/api";
 
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const [stats, setStats] = useState({
-    totalTours: 2,
-    totalProducts: 3,
-    totalViews: 4850,
+    totalTours: 0,
+    totalProducts: 0,
+    totalViews: 0,
     aiConversations: 184,
     engagementRate: "96.4%",
   });
 
   const [tours, setTours] = useState([]);
-
-  const [products, setProducts] = useState([
-    {
-      id: "prod_chair_1",
-      title: "Ergonomic Spatial Chair X1",
-      category: "Modern Furniture",
-      price: "$850",
-      image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
-      modelFormat: "GLTF / GLB",
-      viewsCount: 940,
-    },
-    {
-      id: "prod_desk_1",
-      title: "Executive Minimalist Desk",
-      category: "Office Furniture",
-      price: "$1,400",
-      image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&q=80&w=800",
-      modelFormat: "GLTF / GLB",
-      viewsCount: 610,
-    },
-    {
-      id: "prod_headset_1",
-      title: "ViewRoom VR Spatial Lens",
-      category: "Hardware",
-      price: "$1,200",
-      image: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&q=80&w=800",
-      modelFormat: "USDZ / GLB",
-      viewsCount: 1250,
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const [toursSearch, setToursSearch] = useState("");
   const [productsSearch, setProductsSearch] = useState("");
@@ -180,12 +154,16 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   const loadDashboardData = async () => {
     try {
-      const [fetchedStats, fetchedToursRes] = await Promise.all([
+      const [fetchedStats, fetchedToursRes, fetchedProdsRes] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(),
+        apiGetOwnerProducts(),
       ]);
       const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
+      const fetchedProds = fetchedProdsRes && (fetchedProdsRes.data || fetchedProdsRes);
+
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
+      if (Array.isArray(fetchedProds)) setProducts(fetchedProds);
 
       let combinedTours = [];
       const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
@@ -314,23 +292,48 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     if (setActiveTab) setActiveTab("tours");
   };
 
-  const handleCreateProduct = (e) => {
+  const handleCreateProduct = async (e) => {
     e.preventDefault();
     if (!newProdTitle) return;
 
-    const newProd = {
-      id: `prod_${Date.now()}`,
-      title: newProdTitle,
-      category: newProdCategory,
-      price: newProdPrice,
-      image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
-      modelFormat: "GLTF / GLB",
-      viewsCount: 0,
-    };
+    try {
+      const res = await apiCreateOwnerProduct({
+        title: newProdTitle,
+        category: newProdCategory,
+        price: newProdPrice,
+        image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
+        modelFormat: "GLTF / GLB",
+      });
+      const created = (res && res.data) || res;
+      if (created && created.id) {
+        setProducts((prev) => [created, ...prev]);
+      }
+    } catch (err) {
+      console.warn("Failed to create product in DB:", err);
+      const fallbackProd = {
+        id: `prod_${Date.now()}`,
+        title: newProdTitle,
+        category: newProdCategory,
+        price: newProdPrice,
+        image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
+        modelFormat: "GLTF / GLB",
+        viewsCount: 0,
+      };
+      setProducts((prev) => [fallbackProd, ...prev]);
+    }
 
-    setProducts((prev) => [newProd, ...prev]);
     setNewProdTitle("");
     setShowAddProductModal(false);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm("Are you sure you want to delete this 3D product?")) return;
+    try {
+      await apiDeleteOwnerProduct(productId);
+    } catch (err) {
+      console.warn("Failed to delete product from database:", err);
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
   const handleAddSceneToTour = async (tourId) => {
@@ -925,12 +928,22 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   </span>
                 </div>
 
-                <Link to="/360-product" className="w-full">
-                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
-                    <FontAwesomeIcon icon={faCube} className="mr-2" />
-                    Launch 3D Product Spin
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2 w-full">
+                  <Link to="/360-product" className="flex-1">
+                    <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
+                      <FontAwesomeIcon icon={faCube} className="mr-2" />
+                      Launch 3D Product Spin
+                    </Button>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteProduct(p.id)}
+                    className="p-2.5 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content border border-base-content/10 transition-all cursor-pointer"
+                    title="Delete 3D Product"
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

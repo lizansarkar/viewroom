@@ -143,6 +143,27 @@ export async function apiGetOwnerProducts() {
   }
 }
 
+export async function apiCreateOwnerProduct(productData) {
+  try {
+    return await apiRequest("/owner/products", {
+      method: "POST",
+      body: JSON.stringify(productData),
+    });
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function apiDeleteOwnerProduct(productId) {
+  try {
+    return await apiRequest(`/owner/products/${productId}`, {
+      method: "DELETE",
+    });
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 // -------------------------------------------------------------
 // 4. SPATIAL AI CONCIERGE & VOICE AI
 // -------------------------------------------------------------

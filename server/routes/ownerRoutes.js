@@ -70,7 +70,97 @@ router.get("/products", async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
-    res.json({ success: true, data: products });
+    const formatted = products.map((p) => {
+      const primaryVariant = p.variants?.[0];
+      const coverImage =
+        primaryVariant?.imageSequence?.[0] ||
+        "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800";
+
+      return {
+        id: p.id,
+        title: p.title,
+        category: p.category,
+        price: "$499",
+        image: coverImage,
+        modelFormat: "GLTF / GLB",
+        viewsCount: 0,
+        createdAt: p.createdAt,
+      };
+    });
+
+    res.json({ success: true, data: formatted });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/v1/owner/products - Create new 3D Product in PostgreSQL
+router.post("/products", async (req, res) => {
+  try {
+    const { title, category, price, image, modelFormat } = req.body;
+    if (!title) {
+      return res.status(400).json({ success: false, error: "Title is required" });
+    }
+
+    let author = null;
+    if (req.user?.id) {
+      author = await prisma.user.findUnique({ where: { id: req.user.id } });
+    }
+    if (!author) {
+      author = await prisma.user.findFirst({ where: { role: "CREATOR" } }) || (await prisma.user.findFirst());
+    }
+
+    const defaultImage = image || "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800";
+
+    const newProd = await prisma.product360.create({
+      data: {
+        title,
+        category: category || "Modern Furniture",
+        status: "Studio Ready",
+        model3DUrl: "/models/chair.glb",
+        authorId: author.id,
+        variants: {
+          create: [
+            {
+              name: "Standard Finish",
+              colorHex: "#1a1a1a",
+              accentHex: "#3b82f6",
+              imageSequence: [defaultImage],
+            },
+          ],
+        },
+      },
+      include: {
+        variants: true,
+      },
+    });
+
+    const formatted = {
+      id: newProd.id,
+      title: newProd.title,
+      category: newProd.category,
+      price: price || "$499",
+      image: defaultImage,
+      modelFormat: modelFormat || "GLTF / GLB",
+      viewsCount: 0,
+      createdAt: newProd.createdAt,
+    };
+
+    res.status(201).json({ success: true, data: formatted });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/v1/owner/products/:id - Delete 3D product from PostgreSQL
+router.delete("/products/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    await prisma.productHotspot.deleteMany({ where: { productId } }).catch(() => {});
+    await prisma.productVariant.deleteMany({ where: { productId } }).catch(() => {});
+    await prisma.product360.delete({ where: { id: productId } });
+
+    res.json({ success: true, message: "Product deleted successfully from database" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

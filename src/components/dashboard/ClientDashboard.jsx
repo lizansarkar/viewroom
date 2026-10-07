@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,39 +12,48 @@ import {
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
-import { apiPromoteToCreator } from "../../services/api";
+import { apiPromoteToCreator, apiGetTours } from "../../services/api";
 
 export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgradeSuccess }) {
   const [upgrading, setUpgrading] = useState(false);
   const [bookmarksSearch, setBookmarksSearch] = useState("");
   const [aiSearchQuery, setAiSearchQuery] = useState("");
+  const [bookmarks, setBookmarks] = useState([]);
 
-  const [bookmarks, setBookmarks] = useState([
-    {
-      id: "tour_skyline_headquarters",
-      title: "Skyline Innovation Campus 360°",
-      category: "Commercial Real Estate",
-      image: "/panoramas/panorama_aerial.jpg",
-      link: "/360-virtual-tour",
-      savedAt: "2 days ago",
-    },
-    {
-      id: "prod_aero_chair",
-      title: "Ergonomic Spatial Chair X1",
-      category: "Modern Furniture",
-      image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
-      link: "/360-product",
-      savedAt: "5 days ago",
-    },
-    {
-      id: "tour_penthouse",
-      title: "Glass Pavilion Penthouse 360°",
-      category: "Luxury Residential",
-      image: "/panoramas/panorama_entrance.jpg",
-      link: "/360-virtual-tour",
-      savedAt: "1 week ago",
-    },
-  ]);
+  useEffect(() => {
+    async function loadBookmarks() {
+      try {
+        const saved = localStorage.getItem("viewroom_client_bookmarks");
+        if (saved !== null) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setBookmarks(parsed);
+            return;
+          }
+        }
+
+        const res = await apiGetTours();
+        const tours = res?.data || res || [];
+        if (Array.isArray(tours) && tours.length > 0) {
+          const initialBookmarks = tours.slice(0, 3).map((t, idx) => ({
+            id: t.id,
+            title: t.title,
+            category: t.category || "Commercial Real Estate",
+            image: t.coverImage || "/panoramas/panorama_aerial.jpg",
+            link: "/360-virtual-tour",
+            savedAt: idx === 0 ? "Recently Saved" : `${idx + 1} days ago`,
+          }));
+          setBookmarks(initialBookmarks);
+          localStorage.setItem("viewroom_client_bookmarks", JSON.stringify(initialBookmarks));
+        } else {
+          setBookmarks([]);
+        }
+      } catch (err) {
+        console.warn("Failed to load client bookmarks:", err);
+      }
+    }
+    loadBookmarks();
+  }, []);
 
   const [aiHistory] = useState([
     {
@@ -68,7 +77,13 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
   ]);
 
   const handleRemoveBookmark = (id) => {
-    setBookmarks((prev) => prev.filter((b) => b.id !== id));
+    setBookmarks((prev) => {
+      const updated = prev.filter((b) => b.id !== id);
+      try {
+        localStorage.setItem("viewroom_client_bookmarks", JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
   };
 
   const handleUpgrade = async () => {
