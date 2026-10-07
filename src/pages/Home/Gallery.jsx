@@ -185,7 +185,7 @@ function Gallery() {
                   alt={item.title}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
                   <ImageIcon className="w-8 h-8 text-white opacity-80" />
                 </div>
               </div>
@@ -201,7 +201,7 @@ function Gallery() {
                 alt={galleryItems[4].title}
                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
               />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
                 <ImageIcon className="w-10 h-10 text-white opacity-80" />
               </div>
             </div>
@@ -220,7 +220,7 @@ function Gallery() {
                   alt={item.title}
                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 backdrop-blur-[2px]">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
                   <ImageIcon className="w-10 h-10 text-white opacity-80" />
                 </div>
               </div>
@@ -237,7 +237,7 @@ function Gallery() {
           role="dialog"
           aria-modal="true"
           onClick={() => setActiveItem(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/20 backdrop-blur-md transition-all duration-300 animate-in fade-in"
         >
           {/* Top Bar / Close Button */}
           <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-3">
