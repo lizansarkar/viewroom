@@ -2,32 +2,36 @@ import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
 // =========================================================
-// 4 HIGH-END ULTRA-CLEAN 360 PRODUCTS (Fast & Lightweight)
+// 6 DISTINCT HIGH-END 3D PRODUCTS (2 ROWS X 3 COLUMNS)
 // =========================================================
-const PRODUCTS = [
+const GRID_PRODUCTS = [
   {
     id: "watch",
     name: "Aero Chronograph 360",
-    category: "Luxury Timepiece",
   },
   {
     id: "headset",
     name: "Spatial Vision VR Lens",
-    category: "Spatial Hardware",
+  },
+  {
+    id: "drone",
+    name: "Apex Aerial 4K Drone",
   },
   {
     id: "chair",
     name: "Eames Silhouette Lounge",
-    category: "Modern Furniture",
+  },
+  {
+    id: "phone",
+    name: "Horizon Ultra Smartphone",
   },
   {
     id: "camera",
     name: "Lumix Retro Rangefinder",
-    category: "Optical Camera",
   },
 ];
 
-// Single reusable shadow texture (Creates zero memory overhead)
+// Single reusable shadow texture (Zero memory leak, fast load)
 let cachedShadowTexture = null;
 function getSharedShadowTexture() {
   if (cachedShadowTexture) return cachedShadowTexture;
@@ -36,8 +40,9 @@ function getSharedShadowTexture() {
   canvas.height = 64;
   const ctx = canvas.getContext("2d");
   const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grad.addColorStop(0, "rgba(0, 0, 0, 0.4)");
-  grad.addColorStop(0.4, "rgba(0, 0, 0, 0.15)");
+  grad.addColorStop(0, "rgba(0, 0, 0, 0.45)");
+  grad.addColorStop(0.35, "rgba(0, 0, 0, 0.2)");
+  grad.addColorStop(0.7, "rgba(0, 0, 0, 0.05)");
   grad.addColorStop(1, "rgba(0, 0, 0, 0)");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 64, 64);
@@ -45,75 +50,79 @@ function getSharedShadowTexture() {
   return cachedShadowTexture;
 }
 
-// Lightweight realistic 3D models with physical materials
+// Procedural realistic 3D model builder for all 6 products
 function buildProductModel(id) {
   const group = new THREE.Group();
 
   if (id === "watch") {
-    // Luxury Chronograph Watch
+    // 1. Luxury Chronograph Timepiece
     const steel = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
-    const gold = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.15 });
-    const dialMat = new THREE.MeshStandardMaterial({ color: 0x09090b, roughness: 0.25 });
-    const strapMat = new THREE.MeshStandardMaterial({ color: 0x542310, roughness: 0.7 });
+    const gold = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.96, roughness: 0.15 });
+    const dial = new THREE.MeshStandardMaterial({ color: 0x09090b, roughness: 0.25 });
+    const strap = new THREE.MeshStandardMaterial({ color: 0x542310, roughness: 0.65 });
 
-    const caseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 0.38, 48), steel);
+    const caseMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.65, 1.65, 0.4, 48), steel);
     caseMesh.rotation.x = Math.PI / 2;
     group.add(caseMesh);
 
-    const bezel = new THREE.Mesh(new THREE.TorusGeometry(1.58, 0.09, 16, 48), gold);
-    bezel.position.z = 0.2;
+    const bezel = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.09, 16, 48), gold);
+    bezel.position.z = 0.21;
     group.add(bezel);
 
     const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.28, 16), gold);
-    crown.position.set(1.75, 0, 0);
+    crown.position.set(1.8, 0, 0);
     crown.rotation.z = Math.PI / 2;
     group.add(crown);
 
-    const dial = new THREE.Mesh(new THREE.CylinderGeometry(1.48, 1.48, 0.04, 36), dialMat);
-    dial.rotation.x = Math.PI / 2;
-    dial.position.z = 0.19;
-    group.add(dial);
+    const dialMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.04, 36), dial);
+    dialMesh.rotation.x = Math.PI / 2;
+    dialMesh.position.z = 0.2;
+    group.add(dialMesh);
+
+    // Sub-dial accents
+    [[-0.45, 0.2], [0.45, 0.2], [0, -0.45]].forEach(([x, y]) => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 12, 24), gold);
+      ring.position.set(x, y, 0.22);
+      group.add(ring);
+    });
 
     // Hands
     const hourHand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.8, 0.03), gold);
-    hourHand.position.set(0, 0.25, 0.23);
+    hourHand.position.set(0, 0.25, 0.24);
     group.add(hourHand);
 
     const minHand = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.2, 0.03), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-    minHand.position.set(0.2, 0.35, 0.24);
+    minHand.position.set(0.2, 0.35, 0.25);
     minHand.rotation.z = -Math.PI / 4;
     group.add(minHand);
 
-    // Straps
-    const s1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.5, 0.14), strapMat);
-    s1.position.set(0, 2.6, -0.04);
-    const s2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.5, 0.14), strapMat);
-    s2.position.set(0, -2.6, -0.04);
+    // Stitched leather straps
+    const s1 = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.6, 0.15), strap);
+    s1.position.set(0, 2.7, -0.04);
+    const s2 = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.6, 0.15), strap);
+    s2.position.set(0, -2.7, -0.04);
     group.add(s1);
     group.add(s2);
 
   } else if (id === "headset") {
-    // Spatial VR Headset (Replaced T-shirt & AirPods)
+    // 2. Spatial Vision VR Lens (Replaces AirPods)
     const glassVisor = new THREE.MeshPhysicalMaterial({
       color: 0x020617,
-      metalness: 0.9,
-      roughness: 0.05,
+      metalness: 0.92,
+      roughness: 0.04,
       clearcoat: 1.0,
       clearcoatRoughness: 0.05,
     });
-    const frame = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.85, roughness: 0.2 });
-    const fabricStrap = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.85 });
+    const frame = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.88, roughness: 0.2 });
+    const fabric = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.85 });
 
-    // Curved Front Glass Visor
-    const visor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 1.4, 0.8), glassVisor);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(2.8, 1.4, 0.85), glassVisor);
     visor.position.set(0, 0, 0.4);
     group.add(visor);
 
-    // Aluminum Chassis Body
-    const body = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.48, 1.1), frame);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.48, 1.15), frame);
     group.add(body);
 
-    // Audio Side Pods
     [-1.55, 1.55].forEach((x) => {
       const pod = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.4, 16), frame);
       pod.rotation.z = Math.PI / 2;
@@ -121,13 +130,47 @@ function buildProductModel(id) {
       group.add(pod);
     });
 
-    // Flexible Knitted Loop Headband
-    const strap = new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.22, 16, 48), fabricStrap);
-    strap.position.set(0, 0, -0.9);
+    const strap = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.22, 16, 48), fabric);
+    strap.position.set(0, 0, -0.95);
     group.add(strap);
 
+  } else if (id === "drone") {
+    // 3. Apex Aerial 4K Drone (Replaces Black T-Shirt)
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.6, roughness: 0.3 });
+    const rotorMat = new THREE.MeshStandardMaterial({ color: 0x0ea5e9, roughness: 0.2 });
+    const armMat = new THREE.MeshStandardMaterial({ color: 0x3f3f46, metalness: 0.8, roughness: 0.3 });
+
+    // Fuselage Central Body
+    const core = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2.2), bodyMat);
+    group.add(core);
+
+    // Front Optical Sensor Eye
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transmission: 0.8, roughness: 0.1 }));
+    eye.position.set(0, -0.1, 1.15);
+    group.add(eye);
+
+    // 4 Diagonal Rotor Arms & Propeller Discs
+    [[-1.4, 1.3], [1.4, 1.3], [-1.4, -1.3], [1.4, -1.3]].forEach(([x, z]) => {
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.8, 12), armMat);
+      arm.rotation.z = Math.PI / 2;
+      arm.rotation.y = Math.atan2(z, x);
+      arm.position.set(x / 2, 0.1, z / 2);
+      group.add(arm);
+
+      // Motor Cap
+      const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.28, 16), armMat);
+      motor.position.set(x, 0.22, z);
+      group.add(motor);
+
+      // Spin Propeller Blades
+      const prop = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.02, 0.15), rotorMat);
+      prop.position.set(x, 0.38, z);
+      prop.rotation.y = Math.PI / 4;
+      group.add(prop);
+    });
+
   } else if (id === "chair") {
-    // Eames Silhouette Lounge Chair
+    // 4. Eames Silhouette Lounge Chair
     const walnut = new THREE.MeshStandardMaterial({ color: 0x542310, roughness: 0.35, metalness: 0.2 });
     const leather = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.65 });
     const chrome = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
@@ -161,11 +204,35 @@ function buildProductModel(id) {
       group.add(leg);
     }
 
+  } else if (id === "phone") {
+    // 5. Horizon Ultra Smartphone
+    const aluminum = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.95, roughness: 0.2 });
+    const glassFront = new THREE.MeshPhysicalMaterial({ color: 0x020617, metalness: 0.9, roughness: 0.05, clearcoat: 1.0 });
+    const lensMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.95, roughness: 0.1 });
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.85, 3.7, 0.18), aluminum);
+    group.add(body);
+
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.75, 3.55), glassFront);
+    screen.position.z = 0.1;
+    group.add(screen);
+
+    const island = new THREE.Mesh(new THREE.BoxGeometry(0.78, 1.25, 0.12), aluminum);
+    island.position.set(-0.45, 1.08, -0.14);
+    group.add(island);
+
+    [-0.35, 0, 0.35].forEach((yOff) => {
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.08, 20), lensMat);
+      lens.rotation.x = Math.PI / 2;
+      lens.position.set(-0.45, 1.08 + yOff, -0.22);
+      group.add(lens);
+    });
+
   } else if (id === "camera") {
-    // Lumix Retro Rangefinder Camera
-    const silver = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.18 });
+    // 6. Lumix Retro Rangefinder Camera
+    const silver = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.92, roughness: 0.18 });
     const leatherGrip = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.75 });
-    const lensGlass = new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.75, roughness: 0.05 });
+    const lensGlass = new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.8, roughness: 0.05 });
 
     const lower = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.3, 1.1), leatherGrip);
     lower.position.y = -0.25;
@@ -195,7 +262,7 @@ function buildProductModel(id) {
   return group;
 }
 
-// Single Lightweight 360 Product Card
+// Single Clean 360 Product Card Component (Preserves original styling & design)
 function ProductCard({ product }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -227,7 +294,7 @@ function ProductCard({ product }) {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
 
-    // Lighting
+    // Direct & Ambient Studio Lighting
     scene.add(new THREE.AmbientLight(0xffffff, 1.2));
 
     const key = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -238,8 +305,8 @@ function ProductCard({ product }) {
     fill.position.set(-5, -2, 4);
     scene.add(fill);
 
-    // Soft Shadow
-    const shadowGeo = new THREE.PlaneGeometry(3.5, 3.5);
+    // Ground Contact Shadow
+    const shadowGeo = new THREE.PlaneGeometry(3.6, 3.6);
     const shadowMat = new THREE.MeshBasicMaterial({
       map: getSharedShadowTexture(),
       transparent: true,
@@ -250,11 +317,11 @@ function ProductCard({ product }) {
     shadow.position.y = -1.55;
     scene.add(shadow);
 
-    // Product Model
+    // 3D Model Group
     const modelGroup = buildProductModel(product.id);
     scene.add(modelGroup);
 
-    // Animation Loop
+    // Auto-Spin Animation Loop
     let animId;
     const render = () => {
       animId = requestAnimationFrame(render);
@@ -265,7 +332,7 @@ function ProductCard({ product }) {
     };
     render();
 
-    // Interaction handlers (Drag & Click-to-Pause)
+    // Interaction Handlers (Drag to Rotate & Click anywhere to Pause)
     let isDragging = false;
     let hasMoved = false;
     let prevX = 0;
@@ -299,7 +366,7 @@ function ProductCard({ product }) {
 
     const onPointerUp = () => {
       if (isDragging && !hasMoved) {
-        // Simple click toggles pause / play
+        // Click without dragging toggles spin state
         setIsSpinning((prev) => !prev);
       }
       isDragging = false;
@@ -338,52 +405,51 @@ function ProductCard({ product }) {
   }, [product.id]);
 
   return (
-    <div className="group flex flex-col items-center bg-base-100 border border-base-content/10 rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:border-base-content/25 select-none">
+    <div className="group relative flex flex-col bg-base-100/80 backdrop-blur-xl border border-[var(--app-text-secondary)]/15 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 select-none">
       
-      {/* 3D WebGL Viewport */}
+      {/* 3D WebGL Viewport Container (Unobstructed 3D Product Display) */}
       <div
         ref={containerRef}
-        className="w-full h-64 sm:h-72 cursor-grab active:cursor-grabbing relative flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[250px] sm:h-[280px] bg-transparent cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
       >
-        <canvas ref={canvasRef} className="w-full h-full block" />
+        <canvas ref={canvasRef} className="w-full h-full block bg-transparent relative z-10" />
       </div>
 
-      {/* Clean Title Only */}
-      <div className="w-full text-center pt-3 border-t border-base-content/10">
-        <h3 className="font-heading text-sm sm:text-base font-extrabold uppercase tracking-tight text-base-content">
+      {/* Card Details Footer: Only the Product Name Title */}
+      <div className="p-5 flex flex-col items-center justify-center border-t border-[var(--app-text-secondary)]/15 bg-base-200/40">
+        <h3 className="text-base font-extrabold uppercase tracking-tight text-[var(--app-text-primary)] text-center leading-tight">
           {product.name}
         </h3>
-        <p className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider mt-0.5">
-          {product.category}
-        </p>
       </div>
 
     </div>
   );
 }
 
-// Main Grid Section
+// Main 2 Rows x 3 Columns (6 Products) Grid Component
 export default function Product360Grid() {
   return (
-    <section className="w-full bg-base-200/50 py-12 sm:py-16 px-4 sm:px-8 select-none">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-14 sm:py-20 px-4 sm:px-8 transition-colors duration-250 select-none">
+      <div className="max-w-7xl mx-auto flex flex-col gap-10">
         
-        {/* Simple Section Header */}
-        <div className="text-center space-y-2">
-          <span className="text-[11px] font-bold tracking-[0.2em] text-base-content/50 uppercase block">
-            INTERACTIVE 360° SHOWCASE
-          </span>
-          <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-base-content">
-            3D VIRTUAL PRODUCTS
-          </h2>
-          <p className="text-xs sm:text-sm text-base-content/60 max-w-md mx-auto">
-            Drag to rotate in full 360° or click to pause auto-spin.
+        {/* Section Header (Original Style & Typography) */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-[var(--app-text-secondary)]/15 pb-6">
+          <div>
+            <span className="font-heading text-xs font-extrabold tracking-[0.2em] text-[var(--app-text-secondary)] uppercase block mb-2">
+              INTERACTIVE CATALOG
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none text-[var(--app-text-primary)]">
+              EXPLORE 3D PRODUCTS
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm font-medium text-[var(--app-text-secondary)] max-w-md">
+            Spin, inspect, and experience 6 realistic everyday products in interactive 3D format across all devices.
           </p>
         </div>
 
-        {/* 4 Clean Responsive Cards (2x2 Grid) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PRODUCTS.map((prod) => (
+        {/* 2 ROWS X 3 COLUMNS RESPONSIVE GRID (3 + 3 = 6 PRODUCTS TOTAL) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {GRID_PRODUCTS.map((prod) => (
             <ProductCard key={prod.id} product={prod} />
           ))}
         </div>
