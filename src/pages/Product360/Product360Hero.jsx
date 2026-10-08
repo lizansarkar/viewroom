@@ -13,78 +13,72 @@ import {
 import Button from "../../components/reuseable/Button";
 
 // =========================================================
-// LUXURY TIMEPIECE FINISH & MATERIAL PRESETS
+// STUDIO DISPLAY FINISH & COLORWAY PRESETS
 // =========================================================
-const WATCH_PRESETS = [
+const MONITOR_FINISHES = [
   {
-    id: "steel",
-    name: "Classic Steel & Leather",
+    id: "silver",
+    name: "Silver Aluminium",
     tag: "SIGNATURE",
-    caseColor: 0xe2e8f0,
-    strapColor: 0x451a03,
-    metalness: 0.92,
-    roughness: 0.2,
-    preview: "linear-gradient(135deg, #f8fafc, #64748b)",
-    desc: "Polished surgical-grade 316L stainless steel case with hand-stitched saddle leather strap.",
+    color: 0xffffff,
+    metalness: 0.65,
+    roughness: 0.35,
+    preview: "linear-gradient(135deg, #f8fafc, #94a3b8)",
+    desc: "Pure anodized silver aluminum chassis with anti-reflective nano-texture front glass.",
   },
   {
-    id: "gold",
-    name: "18K Heritage Gold",
+    id: "spacegray",
+    name: "Space Gray",
+    tag: "PRO",
+    color: 0x8a929e,
+    metalness: 0.8,
+    roughness: 0.3,
+    preview: "linear-gradient(135deg, #64748b, #334155)",
+    desc: "Deep space gray matte anodized finish engineered for professional creator studios.",
+  },
+  {
+    id: "starlight",
+    name: "Starlight Gold",
     tag: "LUXURY",
-    caseColor: 0xf59e0b,
-    strapColor: 0x1c1917,
-    metalness: 0.96,
-    roughness: 0.15,
-    preview: "linear-gradient(135deg, #fbbf24, #b45309)",
-    desc: "18-karat warm yellow gold finish paired with deep obsidian black leather.",
+    color: 0xfef08a,
+    metalness: 0.75,
+    roughness: 0.28,
+    preview: "linear-gradient(135deg, #fef08a, #d97706)",
+    desc: "Subtle warm champagne metallic tone with luminous specular bevel reflections.",
+  },
+  {
+    id: "midnight",
+    name: "Midnight Blue",
+    tag: "CREATIVE",
+    color: 0x93c5fd,
+    metalness: 0.75,
+    roughness: 0.3,
+    preview: "linear-gradient(135deg, #93c5fd, #1e3a8a)",
+    desc: "Deep atmospheric oceanic indigo anodized casing for modern architectural desks.",
   },
   {
     id: "rose",
-    name: "Rose Gold Atelier",
-    tag: "ELEGANT",
-    caseColor: 0xfb7185,
-    strapColor: 0x292524,
-    metalness: 0.9,
-    roughness: 0.22,
-    preview: "linear-gradient(135deg, #fda4af, #be123c)",
-    desc: "Refined rose gold bezel and lugs accented with dark saddle leather strap.",
+    name: "Blush Rose",
+    tag: "STUDIO",
+    color: 0xfecdd3,
+    metalness: 0.7,
+    roughness: 0.35,
+    preview: "linear-gradient(135deg, #fecdd3, #e11d48)",
+    desc: "Contemporary rose gold brushed finish with precision laser-cut stand geometry.",
   },
   {
-    id: "stealth",
-    name: "Tactical Matte Black",
-    tag: "TACTICAL",
-    caseColor: 0x18181b,
-    strapColor: 0x09090b,
-    metalness: 0.4,
-    roughness: 0.65,
-    preview: "linear-gradient(135deg, #3f3f46, #09090b)",
-    desc: "DLC diamond-like carbon matte coating with textured composite tactical strap.",
-  },
-  {
-    id: "emerald",
-    name: "Royal Emerald Edition",
-    tag: "LIMITED",
-    caseColor: 0xf59e0b,
-    strapColor: 0x064e3b,
-    metalness: 0.95,
-    roughness: 0.18,
-    preview: "linear-gradient(135deg, #10b981, #064e3b)",
-    desc: "Exclusive emerald green strap paired with gleaming 18K yellow gold case.",
-  },
-  {
-    id: "titanium",
-    name: "Titanium Slate",
-    tag: "MODERN",
-    caseColor: 0x94a3b8,
-    strapColor: 0x1e3a8a,
-    metalness: 0.88,
-    roughness: 0.3,
-    preview: "linear-gradient(135deg, #3b82f6, #1e3a8a)",
-    desc: "Aerospace-grade satin brushed titanium with deep navy ocean strap.",
+    id: "sage",
+    name: "Forest Sage",
+    tag: "EDITION",
+    color: 0xa7f3d0,
+    metalness: 0.65,
+    roughness: 0.4,
+    preview: "linear-gradient(135deg, #a7f3d0, #047857)",
+    desc: "Nordic serene sage metallic hue designed for clean minimalist setups.",
   },
 ];
 
-// Single Reusable Shadow Texture
+// Single Reusable Ground Shadow
 let cachedHeroShadowTexture = null;
 function getHeroShadowTexture() {
   if (cachedHeroShadowTexture) return cachedHeroShadowTexture;
@@ -94,8 +88,8 @@ function getHeroShadowTexture() {
   const ctx = canvas.getContext("2d");
   const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
   grad.addColorStop(0, "rgba(0, 0, 0, 0.5)");
-  grad.addColorStop(0.35, "rgba(0, 0, 0, 0.25)");
-  grad.addColorStop(0.7, "rgba(0, 0, 0, 0.06)");
+  grad.addColorStop(0.35, "rgba(0, 0, 0, 0.22)");
+  grad.addColorStop(0.7, "rgba(0, 0, 0, 0.05)");
   grad.addColorStop(1, "rgba(0, 0, 0, 0)");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 128, 128);
@@ -104,7 +98,7 @@ function getHeroShadowTexture() {
 }
 
 export default function Product360Hero() {
-  const [selectedPreset, setSelectedPreset] = useState(WATCH_PRESETS[0]);
+  const [selectedFinish, setSelectedFinish] = useState(MONITOR_FINISHES[0]);
   const [loading, setLoading] = useState(true);
   const [isAutoRotate, setIsAutoRotate] = useState(true);
   const [toastMessage, setToastMessage] = useState(null);
@@ -113,8 +107,7 @@ export default function Product360Hero() {
   const canvasRef = useRef(null);
   const autoRotateRef = useRef(isAutoRotate);
   const modelGroupRef = useRef(null);
-  const caseMaterialRef = useRef(null);
-  const strapMaterialRef = useRef(null);
+  const monitorMaterialRef = useRef(null);
 
   useEffect(() => {
     autoRotateRef.current = isAutoRotate;
@@ -125,21 +118,17 @@ export default function Product360Hero() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Update materials dynamically when preset changes
+  // Update material dynamically when finish preset changes
   useEffect(() => {
-    if (caseMaterialRef.current) {
-      caseMaterialRef.current.color.setHex(selectedPreset.caseColor);
-      caseMaterialRef.current.metalness = selectedPreset.metalness;
-      caseMaterialRef.current.roughness = selectedPreset.roughness;
-      caseMaterialRef.current.needsUpdate = true;
+    if (monitorMaterialRef.current) {
+      monitorMaterialRef.current.color.setHex(selectedFinish.color);
+      monitorMaterialRef.current.metalness = selectedFinish.metalness;
+      monitorMaterialRef.current.roughness = selectedFinish.roughness;
+      monitorMaterialRef.current.needsUpdate = true;
     }
-    if (strapMaterialRef.current) {
-      strapMaterialRef.current.color.setHex(selectedPreset.strapColor);
-      strapMaterialRef.current.needsUpdate = true;
-    }
-  }, [selectedPreset]);
+  }, [selectedFinish]);
 
-  // Three.js Scene Setup & Real .glb Model Loading
+  // Three.js Scene Setup & Real .glb Monitor Loading
   useEffect(() => {
     if (!containerRef.current || !canvasRef.current) return;
 
@@ -147,8 +136,8 @@ export default function Product360Hero() {
     const height = containerRef.current.clientHeight;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
-    camera.position.set(0, 0.3, 6.4);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 50);
+    camera.position.set(0, 0.2, 6.8);
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
@@ -163,22 +152,22 @@ export default function Product360Hero() {
     renderer.toneMappingExposure = 1.25;
 
     // High Dynamic Studio Lighting
-    scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+    scene.add(new THREE.AmbientLight(0xffffff, 2.2));
 
-    const keyLight = new THREE.DirectionalLight(0xfff8e7, 3.0);
-    keyLight.position.set(5, 8, 6);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+    keyLight.position.set(6, 8, 6);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x93c5fd, 1.8);
-    fillLight.position.set(-6, -2, 4);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    fillLight.position.set(-6, -2, 5);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xfef08a, 2.0);
-    rimLight.position.set(0, -5, -4);
+    const rimLight = new THREE.DirectionalLight(0x93c5fd, 1.4);
+    rimLight.position.set(0, 5, -5);
     scene.add(rimLight);
 
     // Ground Contact Shadow
-    const shadowGeo = new THREE.PlaneGeometry(4.5, 4.5);
+    const shadowGeo = new THREE.PlaneGeometry(4.8, 4.8);
     const shadowMat = new THREE.MeshBasicMaterial({
       map: getHeroShadowTexture(),
       transparent: true,
@@ -186,64 +175,32 @@ export default function Product360Hero() {
     });
     const shadow = new THREE.Mesh(shadowGeo, shadowMat);
     shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = -1.65;
+    shadow.position.y = -1.55;
     scene.add(shadow);
 
     // Model Container
     const modelGroup = new THREE.Group();
+    // Default angle facing the front screen towards the user (+Z)
+    modelGroup.rotation.y = -Math.PI / 2;
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
 
-    // Dedicated Interactive Materials
-    const caseMat = new THREE.MeshStandardMaterial({
-      color: selectedPreset.caseColor,
-      metalness: selectedPreset.metalness,
-      roughness: selectedPreset.roughness,
-    });
-    const strapMat = new THREE.MeshStandardMaterial({
-      color: selectedPreset.strapColor,
-      metalness: 0.1,
-      roughness: 0.7,
-    });
-    const handsMat = new THREE.MeshStandardMaterial({
-      color: 0xf59e0b,
-      metalness: 0.95,
-      roughness: 0.15,
-    });
-
-    caseMaterialRef.current = caseMat;
-    strapMaterialRef.current = strapMat;
-
-    let secHand = null;
-    let minHand = null;
-    let hrHand = null;
-
-    // Load Real .glb Watch Model
+    // Load Real .glb Monitor Model
     let isDisposed = false;
     const loader = new GLTFLoader();
     loader.load(
-      "/models/watch.glb",
+      "/models/monitor.glb",
       (gltf) => {
         if (isDisposed) return;
         const root = gltf.scene;
 
         root.traverse((child) => {
-          if (child.isMesh) {
-            const name = (child.name || "").toLowerCase();
-            if (name.includes("strap")) {
-              child.material = strapMat;
-            } else if (name.includes("second")) {
-              secHand = child;
-              child.material = handsMat;
-            } else if (name.includes("minute")) {
-              minHand = child;
-              child.material = handsMat;
-            } else if (name.includes("hour")) {
-              hrHand = child;
-              child.material = handsMat;
-            } else {
-              child.material = caseMat;
-            }
+          if (child.isMesh && child.material) {
+            child.material.metalness = selectedFinish.metalness;
+            child.material.roughness = selectedFinish.roughness;
+            child.material.color.setHex(selectedFinish.color);
+            child.material.needsUpdate = true;
+            monitorMaterialRef.current = child.material;
           }
         });
 
@@ -252,7 +209,7 @@ export default function Product360Hero() {
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
-        const targetSize = 3.0;
+        const targetSize = 3.6;
         const scale = maxDim > 0 ? targetSize / maxDim : 1;
 
         root.scale.setScalar(scale);
@@ -265,30 +222,18 @@ export default function Product360Hero() {
       },
       undefined,
       (err) => {
-        console.error("Failed to load hero watch model:", err);
+        console.error("Failed to load hero monitor model:", err);
         setLoading(false);
       }
     );
 
-    // Animation Loop (Real-time clock sweep + auto-rotation)
+    // Animation Loop
     let animId;
     const render = () => {
       animId = requestAnimationFrame(render);
-
-      // Real-time hands tick
-      const now = new Date();
-      const sec = now.getSeconds() + now.getMilliseconds() / 1000;
-      const min = now.getMinutes() + sec / 60;
-      const hr = (now.getHours() % 12) + min / 60;
-
-      if (secHand) secHand.rotation.z = -(sec / 60) * Math.PI * 2;
-      if (minHand) minHand.rotation.z = -(min / 60) * Math.PI * 2;
-      if (hrHand) hrHand.rotation.z = -(hr / 12) * Math.PI * 2;
-
       if (autoRotateRef.current) {
         modelGroup.rotation.y += 0.005;
       }
-
       renderer.render(scene, camera);
     };
     render();
@@ -359,16 +304,16 @@ export default function Product360Hero() {
   // Actions
   const handleReset = () => {
     if (modelGroupRef.current) {
-      modelGroupRef.current.rotation.set(0, 0, 0);
+      modelGroupRef.current.rotation.set(0, -Math.PI / 2, 0);
       setIsAutoRotate(true);
-      showToast("Model position reset.");
+      showToast("Front view restored.");
     }
   };
 
   const handleCapture = () => {
     if (!canvasRef.current) return;
     const link = document.createElement("a");
-    link.download = `viewroom-${selectedPreset.id}-watch-360.png`;
+    link.download = `viewroom-${selectedFinish.id}-studio-display-360.png`;
     link.href = canvasRef.current.toDataURL("image/png");
     link.click();
     showToast("360° Snapshot downloaded!");
@@ -388,7 +333,7 @@ export default function Product360Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* 3D WATCH VIEWPORT (Columns 1-7) */}
+          {/* 3D MONITOR VIEWPORT (Columns 1-7) */}
           <div className="lg:col-span-7 flex flex-col items-center">
             <div
               ref={containerRef}
@@ -398,7 +343,7 @@ export default function Product360Hero() {
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-base-100/60 backdrop-blur-sm gap-3">
                   <div className="w-10 h-10 rounded-full border-2 border-[var(--app-text-secondary)]/30 border-t-[var(--app-text-primary)] animate-spin" />
                   <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                    Loading 3D Model...
+                    Loading 3D Studio Display...
                   </span>
                 </div>
               )}
@@ -407,7 +352,7 @@ export default function Product360Hero() {
 
               {/* Viewport Floating Action Bar */}
               <div className="absolute bottom-5 inset-x-5 z-20 flex items-center justify-between pointer-events-none">
-                <span className="text-[11px] font-black uppercase tracking-wider text-[var(--app-text-secondary)] bg-base-100/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-[var(--app-text-secondary)]/20 shadow-sm pointer-events-auto">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[var(--app-text-secondary)] bg-base-100/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[var(--app-text-secondary)]/20 shadow-sm pointer-events-auto">
                   Drag 360° to rotate
                 </span>
 
@@ -428,7 +373,7 @@ export default function Product360Hero() {
                   <button
                     type="button"
                     onClick={handleReset}
-                    title="Reset Orientation"
+                    title="Reset Front View"
                     className="w-8 h-8 rounded-full flex items-center justify-center text-sm text-[var(--app-text-primary)] hover:bg-[var(--app-text-secondary)]/15 transition-colors cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faArrowRotateLeft} />
@@ -447,46 +392,58 @@ export default function Product360Hero() {
             </div>
           </div>
 
-          {/* CUSTOMIZATION & DETAILS DOCK (Columns 8-12) */}
+          {/* MONITOR CUSTOMIZATION & DETAILS DOCK (Columns 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-black tracking-[0.2em] text-[var(--app-text-secondary)] uppercase">
-                  INTERACTIVE 360° ATELIER
+                  PRO STUDIO HARDWARE
                 </span>
                 <span className="text-[10px] font-extrabold uppercase bg-amber-500/20 text-amber-500 border border-amber-500/30 px-2 py-0.5 rounded-full">
-                  {selectedPreset.tag}
+                  {selectedFinish.tag}
                 </span>
               </div>
               <h1 className="font-heading text-3xl sm:text-4xl font-black uppercase tracking-tight text-[var(--app-text-primary)] leading-tight">
-                AERO CHRONOGRAPH 360
+                STUDIO DISPLAY 5K 360°
               </h1>
               <p className="text-xs sm:text-sm font-medium text-[var(--app-text-secondary)] mt-3 leading-relaxed">
-                {selectedPreset.desc}
+                {selectedFinish.desc}
               </p>
+            </div>
+
+            {/* Quick Specs Pills */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="p-2.5 rounded-xl bg-base-100/60 border border-[var(--app-text-secondary)]/15 flex flex-col">
+                <span className="text-[10px] font-bold text-[var(--app-text-secondary)] uppercase">Display Panel</span>
+                <span className="text-xs font-extrabold text-[var(--app-text-primary)]">27" 5K Retina (5120×2880)</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-base-100/60 border border-[var(--app-text-secondary)]/15 flex flex-col">
+                <span className="text-[10px] font-bold text-[var(--app-text-secondary)] uppercase">Color Profile</span>
+                <span className="text-xs font-extrabold text-[var(--app-text-primary)]">600 Nits • P3 Wide Color</span>
+              </div>
             </div>
 
             {/* Finish & Material Selection Swatches */}
             <div className="flex flex-col gap-3 pt-2 border-t border-[var(--app-text-secondary)]/15">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-secondary)]">
-                  SELECT FINISH & STRAP
+                  SELECT ALUMINIUM FINISH
                 </span>
                 <span className="text-xs font-black uppercase text-[var(--app-text-primary)]">
-                  {selectedPreset.name}
+                  {selectedFinish.name}
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                {WATCH_PRESETS.map((preset) => {
-                  const isSelected = selectedPreset.id === preset.id;
+                {MONITOR_FINISHES.map((finish) => {
+                  const isSelected = selectedFinish.id === finish.id;
                   return (
                     <button
                       type="button"
-                      key={preset.id}
+                      key={finish.id}
                       onClick={() => {
-                        setSelectedPreset(preset);
-                        showToast(`Applied ${preset.name}`);
+                        setSelectedFinish(finish);
+                        showToast(`Applied ${finish.name}`);
                       }}
                       className={`relative flex flex-col items-center justify-center p-3 rounded-2xl border transition-all cursor-pointer group bg-base-100/60 ${
                         isSelected
@@ -496,14 +453,14 @@ export default function Product360Hero() {
                     >
                       <div
                         className="w-10 h-10 rounded-full mb-2 border border-white/20 shadow-md transition-transform group-hover:scale-105 flex items-center justify-center"
-                        style={{ background: preset.preview }}
+                        style={{ background: finish.preview }}
                       >
                         {isSelected && (
                           <FontAwesomeIcon icon={faCheck} className="text-xs text-white drop-shadow-md" />
                         )}
                       </div>
-                      <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)] line-clamp-2">
-                        {preset.name}
+                      <span className="text-[11px] font-extrabold uppercase tracking-tight text-center leading-tight text-[var(--app-text-primary)] line-clamp-1">
+                        {finish.name}
                       </span>
                     </button>
                   );
@@ -512,7 +469,7 @@ export default function Product360Hero() {
             </div>
 
             {/* CTA Action Button */}
-            <div className="pt-4 border-t border-[var(--app-text-secondary)]/15 flex flex-col sm:flex-row items-center gap-3">
+            <div className="pt-2 border-t border-[var(--app-text-secondary)]/15 flex flex-col sm:flex-row items-center gap-3">
               <Button
                 variant="primary"
                 onClick={() => {
