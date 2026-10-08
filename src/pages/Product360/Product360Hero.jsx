@@ -469,10 +469,7 @@ export default function Product360Hero() {
 
           {/* MONITOR CUSTOMIZATION & DETAILS DOCK (Columns 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            <div>
-              <span className="text-xs font-black tracking-[0.2em] text-[var(--app-text-secondary)] uppercase block mb-1">
-                PRO STUDIO HARDWARE
-              </span>
+            <div className="flex flex-col gap-2">
               <h1 className="font-heading text-3xl sm:text-4xl font-black uppercase tracking-tight text-[var(--app-text-primary)] leading-tight">
                 STUDIO DISPLAY 5K 360°
               </h1>

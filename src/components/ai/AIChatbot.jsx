@@ -3,18 +3,72 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faXmark,
   faPaperPlane,
-  faRobot,
   faUser,
   faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
+import { ViewRoomLogoIcon } from "../reuseable/Logo";
 import { apiAskSpatialConcierge } from "../../services/api";
 import { trackEvent } from "../../services/analyticsService";
+
+// Dynamic cycling suggestions inside the input placeholder
+const INPUT_SUGGESTIONS = [
+  'Ask: "How do 360° Virtual Tours work?"',
+  'Ask: "Explain Matterport 3D Pro Scans"',
+  'Ask: "Can I customize 360° 3D Products?"',
+  'Ask: "Pricing & Photography Booking"',
+];
+
+// ViewRoom Logo Emblem with 3 Animated Sparkle Stars (Matches AI reference design)
+export function ViewRoomAIIcon({ className = "w-7 h-7", starClass = "" }) {
+  return (
+    <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
+      {/* Base ViewRoom 360° Logo Emblem */}
+      <ViewRoomLogoIcon className="w-full h-full text-current" />
+
+      {/* 3 Sparkle Stars attached to top-right of the logo */}
+      <svg
+        viewBox="0 0 38 38"
+        fill="currentColor"
+        className={`absolute -top-1.5 -right-2.5 w-4.5 h-4.5 pointer-events-none drop-shadow-sm text-current ${starClass}`}
+      >
+        {/* Top Medium Star */}
+        <path
+          d="M13 2 C13 5.5 10.5 8 7 8 C10.5 8 13 10.5 13 14 C13 10.5 15.5 8 19 8 C15.5 8 13 5.5 13 2 Z"
+          className="animate-pulse"
+          style={{ animationDuration: "1.4s" }}
+        />
+        {/* Center / Bottom Big Star */}
+        <path
+          d="M21 12 C21 18 15 23 9 23 C15 23 21 28 21 34 C21 28 27 23 33 23 C27 23 21 18 21 12 Z"
+          className="animate-pulse"
+          style={{ animationDuration: "2s", animationDelay: "0.3s" }}
+        />
+        {/* Right Small Star */}
+        <path
+          d="M30 6 C30 8.5 28 10.5 25.5 10.5 C28 10.5 30 12.5 30 15 C30 12.5 32 10.5 34.5 10.5 C32 10.5 30 8.5 30 6 Z"
+          className="animate-pulse"
+          style={{ animationDuration: "1.7s", animationDelay: "0.6s" }}
+        />
+      </svg>
+    </div>
+  );
+}
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
+
+  // Initial default welcome introduction from ViewRoom AI
+  const [messages, setMessages] = useState([
+    {
+      id: "intro-msg",
+      sender: "ai",
+      text: "Hello! I am your ViewRoom AI Spatial Concierge. I can guide you through our 360° virtual tours, Matterport 3D digital twins, interactive 3D products, and booking inquiries. How can I help you today?",
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    },
+  ]);
 
   const messagesEndRef = useRef(null);
 
@@ -27,6 +81,15 @@ export default function AIChatbot() {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  // Smoothly cycle through the 4 input placeholder suggestions every 3.5s
+  useEffect(() => {
+    if (!isOpen) return;
+    const interval = setInterval(() => {
+      setSuggestionIndex((prev) => (prev + 1) % INPUT_SUGGESTIONS.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
   const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
@@ -98,23 +161,22 @@ export default function AIChatbot() {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end pointer-events-auto">
-      {/* Black & White Clean Website Theme Chat Window (Fully Responsive) */}
+      {/* Clean Website Theme Chat Window (Fully Responsive) */}
       {isOpen && (
         <div className="mb-3.5 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[78vh] rounded-2xl bg-base-100 border border-[var(--app-border)]/40 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform scale-100 origin-bottom-right">
           
-          {/* Header Bar - Pure Website Color System */}
+          {/* Header Bar - ViewRoom AI Branding */}
           <div className="px-4 py-3.5 bg-base-200 border-b border-[var(--app-border)]/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-base-content text-base-100 flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
-                <FontAwesomeIcon icon={faRobot} />
+              <div className="w-8 h-8 rounded-full bg-base-content text-base-100 flex items-center justify-center shadow-sm flex-shrink-0">
+                <ViewRoomAIIcon className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[var(--app-text-primary)] flex items-center gap-2">
-                  SPATIAL AI ASSISTANT
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h3 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[var(--app-text-primary)]">
+                  VIEWROOM SPATIAL AI
                 </h3>
                 <p className="text-[10px] text-[var(--app-text-secondary)] font-medium">
-                  Google Gemini 1.5 & ViewRoom AI
+                  360° Virtual Concierge • Gemini AI
                 </p>
               </div>
             </div>
@@ -129,20 +191,6 @@ export default function AIChatbot() {
 
           {/* Messages Body */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-base-100 ai-chat-scrollbar">
-            {messages.length === 0 && (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 my-auto">
-                <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center mb-3 text-[var(--app-text-primary)] text-sm shadow-sm">
-                  <FontAwesomeIcon icon={faRobot} />
-                </div>
-                <p className="text-xs font-bold text-[var(--app-text-primary)] uppercase tracking-wider">
-                  ViewRoom AI Concierge
-                </p>
-                <p className="text-[11px] text-[var(--app-text-secondary)] mt-1.5 max-w-[240px]">
-                  Ask anything to start chatting live with Google Gemini AI.
-                </p>
-              </div>
-            )}
-
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -155,7 +203,11 @@ export default function AIChatbot() {
                       : "bg-base-200 border border-[var(--app-border)]/40 text-[var(--app-text-primary)]"
                   }`}
                 >
-                  <FontAwesomeIcon icon={msg.sender === "user" ? faUser : faRobot} />
+                  {msg.sender === "user" ? (
+                    <FontAwesomeIcon icon={faUser} />
+                  ) : (
+                    <ViewRoomLogoIcon className="w-3.5 h-3.5" />
+                  )}
                 </div>
                 <div
                   className={`max-w-[82%] p-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
@@ -182,7 +234,7 @@ export default function AIChatbot() {
             {isLoading && (
               <div className="flex gap-2.5 items-center">
                 <div className="w-6 h-6 rounded-full bg-base-200 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] flex items-center justify-center text-[10px]">
-                  <FontAwesomeIcon icon={faRobot} />
+                  <ViewRoomLogoIcon className="w-3.5 h-3.5" />
                 </div>
                 <div className="bg-base-200/90 p-3 rounded-2xl rounded-tl-none border border-[var(--app-border)]/40 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--app-text-primary)] animate-bounce"></span>
@@ -194,17 +246,17 @@ export default function AIChatbot() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Clean Input Form (Matching Website Black & White Color Palette) */}
+          {/* Input Form with Dynamic Cycling Suggestion Placeholder */}
           <form
             onSubmit={handleSendMessage}
             className="p-3 bg-base-100 border-t border-[var(--app-border)]/30 flex items-center gap-2"
           >
             <input
               type="text"
-              placeholder="Ask about 360° spaces, dimensions..."
+              placeholder={INPUT_SUGGESTIONS[suggestionIndex]}
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              className="flex-1 bg-base-200/60 text-xs px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)] cursor-text transition-colors"
+              className="flex-1 bg-base-200/60 text-xs px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]/70 cursor-text transition-all duration-300"
             />
             <button
               type="submit"
@@ -218,20 +270,19 @@ export default function AIChatbot() {
         </div>
       )}
 
-      {/* Floating Toggle Button (Matching ViewRoom Minimalist Black/White Aesthetics) */}
+      {/* Floating Toggle Button with ViewRoom AI Logo Emblem and Animated Sparkle Stars (No Green Dot) */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className="group relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-base-content text-base-100 border border-[var(--app-border)]/50 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
         aria-label="Toggle AI Assistant"
       >
-        <FontAwesomeIcon
-          icon={isOpen ? faChevronDown : faRobot}
-          className="text-lg sm:text-xl transition-transform duration-300"
-        />
-        {!isOpen && (
-          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-base-100 flex items-center justify-center">
-            <span className="w-1 h-1 rounded-full bg-white animate-ping"></span>
-          </span>
+        {isOpen ? (
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className="text-lg sm:text-xl transition-transform duration-300"
+          />
+        ) : (
+          <ViewRoomAIIcon className="w-7 h-7 sm:w-8 sm:h-8" />
         )}
       </button>
     </div>
