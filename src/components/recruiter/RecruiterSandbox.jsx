@@ -11,25 +11,15 @@ import {
   faCrosshairs,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
-import { useAuth } from "../../context/AuthContext";
 import HotspotEditorModal from "../dashboard/HotspotEditorModal";
 
 export default function RecruiterSandbox() {
-  const { user, switchRole } = useAuth();
   const [activeModal, setActiveModal] = useState(null); // 'tech' | 'roi' | 'studio' | null
   const [fps, setFps] = useState(60);
   const [apiLatency, setApiLatency] = useState(24);
-  const [selectedRole, setSelectedRole] = useState(user?.role || "CLIENT");
   const [studioHotspots, setStudioHotspots] = useState([
     { id: "demo_1", title: "1ST FLOOR LOBBY", yaw: "25deg", pitch: "-20deg" },
   ]);
-
-  // Keep selectedRole synced if user changes externally
-  useEffect(() => {
-    if (user?.role) {
-      setSelectedRole(user.role);
-    }
-  }, [user?.role]);
 
   // ROI Calculator State
   const [monthlyVisitors, setMonthlyVisitors] = useState(25000);
@@ -55,149 +45,112 @@ export default function RecruiterSandbox() {
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Quick 1-Click Role Switcher Handler (Updates AuthContext globally)
-  const handleRoleSwitch = (role) => {
-    setSelectedRole(role);
-    if (switchRole) {
-      switchRole(role);
-    }
-  };
-
   // ROI Calculations
   const currentRevenue = monthlyVisitors * 0.02 * avgOrderValue * 12;
   const estimated3dRevenue = monthlyVisitors * 0.0268 * avgOrderValue * 12;
   const annualUplift = Math.round(estimated3dRevenue - currentRevenue);
   const returnSavings = Math.round(monthlyVisitors * 0.02 * avgOrderValue * 0.08 * 12);
 
-  const activeRoleName = user?.role || selectedRole;
-
   return (
     <>
-      {/* Top Fixed Recruiter Bar Banner matching sidebar style */}
-      <div className="w-full bg-base-100/95 backdrop-blur-md text-base-content border-b border-base-content/10 text-xs py-2 px-3 sm:px-5 select-none z-40 relative transition-colors duration-200 shadow-xs">
+      {/* Top Fixed Recruiter Bar Banner - Sleek Single Line Layout */}
+      <div className="w-full bg-base-100/95 backdrop-blur-md text-base-content border-b border-base-content/10 text-xs py-1.5 px-3 sm:px-5 select-none z-40 relative transition-colors duration-200 shadow-xs">
 
-        {/* MOBILE VIEW (sm:hidden) */}
-        <div className="flex sm:hidden items-center justify-between gap-2 w-full">
-          {/* Left: Badge & Quick Role Dropdown */}
-          <div className="flex items-center gap-2 overflow-hidden">
-            <span className="font-bold uppercase tracking-wider text-[11px] text-base-content flex items-center gap-1.5 shrink-0">
+        {/* MOBILE VIEW (sm:hidden) - STRICT SINGLE LINE */}
+        <div className="flex sm:hidden items-center justify-between gap-1.5 w-full overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="font-bold uppercase tracking-wider text-[10px] text-base-content flex items-center gap-1 shrink-0">
               <FontAwesomeIcon icon={faUserTie} className="text-base-content/70" />
               <span>SANDBOX</span>
             </span>
-
-            <div className="relative inline-block">
-              <select
-                value={activeRoleName}
-                onChange={(e) => handleRoleSwitch(e.target.value)}
-                className="bg-base-200 text-[10px] font-bold text-base-content border border-base-content/15 rounded-xl px-2.5 py-1 outline-none appearance-none pr-6 cursor-pointer focus:ring-1 focus:ring-base-content uppercase tracking-wider"
-              >
-                <option value="VISITOR" className="bg-base-100 text-base-content">ROLE: VISITOR</option>
-                <option value="CLIENT" className="bg-base-100 text-base-content">ROLE: CLIENT</option>
-                <option value="CREATOR" className="bg-base-100 text-base-content">ROLE: CREATOR</option>
-                <option value="ADMIN" className="bg-base-100 text-base-content">ROLE: ADMIN</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-base-content text-[8px] opacity-70">
-                ▼
-              </div>
-            </div>
+            <span className="text-[9px] font-semibold text-base-content/60 bg-base-200/80 px-1.5 py-0.5 rounded-md">
+              {fps} FPS
+            </span>
           </div>
 
-          {/* Right: Quick Action Buttons for Modals */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Button
-              variant="secondary"
+          <div className="flex items-center gap-1 shrink-0 flex-nowrap">
+            <button
+              type="button"
+              onClick={() => setActiveModal("studio")}
+              className="px-2 py-0.5 rounded-lg bg-primary text-primary-content text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 shadow-xs whitespace-nowrap"
+            >
+              <FontAwesomeIcon icon={faCrosshairs} className="text-[9px]" />
+              <span>Hotspot</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveModal("tech")}
-              className="!text-[10px] !px-2.5 !py-0.5 !rounded-xl"
-              title="Tech Architecture"
+              className="px-2 py-0.5 rounded-lg bg-base-200 text-base-content text-[10px] font-semibold transition-colors cursor-pointer flex items-center gap-1 border border-base-content/10 whitespace-nowrap"
             >
-              <FontAwesomeIcon icon={faDiagramProject} className="mr-1" />
+              <FontAwesomeIcon icon={faDiagramProject} className="text-[9px]" />
               <span>Tech</span>
-            </Button>
-            <Button
-              variant="secondary"
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveModal("roi")}
-              className="!text-[10px] !px-2.5 !py-0.5 !rounded-xl"
-              title="ROI Calculator"
+              className="px-2 py-0.5 rounded-lg bg-base-200 text-base-content text-[10px] font-semibold transition-colors cursor-pointer flex items-center gap-1 border border-base-content/10 whitespace-nowrap"
             >
-              <FontAwesomeIcon icon={faCalculator} className="mr-1" />
+              <FontAwesomeIcon icon={faCalculator} className="text-[9px]" />
               <span>ROI</span>
-            </Button>
+            </button>
           </div>
         </div>
 
-        {/* DESKTOP VIEW (hidden sm:flex) */}
-        <div className="hidden sm:flex mx-auto items-center justify-between gap-3 max-w-7xl">
+        {/* DESKTOP VIEW (hidden sm:flex) - SLIM STRICT SINGLE LINE */}
+        <div className="hidden sm:flex mx-auto items-center justify-between gap-4 max-w-7xl flex-nowrap">
 
           {/* Left: Recruiter Sandbox Tag */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 shrink-0">
             <span className="font-bold uppercase tracking-wider text-[11px] text-base-content flex items-center gap-1.5">
               <FontAwesomeIcon icon={faUserTie} className="text-base-content/70" />
               Recruiter & HR Sandbox
             </span>
             <span className="hidden md:inline-block text-[11px] text-base-content/50 border-l border-base-content/10 pl-2.5 font-medium">
-              1-Click Live Role & System Architecture Demo
+              System Architecture & Interactive Demo
             </span>
           </div>
 
-          {/* Center: Quick 1-Click Role Switcher Buttons matching sidebar active pill style */}
-          <div className="flex items-center gap-1 bg-base-200/60 border border-base-content/10 p-1 rounded-2xl">
-            <span className="text-[10px] font-semibold text-base-content/50 px-2 uppercase hidden sm:inline">Role:</span>
-            {["VISITOR", "CLIENT", "CREATOR", "ADMIN"].map((r) => {
-              const isActive = activeRoleName === r;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => handleRoleSwitch(r)}
-                  className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-base-100 text-base-content shadow-xs border border-base-content/10"
-                      : "text-base-content/60 hover:text-base-content hover:bg-base-100/50"
-                  }`}
-                >
-                  {r}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Right: Performance Metrics & Modal Toggles */}
-          <div className="flex items-center gap-3">
+          {/* Right: Performance Counters & 3 Action Buttons on a Single Clean Line */}
+          <div className="flex items-center gap-2 shrink-0 flex-nowrap">
             {/* FPS & Latency Counters */}
-            <div className="hidden lg:flex items-center gap-3 text-[11px] font-semibold text-base-content/70">
-              <span className="flex items-center gap-1">
+            <div className="flex items-center gap-2 text-[10px] font-semibold text-base-content/70 mr-1 shrink-0">
+              <span className="flex items-center gap-1 bg-base-200/60 border border-base-content/10 px-2 py-0.5 rounded-lg">
                 <FontAwesomeIcon icon={faBolt} className="text-base-content/50" />
                 {fps} FPS
               </span>
-              <span className="flex items-center gap-1 opacity-70">
+              <span className="hidden md:flex items-center gap-1 opacity-70 bg-base-200/60 border border-base-content/10 px-2 py-0.5 rounded-lg">
                 <FontAwesomeIcon icon={faDatabase} className="text-base-content/50" />
                 {apiLatency}ms API
               </span>
             </div>
 
-            {/* No-Code Studio Interactive Demo Trigger */}
+            {/* Try Hotspot */}
             <Button
               variant="primary"
               onClick={() => setActiveModal("studio")}
-              className="!text-[10px] !px-3 !py-1 uppercase cursor-pointer !rounded-xl"
+              className="!text-[10px] !px-2.5 !py-1 uppercase cursor-pointer !rounded-lg shrink-0 font-bold whitespace-nowrap"
             >
               <FontAwesomeIcon icon={faCrosshairs} className="mr-1" />
               Try Hotspot
             </Button>
 
-            {/* Architecture Inspector Modal Trigger */}
+            {/* Tech Stack */}
             <button
+              type="button"
               onClick={() => setActiveModal("tech")}
-              className="px-3 py-1 rounded-xl bg-base-200 text-base-content text-[10px] font-semibold hover:bg-base-300 transition-colors cursor-pointer flex items-center gap-1.5 border border-base-content/10"
+              className="px-2.5 py-1 rounded-lg bg-base-200 text-base-content text-[10px] font-semibold hover:bg-base-300 transition-colors cursor-pointer flex items-center gap-1 border border-base-content/10 shrink-0 whitespace-nowrap"
             >
               <FontAwesomeIcon icon={faDiagramProject} />
               <span>Tech Stack</span>
             </button>
 
-            {/* ROI Calculator Modal Trigger */}
+            {/* ROI Impact */}
             <button
+              type="button"
               onClick={() => setActiveModal("roi")}
-              className="px-3 py-1 rounded-xl bg-base-200 text-base-content text-[10px] font-semibold hover:bg-base-300 transition-colors cursor-pointer flex items-center gap-1.5 border border-base-content/10"
+              className="px-2.5 py-1 rounded-lg bg-base-200 text-base-content text-[10px] font-semibold hover:bg-base-300 transition-colors cursor-pointer flex items-center gap-1 border border-base-content/10 shrink-0 whitespace-nowrap"
             >
               <FontAwesomeIcon icon={faCalculator} />
               <span>ROI Impact</span>
