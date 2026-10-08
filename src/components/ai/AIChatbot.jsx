@@ -18,36 +18,58 @@ const INPUT_SUGGESTIONS = [
   'Ask: "Pricing & Photography Booking"',
 ];
 
-// ViewRoom Logo Emblem with 3 Animated Sparkle Stars (Matches AI reference design)
-export function ViewRoomAIIcon({ className = "w-7 h-7", starClass = "" }) {
+// ViewRoom Logo with BIG Animated Sparkle Stars (Jhikimiki effect, adapts 100% to Light & Dark modes)
+export function ViewRoomAIIcon({ className = "w-12 h-12", isHeader = false }) {
   return (
     <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`}>
+      {/* Embedded CSS for smooth organic twinkling ("jhikimiki") animation */}
+      <style>{`
+        @keyframes vr_jhikimiki_main {
+          0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          50% { transform: scale(0.62) rotate(14deg); opacity: 0.35; }
+        }
+        @keyframes vr_jhikimiki_top {
+          0%, 100% { transform: scale(0.58) rotate(-12deg); opacity: 0.35; }
+          50% { transform: scale(1.18) rotate(5deg); opacity: 1; }
+        }
+        @keyframes vr_jhikimiki_right {
+          0%, 100% { transform: scale(1.12) rotate(0deg); opacity: 1; }
+          50% { transform: scale(0.5) rotate(22deg); opacity: 0.3; }
+        }
+        .vr-star-main { transform-origin: 24px 30px; animation: vr_jhikimiki_main 1.8s ease-in-out infinite; }
+        .vr-star-top { transform-origin: 14px 11px; animation: vr_jhikimiki_top 1.5s ease-in-out infinite; }
+        .vr-star-right { transform-origin: 38px 14px; animation: vr_jhikimiki_right 2.1s ease-in-out infinite; }
+      `}</style>
+
       {/* Base ViewRoom 360° Logo Emblem */}
       <ViewRoomLogoIcon className="w-full h-full text-current" />
 
-      {/* 3 Sparkle Stars attached to top-right of the logo */}
+      {/* BIG 3-Star Cluster attached to top-right of the logo */}
       <svg
-        viewBox="0 0 38 38"
+        viewBox="0 0 50 50"
         fill="currentColor"
-        className={`absolute -top-1.5 -right-2.5 w-4.5 h-4.5 pointer-events-none drop-shadow-sm text-current ${starClass}`}
+        className={`absolute pointer-events-none text-current overflow-visible ${
+          isHeader
+            ? "-top-2.5 -right-3 w-6 h-6"
+            : "-top-3.5 -right-4 sm:-top-4 sm:-right-5 w-8 h-8 sm:w-10 sm:h-10"
+        }`}
       >
         {/* Top Medium Star */}
         <path
-          d="M13 2 C13 5.5 10.5 8 7 8 C10.5 8 13 10.5 13 14 C13 10.5 15.5 8 19 8 C15.5 8 13 5.5 13 2 Z"
-          className="animate-pulse"
-          style={{ animationDuration: "1.4s" }}
+          d="M 14 1 Q 14 11 24 11 Q 14 11 14 21 Q 14 11 4 11 Q 14 11 14 1 Z"
+          className="vr-star-top"
         />
-        {/* Center / Bottom Big Star */}
+
+        {/* Center / Bottom Main Big Star */}
         <path
-          d="M21 12 C21 18 15 23 9 23 C15 23 21 28 21 34 C21 28 27 23 33 23 C27 23 21 18 21 12 Z"
-          className="animate-pulse"
-          style={{ animationDuration: "2s", animationDelay: "0.3s" }}
+          d="M 24 14 Q 24 30 40 30 Q 24 30 24 46 Q 24 30 8 30 Q 24 30 24 14 Z"
+          className="vr-star-main"
         />
-        {/* Right Small Star */}
+
+        {/* Right Small / Accent Star */}
         <path
-          d="M30 6 C30 8.5 28 10.5 25.5 10.5 C28 10.5 30 12.5 30 15 C30 12.5 32 10.5 34.5 10.5 C32 10.5 30 8.5 30 6 Z"
-          className="animate-pulse"
-          style={{ animationDuration: "1.7s", animationDelay: "0.6s" }}
+          d="M 38 6 Q 38 14 46 14 Q 38 14 38 22 Q 38 14 30 14 Q 38 14 38 6 Z"
+          className="vr-star-right"
         />
       </svg>
     </div>
@@ -168,8 +190,8 @@ export default function AIChatbot() {
           {/* Header Bar - ViewRoom AI Branding */}
           <div className="px-4 py-3.5 bg-base-200 border-b border-[var(--app-border)]/30 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-base-content text-base-100 flex items-center justify-center shadow-sm flex-shrink-0">
-                <ViewRoomAIIcon className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-full bg-base-100 border border-[var(--app-border)]/40 text-[var(--app-text-primary)] flex items-center justify-center shadow-sm flex-shrink-0">
+                <ViewRoomAIIcon className="w-5 h-5" isHeader={true} />
               </div>
               <div>
                 <h3 className="font-heading font-extrabold text-xs uppercase tracking-wider text-[var(--app-text-primary)]">
@@ -256,7 +278,7 @@ export default function AIChatbot() {
               placeholder={INPUT_SUGGESTIONS[suggestionIndex]}
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              className="flex-1 bg-base-200/60 text-xs px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]/70 cursor-text transition-all duration-300"
+              className="flex-1 bg-base-200/60 text-sm px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]/70 cursor-text transition-all duration-300"
             />
             <button
               type="submit"
@@ -270,19 +292,21 @@ export default function AIChatbot() {
         </div>
       )}
 
-      {/* Floating Toggle Button with ViewRoom AI Logo Emblem and Animated Sparkle Stars (No Green Dot) */}
+      {/* Floating Trigger Button: ZERO Background Color, Bold ViewRoom Logo + BIG Twinkling ("Jhikimiki") Stars */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="group relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-base-content text-base-100 border border-[var(--app-border)]/50 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
-        aria-label="Toggle AI Assistant"
+        className="group relative p-2 bg-transparent border-0 shadow-none flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer outline-none select-none text-[var(--app-text-primary)]"
+        aria-label="Toggle ViewRoom AI Assistant"
       >
         {isOpen ? (
-          <FontAwesomeIcon
-            icon={faChevronDown}
-            className="text-lg sm:text-xl transition-transform duration-300"
-          />
+          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-base-200/90 border border-[var(--app-border)]/40 flex items-center justify-center text-[var(--app-text-primary)] shadow-lg hover:bg-base-300 transition-colors">
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              className="text-lg transition-transform duration-300"
+            />
+          </div>
         ) : (
-          <ViewRoomAIIcon className="w-7 h-7 sm:w-8 sm:h-8" />
+          <ViewRoomAIIcon className="w-12 h-12 sm:w-14 sm:h-14" />
         )}
       </button>
     </div>
