@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/reuseable/Button";
 import Logo from "../../components/reuseable/Logo";
 import { useAuth } from "../../context/AuthContext";
+import AuthKnightViewer from "./AuthKnightViewer";
 
 function GoogleIcon() {
   return (
@@ -435,28 +436,10 @@ function Auth() {
 
         </div>
 
-        {/* RIGHT PANEL: ARCHITECTURAL 360 HERO SHOWCASE IMAGE */}
-        <div className="hidden lg:flex lg:w-1/2 py-8 lg:py-12 lg:pl-6 relative w-full h-[650px] lg:h-[80vh]">
-          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-slate-700/50 bg-base-200">
-            <img
-              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1600"
-              alt="ViewRoom Architectural 360 Space Showcase"
-              className="w-full h-full object-cover filter brightness-90 hover:scale-105 transition-transform duration-700"
-            />
-            
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-
-            <div className="absolute bottom-8 left-8 right-8 z-10 text-white max-w-md">
-              <span className="text-xs font-extrabold uppercase tracking-widest bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/20 mb-3 inline-block">
-                IMMERSIVE SPATIAL TOURS
-              </span>
-              <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tight mb-2">
-                STEP INSIDE REAL SPACES BEFORE YOU ARRIVE.
-              </h2>
-              <p className="text-xs sm:text-sm text-white/80 font-medium leading-relaxed">
-                Explore homes, hotels, and architectural venues worldwide with 8K 360° panoramic precision.
-              </p>
-            </div>
+        {/* RIGHT PANEL: 3D KNIGHT GUARDIAN MODEL (PURE 3D, NO BACKGROUND) */}
+        <div className="hidden lg:flex lg:w-1/2 py-8 lg:py-12 lg:pl-6 relative w-full h-[650px] lg:h-[85vh] items-center justify-center bg-transparent">
+          <div className="relative w-full h-full flex items-center justify-center bg-transparent">
+            <AuthKnightViewer />
           </div>
         </div>
 
