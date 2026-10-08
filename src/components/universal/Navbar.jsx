@@ -188,8 +188,8 @@ function Navbar() {
   }, [location.pathname]);
 
   const getNavItemClass = (isActive) =>
-    `text-[15px] font-bold transition-colors flex items-center gap-1.5 cursor-pointer text-base-content hover:opacity-75 select-none ${
-      isActive ? "opacity-100" : "opacity-90"
+    `text-[15px] font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer text-base-content select-none ${
+      isActive ? "opacity-50" : "opacity-100 hover:opacity-75"
     }`;
 
   const visibleNavLinks = NAV_LINKS.filter(
@@ -203,7 +203,7 @@ function Navbar() {
           <Logo size="md" />
 
           {/* Desktop nav links */}
-          <div className="hidden lg:flex items-center gap-7 ml-12 mr-auto text-[15px] h-full">
+          <div className="hidden lg:flex items-center gap-8 ml-12 mr-auto text-[15px]">
             {visibleNavLinks.map((link) => {
               if (link.dropdown) {
                 const isAnyChildActive = link.dropdown.some(
@@ -211,46 +211,33 @@ function Navbar() {
                 );
 
                 return (
-                  <div key={link.label} className="relative group h-[72px] flex items-center">
+                  <div key={link.label} className="relative group py-4 flex items-center">
                     <span
                       tabIndex={0}
                       role="button"
-                      className={`relative h-full flex items-center gap-1.5 cursor-pointer text-[15px] transition-colors select-none ${
-                        isAnyChildActive
-                          ? "text-base-content font-extrabold"
-                          : "text-base-content/75 hover:text-base-content font-bold"
-                      }`}
+                      className={getNavItemClass(isAnyChildActive)}
                     >
                       <span>{link.label}</span>
-                      <ChevronDownIcon className={`transition-transform duration-200 ${isAnyChildActive ? "opacity-100" : "opacity-75"}`} />
-
-                      {/* Active Underline Indicator for Dropdown Category */}
-                      {isAnyChildActive && (
-                        <span className="absolute bottom-0 inset-x-0 h-[2.5px] bg-base-content rounded-t-full shadow-xs animate-in fade-in zoom-in-95 duration-200" />
-                      )}
+                      <ChevronDownIcon />
                     </span>
 
                     <div className="absolute top-full left-0 pt-1 hidden group-hover:block transition-all duration-200 animate-fadeIn">
-                      <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-56 flex flex-col gap-1 z-50">
-                        {link.dropdown.map((sub) => {
-                          const isSubActive = location.pathname === sub.to;
-                          return (
-                            <NavLink
-                              key={sub.to}
-                              to={sub.to}
-                              className={`px-3.5 py-2.5 rounded-xl text-[14px] transition-all flex items-center justify-between ${
-                                isSubActive
-                                  ? "bg-base-content text-base-100 font-bold shadow-xs"
-                                  : "text-base-content/80 hover:text-base-content hover:bg-base-200/80 font-medium"
-                              }`}
-                            >
-                              <span>{sub.label}</span>
-                              {isSubActive && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-base-100" />
-                              )}
-                            </NavLink>
-                          );
-                        })}
+                      <div className="bg-base-100/95 backdrop-blur-md border border-[var(--app-border)]/20 shadow-2xl rounded-2xl p-2 w-52 flex flex-col gap-1 z-50">
+                        {link.dropdown.map((sub) => (
+                          <NavLink
+                            key={sub.to}
+                            to={sub.to}
+                            className={({ isActive }) =>
+                              `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all text-base-content ${
+                                isActive
+                                  ? "opacity-50 bg-base-200 font-semibold"
+                                  : "opacity-100 hover:bg-base-200/70"
+                              }`
+                            }
+                          >
+                            {sub.label}
+                          </NavLink>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -261,23 +248,9 @@ function Navbar() {
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className={({ isActive }) =>
-                    `relative h-[72px] flex items-center text-[15px] transition-colors cursor-pointer select-none ${
-                      isActive
-                        ? "text-base-content font-extrabold"
-                        : "text-base-content/75 hover:text-base-content font-bold"
-                    }`
-                  }
+                  className={({ isActive }) => getNavItemClass(isActive)}
                 >
-                  {({ isActive }) => (
-                    <>
-                      <span>{link.label}</span>
-                      {/* Active Underline Indicator */}
-                      {isActive && (
-                        <span className="absolute bottom-0 inset-x-0 h-[2.5px] bg-base-content rounded-t-full shadow-xs animate-in fade-in zoom-in-95 duration-200" />
-                      )}
-                    </>
-                  )}
+                  {link.label}
                 </NavLink>
               );
             })}
@@ -530,7 +503,7 @@ function Navbar() {
                     className={({ isActive }) =>
                       `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
                         isActive
-                          ? "bg-base-content text-base-100 font-bold shadow-xs"
+                          ? "bg-base-content/10 text-base-content font-bold border-l-3 border-base-content shadow-xs"
                           : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
                       }`
                     }
