@@ -278,7 +278,7 @@ export default function AIChatbot() {
               placeholder={INPUT_SUGGESTIONS[suggestionIndex]}
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              className="flex-1 bg-base-200/60 text-sm px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]/70 cursor-text transition-all duration-300"
+              className="flex-1 bg-base-200/60 !text-[14px] px-3.5 py-2.5 rounded-full border border-[var(--app-border)]/40 focus:outline-none focus:border-[var(--app-text-primary)] text-[var(--app-text-primary)] placeholder:text-[var(--app-text-secondary)]/70 cursor-text transition-all duration-300"
             />
             <button
               type="submit"
