@@ -171,7 +171,10 @@ router.get("/tours", async (req, res) => {
   try {
     let tours = [];
     try {
+      const isGlobalAdmin = req.user?.role === "ADMIN";
+      const filter = isGlobalAdmin || !req.user ? {} : { authorId: req.user.id };
       tours = await prisma.virtualTour.findMany({
+        where: filter,
         include: {
           scenes: {
             include: { hotspots: true },

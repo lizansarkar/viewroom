@@ -118,7 +118,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   useEffect(() => {
     loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.email, user?.id]);
 
   const ensureTourScenes = (tourList) => {
     if (!Array.isArray(tourList)) return [];
@@ -146,14 +146,56 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   const saveToursToStorage = (updatedTours) => {
     try {
-      localStorage.setItem("viewroom_custom_tours", JSON.stringify(updatedTours));
+      const userEmail = (user?.email || "").toLowerCase().trim();
+      if (!userEmail) return;
+
+      // 1. Save user's own tours in isolated storage key
+      localStorage.setItem(`viewroom_tours_${userEmail}`, JSON.stringify(updatedTours));
+
+      // 2. Sync to global master list (preserving other users' tours)
+      const allRaw = localStorage.getItem("viewroom_custom_tours");
+      let allTours = [];
+      if (allRaw) {
+        try {
+          const parsed = JSON.parse(allRaw);
+          if (Array.isArray(parsed)) allTours = parsed;
+        } catch (e) {}
+      }
+
+      // Preserve other creators' tours
+      const otherCreatorsTours = allTours.filter(
+        (t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail
+      );
+
+      // Stamped with current creator's email and id
+      const stampedUserTours = updatedTours.map((t) => ({
+        ...t,
+        authorEmail: t.authorEmail || user?.email,
+        authorId: t.authorId || user?.id,
+      }));
+
+      const merged = [...stampedUserTours, ...otherCreatorsTours];
+      localStorage.setItem("viewroom_custom_tours", JSON.stringify(merged));
     } catch (err) {
       console.warn("Failed to save custom tours to localStorage:", err);
     }
   };
 
+  const saveProductsToStorage = (updatedProducts) => {
+    try {
+      const userEmail = (user?.email || "").toLowerCase().trim();
+      if (!userEmail) return;
+      localStorage.setItem(`viewroom_products_${userEmail}`, JSON.stringify(updatedProducts));
+    } catch (err) {
+      console.warn("Failed to save custom products:", err);
+    }
+  };
+
   const loadDashboardData = async () => {
     try {
+      const userEmail = (user?.email || "").toLowerCase().trim();
+      const userId = user?.id || "";
+
       const [fetchedStats, fetchedToursRes, fetchedProdsRes] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(),
@@ -163,31 +205,57 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       const fetchedProds = fetchedProdsRes && (fetchedProdsRes.data || fetchedProdsRes);
 
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
-      if (Array.isArray(fetchedProds)) setProducts(fetchedProds);
 
-      let combinedTours = [];
-      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-      let localToursParsed = [];
-      if (savedLocalTours) {
+      // Load products isolated for this creator
+      let myProducts = [];
+      const userSpecificProds = localStorage.getItem(`viewroom_products_${userEmail}`);
+      if (userSpecificProds) {
         try {
-          const parsed = JSON.parse(savedLocalTours);
-          if (Array.isArray(parsed)) {
-            localToursParsed = parsed;
+          const parsed = JSON.parse(userSpecificProds);
+          if (Array.isArray(parsed)) myProducts = parsed;
+        } catch (e) {}
+      } else if (Array.isArray(fetchedProds)) {
+        myProducts = fetchedProds.filter(
+          (p) => p.authorEmail && p.authorEmail.toLowerCase().trim() === userEmail
+        );
+      }
+      setProducts(myProducts);
+
+      // Load tours strictly isolated for this creator
+      let myTours = [];
+      const userSpecificTours = localStorage.getItem(`viewroom_tours_${userEmail}`);
+      const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
+
+      if (userSpecificTours) {
+        try {
+          const parsed = JSON.parse(userSpecificTours);
+          if (Array.isArray(parsed)) myTours = parsed;
+        } catch (e) {}
+      } else if (savedLocalTours) {
+        try {
+          const allTours = JSON.parse(savedLocalTours);
+          if (Array.isArray(allTours)) {
+            // Only load tours that belong to this specific email or ID!
+            myTours = allTours.filter(
+              (t) =>
+                (t.authorEmail && t.authorEmail.toLowerCase().trim() === userEmail) ||
+                (t.authorId && t.authorId === userId)
+            );
           }
         } catch (e) {}
+      } else if (Array.isArray(fetchedTours)) {
+        myTours = fetchedTours.filter(
+          (t) =>
+            (t.authorEmail && t.authorEmail.toLowerCase().trim() === userEmail) ||
+            (t.authorId && t.authorId === userId)
+        );
       }
 
-      if (Array.isArray(fetchedTours)) {
-        combinedTours = fetchedTours;
-      } else if (savedLocalTours !== null && Array.isArray(localToursParsed)) {
-        combinedTours = localToursParsed;
-      } else {
-        combinedTours = [];
-      }
-
-      const healedTours = ensureTourScenes(combinedTours);
+      const healedTours = ensureTourScenes(myTours);
       setTours(healedTours);
-      saveToursToStorage(healedTours);
+      if (userEmail && healedTours.length > 0) {
+        saveToursToStorage(healedTours);
+      }
     } catch (err) {
       console.warn("Creator dashboard data loading error:", err);
     }
@@ -250,10 +318,21 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       coverImage: coverScene ? (coverScene.thumbnailUrl || coverScene.panoramaUrl) : "/panoramas/panorama_aerial.jpg",
       viewsCount: 0,
       scenes: formattedScenes,
+      authorId: user?.id,
+      authorEmail: user?.email,
+      authorName: user?.name,
+      createdAt: new Date().toISOString(),
     };
 
     const res = await apiCreateOwnerTour(tourData);
     let created = (res && res.data) || tourData;
+
+    created = {
+      ...created,
+      authorEmail: created.authorEmail || user?.email,
+      authorId: created.authorId || user?.id,
+      authorName: created.authorName || user?.name,
+    };
 
     if (!created.scenes || created.scenes.length === 0) {
       created = {
@@ -303,11 +382,27 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         price: newProdPrice,
         image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
         modelFormat: "GLTF / GLB",
+        authorEmail: user?.email,
+        authorId: user?.id,
       });
       const created = (res && res.data) || res;
-      if (created && created.id) {
-        setProducts((prev) => [created, ...prev]);
-      }
+      const productObj = {
+        ...(created || {}),
+        id: created?.id || `prod_${Date.now()}`,
+        title: newProdTitle,
+        category: newProdCategory,
+        price: newProdPrice,
+        image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
+        modelFormat: "GLTF / GLB",
+        authorEmail: user?.email,
+        authorId: user?.id,
+        viewsCount: 0,
+      };
+      setProducts((prev) => {
+        const updated = [productObj, ...prev];
+        saveProductsToStorage(updated);
+        return updated;
+      });
     } catch (err) {
       console.warn("Failed to create product in DB:", err);
       const fallbackProd = {
@@ -317,9 +412,15 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         price: newProdPrice,
         image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
         modelFormat: "GLTF / GLB",
+        authorEmail: user?.email,
+        authorId: user?.id,
         viewsCount: 0,
       };
-      setProducts((prev) => [fallbackProd, ...prev]);
+      setProducts((prev) => {
+        const updated = [fallbackProd, ...prev];
+        saveProductsToStorage(updated);
+        return updated;
+      });
     }
 
     setNewProdTitle("");
@@ -333,7 +434,11 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     } catch (err) {
       console.warn("Failed to delete product from database:", err);
     }
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    setProducts((prev) => {
+      const updated = prev.filter((p) => p.id !== productId);
+      saveProductsToStorage(updated);
+      return updated;
+    });
   };
 
   const handleAddSceneToTour = async (tourId) => {
@@ -378,7 +483,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   };
 
   const handleDeleteAllTours = async () => {
-    if (!window.confirm("Are you sure you want to delete ALL 360° virtual tours? This will permanently remove all test tours.")) return;
+    if (!window.confirm("Are you sure you want to delete ALL your 360° virtual tours? This will permanently remove all your tours.")) return;
     try {
       for (const t of tours) {
         if (t.id) {
@@ -388,8 +493,18 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     } catch (err) {
       console.warn("Failed to delete tours from backend:", err);
     }
-    localStorage.removeItem("viewroom_custom_tours");
-    localStorage.setItem("viewroom_custom_tours", JSON.stringify([]));
+    const userEmail = (user?.email || "").toLowerCase().trim();
+    if (userEmail) {
+      localStorage.removeItem(`viewroom_tours_${userEmail}`);
+      try {
+        const allRaw = localStorage.getItem("viewroom_custom_tours");
+        const allTours = allRaw ? JSON.parse(allRaw) : [];
+        const otherTours = allTours.filter(
+          (t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail
+        );
+        localStorage.setItem("viewroom_custom_tours", JSON.stringify(otherTours));
+      } catch (e) {}
+    }
     setTours([]);
   };
 
