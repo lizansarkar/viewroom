@@ -14,6 +14,8 @@ import {
   faVolumeMute,
   faExpand,
   faCompress,
+  faFilm,
+  faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import { uiSound } from "../../utils/tourSoundEngine";
 
@@ -31,6 +33,8 @@ export default function TourActionMenu({
   isFullscreen,
   isMuted,
   onToggleMute,
+  isAutoPilot,
+  onToggleAutoPilot,
 }) {
   return (
     <div className="absolute top-5 right-5 z-30 flex flex-col items-center gap-3 pointer-events-auto">
@@ -64,6 +68,34 @@ export default function TourActionMenu({
             <FontAwesomeIcon icon={faMicrophone} className="text-base" />
             {isListening && (
               <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
+            )}
+          </button>
+
+          {/* CINEMATIC AUTO-PILOT / DIRECTOR'S TOUR BUTTON */}
+          <button
+            type="button"
+            onClick={() => {
+              uiSound.playHoverClick();
+              if (onToggleAutoPilot) onToggleAutoPilot();
+            }}
+            onMouseEnter={() => uiSound.playHoverClick()}
+            title={
+              isAutoPilot
+                ? "Exit Director's Tour"
+                : "Play Cinematic Tour (Director's Tour / Auto-Pilot)"
+            }
+            className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer ${
+              isAutoPilot
+                ? "bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white border-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.8)] animate-pulse"
+                : "bg-white/25 hover:bg-white/40 border-white/40 text-white"
+            }`}
+          >
+            <FontAwesomeIcon icon={isAutoPilot ? faPlay : faFilm} className="text-base" />
+            {isAutoPilot && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+              </span>
             )}
           </button>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 /* Inline SVG icons — no external icon package required */
 const IconBuilding = (props) => (
@@ -110,19 +111,19 @@ function Explore() {
 
         {/* Bottom: View button + All link */}
         <div className="flex items-center gap-6">
-          <button
-            type="button"
+          <Link
+            to="/360-virtual-tour"
             className="btn rounded-full bg-base-content text-base-100 hover:bg-base-content/90 border-none px-8 font-heading text-sm font-semibold"
           >
-            View
-          </button>
-          <a
-            href="#"
+            View Tour
+          </Link>
+          <Link
+            to="/products"
             className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
           >
-            All
+            All Spaces
             <IconChevronRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </section>

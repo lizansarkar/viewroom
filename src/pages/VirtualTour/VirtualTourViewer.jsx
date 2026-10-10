@@ -18,6 +18,7 @@ import TourShareModal from "../../components/tour/TourShareModal";
 import TourThumbnailCarousel from "../../components/tour/TourThumbnailCarousel";
 import TourActionMenu from "../../components/tour/TourActionMenu";
 import TourVoiceToast from "../../components/tour/TourVoiceToast";
+import CinematicAutoPilotHUD from "../../components/tour/CinematicAutoPilotHUD";
 
 import { uiSound, spatialAudio } from "../../utils/tourSoundEngine";
 import {
@@ -45,6 +46,18 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
   const [showLiveTourModal, setShowLiveTourModal] = useState(() => {
     return !!searchParams.get("sessionId");
   });
+
+  const [isAutoPilot, setIsAutoPilot] = useState(false);
+  const [isAutoPilotPaused, setIsAutoPilotPaused] = useState(false);
+  const [autoPilotProgress, setAutoPilotProgress] = useState(0);
+
+  const isAutoPilotRef = useRef(isAutoPilot);
+  const isAutoPilotPausedRef = useRef(isAutoPilotPaused);
+
+  useEffect(() => {
+    isAutoPilotRef.current = isAutoPilot;
+    isAutoPilotPausedRef.current = isAutoPilotPaused;
+  }, [isAutoPilot, isAutoPilotPaused]);
 
   const psvRef = useRef(null);
   const viewportRef = useRef(null);
@@ -385,7 +398,114 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
         }
       });
     }
+
+    // Auto-Pause Director's Tour when user manually interacts/drags
+    instance.addEventListener("user-interaction", () => {
+      if (isAutoPilotRef.current && !isAutoPilotPausedRef.current) {
+        setIsAutoPilotPaused(true);
+        try {
+          instance.stopAnimation();
+        } catch (err) {}
+      }
+    });
   };
+
+  // Cinematic Auto-Pilot Controller Loop
+  useEffect(() => {
+    if (!isAutoPilot || isAutoPilotPaused) return;
+
+    const DWELL_TIME_MS = 8000;
+    const INTERVAL_MS = 100;
+    const STEP = (INTERVAL_MS / DWELL_TIME_MS) * 100;
+
+    // Start slow, smooth drone-like panoramic sweep
+    if (psvRef.current) {
+      try {
+        const curPos = psvRef.current.getPosition();
+        psvRef.current.animate({
+          yaw: curPos.yaw + Math.PI * 0.7,
+          pitch: -0.05,
+          speed: "0.8rpm",
+        });
+      } catch (err) {}
+    }
+
+    const intervalId = setInterval(() => {
+      setAutoPilotProgress((prev) => {
+        if (prev + STEP >= 100) {
+          const curIdx = tourNodes.findIndex((n) => n.id === currentPanoramaId);
+          const safeCurIdx = curIdx >= 0 ? curIdx : 0;
+          const nextIdx = (safeCurIdx + 1) % tourNodes.length;
+          uiSound.playCameraSwoosh();
+          changePanoramaWithGsap(tourNodes[nextIdx].id);
+          return 0;
+        }
+        return prev + STEP;
+      });
+    }, INTERVAL_MS);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isAutoPilot, isAutoPilotPaused, currentPanoramaId, tourNodes]);
+
+  const toggleAutoPilot = () => {
+    if (isAutoPilot) {
+      setIsAutoPilot(false);
+      setIsAutoPilotPaused(false);
+      setAutoPilotProgress(0);
+      if (psvRef.current) {
+        try {
+          psvRef.current.stopAnimation();
+        } catch (err) {}
+      }
+    } else {
+      setIsAutoPilot(true);
+      setIsAutoPilotPaused(false);
+      setAutoPilotProgress(0);
+      if (isMuted) {
+        setIsMuted(false);
+        spatialAudio.unmute();
+      }
+      spatialAudio.play();
+      uiSound.playCameraSwoosh();
+    }
+  };
+
+  const handleAutoPilotNextScene = () => {
+    const curIdx = tourNodes.findIndex((n) => n.id === currentPanoramaId);
+    const safeCurIdx = curIdx >= 0 ? curIdx : 0;
+    const nextIdx = (safeCurIdx + 1) % tourNodes.length;
+    uiSound.playCameraSwoosh();
+    changePanoramaWithGsap(tourNodes[nextIdx].id);
+    setAutoPilotProgress(0);
+  };
+
+  const handleToggleAutoPilotPause = () => {
+    if (isAutoPilotPaused) {
+      setIsAutoPilotPaused(false);
+      if (psvRef.current) {
+        try {
+          const curPos = psvRef.current.getPosition();
+          psvRef.current.animate({
+            yaw: curPos.yaw + Math.PI * 0.7,
+            pitch: -0.05,
+            speed: "0.8rpm",
+          });
+        } catch (err) {}
+      }
+    } else {
+      setIsAutoPilotPaused(true);
+      if (psvRef.current) {
+        try {
+          psvRef.current.stopAnimation();
+        } catch (err) {}
+      }
+    }
+  };
+
+  const activeNodeIndex = tourNodes.findIndex((s) => s.id === currentPanoramaId);
+  const currentSceneIndex = activeNodeIndex >= 0 ? activeNodeIndex : 0;
 
   const plugins = [
     [
@@ -416,6 +536,17 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
         ref={viewportRef}
         onClick={() => {
           if (!isMuted) spatialAudio.play();
+        }}
+        onPointerDown={(e) => {
+          if (e.target.closest("button") || e.target.closest(".pointer-events-auto")) return;
+          if (isAutoPilot && !isAutoPilotPaused) {
+            setIsAutoPilotPaused(true);
+            if (psvRef.current) {
+              try {
+                psvRef.current.stopAnimation();
+              } catch (err) {}
+            }
+          }
         }}
         className="relative w-full h-full bg-black group overflow-hidden"
       >
@@ -475,14 +606,31 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
             setIsMuted(nextMuted);
             if (!nextMuted) spatialAudio.play();
           }}
+          isAutoPilot={isAutoPilot}
+          onToggleAutoPilot={toggleAutoPilot}
         />
 
-        {/* BOTTOM THUMBNAIL GALLERY CAROUSEL */}
-        <TourThumbnailCarousel
-          tourNodes={tourNodes}
-          currentPanoramaId={currentPanoramaId}
-          onSelectNode={changePanoramaWithGsap}
+        {/* CINEMATIC AUTO-PILOT HUD OVERLAY */}
+        <CinematicAutoPilotHUD
+          isActive={isAutoPilot}
+          isPaused={isAutoPilotPaused}
+          onTogglePause={handleToggleAutoPilotPause}
+          onNextScene={handleAutoPilotNextScene}
+          onExit={toggleAutoPilot}
+          currentScene={activeNode}
+          currentIndex={currentSceneIndex}
+          totalScenes={tourNodes.length}
+          progress={autoPilotProgress}
         />
+
+        {/* BOTTOM THUMBNAIL GALLERY CAROUSEL (hidden during Auto-Pilot for cinematic view) */}
+        {!isAutoPilot && (
+          <TourThumbnailCarousel
+            tourNodes={tourNodes}
+            currentPanoramaId={currentPanoramaId}
+            onSelectNode={changePanoramaWithGsap}
+          />
+        )}
       </div>
 
       {/* SHARE & EMBED MODAL */}

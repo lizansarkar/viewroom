@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // Icons using Lucide React / Inline SVG for exact design matching
 const UploadIcon = () => (
@@ -111,10 +112,10 @@ const IconMarkPeak = (props) => (
 );
 
 const badges = [
-  { icon: IconMarkPeak, label: "Webflow" },
-  { icon: IconMarkSquare, label: "Relume" },
-  { icon: IconMarkPeak, label: "Webflow" },
-  { icon: IconMarkSquare, label: "Relume" },
+  { icon: IconMarkPeak, label: "360° Panoramas" },
+  { icon: IconMarkSquare, label: "Spatial Audio" },
+  { icon: IconMarkPeak, label: "Smart Hotspots" },
+  { icon: IconMarkSquare, label: "VR Compatible" },
 ];
 
 function Hotspots() {
@@ -129,11 +130,11 @@ function Hotspots() {
             </span>
 
             <h2 className="mt-3 font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight tracking-tight">
-              One panoroma became a whole walkable tour. Hotspots connect the spaces.
+              One panorama became a whole walkable tour. Hotspots connect the spaces.
             </h2>
 
             <p className="mt-4 text-sm sm:text-base text-[var(--app-text-secondary)] max-w-xl leading-relaxed">
-              Enterence to living room to kitchen to bedroom to bathroom. Hotspots are the doors that connect each room.
+              Entrance to living room to kitchen to bedroom to bathroom. Hotspots are the doors that connect each room.
             </p>
 
             {/* Badge row */}
@@ -153,18 +154,17 @@ function Hotspots() {
 
             {/* CTA row */}
             <div className="mt-9 flex items-center gap-6">
-              {/* TODO: swap in your <Button /> component here — see note below */}
-              <button
-                type="button"
+              <Link
+                to="/360-virtual-tour"
                 className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
               >
                 Enter
-              </button>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/products"
                 className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
               >
-                Tour
+                Explore Tours
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -178,7 +178,7 @@ function Hotspots() {
                     strokeLinejoin="round"
                   />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ function Hotspots() {
         <div className="w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[16/6]">
           <img
             src="https://www.luxuryroof.in/blog-assets/uploads/IOD%20Full%20Form%20in%20Real%20Estate%20Process%20%26%20Documents%20Guide.webp"
-            alt="Couple sharing coffee at a cafe table"
+            alt="Modern architectural interior with walkable virtual tour"
             className="h-full w-full object-cover rounded-none"
           />
         </div>
@@ -255,12 +255,18 @@ function Hotspots() {
 
             {/* Buttons */}
             <div className="flex items-center gap-4 mt-12">
-              <button className="btn bg-[var(--color-primary)] text-[var(--color-primary-content)] hover:opacity-90 rounded-full px-8 border-none font-medium text-sm transition-all duration-200 cursor-pointer">
+              <Link
+                to="/dashboard"
+                className="btn bg-[var(--color-primary)] text-[var(--color-primary-content)] hover:opacity-90 rounded-full px-8 border-none font-medium text-sm transition-all duration-200 cursor-pointer"
+              >
                 Create
-              </button>
-              <button className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer">
+              </Link>
+              <Link
+                to="/360-virtual-tour"
+                className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+              >
                 Tour <span className="text-xs">&gt;</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -279,9 +285,12 @@ function Hotspots() {
                 <p className="text-sm leading-relaxed text-[var(--app-text-secondary)] mb-4">
                   The first look is not a photo. It is the room itself.
                 </p>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer">
+                <Link
+                  to="/360-virtual-tour"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   Look <span className="text-xs">&gt;</span>
-                </button>
+                </Link>
               </div>
 
               {/* Feature 2 */}
@@ -293,9 +302,12 @@ function Hotspots() {
                 <p className="text-sm leading-relaxed text-[var(--app-text-secondary)] mb-4">
                   Know how rooms connect before you ever arrive.
                 </p>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer">
+                <Link
+                  to="/360-virtual-tour"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   Move <span className="text-xs">&gt;</span>
-                </button>
+                </Link>
               </div>
 
               {/* Feature 3 */}
@@ -307,9 +319,12 @@ function Hotspots() {
                 <p className="text-sm leading-relaxed text-[var(--app-text-secondary)] mb-4">
                   Walk the floor, check the ceiling, feel the scale.
                 </p>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer">
+                <Link
+                  to="/360-virtual-tour"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   Enter <span className="text-xs">&gt;</span>
-                </button>
+                </Link>
               </div>
 
               {/* Feature 4 */}
@@ -321,9 +336,12 @@ function Hotspots() {
                 <p className="text-sm leading-relaxed text-[var(--app-text-secondary)] mb-4">
                   Step inside from anywhere and know the truth of the place.
                 </p>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer">
+                <Link
+                  to="/360-virtual-tour"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   Begin <span className="text-xs">&gt;</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>

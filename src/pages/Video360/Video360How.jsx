@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlass,
@@ -57,20 +58,19 @@ function Video360How() {
           </h2>
 
           <div className="mt-8 flex items-center gap-6">
-            {/* TODO: swap in your <Button /> component here, same as Featured.jsx / HowItWorks.jsx */}
-            <button
-              type="button"
+            <Link
+              to="/360-virtual-tour"
               className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
             >
-              Start
-            </button>
-            <a
-              href="#"
+              Start Experience
+            </Link>
+            <Link
+              to="/video-360"
               className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
             >
-              Explore
+              Explore 360° Videos
               <IconChevronRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const steps = [
   {
@@ -65,18 +66,17 @@ function HowItWorks() {
 
         {/* CTA row */}
         <div className="mt-14 sm:mt-16 flex items-center gap-6">
-          {/* TODO: swap in your <Button /> component here, same as Featured.jsx */}
-          <button
-            type="button"
+          <Link
+            to="/360-virtual-tour"
             className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
           >
-            Start
-          </button>
-          <a
-            href="#"
+            Start Tour
+          </Link>
+          <Link
+            to="/products"
             className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
           >
-            Explore
+            Explore Spaces
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -90,7 +90,7 @@ function HowItWorks() {
                 strokeLinejoin="round"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

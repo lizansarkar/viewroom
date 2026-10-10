@@ -16,10 +16,10 @@ const IconMarkPeak = (props) => (
 );
 
 const badges = [
-  { icon: IconMarkPeak, label: "Webflow" },
-  { icon: IconMarkSquare, label: "Relume" },
-  { icon: IconMarkPeak, label: "Webflow" },
-  { icon: IconMarkSquare, label: "Relume" },
+  { icon: IconMarkPeak, label: "3 Bedrooms" },
+  { icon: IconMarkSquare, label: "2 Bathrooms" },
+  { icon: IconMarkPeak, label: "Full 360° Walkthrough" },
+  { icon: IconMarkSquare, label: "4K Ultra-HD" },
 ];
 
 function Featured() {
@@ -93,7 +93,7 @@ function Featured() {
       <div className="w-full aspect-[16/10] sm:aspect-[16/8] lg:aspect-[16/6]">
         <img
           src="https://media.licdn.com/dms/image/v2/D4E12AQGn5iOuSfzR0g/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1698674398769?e=2147483647&v=beta&t=bvXEc6IP9G-f5JZyWV3Dil7twZ-oyKBYPVe1Mici218"
-          alt="Couple sharing coffee at a cafe table"
+          alt="Modern Residence 360 virtual tour"
           className="h-full w-full object-cover rounded-none"
         />
       </div>
