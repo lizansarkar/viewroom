@@ -24,44 +24,44 @@ export default function CinematicAutoPilotHUD({
   if (!isActive) return null;
 
   return (
-    <div className="absolute inset-x-0 bottom-6 sm:bottom-8 z-40 flex flex-col items-center pointer-events-none px-4">
+    <div className="absolute inset-x-0 bottom-6 sm:bottom-8 z-40 flex flex-col items-center pointer-events-none px-4 select-none">
       {/* Top Helper Badge: Manual Touch Notification */}
       <div className="mb-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
         {isPaused ? (
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/90 text-black font-semibold text-xs shadow-lg backdrop-blur-md pointer-events-auto animate-pulse">
-            <FontAwesomeIcon icon={faHandPointer} className="text-xs" />
-            <span>Manual Mode Active • Drag screen freely or click Resume</span>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/85 border border-white/35 text-white font-medium text-xs shadow-2xl backdrop-blur-xl pointer-events-auto">
+            <FontAwesomeIcon icon={faHandPointer} className="text-xs text-white" />
+            <span>Manual Control Active • Drag freely or click Resume</span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 border border-white/20 text-white/80 font-medium text-xs backdrop-blur-md">
-            <FontAwesomeIcon icon={faHandPointer} className="text-[10px] text-cyan-400" />
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/70 border border-white/20 text-white/85 font-medium text-xs backdrop-blur-xl shadow-lg">
+            <FontAwesomeIcon icon={faHandPointer} className="text-[10px] text-white/70" />
             <span>Drag mouse/touch anytime to pause and explore manually</span>
           </div>
         )}
       </div>
 
-      {/* Main Glassmorphic Cinematic Console */}
-      <div className="w-full max-w-2xl bg-black/85 backdrop-blur-xl border border-white/20 text-white rounded-2xl shadow-2xl p-4 sm:p-5 pointer-events-auto transition-all duration-300">
+      {/* Main Frosted Glass Luxury Console */}
+      <div className="w-full max-w-2xl bg-black/80 backdrop-blur-2xl border border-white/20 text-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] p-4 sm:p-5 pointer-events-auto transition-all duration-300">
         {/* Header Row: Live Auto-Pilot Tag & Exit Button */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2.5">
             {isPaused ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-400 border border-amber-500/40">
-                <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase bg-white/10 text-white/80 border border-white/20">
+                <span className="w-2 h-2 rounded-full bg-white/60" />
                 PAUSED
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase bg-white/15 text-white border border-white/30">
+                <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)] animate-ping" />
                 DIRECTOR'S TOUR
               </span>
             )}
-            <span className="text-xs text-white/50 hidden sm:inline">
+            <span className="text-xs text-white/60 font-semibold hidden sm:inline">
               Room {currentIndex + 1} of {totalScenes}
             </span>
           </div>
 
-          {/* Room Counter + Exit */}
+          {/* Exit Button */}
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -69,23 +69,23 @@ export default function CinematicAutoPilotHUD({
                 uiSound.playHoverClick();
                 onExit();
               }}
-              title="Exit Cinematic Auto-Pilot"
-              className="p-1.5 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors text-xs flex items-center gap-1.5 cursor-pointer"
+              title="Exit Director's Tour"
+              className="p-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 hover:text-white transition-all text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               <FontAwesomeIcon icon={faXmark} className="text-xs" />
-              <span className="hidden sm:inline font-medium">Exit</span>
+              <span className="hidden sm:inline font-semibold">Exit</span>
             </button>
           </div>
         </div>
 
         {/* Room Title & Highlight Info */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
           <div>
-            <h3 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-              <FontAwesomeIcon icon={faFilm} className="text-cyan-400 text-sm hidden sm:inline" />
+            <h3 className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
+              <FontAwesomeIcon icon={faFilm} className="text-white/80 text-xs hidden sm:inline" />
               {currentScene?.name || "Room Showcase"}
             </h3>
-            <p className="text-xs text-white/60 line-clamp-1 mt-0.5">
+            <p className="text-xs text-white/60 line-clamp-1 mt-0.5 font-medium">
               {currentScene?.category || "360° Virtual Walkthrough"}
               {currentScene?.floorLevel ? ` • ${currentScene.floorLevel}` : ""}
             </p>
@@ -99,10 +99,10 @@ export default function CinematicAutoPilotHUD({
                 uiSound.playHoverClick();
                 onTogglePause();
               }}
-              className={`px-4 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer ${
                 isPaused
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/25"
-                  : "bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                  ? "bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
+                  : "bg-white/15 hover:bg-white/25 text-white border border-white/25"
               }`}
             >
               <FontAwesomeIcon icon={isPaused ? faPlay : faPause} className="text-xs" />
@@ -116,22 +116,18 @@ export default function CinematicAutoPilotHUD({
                 onNextScene();
               }}
               title="Skip to next room"
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white/90 hover:text-white text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
             >
               <FontAwesomeIcon icon={faForwardStep} className="text-xs" />
-              <span className="hidden sm:inline font-medium">Next Room</span>
+              <span className="hidden sm:inline">Next Room</span>
             </button>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+        {/* Crisp White Progress Bar */}
+        <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
           <div
-            className={`h-full transition-all duration-100 ease-linear rounded-full ${
-              isPaused
-                ? "bg-amber-400"
-                : "bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-500"
-            }`}
+            className="h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] transition-all duration-100 ease-linear rounded-full"
             style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
           />
         </div>
@@ -139,4 +135,3 @@ export default function CinematicAutoPilotHUD({
     </div>
   );
 }
-

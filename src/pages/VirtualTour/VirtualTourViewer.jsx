@@ -222,7 +222,11 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
               targetNodeId: hp.targetSceneId || hp.targetId,
               label: hp.label || hp.title,
               type: hp.type === "drone" ? "drone_badge" : "floor_puck",
-              iconType: hp.type || "arrow",
+              iconType:
+                hp.iconType ||
+                (hp.type && hp.type !== "floor_puck" && hp.type !== "drone"
+                  ? hp.type
+                  : "arrow"),
               position: {
                 yaw:
                   typeof hp.yaw === "number"
@@ -279,7 +283,10 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
     html:
       conn.type === "drone_badge"
         ? createDroneHotspotHtml(conn.label)
-        : createFloorPuckMarkerHtml(conn.label, conn.iconType || "arrow"),
+        : createFloorPuckMarkerHtml(
+            conn.label,
+            conn.iconType || (conn.type && conn.type !== "floor_puck" ? conn.type : "arrow")
+          ),
     targetId: conn.targetNodeId,
   }));
 

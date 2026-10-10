@@ -17,20 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { apiUploadImage } from "../../services/api";
-
-const getHotspotIcon = (type) => {
-  switch (type) {
-    case "arrow": return "∧";
-    case "door": return "🚪";
-    case "puck": return "⭕";
-    case "bathroom": return "🛁";
-    case "stairs": return "🪜";
-    case "dining": return "🍽️";
-    case "bedroom": return "🛏️";
-    case "info": return "ℹ️";
-    default: return "➔";
-  }
-};
+import { createFloorPuckMarkerHtml, getHotspotIcon } from "../../utils/tourHotspots";
 
 const toDeg = (val, fallback = "0deg") => {
   if (val === undefined || val === null || val === "") return fallback;
@@ -40,57 +27,7 @@ const toDeg = (val, fallback = "0deg") => {
 };
 
 const createPreviewPuckHtml = (label, type = "arrow") => {
-  const displayLabel = label || "HOTSPOT";
-  if (type === "arrow") {
-    // Ultra-crisp 3D Perspective SVG Road Chevron Arrow with Floor Shadow & Pulse Animation
-    return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs font-black">➔</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
-          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
-          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>
-    `;
-  }
-
-  if (type === "door") {
-    return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🚪</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full border-2 border-white bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-50"></div>
-          <svg class="w-6 h-6 fill-current transition-transform duration-500 group-hover:scale-110" viewBox="0 0 24 24">
-            <path d="M19 19V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v14H3v2h18v-2h-2zm-8-6h-2v-2h2v2z"/>
-          </svg>
-        </div>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-      <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-        <span class="text-xs">${getHotspotIcon(type)}</span>
-        <span>${displayLabel}</span>
-      </div>
-      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-13 h-13 sm:w-15 sm:h-15 rounded-full border-2 border-white bg-white/30 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120">
-        <div class="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-70"></div>
-        <div class="w-5 h-5 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
-      </div>
-    </div>
-  `;
+  return createFloorPuckMarkerHtml(label, type);
 };
 
 export default function HotspotEditorModal({
@@ -252,6 +189,7 @@ export default function HotspotEditorModal({
         pitch: pitch.includes("deg") ? pitch : `${pitch}deg`,
         targetId,
         type: hotspotType,
+        iconType: hotspotType,
       };
       if (onSave) {
         await onSave(newHotspot);
@@ -290,7 +228,7 @@ export default function HotspotEditorModal({
     ...existingHotspots.map((hp) => ({
       id: hp.id,
       position: { yaw: toDeg(hp.yaw, "0deg"), pitch: toDeg(hp.pitch, "-20deg") },
-      html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT", hp.type || "arrow"),
+      html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT", hp.iconType || hp.type || "arrow"),
     })),
   ];
 

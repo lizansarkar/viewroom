@@ -86,16 +86,13 @@ export default function TourActionMenu({
             }
             className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer ${
               isAutoPilot
-                ? "bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white border-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.8)] animate-pulse"
+                ? "bg-white text-black border-white shadow-[0_0_25px_rgba(255,255,255,1)]"
                 : "bg-white/25 hover:bg-white/40 border-white/40 text-white"
             }`}
           >
             <FontAwesomeIcon icon={isAutoPilot ? faPlay : faFilm} className="text-base" />
             {isAutoPilot && (
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
-              </span>
+              <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
             )}
           </button>
 
