@@ -218,34 +218,54 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
               s.panorama ||
               matchedTour.coverImage ||
               "/panoramas/panorama_aerial.jpg",
-            connections: (s.hotspots || s.markers || []).map((hp) => ({
-              targetNodeId: hp.targetSceneId || hp.targetId,
-              label: hp.label || hp.title,
-              type: hp.type === "drone" ? "drone_badge" : "floor_puck",
-              iconType:
+            connections: (s.hotspots || s.markers || []).map((hp) => {
+              let detectedIcon =
                 hp.iconType ||
+                hp.description ||
                 (hp.type && hp.type !== "floor_puck" && hp.type !== "drone"
                   ? hp.type
-                  : "arrow"),
-              position: {
-                yaw:
-                  typeof hp.yaw === "number"
-                    ? `${hp.yaw}deg`
-                    : hp.yaw
-                    ? String(hp.yaw).endsWith("deg") || String(hp.yaw).endsWith("rad")
-                      ? String(hp.yaw)
-                      : `${hp.yaw}deg`
-                    : hp.position?.yaw || "0deg",
-                pitch:
-                  typeof hp.pitch === "number"
-                    ? `${hp.pitch}deg`
-                    : hp.pitch
-                    ? String(hp.pitch).endsWith("deg") || String(hp.pitch).endsWith("rad")
-                      ? String(hp.pitch)
-                      : `${hp.pitch}deg`
-                    : hp.position?.pitch || "-25deg",
-              },
-            })),
+                  : null);
+              if (detectedIcon) {
+                detectedIcon = String(detectedIcon).toLowerCase().trim();
+                if (detectedIcon === "chevron") detectedIcon = "arrow";
+                else if (detectedIcon === "ring" || detectedIcon === "target") detectedIcon = "puck";
+              }
+
+              const textToCheck = `${hp.label || ""} ${hp.title || ""} ${hp.description || ""} ${hp.type || ""}`.toLowerCase();
+              if (!detectedIcon || detectedIcon === "puck" || detectedIcon === "ring" || detectedIcon === "arrow") {
+                if (textToCheck.includes("bath") || textToCheck.includes("washroom") || textToCheck.includes("toilet")) detectedIcon = "bathroom";
+                else if (textToCheck.includes("kitchen") || textToCheck.includes("cook") || textToCheck.includes("stove")) detectedIcon = "kitchen";
+                else if (textToCheck.includes("dining") || textToCheck.includes("cafe") || textToCheck.includes("food")) detectedIcon = "dining";
+                else if (textToCheck.includes("door") || textToCheck.includes("enter") || textToCheck.includes("entry") || textToCheck.includes("suite")) detectedIcon = "door";
+                else if (textToCheck.includes("stair") || textToCheck.includes("step") || textToCheck.includes("level")) detectedIcon = "stairs";
+                else if (textToCheck.includes("bed") || textToCheck.includes("room")) detectedIcon = "bedroom";
+              }
+
+              return {
+                targetNodeId: hp.targetSceneId || hp.targetId,
+                label: hp.label || hp.title,
+                type: hp.type === "drone" ? "drone_badge" : "floor_puck",
+                iconType: detectedIcon || "arrow",
+                position: {
+                  yaw:
+                    typeof hp.yaw === "number"
+                      ? `${hp.yaw}deg`
+                      : hp.yaw
+                      ? String(hp.yaw).endsWith("deg") || String(hp.yaw).endsWith("rad")
+                        ? String(hp.yaw)
+                        : `${hp.yaw}deg`
+                      : hp.position?.yaw || "0deg",
+                  pitch:
+                    typeof hp.pitch === "number"
+                      ? `${hp.pitch}deg`
+                      : hp.pitch
+                      ? String(hp.pitch).endsWith("deg") || String(hp.pitch).endsWith("rad")
+                        ? String(hp.pitch)
+                        : `${hp.pitch}deg`
+                      : hp.position?.pitch || "-25deg",
+                },
+              };
+            }),
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);

@@ -367,7 +367,8 @@ router.post("/tours/:id/scenes", async (req, res) => {
 // POST /api/v1/owner/tours/:tourId/scenes/:sceneId/hotspots - Save pitch/yaw hotspot coordinates in PostgreSQL
 router.post("/tours/:tourId/scenes/:sceneId/hotspots", async (req, res) => {
   try {
-    const { pitch, yaw, title, targetId, type } = req.body;
+    const { pitch, yaw, title, targetId, type, iconType } = req.body;
+    const finalIconType = iconType || type || "arrow";
     const sceneId = req.params.sceneId;
 
     let newHotspot = null;
@@ -378,10 +379,23 @@ router.post("/tours/:tourId/scenes/:sceneId/hotspots", async (req, res) => {
           pitch: typeof pitch === "number" ? pitch : parseFloat(pitch) || 0,
           yaw: typeof yaw === "number" ? yaw : parseFloat(yaw) || 0,
           label: title || "New Marker",
+          description: finalIconType,
           targetSceneId: targetId || null,
-          type: type === "arrow" ? "CHEVRON" : type === "info" ? "INFO" : "RING",
+          type:
+            finalIconType === "arrow"
+              ? "CHEVRON"
+              : finalIconType === "info"
+              ? "INFO"
+              : finalIconType === "door"
+              ? "DOOR"
+              : "RING",
         },
       });
+      newHotspot = {
+        ...newHotspot,
+        type: finalIconType,
+        iconType: finalIconType,
+      };
     } catch (dbErr) {
       console.warn("Prisma PostgreSQL hotspot create fallback:", dbErr.message);
       const tour = getTourById(req.params.tourId);
@@ -394,7 +408,9 @@ router.post("/tours/:tourId/scenes/:sceneId/hotspots", async (req, res) => {
             yaw: yaw || 0,
             title: title || "New Marker",
             targetId: targetId || null,
-            type: type || "arrow",
+            type: finalIconType,
+            iconType: finalIconType,
+            description: finalIconType,
           };
           scene.hotspots.push(newHotspot);
         }

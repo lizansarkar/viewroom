@@ -543,7 +543,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       console.warn("apiAddOwnerHotspot error, falling back locally:", err);
     }
 
-    const savedHotspot = (res && res.data) || hotspotData;
+    const incoming = (res && res.data) || {};
+    const savedHotspot = {
+      ...hotspotData,
+      ...incoming,
+      type: hotspotData.type || incoming.type || "arrow",
+      iconType: hotspotData.iconType || hotspotData.type || incoming.iconType || incoming.type || "arrow",
+    };
 
     setTours((prev) => {
       const updated = prev.map((t) => {

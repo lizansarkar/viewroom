@@ -376,13 +376,14 @@ export default function HotspotEditorModal({
                   className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
                   <option value="arrow">∧ 3D Floor Animated Chevron Arrow</option>
-                  <option value="door">🚪 Circular Doorway Ring</option>
+                  <option value="door">🚪 Architectural Doorway Portal</option>
                   <option value="puck">⭕ Concentric Floor Target Puck</option>
-                  <option value="bathroom">🛁 Bathroom Puck</option>
-                  <option value="stairs">🪜 Stairs / Upper Level</option>
-                  <option value="dining">🍽️ Dining & Kitchen</option>
+                  <option value="bathroom">🛁 Bathroom / Washroom</option>
+                  <option value="kitchen">🍳 Kitchen / Stove Station</option>
+                  <option value="dining">🍽️ Dining & Kitchen Table</option>
+                  <option value="stairs">🪜 Stairs / Level Transition</option>
                   <option value="bedroom">🛏️ Bedroom / Suite</option>
-                  <option value="info">ℹ️ Spatial Info Badge</option>
+                  <option value="info">ℹ️ Spatial Info Beacon</option>
                 </select>
               </div>
 

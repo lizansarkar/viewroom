@@ -25,38 +25,73 @@ export default function CinematicAutoPilotHUD({
 
   return (
     <div className="absolute inset-x-0 bottom-6 sm:bottom-8 z-40 flex flex-col items-center pointer-events-none px-4 select-none">
-      {/* Top Helper Badge: Manual Touch Notification */}
+      {/* Top Helper Badge: Frosted Glass Notification */}
       <div className="mb-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {isPaused ? (
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/85 border border-white/35 text-white font-medium text-xs shadow-2xl backdrop-blur-xl pointer-events-auto">
-            <FontAwesomeIcon icon={faHandPointer} className="text-xs text-white" />
-            <span>Manual Control Active • Drag freely or click Resume</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/70 border border-white/20 text-white/85 font-medium text-xs backdrop-blur-xl shadow-lg">
-            <FontAwesomeIcon icon={faHandPointer} className="text-[10px] text-white/70" />
-            <span>Drag mouse/touch anytime to pause and explore manually</span>
-          </div>
-        )}
+        <div
+          style={{
+            backgroundColor: "rgba(15, 15, 18, 0.4)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            color: "#ffffff",
+          }}
+          className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/30 text-xs font-semibold shadow-xl pointer-events-auto"
+        >
+          <FontAwesomeIcon icon={faHandPointer} className="text-xs" style={{ color: "#ffffff" }} />
+          <span style={{ color: "#ffffff" }}>
+            {isPaused
+              ? "Manual Mode Active • Drag screen freely or click Resume"
+              : "Drag mouse/touch anytime to pause and explore manually"}
+          </span>
+        </div>
       </div>
 
-      {/* Main Frosted Glass Luxury Console */}
-      <div className="w-full max-w-2xl bg-black/80 backdrop-blur-2xl border border-white/20 text-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] p-4 sm:p-5 pointer-events-auto transition-all duration-300">
+      {/* Main Frosted Glass Luxury Console (Pure Translucent Blur) */}
+      <div
+        style={{
+          backgroundColor: "rgba(15, 15, 20, 0.45)",
+          backdropFilter: "blur(32px)",
+          WebkitBackdropFilter: "blur(32px)",
+        }}
+        className="w-full max-w-2xl border border-white/25 rounded-3xl shadow-[0_16px_45px_rgba(0,0,0,0.4)] p-4 sm:p-5 pointer-events-auto transition-all duration-300"
+      >
         {/* Header Row: Live Auto-Pilot Tag & Exit Button */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2.5">
             {isPaused ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase bg-white/10 text-white/80 border border-white/20">
-                <span className="w-2 h-2 rounded-full bg-white/60" />
+              <span
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                  borderColor: "rgba(255, 255, 255, 0.3)",
+                  color: "#ffffff",
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase border"
+              >
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: "#ffffff" }} />
                 PAUSED
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase bg-white/15 text-white border border-white/30">
-                <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)] animate-ping" />
+              <span
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  borderColor: "rgba(255, 255, 255, 0.4)",
+                  color: "#ffffff",
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold tracking-wider uppercase border"
+              >
+                <span
+                  className="w-2 h-2 rounded-full animate-ping"
+                  style={{
+                    backgroundColor: "#ffffff",
+                    boxShadow: "0 0 8px rgba(255,255,255,1)",
+                  }}
+                />
                 DIRECTOR'S TOUR
               </span>
             )}
-            <span className="text-xs text-white/60 font-semibold hidden sm:inline">
+            <span
+              style={{ color: "rgba(255, 255, 255, 0.85)" }}
+              className="text-xs font-bold tracking-wide hidden sm:inline"
+            >
               Room {currentIndex + 1} of {totalScenes}
             </span>
           </div>
@@ -70,10 +105,15 @@ export default function CinematicAutoPilotHUD({
                 onExit();
               }}
               title="Exit Director's Tour"
-              className="p-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 hover:text-white transition-all text-xs flex items-center gap-1.5 cursor-pointer shadow-sm"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                color: "#ffffff",
+                borderColor: "rgba(255, 255, 255, 0.3)",
+              }}
+              className="p-1.5 px-3 rounded-full border hover:bg-white/30 transition-all text-xs flex items-center gap-1.5 cursor-pointer shadow-sm font-semibold"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-xs" />
-              <span className="hidden sm:inline font-semibold">Exit</span>
+              <FontAwesomeIcon icon={faXmark} className="text-xs" style={{ color: "#ffffff" }} />
+              <span style={{ color: "#ffffff" }}>Exit</span>
             </button>
           </div>
         </div>
@@ -81,11 +121,17 @@ export default function CinematicAutoPilotHUD({
         {/* Room Title & Highlight Info */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
           <div>
-            <h3 className="text-sm sm:text-base font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
-              <FontAwesomeIcon icon={faFilm} className="text-white/80 text-xs hidden sm:inline" />
-              {currentScene?.name || "Room Showcase"}
+            <h3
+              style={{ color: "#ffffff" }}
+              className="text-sm sm:text-base font-extrabold uppercase tracking-wider flex items-center gap-2 m-0"
+            >
+              <FontAwesomeIcon icon={faFilm} className="text-xs hidden sm:inline" style={{ color: "#ffffff" }} />
+              <span style={{ color: "#ffffff" }}>{currentScene?.name || "Room Showcase"}</span>
             </h3>
-            <p className="text-xs text-white/60 line-clamp-1 mt-0.5 font-medium">
+            <p
+              style={{ color: "rgba(255, 255, 255, 0.75)" }}
+              className="text-xs line-clamp-1 mt-0.5 font-medium m-0"
+            >
               {currentScene?.category || "360° Virtual Walkthrough"}
               {currentScene?.floorLevel ? ` • ${currentScene.floorLevel}` : ""}
             </p>
@@ -99,14 +145,31 @@ export default function CinematicAutoPilotHUD({
                 uiSound.playHoverClick();
                 onTogglePause();
               }}
-              className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 cursor-pointer ${
+              style={
                 isPaused
-                  ? "bg-white text-black hover:bg-white/90 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
-                  : "bg-white/15 hover:bg-white/25 text-white border border-white/25"
+                  ? {
+                      backgroundColor: "#ffffff",
+                      color: "#0a0a0a",
+                      boxShadow: "0 0 20px rgba(255, 255, 255, 0.6)",
+                    }
+                  : {
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      color: "#ffffff",
+                      borderColor: "rgba(255, 255, 255, 0.35)",
+                    }
+              }
+              className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition-all transform hover:scale-105 cursor-pointer ${
+                !isPaused ? "border" : ""
               }`}
             >
-              <FontAwesomeIcon icon={isPaused ? faPlay : faPause} className="text-xs" />
-              <span>{isPaused ? "Resume Tour" : "Pause"}</span>
+              <FontAwesomeIcon
+                icon={isPaused ? faPlay : faPause}
+                className="text-xs"
+                style={{ color: isPaused ? "#0a0a0a" : "#ffffff" }}
+              />
+              <span style={{ color: isPaused ? "#0a0a0a" : "#ffffff" }}>
+                {isPaused ? "Resume Tour" : "Pause"}
+              </span>
             </button>
 
             <button
@@ -116,19 +179,31 @@ export default function CinematicAutoPilotHUD({
                 onNextScene();
               }}
               title="Skip to next room"
-              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
+                color: "#ffffff",
+                borderColor: "rgba(255, 255, 255, 0.3)",
+              }}
+              className="px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 hover:bg-white/30 transition-all cursor-pointer shadow-sm"
             >
-              <FontAwesomeIcon icon={faForwardStep} className="text-xs" />
-              <span className="hidden sm:inline">Next Room</span>
+              <FontAwesomeIcon icon={faForwardStep} className="text-xs" style={{ color: "#ffffff" }} />
+              <span style={{ color: "#ffffff" }}>Next Room</span>
             </button>
           </div>
         </div>
 
-        {/* Crisp White Progress Bar */}
-        <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
+        {/* Crisp Glowing White Progress Bar */}
+        <div
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+          className="w-full h-1.5 rounded-full overflow-hidden"
+        >
           <div
-            className="h-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] transition-all duration-100 ease-linear rounded-full"
-            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+            style={{
+              backgroundColor: "#ffffff",
+              boxShadow: "0 0 10px rgba(255, 255, 255, 1)",
+              width: `${Math.min(100, Math.max(0, progress))}%`,
+            }}
+            className="h-full transition-all duration-100 ease-linear rounded-full"
           />
         </div>
       </div>

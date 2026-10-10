@@ -8,32 +8,53 @@ export const getHotspotIcon = (type) => {
     case "door": return "🚪";
     case "puck": return "⭕";
     case "bathroom": return "🛁";
-    case "stairs": return "🪜";
+    case "kitchen": return "🍳";
     case "dining": return "🍽️";
+    case "stairs": return "🪜";
     case "bedroom": return "🛏️";
     case "info": return "ℹ️";
     default: return "➔";
   }
 };
 
-export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
+export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   const displayLabel = label || "NAVIGATE";
+  let iconType = String(rawIconType || "").toLowerCase().trim();
+
+  // Normalize synonyms
+  if (iconType === "chevron") iconType = "arrow";
+  else if (iconType === "target" || iconType === "ring" || iconType === "circle") iconType = "puck";
+  else if (iconType === "information") iconType = "info";
+  else if (iconType === "bath" || iconType === "washroom" || iconType === "toilet") iconType = "bathroom";
+  else if (iconType === "cook" || iconType === "cooking" || iconType === "stove") iconType = "kitchen";
+  else if (iconType === "dine" || iconType === "food") iconType = "dining";
+  else if (iconType === "stair" || iconType === "step") iconType = "stairs";
+  else if (iconType === "bed") iconType = "bedroom";
+
+  // Fallback check against label text if iconType is generic or missing
+  if (!iconType || iconType === "floor_puck" || iconType === "arrow" || iconType === "puck") {
+    const lbl = displayLabel.toLowerCase();
+    if (lbl.includes("bath") || lbl.includes("washroom") || lbl.includes("toilet")) iconType = "bathroom";
+    else if (lbl.includes("kitchen") || lbl.includes("cook") || lbl.includes("stove")) iconType = "kitchen";
+    else if (lbl.includes("dining") || lbl.includes("cafe") || lbl.includes("food")) iconType = "dining";
+    else if (lbl.includes("door") || lbl.includes("enter") || lbl.includes("entry") || lbl.includes("suite")) iconType = "door";
+    else if (lbl.includes("stair") || lbl.includes("step") || lbl.includes("level")) iconType = "stairs";
+    else if (lbl.includes("bed") || lbl.includes("room")) iconType = "bedroom";
+  }
 
   // 1. CHEVRON ARROW (তীর)
   if (iconType === "arrow") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
           <span class="text-xs font-black">➔</span>
           <span>${displayLabel}</span>
         </div>
-        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
-          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
-          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <div style="transform: perspective(350px) rotateX(55deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120 text-white">
+          <div class="absolute -inset-1 rounded-full border-2 border-white animate-ping opacity-60 pointer-events-none"></div>
+          <svg class="w-8 h-8 text-white filter drop-shadow-[0_0_10px_rgba(255,255,255,1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
           </svg>
         </div>
       </div>
@@ -48,11 +69,11 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
           <span class="text-xs">🚪</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-18 sm:w-16 sm:h-20 rounded-t-2xl rounded-b-sm border-2 border-white bg-black/70 backdrop-blur-md flex flex-col items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-t-2xl rounded-b-sm border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
+        <div class="relative w-14 h-18 sm:w-16 sm:h-20 rounded-t-2xl rounded-b-md border-2 border-white bg-white/25 backdrop-blur-md flex flex-col items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-t-2xl rounded-b-md border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
           <svg class="w-8 h-10 text-white fill-none stroke-current" viewBox="0 0 32 40" stroke-width="2.5">
             <path d="M4 38V4a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v34" stroke-linecap="round"/>
-            <path d="M6 36L24 30V8L6 4v32z" fill="rgba(255,255,255,0.3)"/>
+            <path d="M6 36L24 30V8L6 4v32z" fill="rgba(255,255,255,0.35)"/>
             <circle cx="20" cy="20" r="1.5" fill="white"/>
             <line x1="2" y1="38" x2="30" y2="38" stroke-width="3" stroke-linecap="round"/>
           </svg>
@@ -62,7 +83,67 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
     `;
   }
 
-  // 3. STAIRS (সিঁড়ি)
+  // 3. BATHROOM (বাথরুম)
+  if (iconType === "bathroom") {
+    return `
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs">🛁</span>
+          <span>${displayLabel}</span>
+        </div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
+          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 11h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/>
+            <path d="M6 11V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/>
+            <circle cx="11" cy="6" r="0.8" fill="white"/>
+            <path d="M5 18l-1 2m16-2l1 2"/>
+          </svg>
+        </div>
+      </div>
+    `;
+  }
+
+  // 4. KITCHEN / COOKING (কিচেন)
+  if (iconType === "kitchen") {
+    return `
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs">🍳</span>
+          <span>${displayLabel}</span>
+        </div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
+          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="6" width="18" height="12" rx="3"/>
+            <circle cx="8" cy="11" r="2.2" fill="white"/>
+            <circle cx="16" cy="11" r="2.2" fill="white"/>
+            <path d="M4 15h16"/>
+          </svg>
+        </div>
+      </div>
+    `;
+  }
+
+  // 5. DINING & TABLE (ডাইনিং)
+  if (iconType === "dining") {
+    return `
+      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
+        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+          <span class="text-xs">🍽️</span>
+          <span>${displayLabel}</span>
+        </div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
+          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2v20M18 2a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3M6 2v7a3 3 0 0 0 6 0V2M9 12v10"/>
+          </svg>
+        </div>
+      </div>
+    `;
+  }
+
+  // 6. STAIRS (সিঁড়ি)
   if (iconType === "stairs") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
@@ -70,8 +151,8 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
           <span class="text-xs">🪜</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-black/70 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
           <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 20h4v-4h4v-4h4V8h4V4"/>
             <path d="M6 10l8-8m0 0h-5m5 0v5"/>
@@ -81,7 +162,7 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
     `;
   }
 
-  // 4. BEDROOM (বেডরুম)
+  // 7. BEDROOM (বেডরুম)
   if (iconType === "bedroom") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
@@ -89,8 +170,8 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
           <span class="text-xs">🛏️</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-black/70 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
           <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 19h20M2 17v2m20-2v2M2 8v9h20V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
             <circle cx="7" cy="11" r="2" fill="white"/>
@@ -101,46 +182,7 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
     `;
   }
 
-  // 5. BATHROOM (বাথরুম)
-  if (iconType === "bathroom") {
-    return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🛁</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-black/70 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/>
-            <path d="M6 12V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2"/>
-            <circle cx="11" cy="7" r="1" fill="white"/>
-            <path d="M5 20l-1 2m16-2l1 2"/>
-          </svg>
-        </div>
-      </div>
-    `;
-  }
-
-  // 6. DINING / KITCHEN (ডাইনিং)
-  if (iconType === "dining") {
-    return `
-      <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🍽️</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-black/70 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 2v20M18 2a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3M6 2v7a3 3 0 0 0 6 0V2M9 12v10"/>
-          </svg>
-        </div>
-      </div>
-    `;
-  }
-
-  // 7. INFO BEACON (ইনফো)
+  // 8. INFO BEACON (ইনফো)
   if (iconType === "info") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
@@ -148,8 +190,8 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
           <span class="text-xs">ℹ️</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-black/70 backdrop-blur-md flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-full border border-white/60 animate-ping opacity-40 pointer-events-none"></div>
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
+          <div class="absolute -inset-1 rounded-full border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
           <svg class="w-7 h-7 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"/>
             <line x1="12" y1="8" x2="12.01" y2="8" stroke-width="3"/>
@@ -160,7 +202,7 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
     `;
   }
 
-  // 8. CONCENTRIC TARGET FLOOR PUCK (গোল / টার্গেট রিং)
+  // 9. CONCENTRIC TARGET FLOOR PUCK (গোল / টার্গেট রিং)
   return `
     <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
       <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
@@ -178,7 +220,7 @@ export const createFloorPuckMarkerHtml = (label, iconType = "arrow") => {
 // Floating Drone / Aerial Action Hotspot
 export const createDroneHotspotHtml = (label, icon = "🛸") => `
   <div class="cursor-pointer group flex flex-col items-center p-3 select-none">
-    <div class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-black/85 hover:bg-white hover:text-black backdrop-blur-md border-2 border-white text-white shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex items-center gap-2.5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.9)]">
+    <div class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-white/25 hover:bg-white hover:text-black backdrop-blur-md border-2 border-white text-white shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-center gap-2.5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(255,255,255,0.9)]">
       <span class="text-base sm:text-lg animate-bounce">${icon}</span>
       <span class="text-xs sm:text-sm font-black uppercase tracking-wider">${label}</span>
     </div>
