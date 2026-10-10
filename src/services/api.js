@@ -1,7 +1,11 @@
 // Central API Service Client for ViewRoom 360° Platform
 // Connects Frontend Components to Express Backend API Engine & PostgreSQL (Neon.io) Database via Prisma ORM
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? "/api/v1"
+    : "https://viewroom-api.onrender.com/api/v1");
 
 // Helper to retrieve auth token from either key convention
 function getAuthToken() {

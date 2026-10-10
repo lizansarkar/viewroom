@@ -53,7 +53,12 @@ function Contact() {
     setStatus({ submitting: true, successMsg: null, errorMsg: null });
 
     try {
-      const contactEndpoint = `${import.meta.env.VITE_API_BASE_URL || "/api/v1"}/contact`;
+      const baseApi =
+        import.meta.env.VITE_API_BASE_URL ||
+        (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+          ? "/api/v1"
+          : "https://viewroom-api.onrender.com/api/v1");
+      const contactEndpoint = `${baseApi}/contact`;
       const response = await fetch(contactEndpoint, {
         method: 'POST',
         headers: {

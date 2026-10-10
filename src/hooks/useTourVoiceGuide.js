@@ -270,7 +270,12 @@ export function useTourVoiceGuide({
 
     // 3. Fallback to Server Gemini AI Agent (/api/v1/ai/spatial-voice)
     try {
-      const aiEndpoint = `${import.meta.env.VITE_API_BASE_URL || "/api/v1"}/ai/spatial-voice`;
+      const baseApi =
+        import.meta.env.VITE_API_BASE_URL ||
+        (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+          ? "/api/v1"
+          : "https://viewroom-api.onrender.com/api/v1");
+      const aiEndpoint = `${baseApi}/ai/spatial-voice`;
       res = await fetch(aiEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
