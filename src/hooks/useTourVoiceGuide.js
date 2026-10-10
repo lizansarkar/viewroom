@@ -270,28 +270,16 @@ export function useTourVoiceGuide({
 
     // 3. Fallback to Server Gemini AI Agent (/api/v1/ai/spatial-voice)
     try {
-      let res;
-      try {
-        res = await fetch("/api/v1/ai/spatial-voice", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: rawTranscript,
-            currentPanoramaId,
-            nodes: tourNodes,
-          }),
-        });
-      } catch (netErr) {
-        res = await fetch("http://localhost:5000/api/v1/ai/spatial-voice", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: rawTranscript,
-            currentPanoramaId,
-            nodes: tourNodes,
-          }),
-        });
-      }
+      const aiEndpoint = `${import.meta.env.VITE_API_BASE_URL || "/api/v1"}/ai/spatial-voice`;
+      res = await fetch(aiEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: rawTranscript,
+          currentPanoramaId,
+          nodes: tourNodes,
+        }),
+      });
 
       if (res && res.ok) {
         const data = await res.json();

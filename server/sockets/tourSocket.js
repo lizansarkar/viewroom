@@ -8,9 +8,28 @@ import { Server } from "socket.io";
 const activeRooms = new Map();
 
 export const initTourSockets = (server) => {
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : []),
+  ];
+
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"],
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (
+          allowedOrigins.includes(origin) ||
+          process.env.NODE_ENV !== "production" ||
+          allowedOrigins.some((o) => origin.startsWith(o)) ||
+          origin.endsWith(".vercel.app") ||
+          origin.endsWith(".netlify.app")
+        ) {
+          return callback(null, true);
+        }
+        return callback(null, true);
+      },
       methods: ["GET", "POST"],
       credentials: true,
     },

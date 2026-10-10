@@ -53,7 +53,8 @@ function Contact() {
     setStatus({ submitting: true, successMsg: null, errorMsg: null });
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/contact', {
+      const contactEndpoint = `${import.meta.env.VITE_API_BASE_URL || "/api/v1"}/contact`;
+      const response = await fetch(contactEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

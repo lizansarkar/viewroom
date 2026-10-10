@@ -78,12 +78,25 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
     }
   };
 
-  const handleDeleteTour = async (tourId) => {
-    if (!window.confirm("Are you sure you want to delete this tour platform-wide?")) return;
-    const res = await apiAdminDeleteTour(tourId);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
+    isOpen: false,
+    tourId: null,
+  });
+
+  const handleDeleteTour = (tourId) => {
+    setDeleteConfirmModal({
+      isOpen: true,
+      tourId,
+    });
+  };
+
+  const handleConfirmDeleteTour = async () => {
+    if (!deleteConfirmModal.tourId) return;
+    const res = await apiAdminDeleteTour(deleteConfirmModal.tourId);
     if (res.success) {
-      setToursList((prev) => prev.filter((t) => t.id !== tourId));
+      setToursList((prev) => prev.filter((t) => t.id !== deleteConfirmModal.tourId));
     }
+    setDeleteConfirmModal({ isOpen: false, tourId: null });
   };
 
   const filteredUsers = usersList.filter(
@@ -546,6 +559,45 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 <p>• To inspect or remove questionable 360° tours, use the <strong>Content Moderation</strong> tab.</p>
                 <p>• To preview how the platform looks for other roles, click <strong>"Creator View"</strong> or <strong>"Client View"</strong> in Admin Overview.</p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Platform-wide Tour Deletion Confirmation Modal */}
+      {deleteConfirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+          <div
+            style={{
+              backgroundColor: "rgba(18, 18, 24, 0.9)",
+              backdropFilter: "blur(24px)",
+            }}
+            className="w-full max-w-md p-6 sm:p-7 rounded-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-in zoom-in-95 duration-200"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+              <FontAwesomeIcon icon={faTrash} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-extrabold text-white mb-2">
+              Delete Tour Platform-Wide
+            </h3>
+            <p className="text-xs sm:text-sm text-white/70 mb-6 leading-relaxed">
+              Are you sure you want to delete this 360° tour platform-wide? This will permanently remove it from the database for all users.
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => setDeleteConfirmModal({ isOpen: false, tourId: null })}
+                className="!text-xs !py-2.5 !px-5 !rounded-xl"
+              >
+                Cancel
+              </Button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteTour}
+                className="cursor-pointer transition-all duration-150 select-none inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-[0_4px_15px_rgba(220,38,38,0.4)] active:scale-95"
+              >
+                Delete Platform-Wide
+              </button>
             </div>
           </div>
         </div>

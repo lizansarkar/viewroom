@@ -77,6 +77,14 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   // Share Link State
   const [copiedTourId, setCopiedTourId] = useState(null);
 
+  // Custom Delete Confirmation Modal State
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
   // Tour Spatial Sound Modal State
   const [soundModalTour, setSoundModalTour] = useState(null);
 
@@ -427,17 +435,24 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setShowAddProductModal(false);
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (!window.confirm("Are you sure you want to delete this 3D product?")) return;
-    try {
-      await apiDeleteOwnerProduct(productId);
-    } catch (err) {
-      console.warn("Failed to delete product from database:", err);
-    }
-    setProducts((prev) => {
-      const updated = prev.filter((p) => p.id !== productId);
-      saveProductsToStorage(updated);
-      return updated;
+  const handleDeleteProduct = (productId) => {
+    setDeleteConfirmModal({
+      isOpen: true,
+      title: "Delete 3D Product",
+      message: "Are you sure you want to delete this 3D product? This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          await apiDeleteOwnerProduct(productId);
+        } catch (err) {
+          console.warn("Failed to delete product from database:", err);
+        }
+        setProducts((prev) => {
+          const updated = prev.filter((p) => p.id !== productId);
+          saveProductsToStorage(updated);
+          return updated;
+        });
+        setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null });
+      },
     });
   };
 
@@ -468,44 +483,58 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
-  const handleDeleteTour = async (tourId) => {
-    if (!window.confirm("Are you sure you want to delete this 360° tour?")) return;
-    try {
-      await apiDeleteOwnerTour(tourId);
-    } catch (err) {
-      console.warn("Failed to delete tour from backend:", err);
-    }
-    setTours((prev) => {
-      const updated = prev.filter((t) => t.id !== tourId);
-      saveToursToStorage(updated);
-      return updated;
+  const handleDeleteTour = (tourId) => {
+    setDeleteConfirmModal({
+      isOpen: true,
+      title: "Delete 360° Virtual Tour",
+      message: "Are you sure you want to delete this 360° tour? This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          await apiDeleteOwnerTour(tourId);
+        } catch (err) {
+          console.warn("Failed to delete tour from backend:", err);
+        }
+        setTours((prev) => {
+          const updated = prev.filter((t) => t.id !== tourId);
+          saveToursToStorage(updated);
+          return updated;
+        });
+        setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null });
+      },
     });
   };
 
-  const handleDeleteAllTours = async () => {
-    if (!window.confirm("Are you sure you want to delete ALL your 360° virtual tours? This will permanently remove all your tours.")) return;
-    try {
-      for (const t of tours) {
-        if (t.id) {
-          await apiDeleteOwnerTour(t.id).catch(() => {});
+  const handleDeleteAllTours = () => {
+    setDeleteConfirmModal({
+      isOpen: true,
+      title: "Delete All Virtual Tours",
+      message: "Are you sure you want to delete ALL your 360° virtual tours? This will permanently remove all your tours.",
+      onConfirm: async () => {
+        try {
+          for (const t of tours) {
+            if (t.id) {
+              await apiDeleteOwnerTour(t.id).catch(() => {});
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to delete tours from backend:", err);
         }
-      }
-    } catch (err) {
-      console.warn("Failed to delete tours from backend:", err);
-    }
-    const userEmail = (user?.email || "").toLowerCase().trim();
-    if (userEmail) {
-      localStorage.removeItem(`viewroom_tours_${userEmail}`);
-      try {
-        const allRaw = localStorage.getItem("viewroom_custom_tours");
-        const allTours = allRaw ? JSON.parse(allRaw) : [];
-        const otherTours = allTours.filter(
-          (t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail
-        );
-        localStorage.setItem("viewroom_custom_tours", JSON.stringify(otherTours));
-      } catch (e) {}
-    }
-    setTours([]);
+        const userEmail = (user?.email || "").toLowerCase().trim();
+        if (userEmail) {
+          localStorage.removeItem(`viewroom_tours_${userEmail}`);
+          try {
+            const allRaw = localStorage.getItem("viewroom_custom_tours");
+            const allTours = allRaw ? JSON.parse(allRaw) : [];
+            const otherTours = allTours.filter(
+              (t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail
+            );
+            localStorage.setItem("viewroom_custom_tours", JSON.stringify(otherTours));
+          } catch (e) {}
+        }
+        setTours([]);
+        setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null });
+      },
+    });
   };
 
   const handleAddNewSceneFromModal = async (sceneData) => {
@@ -1449,6 +1478,52 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           onClose={() => setSoundModalTour(null)}
           onSave={handleSaveSoundConfig}
         />
+      )}
+
+      {/* Sleek Glassmorphic Delete Confirmation Modal */}
+      {deleteConfirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+          <div
+            style={{
+              backgroundColor: "rgba(18, 18, 24, 0.9)",
+              backdropFilter: "blur(24px)",
+            }}
+            className="w-full max-w-md p-6 sm:p-7 rounded-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-in zoom-in-95 duration-200"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+              <FontAwesomeIcon icon={faTrash} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-extrabold text-white mb-2">
+              {deleteConfirmModal.title}
+            </h3>
+            <p className="text-xs sm:text-sm text-white/70 mb-6 leading-relaxed">
+              {deleteConfirmModal.message}
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setDeleteConfirmModal({
+                    isOpen: false,
+                    title: "",
+                    message: "",
+                    onConfirm: null,
+                  })
+                }
+                className="!text-xs !py-2.5 !px-5 !rounded-xl"
+              >
+                Cancel
+              </Button>
+              <button
+                type="button"
+                onClick={deleteConfirmModal.onConfirm}
+                className="cursor-pointer transition-all duration-150 select-none inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-[0_4px_15px_rgba(220,38,38,0.4)] active:scale-95"
+              >
+                Delete Permanently
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
