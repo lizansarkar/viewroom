@@ -9,6 +9,7 @@ import {
   faHandPointer,
 } from "@fortawesome/free-solid-svg-icons";
 import { uiSound } from "../../utils/tourSoundEngine";
+import Button from "../reuseable/Button";
 
 export default function CinematicAutoPilotHUD({
   isActive,
@@ -98,23 +99,18 @@ export default function CinematicAutoPilotHUD({
 
           {/* Exit Button */}
           <div className="flex items-center gap-2">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => {
                 uiSound.playHoverClick();
                 onExit();
               }}
               title="Exit Director's Tour"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
-                color: "#ffffff",
-                borderColor: "rgba(255, 255, 255, 0.3)",
-              }}
-              className="p-1.5 px-3 rounded-full border hover:bg-white/30 transition-all text-xs flex items-center gap-1.5 cursor-pointer shadow-sm font-semibold"
+              className="!text-xs !py-1 !px-3 !rounded-full gap-1.5 shadow-sm"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-xs" style={{ color: "#ffffff" }} />
-              <span style={{ color: "#ffffff" }}>Exit</span>
-            </button>
+              <FontAwesomeIcon icon={faXmark} className="text-xs text-black" />
+              <span className="text-black font-bold">Exit</span>
+            </Button>
           </div>
         </div>
 
@@ -139,56 +135,35 @@ export default function CinematicAutoPilotHUD({
 
           {/* Play/Pause & Skip Controls */}
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-            <button
-              type="button"
+            <Button
+              variant={isPaused ? "secondary" : "primary"}
               onClick={() => {
                 uiSound.playHoverClick();
                 onTogglePause();
               }}
-              style={
-                isPaused
-                  ? {
-                      backgroundColor: "#ffffff",
-                      color: "#0a0a0a",
-                      boxShadow: "0 0 20px rgba(255, 255, 255, 0.6)",
-                    }
-                  : {
-                      backgroundColor: "rgba(255, 255, 255, 0.2)",
-                      color: "#ffffff",
-                      borderColor: "rgba(255, 255, 255, 0.35)",
-                    }
-              }
-              className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 transition-all transform hover:scale-105 cursor-pointer ${
-                !isPaused ? "border" : ""
-              }`}
+              className="!text-xs !py-2 !px-4 !rounded-xl gap-2 shadow-lg"
             >
               <FontAwesomeIcon
                 icon={isPaused ? faPlay : faPause}
-                className="text-xs"
-                style={{ color: isPaused ? "#0a0a0a" : "#ffffff" }}
+                className="text-xs text-black"
               />
-              <span style={{ color: isPaused ? "#0a0a0a" : "#ffffff" }}>
+              <span className="text-black font-bold">
                 {isPaused ? "Resume Tour" : "Pause"}
               </span>
-            </button>
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => {
                 uiSound.playCameraSwoosh();
                 onNextScene();
               }}
               title="Skip to next room"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
-                color: "#ffffff",
-                borderColor: "rgba(255, 255, 255, 0.3)",
-              }}
-              className="px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 hover:bg-white/30 transition-all cursor-pointer shadow-sm"
+              className="!text-xs !py-2 !px-3.5 !rounded-xl gap-1.5 shadow-sm"
             >
-              <FontAwesomeIcon icon={faForwardStep} className="text-xs" style={{ color: "#ffffff" }} />
-              <span style={{ color: "#ffffff" }}>Next Room</span>
-            </button>
+              <FontAwesomeIcon icon={faForwardStep} className="text-xs text-black" />
+              <span className="text-black font-bold">Next Room</span>
+            </Button>
           </div>
         </div>
 

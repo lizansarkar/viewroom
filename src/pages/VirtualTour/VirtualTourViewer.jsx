@@ -598,10 +598,17 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
         )}
 
-        {/* TOP-LEFT BRANDING & SCENE BADGE */}
-        <div className="absolute top-5 left-5 z-20 flex items-center gap-2.5 bg-black/75 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg pointer-events-auto">
+        {/* TOP-LEFT BRANDING & SCENE BADGE (Frosted Glass Blur) */}
+        <div
+          style={{
+            backgroundColor: "rgba(15, 15, 20, 0.45)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+          }}
+          className="absolute top-5 left-5 z-20 flex items-center gap-2.5 border border-white/25 px-4 py-2 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.35)] pointer-events-auto"
+        >
           <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
-          <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase">
+          <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase drop-shadow-sm">
             {activeNode.name}
           </span>
         </div>

@@ -46,15 +46,17 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "arrow") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
+        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
           <span class="text-xs font-black">➔</span>
           <span>${displayLabel}</span>
         </div>
-        <div style="transform: perspective(350px) rotateX(55deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120 text-white">
-          <div class="absolute -inset-1 rounded-full border-2 border-white animate-ping opacity-60 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white filter drop-shadow-[0_0_10px_rgba(255,255,255,1)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5"></line>
-            <polyline points="5 12 12 5 19 12"></polyline>
+        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
+          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
+          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
+            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
       </div>
@@ -69,15 +71,14 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🚪</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-18 sm:w-16 sm:h-20 rounded-t-2xl rounded-b-md border-2 border-white bg-white/25 backdrop-blur-md flex flex-col items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-t-2xl rounded-b-md border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-10 text-white fill-none stroke-current" viewBox="0 0 32 40" stroke-width="2.5">
+        <div class="relative w-14 h-18 sm:w-16 sm:h-20 rounded-2xl bg-white/15 backdrop-blur-md flex flex-col items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-11 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 32 40" stroke-width="2.5">
             <path d="M4 38V4a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v34" stroke-linecap="round"/>
-            <path d="M6 36L24 30V8L6 4v32z" fill="rgba(255,255,255,0.35)"/>
+            <path d="M6 36L24 30V8L6 4v32z" fill="rgba(255,255,255,0.4)"/>
             <circle cx="20" cy="20" r="1.5" fill="white"/>
             <line x1="2" y1="38" x2="30" y2="38" stroke-width="3" stroke-linecap="round"/>
           </svg>
-          <div class="w-10 h-1 bg-white rounded-full blur-[1px] shadow-[0_0_8px_rgba(255,255,255,1)] animate-pulse mt-1"></div>
+          <div class="w-10 h-1 bg-white/80 rounded-full blur-[1px] shadow-[0_0_8px_rgba(255,255,255,1)] animate-pulse mt-1"></div>
         </div>
       </div>
     `;
@@ -91,9 +92,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🛁</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 11h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/>
             <path d="M6 11V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/>
             <circle cx="11" cy="6" r="0.8" fill="white"/>
@@ -112,9 +112,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🍳</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="6" width="18" height="12" rx="3"/>
             <circle cx="8" cy="11" r="2.2" fill="white"/>
             <circle cx="16" cy="11" r="2.2" fill="white"/>
@@ -133,9 +132,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🍽️</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 2v20M18 2a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3M6 2v7a3 3 0 0 0 6 0V2M9 12v10"/>
           </svg>
         </div>
@@ -151,9 +149,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🪜</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 20h4v-4h4v-4h4V8h4V4"/>
             <path d="M6 10l8-8m0 0h-5m5 0v5"/>
           </svg>
@@ -170,9 +167,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">🛏️</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-2xl border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-8 h-8 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 19h20M2 17v2m20-2v2M2 8v9h20V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
             <circle cx="7" cy="11" r="2" fill="white"/>
             <circle cx="17" cy="11" r="2" fill="white"/>
@@ -190,9 +186,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
           <span class="text-xs">ℹ️</span>
           <span>${displayLabel}</span>
         </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-115 text-white">
-          <div class="absolute -inset-1 rounded-full border-2 border-white animate-ping opacity-50 pointer-events-none"></div>
-          <svg class="w-7 h-7 text-white fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"/>
             <line x1="12" y1="8" x2="12.01" y2="8" stroke-width="3"/>
             <line x1="12" y1="12" x2="12" y2="16"/>
@@ -209,8 +204,8 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
         <span class="text-xs font-black">⭕</span>
         <span>${displayLabel}</span>
       </div>
-      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-white bg-white/25 backdrop-blur-md flex items-center justify-center shadow-[0_0_25px_rgba(255,255,255,0.9)] transition-all duration-300 group-hover:scale-120">
-        <div class="absolute -inset-1 rounded-full border-2 border-white animate-ping opacity-60"></div>
+      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-120">
+        <div class="absolute -inset-1 rounded-full bg-white/15 animate-ping opacity-50"></div>
         <div class="w-6 h-6 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
       </div>
     </div>
