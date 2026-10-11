@@ -10,7 +10,6 @@ const THEMES = {
 function getInitialTheme() {
   const saved = localStorage.getItem('viewroom-theme')
   if (saved && THEMES[saved]) return saved
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
   return 'light'
 }
 
