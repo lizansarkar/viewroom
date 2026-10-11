@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Live Application](https://img.shields.io/badge/Live_App-viewroom--neon.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://viewroom-neon.vercel.app)
+[![Live Application](https://img.shields.io/badge/Live_App-viewroom--360.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://viewroom-360.vercel.app)
 [![Live Backend API](https://img.shields.io/badge/Live_API-viewroom--api.onrender.com-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://viewroom-api.onrender.com)
 [![Database](https://img.shields.io/badge/Neon_PostgreSQL-Serverless_Cloud-00E599?style=for-the-badge&logo=postgresql&logoColor=black)](https://neon.tech/)
 
@@ -24,7 +24,7 @@
 
 | Service | Platform | Live URL | Status |
 | :--- | :--- | :--- | :--- |
-| **Frontend Web App** | Vercel (Vite SPA) | [https://viewroom-neon.vercel.app](https://viewroom-neon.vercel.app) | 🟢 Healthy |
+| **Frontend Web App** | Vercel (Vite SPA) | [https://viewroom-360.vercel.app](https://viewroom-360.vercel.app) | 🟢 Healthy |
 | **Backend API Engine** | Render (Node/Express) | [https://viewroom-api.onrender.com](https://viewroom-api.onrender.com) | 🟢 Healthy |
 | **Real-time WebSockets** | Render (Socket.io) | `wss://viewroom-api.onrender.com` | 🟢 Healthy |
 | **Primary Database** | Neon.tech (PostgreSQL) | Serverless Neon AWS Cloud | 🟢 Healthy |
