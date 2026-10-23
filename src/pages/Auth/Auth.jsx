@@ -59,21 +59,15 @@ function SparklesIcon(props) {
 const ROLE_OPTIONS = [
   {
     id: "CLIENT",
-    title: "CLIENT",
+    title: "CLIENT / VISITOR",
     badge: "Explorer",
-    desc: "Browse 360° spaces, bookmark tours, & interact with AI Concierge.",
+    desc: "Explore 360° virtual spaces, view floorplans, & tour properties.",
   },
   {
     id: "CREATOR",
-    title: "CREATOR / OWNER",
-    badge: "Publisher",
-    desc: "Build & publish 360° virtual tours, 3D products, and analytics.",
-  },
-  {
-    id: "VISITOR",
-    title: "VISITOR GUEST",
-    badge: "Public View",
-    desc: "Public access for quick discovery & showcase browsing.",
+    title: "CREATOR / AGENCY",
+    badge: "Studio",
+    desc: "Upload 360° panoramas, build interactive tours, & manage listings.",
   },
 ];
 
@@ -175,12 +169,18 @@ function Auth() {
     setError("");
     setIsSubmitting(true);
     try {
+      let res;
       if (isSignUp) {
-        await register({ name, email, password, role: selectedRole });
+        res = await register({ name, email, password, role: selectedRole });
       } else {
-        await login({ email, password });
+        res = await login({ email, password });
       }
-      navigate("/");
+      const userRole = res?.user?.role || selectedRole;
+      if (userRole === "CREATOR" || userRole === "ADMIN") {
+        navigate("/dashboard/creator");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error("Auth submit error:", err);
       setError(err.message || "Authentication failed. Please check your inputs.");
@@ -193,17 +193,23 @@ function Auth() {
     setError("");
     setIsSubmitting(true);
     try {
+      let res;
       if (isSignUp) {
-        await register({
-          name: "Google User",
-          email: `user_${Date.now()}@gmail.com`,
+        res = await register({
+          name: "Demo Creator",
+          email: `creator_${Date.now()}@viewroom.com`,
           password: "Password123!",
           role: selectedRole,
         });
       } else {
-        await login({ email: "user@gmail.com", password: "Password123!" });
+        res = await login({ email: "user@gmail.com", password: "Password123!" });
       }
-      navigate("/");
+      const userRole = res?.user?.role || selectedRole;
+      if (userRole === "CREATOR" || userRole === "ADMIN") {
+        navigate("/dashboard/creator");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error("Google Auth error:", err);
       setError(err.message || "Google Authentication failed.");
@@ -343,12 +349,11 @@ function Auth() {
                 )}
               </div>
 
-              {/* Role Selection Option (Sign-Up Only, Excluding ADMIN) */}
+              {/* Role Selection Option (Sign-Up Only) */}
               {isSignUp && (
                 <div className="flex flex-col gap-2 mt-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)] flex items-center justify-between">
-                    <span>Select Account Role*</span>
-                    <span className="text-[10px] text-base-content/50 lowercase font-medium">(Excludes Admin)</span>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[var(--app-text-primary)]">
+                    Select Account Role*
                   </label>
                   
                   <div className="grid grid-cols-1 gap-2">

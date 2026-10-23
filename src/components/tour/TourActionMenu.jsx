@@ -3,13 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faXmark,
-  faMicrophone,
-  faEye,
-  faEyeSlash,
   faUsers,
   faCalendarCheck,
   faShareNodes,
-  faVrCardboard,
   faVolumeHigh,
   faVolumeMute,
   faExpand,
@@ -22,10 +18,6 @@ import { uiSound } from "../../utils/tourSoundEngine";
 export default function TourActionMenu({
   isMenuOpen,
   setIsMenuOpen,
-  isListening,
-  onToggleVoiceAssistant,
-  showHotspots,
-  onToggleHotspots,
   onOpenLiveTour,
   onOpenLeadForm,
   onOpenShareModal,
@@ -53,24 +45,6 @@ export default function TourActionMenu({
             <FontAwesomeIcon icon={faXmark} className="text-lg" />
           </button>
 
-          {/* VOICE AI MICROPHONE TRIGGER BUTTON */}
-          <button
-            type="button"
-            onClick={onToggleVoiceAssistant}
-            onMouseEnter={() => uiSound.playHoverClick()}
-            title={isListening ? "Stop Listening" : "Voice AI Spatial Guide"}
-            className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 cursor-pointer ${
-              isListening
-                ? "bg-white text-black border-white shadow-[0_0_25px_rgba(255,255,255,1)] animate-bounce"
-                : "bg-white/25 hover:bg-white/40 border-white/40 text-white"
-            }`}
-          >
-            <FontAwesomeIcon icon={faMicrophone} className="text-base" />
-            {isListening && (
-              <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
-            )}
-          </button>
-
           {/* CINEMATIC AUTO-PILOT / DIRECTOR'S TOUR BUTTON */}
           <button
             type="button"
@@ -94,24 +68,6 @@ export default function TourActionMenu({
             {isAutoPilot && (
               <span className="absolute -inset-1 rounded-full border-2 border-white animate-ping"></span>
             )}
-          </button>
-
-          {/* TOGGLE HOTSPOTS VISIBILITY BUTTON */}
-          <button
-            type="button"
-            onClick={() => {
-              uiSound.playHoverClick();
-              onToggleHotspots();
-            }}
-            onMouseEnter={() => uiSound.playHoverClick()}
-            title={showHotspots ? "Hide Hotspots" : "Show Hotspots"}
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full backdrop-blur-md border flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer ${
-              showHotspots
-                ? "bg-white/25 hover:bg-white/40 border-white/40 text-white"
-                : "bg-amber-500/80 text-white border-amber-400 font-bold"
-            }`}
-          >
-            <FontAwesomeIcon icon={showHotspots ? faEye : faEyeSlash} className="text-base" />
           </button>
 
           {/* LIVE GUIDED TOUR CO-PRESENCE BUTTON */}
@@ -154,20 +110,6 @@ export default function TourActionMenu({
             className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
           >
             <FontAwesomeIcon icon={faShareNodes} className="text-base" />
-          </button>
-
-          {/* VR HEADSET BUTTON */}
-          <button
-            type="button"
-            onClick={() => {
-              uiSound.playHoverClick();
-              onToggleFullscreen();
-            }}
-            onMouseEnter={() => uiSound.playHoverClick()}
-            title="VR Mode / Headset"
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/25 hover:bg-white/40 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110 cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faVrCardboard} className="text-base" />
           </button>
 
           {/* AUDIO MUTE TOGGLE BUTTON */}

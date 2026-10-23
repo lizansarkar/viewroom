@@ -17,7 +17,6 @@ import InRoomLeadForm from "../../components/tour/InRoomLeadForm";
 import TourShareModal from "../../components/tour/TourShareModal";
 import TourThumbnailCarousel from "../../components/tour/TourThumbnailCarousel";
 import TourActionMenu from "../../components/tour/TourActionMenu";
-import TourVoiceToast from "../../components/tour/TourVoiceToast";
 import CinematicAutoPilotHUD from "../../components/tour/CinematicAutoPilotHUD";
 
 import { uiSound, spatialAudio } from "../../utils/tourSoundEngine";
@@ -26,7 +25,6 @@ import {
   createFloorPuckMarkerHtml,
   createDroneHotspotHtml,
 } from "../../utils/tourHotspots";
-import { useTourVoiceGuide } from "../../hooks/useTourVoiceGuide";
 
 export default function VirtualTourViewer({ _fullScreenMode = false, overrideTourId }) {
   const [searchParams] = useSearchParams();
@@ -38,7 +36,6 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showHotspots, setShowHotspots] = useState(true);
   const [snapshotEffect, _setSnapshotEffect] = useState(false);
 
   const [showShareModal, setShowShareModal] = useState(false);
@@ -101,25 +98,6 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
       setIsFullscreen(false);
     }
   };
-
-  // Voice AI Spatial Tour Guide Hook
-  const {
-    isListening,
-    isAiThinking,
-    aiTranscript,
-    aiSpokenResponse,
-    toggleVoiceAssistant,
-  } = useTourVoiceGuide({
-    tourNodes,
-    currentPanoramaId,
-    onNavigateRoom: changePanoramaWithGsap,
-    isMuted,
-    setIsMuted,
-    toggleFullscreen,
-    setShowHotspots,
-    setIsMenuOpen,
-    setShowShareModal,
-  });
 
   // Load custom tour from backend API or localStorage fallback
   useEffect(() => {
@@ -206,6 +184,8 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
             name: s.name || `Room Scene ${idx + 1}`,
             category: matchedTour.category || "Virtual Tour",
             floorLevel: s.floorLevel || idx,
+            defaultYaw: s.defaultYaw || "0deg",
+            defaultPitch: s.defaultPitch || "0deg",
             thumbnail:
               s.thumbnailUrl ||
               s.panoramaUrl ||
@@ -538,7 +518,7 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
     [
       MarkersPlugin,
       {
-        markers: showHotspots ? activeMarkers : [],
+        markers: activeMarkers,
       },
     ],
   ];
@@ -586,8 +566,8 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           container="psv-container"
           navbar={false}
           mousewheel={true}
-          defaultYaw="0deg"
-          defaultPitch="0deg"
+          defaultYaw={activeNode?.defaultYaw || "0deg"}
+          defaultPitch={activeNode?.defaultPitch || "0deg"}
           defaultZoomLvl={0}
           plugins={plugins}
           onReady={handleReady}
@@ -613,22 +593,10 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           </span>
         </div>
 
-        {/* TOP CENTER GLASSMORPHIC VOICE AI TOAST */}
-        <TourVoiceToast
-          isListening={isListening}
-          isAiThinking={isAiThinking}
-          aiTranscript={aiTranscript}
-          aiSpokenResponse={aiSpokenResponse}
-        />
-
         {/* VERTICAL TOGGLE ACTION MENU */}
         <TourActionMenu
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
-          isListening={isListening}
-          onToggleVoiceAssistant={toggleVoiceAssistant}
-          showHotspots={showHotspots}
-          onToggleHotspots={() => setShowHotspots(!showHotspots)}
           onOpenLiveTour={() => setShowLiveTourModal(true)}
           onOpenLeadForm={() => setShowLeadForm(true)}
           onOpenShareModal={() => setShowShareModal(true)}
