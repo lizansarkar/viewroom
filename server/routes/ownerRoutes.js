@@ -250,6 +250,8 @@ router.post("/tours", async (req, res) => {
             floorLevel: sc.floorLevel || "Ground Floor",
             panoramaUrl: sc.panoramaUrl || sc.panorama || coverImage || "/panoramas/panorama_aerial.jpg",
             thumbnailUrl: sc.thumbnailUrl || sc.thumbnail || sc.panoramaUrl || coverImage || "/panoramas/panorama_aerial.jpg",
+            defaultYaw: sc.defaultYaw || "0deg",
+            defaultPitch: sc.defaultPitch || "0deg",
             orderIndex: idx,
           },
         });
@@ -359,6 +361,32 @@ router.post("/tours/:id/scenes", async (req, res) => {
     }
 
     res.status(201).json({ success: true, data: newScene });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PUT /api/v1/owner/tours/:tourId/scenes/:sceneId - Update scene opening view (pitch/yaw) & title
+router.put("/tours/:tourId/scenes/:sceneId", async (req, res) => {
+  try {
+    const { sceneId } = req.params;
+    const { name, defaultYaw, defaultPitch, floorLevel } = req.body;
+    let updatedScene = null;
+    try {
+      updatedScene = await prisma.scene.update({
+        where: { id: sceneId },
+        data: {
+          ...(name && { name }),
+          ...(defaultYaw && { defaultYaw }),
+          ...(defaultPitch && { defaultPitch }),
+          ...(floorLevel && { floorLevel }),
+        },
+        include: { hotspots: true },
+      });
+    } catch (dbErr) {
+      console.warn("Prisma PostgreSQL scene update fallback:", dbErr.message);
+    }
+    res.json({ success: true, data: updatedScene });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

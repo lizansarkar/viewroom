@@ -18,6 +18,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { createFloorPuckMarkerHtml } from "../../utils/tourHotspots";
+import { apiUpdateOwnerScene, apiAddOwnerHotspot } from "../../services/api";
 
 const ROOM_NAME_PRESETS = [
   "Entrance / Hallway",
@@ -129,7 +130,7 @@ export default function StudioSceneEditor({
   };
 
   // 1. Set Opening View (MadeSnappy Step 1)
-  const handleSaveOpeningView = () => {
+  const handleSaveOpeningView = async () => {
     const updatedScenes = scenes.map((s, idx) => {
       if (idx !== activeSceneIndex) return s;
       return {
@@ -143,6 +144,13 @@ export default function StudioSceneEditor({
     setCurrentTour(updatedTour);
     setOpeningViewSaved(true);
     if (onSaveTour) onSaveTour(updatedTour);
+
+    if (activeScene?.id && currentTour?.id) {
+      apiUpdateOwnerScene(currentTour.id, activeScene.id, {
+        defaultYaw: liveYaw,
+        defaultPitch: livePitch,
+      }).catch(() => {});
+    }
     setTimeout(() => setOpeningViewSaved(false), 2500);
   };
 
@@ -156,10 +164,16 @@ export default function StudioSceneEditor({
     const updatedTour = { ...currentTour, scenes: updatedScenes };
     setCurrentTour(updatedTour);
     if (onSaveTour) onSaveTour(updatedTour);
+
+    if (activeScene?.id && currentTour?.id) {
+      apiUpdateOwnerScene(currentTour.id, activeScene.id, {
+        name: newName,
+      }).catch(() => {});
+    }
   };
 
   // 3. Add Hotspot Link (MadeSnappy Step 3)
-  const handleAddHotspot = (e) => {
+  const handleAddHotspot = async (e) => {
     e.preventDefault();
     if (!selectedTargetSceneId) return;
 
@@ -189,6 +203,10 @@ export default function StudioSceneEditor({
     const updatedTour = { ...currentTour, scenes: updatedScenes };
     setCurrentTour(updatedTour);
     if (onSaveTour) onSaveTour(updatedTour);
+
+    if (activeScene?.id && currentTour?.id) {
+      apiAddOwnerHotspot(currentTour.id, activeScene.id, newHp).catch(() => {});
+    }
 
     // Update markers in PSV instance
     if (psvRef.current) {
@@ -552,3 +570,4 @@ export default function StudioSceneEditor({
     </div>
   );
 }
+

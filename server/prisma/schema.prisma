@@ -53,6 +53,8 @@ model Scene {
   floorLevel    String
   thumbnailUrl  String
   panoramaUrl   String
+  defaultYaw    String?        @default("0deg")
+  defaultPitch  String?        @default("0deg")
   orderIndex    Int            @default(0)
   hotspots      Hotspot[]
 }

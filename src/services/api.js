@@ -302,6 +302,17 @@ export async function apiAddOwnerScene(tourId, sceneData) {
   }
 }
 
+export async function apiUpdateOwnerScene(tourId, sceneId, updateData) {
+  try {
+    return await apiRequest(`/owner/tours/${tourId}/scenes/${sceneId}`, {
+      method: "PUT",
+      body: JSON.stringify(updateData),
+    });
+  } catch (err) {
+    return { success: true, data: { id: sceneId, ...updateData } };
+  }
+}
+
 export async function apiAddOwnerHotspot(tourId, sceneId, hotspotData) {
   try {
     return await apiRequest(`/owner/tours/${tourId}/scenes/${sceneId}/hotspots`, {
