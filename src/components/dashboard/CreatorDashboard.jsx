@@ -21,6 +21,7 @@ import {
   faArrowDown,
   faPenToSquare,
   faSpinner,
+  faGripVertical,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import StudioSceneEditor from "./StudioSceneEditor";
@@ -346,7 +347,29 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setIsProcessingUploads(false);
   };
 
-  // Move Room Scene Up / Down (MadeSnappy Image 4)
+  // Move Room Scene Up / Down & Drag-and-Drop (MadeSnappy Image 4)
+  const [draggedSceneIndex, setDraggedSceneIndex] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedSceneIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedSceneIndex === null || draggedSceneIndex === targetIndex) return;
+    const list = [...newTourScenesList];
+    const item = list.splice(draggedSceneIndex, 1)[0];
+    list.splice(targetIndex, 0, item);
+    setNewTourScenesList(list);
+    setDraggedSceneIndex(null);
+  };
+
   const handleMoveScene = (index, direction) => {
     const targetIndex = index + direction;
     if (targetIndex < 0 || targetIndex >= newTourScenesList.length) return;
@@ -991,14 +1014,29 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 {newTourScenesList.map((sc, idx) => (
                   <div
                     key={sc.id || idx}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, idx)}
+                    onDragEnd={() => setDraggedSceneIndex(null)}
                     className={`p-3 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-                      sc.isCover
+                      draggedSceneIndex === idx
+                        ? "opacity-50 scale-[0.99] border-dashed border-primary"
+                        : sc.isCover
                         ? "bg-primary/5 border-primary/40 shadow-xs"
-                        : "bg-base-100 border-base-content/10"
+                        : "bg-base-100 border-base-content/10 hover:border-base-content/25"
                     }`}
                   >
-                    {/* Left: Index + Thumbnail + Name Preset Dropdown & Input */}
-                    <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
+                    {/* Left: Drag Grip + Index + Thumbnail + Name Preset Dropdown & Input */}
+                    <div className="flex items-center gap-2.5 flex-1 w-full sm:w-auto">
+                      {/* Drag Handle Grip */}
+                      <div
+                        className="cursor-grab active:cursor-grabbing text-base-content/30 hover:text-base-content/70 px-1 py-2"
+                        title="Drag and drop to reorder"
+                      >
+                        <FontAwesomeIcon icon={faGripVertical} className="text-xs" />
+                      </div>
+
                       {/* Step Number Badge */}
                       <span className="w-6 h-6 rounded-xl bg-base-200 text-base-content font-black text-xs flex items-center justify-center shrink-0">
                         {idx + 1}
