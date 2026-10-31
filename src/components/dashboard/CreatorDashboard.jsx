@@ -166,9 +166,9 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const saveToursToStorage = (updatedTours) => {
     try {
       const userEmail = (user?.email || "").toLowerCase().trim();
-      if (!userEmail) return;
-
-      localStorage.setItem(`viewroom_tours_${userEmail}`, JSON.stringify(updatedTours));
+      if (userEmail) {
+        localStorage.setItem(`viewroom_tours_${userEmail}`, JSON.stringify(updatedTours));
+      }
 
       const allRaw = localStorage.getItem("viewroom_custom_tours");
       let allTours = [];
@@ -179,14 +179,14 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         } catch (e) {}
       }
 
-      const otherCreatorsTours = allTours.filter(
-        (t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail
-      );
+      const otherCreatorsTours = userEmail
+        ? allTours.filter((t) => t.authorEmail && t.authorEmail.toLowerCase().trim() !== userEmail)
+        : allTours.filter((t) => !updatedTours.some((ut) => ut.id === t.id));
 
       const stampedUserTours = updatedTours.map((t) => ({
         ...t,
-        authorEmail: t.authorEmail || user?.email,
-        authorId: t.authorId || user?.id,
+        authorEmail: t.authorEmail || user?.email || "creator@viewroom.com",
+        authorId: t.authorId || user?.id || "usr_creator",
       }));
 
       const merged = [...stampedUserTours, ...otherCreatorsTours];
@@ -811,7 +811,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                             </button>
 
                             {/* View 360° */}
-                            <Link to={`/virtual-tour/${tour.id}`} target="_blank">
+                            <Link to={`/virtual-tour/${tour.id}`}>
                               <button
                                 type="button"
                                 className="px-2.5 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer border border-base-content/10"

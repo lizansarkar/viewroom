@@ -154,6 +154,18 @@ function ContactIcon(props) {
   );
 }
 
+const MOBILE_NAV_ITEMS = [
+  { to: "/", label: "Home", icon: HomeIcon },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboardIcon, authOnly: true },
+  { to: "/360-virtual-tour", label: "360° Virtual Tour", icon: TourIcon },
+  { to: "/360-product", label: "360° Product", icon: ProductIcon },
+  { to: "/360-video", label: "360° Video", icon: VideoIcon },
+  { to: "/matterport", label: "Matterport", icon: MatterportIcon },
+  { to: "/photography", label: "Photography", icon: CameraIcon },
+  { to: "/explore", label: "Explore Spaces", icon: ExploreIcon },
+  { to: "/contact", label: "Contact Us", icon: ContactIcon },
+];
+
 function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { isRegistered, isLoggedIn, user, logout } = useAuth();
@@ -187,9 +199,23 @@ function Navbar() {
     setProfileOpen(false);
   }, [location.pathname]);
 
+  const getMobileNavLinkClass = (isActive) =>
+    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
+      isActive
+        ? "bg-primary/15 text-primary font-bold shadow-xs"
+        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
+    }`;
+
   const getNavItemClass = (isActive) =>
     `text-[15px] font-bold transition-all duration-200 flex items-center gap-1.5 cursor-pointer text-base-content select-none ${
       isActive ? "opacity-50" : "opacity-100 hover:opacity-75"
+    }`;
+
+  const getSubNavItemClass = (isActive) =>
+    `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all text-base-content ${
+      isActive
+        ? "opacity-50 bg-base-200 font-semibold"
+        : "opacity-100 hover:bg-base-200/70"
     }`;
 
   const visibleNavLinks = NAV_LINKS.filter(
@@ -227,13 +253,7 @@ function Navbar() {
                           <NavLink
                             key={sub.to}
                             to={sub.to}
-                            className={({ isActive }) =>
-                              `px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-all text-base-content ${
-                                isActive
-                                  ? "opacity-50 bg-base-200 font-semibold"
-                                  : "opacity-100 hover:bg-base-200/70"
-                              }`
-                            }
+                            className={({ isActive }) => getSubNavItemClass(isActive)}
                           >
                             {sub.label}
                           </NavLink>
@@ -481,142 +501,19 @@ function Navbar() {
 
               {/* Navigation List with Icons & Clean Alignment */}
               <nav className="flex flex-col gap-1.5 mt-1">
-                <NavLink
-                  to="/"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <HomeIcon />
-                  <span>Home</span>
-                </NavLink>
-
-                {isLoggedIn && (
-                  <NavLink
-                    to="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                        isActive
-                          ? "bg-base-content/10 text-base-content font-bold border-l-3 border-base-content shadow-xs"
-                          : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                      }`
-                    }
-                  >
-                    <LayoutDashboardIcon />
-                    <span>Dashboard</span>
-                  </NavLink>
+                {MOBILE_NAV_ITEMS.filter((item) => !item.authOnly || isLoggedIn).map(
+                  ({ to, label, icon: Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      onClick={() => setMobileOpen(false)}
+                      className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </NavLink>
+                  )
                 )}
-
-                <NavLink
-                  to="/360-virtual-tour"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <TourIcon />
-                  <span>360° Virtual Tour</span>
-                </NavLink>
-
-                <NavLink
-                  to="/360-product"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <ProductIcon />
-                  <span>360° Product</span>
-                </NavLink>
-
-                <NavLink
-                  to="/360-video"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <VideoIcon />
-                  <span>360° Video</span>
-                </NavLink>
-
-                <NavLink
-                  to="/matterport"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <MatterportIcon />
-                  <span>Matterport</span>
-                </NavLink>
-
-                <NavLink
-                  to="/photography"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <CameraIcon />
-                  <span>Photography</span>
-                </NavLink>
-
-                <NavLink
-                  to="/explore"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <ExploreIcon />
-                  <span>Explore Spaces</span>
-                </NavLink>
-
-                <NavLink
-                  to="/contact"
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `px-3.5 py-3 rounded-xl text-sm font-medium flex items-center gap-3.5 transition-all ${
-                      isActive
-                        ? "bg-primary/15 text-primary font-bold shadow-xs"
-                        : "text-base-content/80 hover:text-base-content hover:bg-base-200/70"
-                    }`
-                  }
-                >
-                  <ContactIcon />
-                  <span>Contact Us</span>
-                </NavLink>
               </nav>
             </div>
 

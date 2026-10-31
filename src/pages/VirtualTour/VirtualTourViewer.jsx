@@ -107,17 +107,38 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
       try {
         let matchedTour = null;
 
-        // 1. If targetTourId is specified, search localStorage first then backend
-        if (targetTourId) {
-          const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-          if (savedLocalTours) {
+        // Helper to search in all localStorage tour stores
+        const findInLocalStorage = (id) => {
+          // 1. Direct custom tours master list
+          const savedMaster = localStorage.getItem("viewroom_custom_tours");
+          if (savedMaster) {
             try {
-              const parsedTours = JSON.parse(savedLocalTours);
-              if (Array.isArray(parsedTours)) {
-                matchedTour = parsedTours.find((t) => t.id === targetTourId);
+              const list = JSON.parse(savedMaster);
+              if (Array.isArray(list)) {
+                const found = id ? list.find((t) => t.id === id) : list[0];
+                if (found) return found;
               }
             } catch (e) {}
           }
+          // 2. Any user-specific tour lists
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("viewroom_tours_")) {
+              try {
+                const userList = JSON.parse(localStorage.getItem(key));
+                if (Array.isArray(userList)) {
+                  const found = id ? userList.find((t) => t.id === id) : userList[0];
+                  if (found) return found;
+                }
+              } catch (e) {}
+            }
+          }
+          return null;
+        };
+
+        // 1. If targetTourId is specified, search localStorage first
+        if (targetTourId) {
+          matchedTour = findInLocalStorage(targetTourId);
 
           if (!matchedTour) {
             try {
@@ -140,17 +161,10 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           }
         }
 
-        // 2. If NO targetTourId was specified in URL, fallback to first available tour
+        // 2. If NO targetTourId was specified in URL, fallback to user's first available custom tour
         if (!matchedTour && !targetTourId) {
-          const savedLocalTours = localStorage.getItem("viewroom_custom_tours");
-          if (savedLocalTours) {
-            try {
-              const parsedTours = JSON.parse(savedLocalTours);
-              if (Array.isArray(parsedTours) && parsedTours.length > 0) {
-                matchedTour = parsedTours[0];
-              }
-            } catch (e) {}
-          }
+          matchedTour = findInLocalStorage(null);
+
           if (!matchedTour) {
             try {
               const ownerRes = await apiGetOwnerTours();
@@ -578,19 +592,39 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
         )}
 
-        {/* TOP-LEFT BRANDING & SCENE BADGE (Frosted Glass Blur) */}
-        <div
-          style={{
-            backgroundColor: "rgba(15, 15, 20, 0.45)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-          }}
-          className="absolute top-5 left-5 z-20 flex items-center gap-2.5 border border-white/25 px-4 py-2 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.35)] pointer-events-auto"
-        >
-          <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
-          <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase drop-shadow-sm">
-            {activeNode.name}
-          </span>
+        {/* TOP-LEFT EXIT / BACK BUTTON & SCENE BADGE */}
+        <div className="absolute top-5 left-5 z-20 flex items-center gap-2 pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                window.location.href = "/dashboard";
+              }
+            }}
+            className="px-3.5 py-2 rounded-full bg-black/60 hover:bg-black/85 border border-white/25 text-white text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg cursor-pointer hover:scale-105"
+            title="Exit Tour & Go Back"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            <span>Back</span>
+          </button>
+
+          <div
+            style={{
+              backgroundColor: "rgba(15, 15, 20, 0.45)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+            }}
+            className="flex items-center gap-2.5 border border-white/25 px-4 py-2 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+          >
+            <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
+            <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase drop-shadow-sm">
+              {activeNode.name}
+            </span>
+          </div>
         </div>
 
         {/* VERTICAL TOGGLE ACTION MENU */}
