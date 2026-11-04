@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import DashboardSidebar from "../../components/dashboard/DashboardSidebar";
 import AdminDashboard from "../../components/dashboard/AdminDashboard";
@@ -17,21 +17,41 @@ export default function Dashboard({ defaultTab }) {
   const { user, isLoggedIn, login, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchParams] = useSearchParams();
+  const params = useParams();
+  const location = useLocation();
   const tabQueryParam = searchParams.get("tab");
 
   // Admin Preview Override State
   const [adminPreviewRole, setAdminPreviewRole] = useState(null);
 
+  // Route param role detection (e.g. /dashboard/creator or /dashboard/client)
+  const roleParam = params.role ? params.role.toUpperCase() : null;
+  const isCreatorPath = location.pathname.toLowerCase().includes("/dashboard/creator") || roleParam === "CREATOR";
+  const isAdminPath = location.pathname.toLowerCase().includes("/dashboard/admin") || roleParam === "ADMIN";
+
   // Determine effective role for rendering
-  const effectiveRole = adminPreviewRole || (isLoggedIn ? user?.role || "CLIENT" : "VISITOR");
+  const effectiveRole =
+    adminPreviewRole ||
+    (isCreatorPath
+      ? "CREATOR"
+      : isAdminPath
+      ? "ADMIN"
+      : isLoggedIn
+      ? user?.role || "CLIENT"
+      : "VISITOR");
 
   const getDefaultTab = (role) => {
     switch (role) {
-      case "ADMIN": return "admin_overview";
-      case "CREATOR": return "creator_overview";
-      case "CLIENT": return "client_overview";
-      case "VISITOR": return "visitor_overview";
-      default: return "creator_overview";
+      case "ADMIN":
+        return "admin_overview";
+      case "CREATOR":
+        return "creator_overview";
+      case "CLIENT":
+        return "client_overview";
+      case "VISITOR":
+        return "visitor_overview";
+      default:
+        return "creator_overview";
     }
   };
 
@@ -39,14 +59,16 @@ export default function Dashboard({ defaultTab }) {
     tabQueryParam || defaultTab || getDefaultTab(effectiveRole)
   );
 
-  // Sync tab when URL search parameter or defaultTab prop changes
+  // Sync tab when URL search parameter, path, or role changes
   useEffect(() => {
     if (tabQueryParam) {
       setActiveTab(tabQueryParam);
     } else if (defaultTab) {
       setActiveTab(defaultTab);
+    } else if (isCreatorPath && (!activeTab || activeTab.startsWith("client_") || activeTab.startsWith("visitor_"))) {
+      setActiveTab("creator_overview");
     }
-  }, [tabQueryParam, defaultTab]);
+  }, [tabQueryParam, defaultTab, isCreatorPath]);
 
   return (
     <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-sans">
@@ -147,4 +169,3 @@ export default function Dashboard({ defaultTab }) {
     </div>
   );
 }
-

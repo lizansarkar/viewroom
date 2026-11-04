@@ -51,7 +51,22 @@ function AppRouter() {
               </ProtectedRoute>
             }
           />
-          <Route path="/recruiter-sandbox" element={<Dashboard />} />
+          <Route
+            path="/dashboard/:role"
+            element={
+              <ProtectedRoute allowGuest={true}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedRoute allowGuest={true}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/virtual-tour/:tourId" element={<VirtualTourPublicViewer />} />
           <Route path="/virtualtour/:tourId" element={<VirtualTourPublicViewer />} />
           <Route path="/360-virtual-tour" element={<VirtualTour360 />} />

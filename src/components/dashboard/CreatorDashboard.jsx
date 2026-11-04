@@ -40,6 +40,13 @@ import {
   apiDeleteOwnerProduct,
 } from "../../services/api";
 
+const SPACE_CATEGORIES = [
+  { id: "Cafe & Restaurant", icon: "☕", label: "Cafe & Restaurant", desc: "Dining, bar, patio, & kitchen" },
+  { id: "Boutique Hotel & Suite", icon: "🏨", label: "Hotel & Resort", desc: "Suites, lobby, pool, & balcony" },
+  { id: "Residential Villa & Home", icon: "🏡", label: "Home & Villa", desc: "Living, master bed, & rooms" },
+  { id: "Commercial Office & Store", icon: "🏢", label: "Office & Store", desc: "Workplace, meeting, & retail" },
+];
+
 const ROOM_NAME_PRESETS = [
   "Entrance / Hallway",
   "Living Room",
@@ -50,11 +57,26 @@ const ROOM_NAME_PRESETS = [
   "Bedroom 3",
   "Bathroom",
   "Balcony / Terrace",
-  "Backyard / Garden",
+  "Coffee & Bar Counter",
+  "Outdoor Patio / Garden",
+  "VIP Lounge",
   "Study / Office",
   "Basement",
   "Garage",
   "Swimming Pool",
+  "Rooftop",
+];
+
+const QUICK_ROOM_CHIPS = [
+  "Entrance",
+  "Living Room",
+  "Dining Room",
+  "Master Bed",
+  "Bathroom",
+  "Kitchen",
+  "Bar Counter",
+  "Patio Garden",
+  "Balcony",
   "Rooftop",
 ];
 
@@ -76,7 +98,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   // Tour Creator Form State (uploader)
   const [newTourTitle, setNewTourTitle] = useState("");
-  const [newTourCategory, setNewTourCategory] = useState("Commercial Real Estate");
+  const [newTourCategory, setNewTourCategory] = useState("Cafe & Restaurant");
   const [newTourPrice, setNewTourPrice] = useState("Free");
   const [newTourDesc, setNewTourDesc] = useState("");
   const [isProcessingUploads, setIsProcessingUploads] = useState(false);
@@ -213,7 +235,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
       const [fetchedStats, fetchedToursRes, fetchedProdsRes] = await Promise.all([
         apiGetOwnerStats(),
-        apiGetOwnerTours(),
+        apiGetOwnerTours(userEmail || userId ? { authorEmail: userEmail, authorId: userId } : {}),
         apiGetOwnerProducts(),
       ]);
       const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
@@ -230,7 +252,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         } catch (e) {}
       } else if (Array.isArray(fetchedProds)) {
         myProducts = fetchedProds.filter(
-          (p) => p.authorEmail && p.authorEmail.toLowerCase().trim() === userEmail
+          (p) => !userEmail || (p.authorEmail && p.authorEmail.toLowerCase().trim() === userEmail)
         );
       }
       setProducts(myProducts);
@@ -242,25 +264,53 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       if (userSpecificTours) {
         try {
           const parsed = JSON.parse(userSpecificTours);
-          if (Array.isArray(parsed)) myTours = parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) myTours = parsed;
         } catch (e) {}
-      } else if (savedLocalTours) {
+      }
+
+      if (savedLocalTours) {
         try {
           const allTours = JSON.parse(savedLocalTours);
           if (Array.isArray(allTours)) {
-            myTours = allTours.filter(
+            const matched = allTours.filter(
               (t) =>
+                !userEmail ||
                 (t.authorEmail && t.authorEmail.toLowerCase().trim() === userEmail) ||
                 (t.authorId && t.authorId === userId)
             );
+            const existingIds = new Set(myTours.map((t) => t.id));
+            matched.forEach((t) => {
+              if (!existingIds.has(t.id)) {
+                myTours.push(t);
+                existingIds.add(t.id);
+              }
+            });
           }
         } catch (e) {}
-      } else if (Array.isArray(fetchedTours)) {
-        myTours = fetchedTours.filter(
+      }
+
+      if (Array.isArray(fetchedTours) && fetchedTours.length > 0) {
+        const fetchedForUser = fetchedTours.filter(
           (t) =>
+            !userEmail ||
             (t.authorEmail && t.authorEmail.toLowerCase().trim() === userEmail) ||
             (t.authorId && t.authorId === userId)
         );
+        const existingIds = new Set(myTours.map((t) => t.id));
+        fetchedForUser.forEach((t) => {
+          if (!existingIds.has(t.id)) {
+            myTours.push(t);
+            existingIds.add(t.id);
+          }
+        });
+      }
+
+      // Fallback: If user has 0 tours but savedLocalTours has any created tours, show them
+      if (myTours.length === 0 && savedLocalTours) {
+        try {
+          const fallback = JSON.parse(savedLocalTours);
+          if (Array.isArray(fallback) && fallback.length > 0) myTours = fallback;
+        } catch (e) {}
       }
 
       const healedTours = ensureTourScenes(myTours);
@@ -419,10 +469,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
   // Publish / Create Tour
   const handleCreateTour = async (openStudioAfter = false) => {
-    if (!newTourTitle) {
-      alert("Please enter a property or tour title.");
-      return;
-    }
+    // Smart auto-title if empty - never blocks user with an alert!
+    const cleanTitle =
+      (newTourTitle || "").trim() ||
+      `${newTourCategory} 360° Space - ${new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })}`;
 
     const coverScene = newTourScenesList.find((s) => s.isCover) || newTourScenesList[0];
 
@@ -437,9 +490,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       hotspots: s.hotspots || [],
     }));
 
+    const authorEmail = (user?.email || "creator@viewroom.com").toLowerCase().trim();
+    const authorId = user?.id || "usr_creator";
+    const authorName = user?.name || "Creator";
+
     const tourData = {
       id: `tour_${Date.now()}`,
-      title: newTourTitle,
+      title: cleanTitle,
       category: newTourCategory,
       price: newTourPrice,
       description: newTourDesc,
@@ -448,22 +505,31 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         : "/panoramas/panorama_aerial.jpg",
       viewsCount: 0,
       scenes: formattedScenes,
-      authorId: user?.id,
-      authorEmail: user?.email,
-      authorName: user?.name,
+      authorId,
+      authorEmail,
+      authorName,
       createdAt: new Date().toISOString(),
     };
 
     let created = tourData;
     try {
       const res = await apiCreateOwnerTour(tourData);
-      if (res && res.data) created = res.data;
+      if (res && res.data) {
+        created = {
+          ...res.data,
+          authorEmail: res.data.authorEmail || authorEmail,
+          authorId: res.data.authorId || authorId,
+          authorName: res.data.authorName || authorName,
+          scenes:
+            res.data.scenes && res.data.scenes.length > 0 ? res.data.scenes : formattedScenes,
+        };
+      }
     } catch (err) {
       console.warn("apiCreateOwnerTour failed, saved locally:", err);
     }
 
     setTours((prev) => {
-      const updated = ensureTourScenes([created, ...prev]);
+      const updated = ensureTourScenes([created, ...prev.filter((t) => t.id !== created.id)]);
       saveToursToStorage(updated);
       return updated;
     });
@@ -485,11 +551,14 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       },
     ]);
 
+    // Always navigate to tours list so when Studio Editor closes, user lands on their tours
+    if (setActiveTab) {
+      setActiveTab("tours");
+    }
+
     if (openStudioAfter) {
       setStudioEditingTour(created);
       setStudioInitialSceneIndex(0);
-    } else if (setActiveTab) {
-      setActiveTab("tours");
     }
   };
 
@@ -922,83 +991,113 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           </div>
 
           {/* Form */}
-          <div className="space-y-5">
-            {/* Property Title & Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-base-content/70 mb-1">
-                  Property / Tour Title*
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Skyline Luxury Villa 360°"
-                  value={newTourTitle}
-                  onChange={(e) => setNewTourTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-base-content/70 mb-1">
-                  Category
-                </label>
-                <select
-                  value={newTourCategory}
-                  onChange={(e) => setNewTourCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
-                >
-                  <option>Commercial Real Estate</option>
-                  <option>Residential Villa</option>
-                  <option>Modern Architecture</option>
-                  <option>Boutique Hotel & Resort</option>
-                </select>
+          <div className="space-y-6">
+            {/* 1. Space Type Quick Selector */}
+            <div>
+              <label className="block text-xs font-bold text-base-content/80 mb-2">
+                1. Select Space Type (Cafe, Hotel, Home, Office)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {SPACE_CATEGORIES.map((cat) => {
+                  const isSelected = newTourCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        setNewTourCategory(cat.id);
+                        if (!newTourTitle) {
+                          setNewTourTitle(`${cat.label} 360° Space`);
+                        }
+                      }}
+                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                        isSelected
+                          ? "bg-primary/10 border-primary shadow-xs ring-1 ring-primary/40"
+                          : "bg-base-200/60 border-base-content/10 hover:border-base-content/20 hover:bg-base-200"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-2xl">{cat.icon}</span>
+                        {isSelected && (
+                          <span className="w-2 h-2 rounded-full bg-primary" />
+                        )}
+                      </div>
+                      <div>
+                        <span className="font-extrabold text-xs text-base-content block">
+                          {cat.label}
+                        </span>
+                        <span className="text-[10px] text-base-content/60 leading-tight block mt-0.5">
+                          {cat.desc}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* BATCH UPLOAD DROPZONE */}
-            <div className="p-6 rounded-2xl border-2 border-dashed border-base-content/20 hover:border-primary/50 transition-colors bg-base-200/40 text-center relative cursor-pointer">
+            {/* 2. Property Title */}
+            <div>
+              <label className="block text-xs font-bold text-base-content/80 mb-1">
+                2. Property / Space Title
+              </label>
               <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleBatchPanoramaUpload}
-                disabled={isProcessingUploads}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                type="text"
+                placeholder="e.g. Skyline Sky Lounge Cafe 360°"
+                value={newTourTitle}
+                onChange={(e) => setNewTourTitle(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none focus:border-primary"
               />
-              <div className="flex flex-col items-center justify-center gap-2 pointer-events-none">
-                <div className="w-12 h-12 rounded-2xl bg-base-100 border border-base-content/10 text-primary flex items-center justify-center text-xl shadow-xs">
-                  {isProcessingUploads ? (
-                    <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-                  ) : (
-                    <FontAwesomeIcon icon={faCloudArrowUp} />
-                  )}
-                </div>
-                <div>
-                  <h4 className="font-extrabold text-sm text-base-content">
-                    {isProcessingUploads
-                      ? "Processing & Uploading 360° Panoramas..."
-                      : "Drop 360° Panorama Photos Here, or Click to Browse"}
-                  </h4>
-                  <p className="text-xs text-base-content/60 mt-0.5">
-                    Select multiple equirectangular JPEG/PNG images at once. Rooms will be added automatically.
-                  </p>
-                </div>
-                <div className="mt-1 px-3 py-1 rounded-full bg-base-100 border border-base-content/10 text-[10px] font-extrabold uppercase tracking-wider text-base-content/70">
-                  ⚡ Multi-File Batch Upload Supported
+            </div>
+
+            {/* 3. BATCH UPLOAD DROPZONE */}
+            <div>
+              <label className="block text-xs font-bold text-base-content/80 mb-1.5">
+                3. Upload 360° Panorama Photos
+              </label>
+              <div className="p-6 rounded-2xl border-2 border-dashed border-base-content/20 hover:border-primary/50 transition-colors bg-base-200/40 text-center relative cursor-pointer">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleBatchPanoramaUpload}
+                  disabled={isProcessingUploads}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="flex flex-col items-center justify-center gap-2 pointer-events-none">
+                  <div className="w-12 h-12 rounded-2xl bg-base-100 border border-base-content/10 text-primary flex items-center justify-center text-xl shadow-xs">
+                    {isProcessingUploads ? (
+                      <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+                    ) : (
+                      <FontAwesomeIcon icon={faCloudArrowUp} />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-sm text-base-content">
+                      {isProcessingUploads
+                        ? "Processing & Uploading 360° Panoramas..."
+                        : "Drop 360° Panorama Photos Here, or Click to Browse"}
+                    </h4>
+                    <p className="text-xs text-base-content/60 mt-0.5">
+                      Select multiple equirectangular JPEG/PNG images. Rooms will appear below in sequence.
+                    </p>
+                  </div>
+                  <div className="mt-1 px-3 py-1 rounded-full bg-base-100 border border-base-content/10 text-[10px] font-extrabold uppercase tracking-wider text-base-content/70">
+                    ⚡ Fast Local Disk & Cloud Storage
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* VISUAL ROOM REORDER STRIP (MadeSnappy Image 4) */}
+            {/* 4. VISUAL ROOM REORDER & LABEL STRIP */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-bold text-xs uppercase tracking-wider text-base-content flex items-center gap-2">
-                    Room Sequence & Labels ({newTourScenesList.length})
+                    4. Room Sequence & Walking Path ({newTourScenesList.length} Rooms)
                   </h4>
                   <p className="text-[11px] text-base-content/60">
-                    Use arrows ▲/▼ to order room flow. Choose standard room name presets.
+                    Reorder the visitor's walking path and pick room names.
                   </p>
                 </div>
                 <button
@@ -1011,7 +1110,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {newTourScenesList.map((sc, idx) => (
                   <div
                     key={sc.id || idx}
@@ -1020,7 +1119,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, idx)}
                     onDragEnd={() => setDraggedSceneIndex(null)}
-                    className={`p-3 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+                    className={`p-3.5 rounded-2xl border transition-all flex flex-col gap-2.5 ${
                       draggedSceneIndex === idx
                         ? "opacity-50 scale-[0.99] border-dashed border-primary"
                         : sc.isCover
@@ -1028,116 +1127,141 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         : "bg-base-100 border-base-content/10 hover:border-base-content/25"
                     }`}
                   >
-                    {/* Left: Drag Grip + Index + Thumbnail + Name Preset Dropdown & Input */}
-                    <div className="flex items-center gap-2.5 flex-1 w-full sm:w-auto">
-                      {/* Drag Handle Grip */}
-                      <div
-                        className="cursor-grab active:cursor-grabbing text-base-content/30 hover:text-base-content/70 px-1 py-2"
-                        title="Drag and drop to reorder"
-                      >
-                        <FontAwesomeIcon icon={faGripVertical} className="text-xs" />
-                      </div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      {/* Left: Drag Grip + Index + Thumbnail + Name Field */}
+                      <div className="flex items-center gap-2.5 flex-1 w-full sm:w-auto">
+                        {/* Drag Handle Grip */}
+                        <div
+                          className="cursor-grab active:cursor-grabbing text-base-content/30 hover:text-base-content/70 px-1 py-2"
+                          title="Drag to reorder"
+                        >
+                          <FontAwesomeIcon icon={faGripVertical} className="text-xs" />
+                        </div>
 
-                      {/* Step Number Badge */}
-                      <span className="w-6 h-6 rounded-xl bg-base-200 text-base-content font-black text-xs flex items-center justify-center shrink-0">
-                        {idx + 1}
-                      </span>
+                        {/* Step Number Badge */}
+                        <span className="w-6 h-6 rounded-xl bg-base-200 text-base-content font-black text-xs flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </span>
 
-                      {/* Thumbnail & Cover Indicator */}
-                      <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10 shadow-xs">
-                        <img
-                          src={sc.thumbnailUrl || sc.panoramaUrl}
-                          alt={sc.name}
-                          className="w-full h-full object-cover"
-                        />
-                        {sc.isCover && (
-                          <span className="absolute bottom-0 inset-x-0 bg-primary text-primary-content text-[8px] font-black uppercase text-center py-0.2 tracking-wider">
-                            COVER
-                          </span>
-                        )}
-                      </div>
+                        {/* Thumbnail & Cover Indicator */}
+                        <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10 shadow-xs">
+                          <img
+                            src={sc.thumbnailUrl || sc.panoramaUrl}
+                            alt={sc.name}
+                            className="w-full h-full object-cover"
+                          />
+                          {sc.isCover && (
+                            <span className="absolute bottom-0 inset-x-0 bg-primary text-primary-content text-[8px] font-black uppercase text-center py-0.2 tracking-wider">
+                              COVER
+                            </span>
+                          )}
+                        </div>
 
-                      {/* Name Preset Dropdown & Text Field */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
-                        <select
-                          value={ROOM_NAME_PRESETS.includes(sc.name) ? sc.name : "Custom"}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            if (val !== "Custom") {
+                        {/* Name Preset Dropdown & Text Field */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                          <select
+                            value={ROOM_NAME_PRESETS.includes(sc.name) ? sc.name : "Custom"}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val !== "Custom") {
+                                setNewTourScenesList((prev) =>
+                                  prev.map((item, i) => (i === idx ? { ...item, name: val } : item))
+                                );
+                              }
+                            }}
+                            className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                          >
+                            <option value="Custom">Custom Name...</option>
+                            {ROOM_NAME_PRESETS.map((p) => (
+                              <option key={p} value={p}>
+                                {p}
+                              </option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="text"
+                            value={sc.name}
+                            onChange={(e) => {
+                              const val = e.target.value;
                               setNewTourScenesList((prev) =>
                                 prev.map((item, i) => (i === idx ? { ...item, name: val } : item))
                               );
-                            }
-                          }}
-                          className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
-                        >
-                          <option value="Custom">Custom Room...</option>
-                          {ROOM_NAME_PRESETS.map((p) => (
-                            <option key={p} value={p}>
-                              {p}
-                            </option>
-                          ))}
-                        </select>
+                            }}
+                            placeholder="Room Name"
+                            className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-bold text-base-content focus:outline-none"
+                          />
+                        </div>
+                      </div>
 
-                        <input
-                          type="text"
-                          value={sc.name}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setNewTourScenesList((prev) =>
-                              prev.map((item, i) => (i === idx ? { ...item, name: val } : item))
-                            );
-                          }}
-                          placeholder="Room Name"
-                          className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-bold text-base-content focus:outline-none"
-                        />
+                      {/* Right: Up / Down Reorder + Cover + Delete */}
+                      <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => handleMoveScene(idx, -1)}
+                          className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
+                          title="Move Room Up"
+                        >
+                          <FontAwesomeIcon icon={faArrowUp} />
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={idx === newTourScenesList.length - 1}
+                          onClick={() => handleMoveScene(idx, 1)}
+                          className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
+                          title="Move Room Down"
+                        >
+                          <FontAwesomeIcon icon={faArrowDown} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSetCoverScene(sc.id)}
+                          className={`px-2.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
+                            sc.isCover
+                              ? "bg-primary text-primary-content border-primary"
+                              : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
+                          }`}
+                        >
+                          {sc.isCover ? "★ Cover Room" : "Make Cover"}
+                        </button>
+
+                        {newTourScenesList.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveBuilderScene(sc.id)}
+                            className="p-1.5 rounded-lg bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
+                            title="Remove Room"
+                          >
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                        )}
                       </div>
                     </div>
 
-                    {/* Right: Up / Down Reorder + Cover + Delete */}
-                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                      <button
-                        type="button"
-                        disabled={idx === 0}
-                        onClick={() => handleMoveScene(idx, -1)}
-                        className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
-                        title="Move Room Up"
-                      >
-                        <FontAwesomeIcon icon={faArrowUp} />
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={idx === newTourScenesList.length - 1}
-                        onClick={() => handleMoveScene(idx, 1)}
-                        className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
-                        title="Move Room Down"
-                      >
-                        <FontAwesomeIcon icon={faArrowDown} />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleSetCoverScene(sc.id)}
-                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
-                          sc.isCover
-                            ? "bg-primary text-primary-content border-primary"
-                            : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
-                        }`}
-                      >
-                        {sc.isCover ? "★ Main Cover" : "Make Cover"}
-                      </button>
-
-                      {newTourScenesList.length > 1 && (
+                    {/* Quick Name Chips for 1-Click Naming */}
+                    <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-base-content/5">
+                      <span className="text-[10px] font-semibold text-base-content/50 mr-1">Quick Name:</span>
+                      {QUICK_ROOM_CHIPS.map((chip) => (
                         <button
+                          key={chip}
                           type="button"
-                          onClick={() => handleRemoveBuilderScene(sc.id)}
-                          className="p-1.5 rounded-lg bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
-                          title="Remove Room"
+                          onClick={() => {
+                            setNewTourScenesList((prev) =>
+                              prev.map((item, i) => (i === idx ? { ...item, name: chip } : item))
+                            );
+                          }}
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors cursor-pointer border ${
+                            sc.name === chip
+                              ? "bg-primary text-primary-content border-primary"
+                              : "bg-base-200 text-base-content/70 hover:bg-base-300 border-base-content/10"
+                          }`}
                         >
-                          <FontAwesomeIcon icon={faTrash} />
+                          {chip}
                         </button>
-                      )}
+                      ))}
                     </div>
                   </div>
                 ))}
@@ -1145,23 +1269,29 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             </div>
 
             {/* Bottom Actions */}
-            <div className="pt-4 border-t border-base-content/10 flex flex-col sm:flex-row items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => handleCreateTour(false)}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer border border-base-content/10"
-              >
-                Save & Go to Tours List
-              </button>
+            <div className="pt-4 border-t border-base-content/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs text-base-content/60 font-medium">
+                {newTourScenesList.length} {newTourScenesList.length === 1 ? "Room" : "Rooms"} Ready to Connect in 360°
+              </div>
 
-              <Button
-                type="button"
-                variant="primary"
-                onClick={() => handleCreateTour(true)}
-                className="w-full sm:w-auto !px-6 !py-2.5 !rounded-xl cursor-pointer"
-              >
-                <span>Save & Open 360° Studio Editor ▶</span>
-              </Button>
+              <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => handleCreateTour(false)}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer border border-base-content/10"
+                >
+                  Save & Go to Tours List
+                </button>
+
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => handleCreateTour(true)}
+                  className="w-full sm:w-auto !px-6 !py-2.5 !rounded-xl cursor-pointer"
+                >
+                  <span>Save & Open 360° Studio Editor ▶</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

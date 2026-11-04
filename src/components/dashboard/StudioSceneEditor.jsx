@@ -304,12 +304,15 @@ export default function StudioSceneEditor({
 
         <button
           type="button"
-          onClick={onClose}
-          className="p-2 sm:px-4 sm:py-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border border-base-content/10 shrink-0"
-          title="Done & Close Studio"
+          onClick={() => {
+            if (onSaveTour) onSaveTour(currentTour);
+            if (onClose) onClose();
+          }}
+          className="p-2 sm:px-4 sm:py-2 rounded-xl bg-primary text-primary-content hover:opacity-90 text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border border-primary shrink-0 shadow-xs"
+          title="Done & Save Tour"
         >
-          <FontAwesomeIcon icon={faCheck} className="text-success" />
-          <span className="hidden sm:inline">Done & Save</span>
+          <FontAwesomeIcon icon={faCheck} />
+          <span>Done & Save Tour</span>
         </button>
       </header>
 

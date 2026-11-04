@@ -249,9 +249,10 @@ export async function apiGetOwnerStats() {
   }
 }
 
-export async function apiGetOwnerTours() {
+export async function apiGetOwnerTours(params = {}) {
   try {
-    return await apiRequest("/owner/tours");
+    const query = new URLSearchParams(params).toString();
+    return await apiRequest(`/owner/tours${query ? `?${query}` : ""}`);
   } catch (err) {
     return { success: true, data: [] };
   }

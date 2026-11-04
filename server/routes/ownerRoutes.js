@@ -172,10 +172,23 @@ router.get("/tours", async (req, res) => {
     let tours = [];
     try {
       const isGlobalAdmin = req.user?.role === "ADMIN";
-      const filter = isGlobalAdmin || !req.user ? {} : { authorId: req.user.id };
-      tours = await prisma.virtualTour.findMany({
+      const userEmail = (req.user?.email || req.query.authorEmail || "").toLowerCase().trim();
+      const userId = req.user?.id || req.query.authorId;
+
+      let filter = {};
+      if (!isGlobalAdmin && (userId || userEmail)) {
+        filter = {
+          OR: [
+            ...(userId ? [{ authorId: userId }] : []),
+            ...(userEmail ? [{ author: { email: userEmail } }] : []),
+          ],
+        };
+      }
+
+      const fetchedTours = await prisma.virtualTour.findMany({
         where: filter,
         include: {
+          author: { select: { id: true, email: true, name: true } },
           scenes: {
             include: { hotspots: true },
             orderBy: { orderIndex: "asc" },
@@ -183,6 +196,12 @@ router.get("/tours", async (req, res) => {
         },
         orderBy: { createdAt: "desc" },
       });
+
+      tours = fetchedTours.map((t) => ({
+        ...t,
+        authorEmail: t.author?.email || userEmail,
+        authorName: t.author?.name || "Creator",
+      }));
     } catch (dbErr) {
       console.warn("Prisma PostgreSQL owner tours fetch error:", dbErr.message);
       tours = toursStore;
@@ -197,15 +216,37 @@ router.get("/tours", async (req, res) => {
 // POST /api/v1/owner/tours - Create a new 360 Virtual Tour in PostgreSQL
 router.post("/tours", async (req, res) => {
   try {
-    const { id, title, description, category, price, coverImage, audioConfig, scenes } = req.body;
+    const { id, title, description, category, price, coverImage, audioConfig, scenes, authorId, authorEmail, authorName } = req.body;
     if (!title) {
       return res.status(400).json({ success: false, error: "Title is required" });
     }
 
     let newTour = null;
     try {
-      // Create user if default user missing
-      let author = await prisma.user.findFirst({ where: { role: "CREATOR" } });
+      // Resolve or create author matching the user creating the tour
+      let author = null;
+      if (req.user?.id) {
+        author = await prisma.user.findUnique({ where: { id: req.user.id } });
+      }
+      if (!author && authorEmail) {
+        const cleanEmail = authorEmail.toLowerCase().trim();
+        author = await prisma.user.findUnique({ where: { email: cleanEmail } });
+        if (!author) {
+          author = await prisma.user.create({
+            data: {
+              email: cleanEmail,
+              name: authorName || cleanEmail.split("@")[0],
+              role: "CREATOR",
+            },
+          });
+        }
+      }
+      if (!author && authorId) {
+        author = await prisma.user.findUnique({ where: { id: authorId } });
+      }
+      if (!author) {
+        author = await prisma.user.findFirst({ where: { role: "CREATOR" } });
+      }
       if (!author) {
         author = await prisma.user.create({
           data: {
@@ -256,10 +297,20 @@ router.post("/tours", async (req, res) => {
           },
         });
       }
-      newTour = await prisma.virtualTour.findUnique({
+
+      const refreshed = await prisma.virtualTour.findUnique({
         where: { id: newTour.id },
-        include: { scenes: { include: { hotspots: true } } },
+        include: {
+          author: { select: { id: true, email: true, name: true } },
+          scenes: { include: { hotspots: true } },
+        },
       });
+
+      newTour = {
+        ...refreshed,
+        authorEmail: refreshed?.author?.email || authorEmail,
+        authorName: refreshed?.author?.name || authorName,
+      };
     } catch (dbErr) {
       console.warn("Prisma PostgreSQL owner tour creation fallback:", dbErr.message);
       const fallbackScenes = (Array.isArray(scenes) && scenes.length > 0)
@@ -282,6 +333,9 @@ router.post("/tours", async (req, res) => {
         price: price || "Free",
         coverImage: coverImage || "/panoramas/panorama_aerial.jpg",
         audioConfig,
+        authorId: authorId || req.user?.id || "usr_creator",
+        authorEmail: authorEmail || req.user?.email || "creator@viewroom.com",
+        authorName: authorName || req.user?.name || "Creator",
         isPublished: true,
         viewsCount: 0,
         scenes: fallbackScenes,
