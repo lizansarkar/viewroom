@@ -297,18 +297,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const base64Data = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (event) => resolve(event.target?.result);
-        reader.readAsDataURL(file);
-      });
 
-      let finalUrl = base64Data;
+      let finalUrl = "";
       try {
-        const uploadedUrl = await apiUploadImage(base64Data, file.name);
+        // Direct multipart upload of File object to local/cloud storage engine
+        const uploadedUrl = await apiUploadImage(file);
         if (uploadedUrl) finalUrl = uploadedUrl;
       } catch (err) {
-        console.warn("Server upload fallback to base64:", err);
+        console.warn("Direct file upload error:", err);
+      }
+
+      // Fallback: If backend is completely offline, generate lightweight blob URL
+      if (!finalUrl) {
+        finalUrl = URL.createObjectURL(file);
       }
 
       // Auto-detect clean name from file name (e.g., "living_room.jpg" -> "Living Room")

@@ -3,6 +3,21 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import compression from "compression";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, "uploads");
+const panoramasDir = path.join(uploadsDir, "panoramas");
+const audioDir = path.join(uploadsDir, "audio");
+
+[uploadsDir, panoramasDir, audioDir].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 import authRoutes from "./routes/authRoutes.js";
 import tourRoutes from "./routes/tourRoutes.js";
@@ -55,8 +70,8 @@ app.use(
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
-// Serve static uploaded 360 images
-app.use("/uploads", express.static("uploads"));
+// Serve static uploaded 360 images & audio files reliably from absolute directory
+app.use("/uploads", express.static(uploadsDir));
 
 // Performance Cache-Control Header Middleware for API responses
 app.use((req, res, next) => {

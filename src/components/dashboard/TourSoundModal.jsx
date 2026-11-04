@@ -127,18 +127,14 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
     if (!file) return;
     setIsUploading(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const base64 = event.target?.result;
-        if (base64) {
-          const uploadedUrl = await apiUploadAudio(base64, file.name);
-          setCustomAudioUrl(uploadedUrl || base64);
-          setSourceType("custom");
-        }
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+      const uploadedUrl = await apiUploadAudio(file);
+      if (uploadedUrl) {
+        setCustomAudioUrl(uploadedUrl);
+        setSourceType("custom");
+      }
     } catch (err) {
+      console.warn("Audio file upload error:", err);
+    } finally {
       setIsUploading(false);
     }
   };

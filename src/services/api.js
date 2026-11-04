@@ -387,7 +387,7 @@ export async function apiUploadImage(fileOrBase64) {
 
       if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
-      return data.url || data.imageUrl;
+      return data.url || data.imageUrl || data.localUrl;
     }
   } catch (err) {
     console.warn("apiUploadImage fallback:", err.message);
@@ -425,7 +425,7 @@ export async function apiUploadAudio(fileOrBase64, fileName = "sound.mp3") {
 
       if (!res.ok) throw new Error("Audio upload failed");
       const data = await res.json();
-      return data.audioUrl || data.url;
+      return data.audioUrl || data.url || data.localUrl;
     }
   } catch (err) {
     console.warn("apiUploadAudio fallback:", err.message);
