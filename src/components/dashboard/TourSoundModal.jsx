@@ -153,11 +153,11 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-xl bg-base-100 border border-base-content/10 rounded-[28px] p-6 sm:p-8 shadow-2xl relative text-base-content flex flex-col space-y-6">
+      <div className="w-full max-w-xl bg-base-100 border border-base-content/10 rounded-sm p-6 sm:p-8 shadow-2xl relative text-base-content flex flex-col space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-base-content/10 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-base-200 border border-base-content/10 flex items-center justify-center text-base">
+            <div className="w-10 h-10 rounded-sm bg-base-200 border border-base-content/10 flex items-center justify-center text-base">
               <FontAwesomeIcon icon={faMusic} className="text-base-content" />
             </div>
             <div>
@@ -173,14 +173,14 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-2xl bg-base-200 hover:bg-base-300 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-sm bg-base-200 hover:bg-base-300 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer"
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
 
         {/* Master Sound Enable Toggle */}
-        <div className="p-4 rounded-2xl bg-base-200/60 border border-base-content/10 flex items-center justify-between">
+        <div className="p-4 rounded-sm bg-base-200/60 border border-base-content/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <FontAwesomeIcon icon={enabled ? faVolumeHigh : faVolumeMute} className="text-base text-base-content/70" />
             <div>
@@ -203,14 +203,14 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
         {enabled && (
           <div className="space-y-5">
             {/* Audio Source Tabs */}
-            <div className="flex items-center gap-2 p-1 rounded-2xl bg-base-200/80 border border-base-content/10">
+            <div className="flex items-center gap-2 p-1 rounded-sm bg-base-200/80 border border-base-content/10">
               <button
                 type="button"
                 onClick={() => {
                   stopPreviewAudio();
                   setSourceType("preset");
                 }}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-2 rounded-sm text-xs font-bold transition-all cursor-pointer ${
                   sourceType === "preset"
                     ? "bg-base-100 text-base-content shadow-xs"
                     : "text-base-content/60 hover:text-base-content"
@@ -224,7 +224,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
                   stopPreviewAudio();
                   setSourceType("custom");
                 }}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`flex-1 py-2 rounded-sm text-xs font-bold transition-all cursor-pointer ${
                   sourceType === "custom"
                     ? "bg-base-100 text-base-content shadow-xs"
                     : "text-base-content/60 hover:text-base-content"
@@ -248,7 +248,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
                           stopPreviewAudio();
                         }
                       }}
-                      className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      className={`p-3 rounded-sm border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                         isSelected
                           ? "bg-base-200 border-base-content/30 shadow-xs"
                           : "bg-base-100 border-base-content/10 hover:border-base-content/20"
@@ -261,7 +261,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
                         <span className="text-[10px] text-base-content/60">{trk.desc}</span>
                       </div>
                       {isSelected && (
-                        <span className="w-5 h-5 rounded-full bg-base-content text-base-100 flex items-center justify-center text-[10px] font-bold shrink-0">
+                        <span className="w-5 h-5 rounded-sm bg-base-content text-base-100 flex items-center justify-center text-[10px] font-bold shrink-0">
                           ✓
                         </span>
                       )}
@@ -273,7 +273,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
 
             {/* Custom Audio Uploader Card */}
             {sourceType === "custom" && (
-              <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/15 space-y-3">
+              <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/15 space-y-3">
                 <span className="text-xs font-extrabold text-base-content block">
                   Upload Custom MP3 / WAV Audio File
                 </span>
@@ -291,7 +291,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
                   />
                   <label
                     htmlFor="tour_custom_audio_input"
-                    className={`flex-1 px-4 py-3 rounded-2xl border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                    className={`flex-1 px-4 py-3 rounded-sm border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all ${
                       customAudioUrl
                         ? "bg-base-300 text-base-content border-base-content/30"
                         : "bg-base-100 hover:bg-base-200 border-base-content/15 text-base-content"
@@ -311,7 +311,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
             )}
 
             {/* Live Audio Preview & Master Volume Slider */}
-            <div className="p-4 rounded-2xl bg-base-200/40 border border-base-content/10 space-y-3">
+            <div className="p-4 rounded-sm bg-base-200/40 border border-base-content/10 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-base-content flex items-center gap-1.5">
                   <FontAwesomeIcon icon={faSliders} className="text-xs text-base-content/60" />
@@ -321,7 +321,7 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
                 <Button
                   variant="secondary"
                   onClick={handleTogglePreview}
-                  className="!text-[11px] !py-1 !px-3 !h-auto font-bold"
+                  className="!text-[11px] !py-1 !px-3 !h-auto !rounded-sm font-bold"
                 >
                   <FontAwesomeIcon icon={isPlayingPreview ? faPause : faPlay} className="mr-1.5" />
                   {isPlayingPreview ? "Pause Sound" : "Listen Preview"}
@@ -354,10 +354,10 @@ export default function TourSoundModal({ tour, onClose, onSave }) {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-3 pt-2 border-t border-base-content/10">
-          <Button variant="secondary" onClick={onClose} className="!text-xs !py-2.5 !px-4">
+          <Button variant="secondary" onClick={onClose} className="!text-xs !py-2.5 !px-4 !rounded-sm">
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSave} className="!text-xs !py-2.5 !px-5">
+          <Button variant="primary" onClick={handleSave} className="!text-xs !py-2.5 !px-5 !rounded-sm">
             <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
             Save Sound Config
           </Button>

@@ -273,12 +273,11 @@ export default function StudioSceneEditor({
       <header className="h-16 px-4 sm:px-6 bg-base-100 border-b border-base-content/10 flex items-center justify-between gap-4 shrink-0 shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <h2 className="text-sm font-extrabold uppercase tracking-wider text-base-content truncate">
               {currentTour?.title || "360° Studio Editor"}
             </h2>
           </div>
-          <span className="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-md bg-base-200 text-base-content/70">
+          <span className="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-sm bg-base-200 text-base-content/70 border border-base-content/10">
             {scenes.length} {scenes.length === 1 ? "Room" : "Rooms"}
           </span>
         </div>
@@ -290,7 +289,7 @@ export default function StudioSceneEditor({
               key={sc.id || idx}
               type="button"
               onClick={() => setActiveSceneIndex(idx)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 border ${
+              className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 border ${
                 idx === activeSceneIndex
                   ? "bg-primary text-primary-content border-primary shadow-xs"
                   : "bg-base-200 hover:bg-base-300 text-base-content/75 border-base-content/10"
@@ -302,18 +301,18 @@ export default function StudioSceneEditor({
           ))}
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={() => {
             if (onSaveTour) onSaveTour(currentTour);
             if (onClose) onClose();
           }}
-          className="p-2 sm:px-4 sm:py-2 rounded-xl bg-primary text-primary-content hover:opacity-90 text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border border-primary shrink-0 shadow-xs"
+          className="!text-xs !py-1.5 !px-4 !rounded-sm shrink-0 gap-1.5 cursor-pointer"
           title="Done & Save Tour"
         >
-          <FontAwesomeIcon icon={faCheck} />
+          <FontAwesomeIcon icon={faCheck} className="text-success" />
           <span>Done & Save Tour</span>
-        </button>
+        </Button>
       </header>
 
       {/* MAIN SPLIT VIEW */}
@@ -337,38 +336,30 @@ export default function StudioSceneEditor({
 
           {/* Top-Left Live Status Badge */}
           <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 pointer-events-none">
-            <div className="px-3 py-1.5 rounded-xl bg-black/75 backdrop-blur-md border border-white/20 text-white text-xs font-bold flex items-center gap-2 shadow-lg">
-              <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            <div className="px-3 py-1.5 rounded-sm bg-black/85 backdrop-blur-md border border-white/20 text-white text-xs font-bold flex items-center gap-2 shadow-lg">
               <span>Room {activeSceneIndex + 1}: {activeScene?.name}</span>
             </div>
-            <div className="px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white/70 text-[10px] font-mono">
+            <div className="px-2.5 py-1 rounded-sm bg-black/75 backdrop-blur-md text-white/70 text-[10px] font-mono border border-white/10">
               Live Camera: {liveYaw} yaw • {livePitch} pitch
-            </div>
-          </div>
-
-          {/* Helper Hint Overlay at Bottom */}
-          <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-center pointer-events-none">
-            <div className="px-4 py-2 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] font-medium border border-white/10 shadow-lg text-center">
-              💡 Drag to rotate 360° • Click anywhere on floor/doorway to position a hotspot link
             </div>
           </div>
         </div>
 
         {/* RIGHT COLUMN: MADESNAPPY 3-STEP SETUP PANEL */}
         <div className="w-full lg:w-96 xl:w-[420px] bg-base-100 border-l border-base-content/10 flex flex-col justify-between overflow-y-auto shrink-0 shadow-lg">
-          <div className="p-5 sm:p-6 space-y-6">
+          <div className="p-5 sm:p-6 space-y-5">
             
             {/* STEP 1: OPENING VIEW (MadeSnappy Image 2) */}
-            <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10 space-y-3">
+            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-primary text-primary-content text-[10px] flex items-center justify-center font-black">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-sm bg-base-content/10 text-base-content text-[11px] flex items-center justify-center font-black">
                     1
                   </span>
                   Opening View
                 </span>
                 {activeScene?.defaultYaw && (
-                  <span className="text-[10px] font-semibold text-success bg-success/15 px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-bold text-success bg-success/15 px-2 py-0.5 rounded-sm border border-success/20">
                     Configured ✓
                   </span>
                 )}
@@ -376,27 +367,27 @@ export default function StudioSceneEditor({
               <p className="text-[11px] text-base-content/70 leading-relaxed">
                 Rotate the 360° viewer to the best angle. This is what visitors will see first when entering this room.
               </p>
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <button
-                  type="button"
+              <div className="pt-1">
+                <Button
+                  variant="primary"
                   onClick={handleSaveOpeningView}
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-primary text-primary-content hover:opacity-90 font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full !rounded-sm !text-xs !py-2.5 gap-2 cursor-pointer"
                 >
                   <FontAwesomeIcon icon={faEye} />
                   <span>Set Opening View ▶</span>
-                </button>
+                </Button>
               </div>
               {openingViewSaved && (
-                <div className="p-2 rounded-lg bg-success/15 text-success text-center text-xs font-bold animate-in fade-in">
+                <div className="p-2 rounded-sm bg-success/15 text-success text-center text-xs font-bold border border-success/20 animate-in fade-in">
                   ✓ Opening view saved ({liveYaw}, {livePitch})!
                 </div>
               )}
             </div>
 
             {/* STEP 2: ROOM TITLE (MadeSnappy Image 2) */}
-            <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10 space-y-3">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
-                <span className="w-5 h-5 rounded-full bg-primary text-primary-content text-[10px] flex items-center justify-center font-black">
+            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-sm bg-base-content/10 text-base-content text-[11px] flex items-center justify-center font-black">
                   2
                 </span>
                 Room Title
@@ -411,7 +402,7 @@ export default function StudioSceneEditor({
                       handleRoomNameChange(val);
                     }
                   }}
-                  className="w-full px-3 py-2 rounded-xl bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                  className="w-full px-3 py-2 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
                   <option value="Custom">Custom Room Name...</option>
                   {ROOM_NAME_PRESETS.map((preset) => (
@@ -426,22 +417,22 @@ export default function StudioSceneEditor({
                   value={activeScene?.name || ""}
                   onChange={(e) => handleRoomNameChange(e.target.value)}
                   placeholder="Enter Room Title"
-                  className="w-full px-3.5 py-2 rounded-xl bg-base-100 border border-base-content/15 text-xs font-bold text-base-content focus:outline-none"
+                  className="w-full px-3.5 py-2 rounded-sm bg-base-100 border border-base-content/15 text-xs font-bold text-base-content focus:outline-none"
                 />
               </div>
             </div>
 
             {/* STEP 3: CONNECT / HOTSPOT LINK TO ANOTHER ROOM */}
-            <div className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10 space-y-3">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/60 flex items-center gap-1.5">
-                <span className="w-5 h-5 rounded-full bg-primary text-primary-content text-[10px] flex items-center justify-center font-black">
+            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-sm bg-base-content/10 text-base-content text-[11px] flex items-center justify-center font-black">
                   3
                 </span>
                 Link to Another Room
               </span>
 
               {otherAvailableScenes.length === 0 ? (
-                <div className="p-3 rounded-xl bg-base-100 text-xs text-base-content/60 text-center">
+                <div className="p-3 rounded-sm bg-base-100 border border-base-content/10 text-xs text-base-content/60 text-center">
                   Only 1 room in this tour. Add more scenes to connect rooms with hotspots.
                 </div>
               ) : (
@@ -457,7 +448,7 @@ export default function StudioSceneEditor({
                         const targetScene = scenes.find((s) => s.id === e.target.value);
                         if (targetScene) setCustomHotspotLabel(targetScene.name);
                       }}
-                      className="w-full px-3 py-2 rounded-xl bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                      className="w-full px-3 py-2 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                     >
                       {otherAvailableScenes.map((s) => (
                         <option key={s.id} value={s.id}>
@@ -475,7 +466,7 @@ export default function StudioSceneEditor({
                       <select
                         value={hotspotType}
                         onChange={(e) => setHotspotType(e.target.value)}
-                        className="w-full px-2.5 py-1.5 rounded-xl bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                        className="w-full px-2.5 py-1.5 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                       >
                         <option value="arrow">Chevron Arrow ➔</option>
                         <option value="door">Doorway 🚪</option>
@@ -487,19 +478,20 @@ export default function StudioSceneEditor({
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-base-content/60 mb-1">
                         Placed At
                       </label>
-                      <div className="px-2.5 py-1.5 rounded-xl bg-base-100 border border-base-content/15 text-[11px] font-mono text-base-content/70 truncate">
+                      <div className="px-2.5 py-1.5 rounded-sm bg-base-100 border border-base-content/15 text-[11px] font-mono text-base-content/70 truncate">
                         {hotspotYaw}, {hotspotPitch}
                       </div>
                     </div>
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full py-2.5 px-4 rounded-xl bg-base-content text-base-100 hover:opacity-90 font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                    variant="primary"
+                    className="w-full !rounded-sm !text-xs !py-2.5 gap-2 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faPlus} />
                     <span>Attach Link Hotspot</span>
-                  </button>
+                  </Button>
                 </form>
               )}
 
@@ -515,7 +507,7 @@ export default function StudioSceneEditor({
                       return (
                         <div
                           key={hp.id}
-                          className="p-2 rounded-xl bg-base-100 border border-base-content/10 flex items-center justify-between gap-2 text-xs"
+                          className="p-2 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between gap-2 text-xs"
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <span className="text-primary font-bold">➔</span>
@@ -526,7 +518,7 @@ export default function StudioSceneEditor({
                           <button
                             type="button"
                             onClick={() => handleDeleteHotspot(hp.id)}
-                            className="p-1.5 rounded-lg hover:bg-error hover:text-white text-base-content/50 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-sm hover:bg-error hover:text-white text-base-content/50 transition-colors cursor-pointer"
                             title="Remove Hotspot"
                           >
                             <FontAwesomeIcon icon={faTrash} className="text-[10px]" />
@@ -543,29 +535,29 @@ export default function StudioSceneEditor({
 
           {/* FOOTER: PREV / NEXT ROOM STEP NAVIGATION */}
           <div className="p-4 bg-base-200/80 border-t border-base-content/10 flex items-center justify-between gap-3">
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               disabled={activeSceneIndex === 0}
               onClick={() => setActiveSceneIndex((prev) => Math.max(0, prev - 1))}
-              className="py-2 px-3 rounded-xl bg-base-100 hover:bg-base-300 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold flex items-center gap-1.5 border border-base-content/10 cursor-pointer"
+              className="!py-1.5 !px-3 !rounded-sm !text-xs gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <FontAwesomeIcon icon={faArrowLeft} />
               <span>Prev Room</span>
-            </button>
+            </Button>
 
             <span className="text-xs font-semibold text-base-content/60">
               {activeSceneIndex + 1} of {scenes.length}
             </span>
 
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               disabled={activeSceneIndex === scenes.length - 1}
               onClick={() => setActiveSceneIndex((prev) => Math.min(scenes.length - 1, prev + 1))}
-              className="py-2 px-3 rounded-xl bg-base-100 hover:bg-base-300 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold flex items-center gap-1.5 border border-base-content/10 cursor-pointer"
+              className="!py-1.5 !px-3 !rounded-sm !text-xs gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <span>Next Room</span>
               <FontAwesomeIcon icon={faArrowRight} />
-            </button>
+            </Button>
           </div>
 
         </div>

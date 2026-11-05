@@ -25,6 +25,9 @@ function Button({
 
     // Neutral Button: Transparent background with CSS variable text color & built-in Chevron
     neutral: "bg-transparent text-[var(--app-text-primary)] hover:opacity-75 font-bold text-xs gap-1.5 p-0 border-none shadow-none focus:outline-none",
+
+    // Danger Button: Soft red background with red border
+    danger: `${pill3DStyles} bg-[#fee2e2] hover:bg-[#fecaca] text-[#dc2626] border-[#dc2626] shadow-[inset_0_-5px_0_0_#fca5a5,0_4px_6px_-1px_rgba(0,0,0,0.2)]`,
   };
 
   return (

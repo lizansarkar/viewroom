@@ -591,27 +591,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
-  const handleDeleteAllTours = () => {
-    setDeleteConfirmModal({
-      isOpen: true,
-      title: "Delete All Virtual Tours",
-      message: "Are you sure you want to delete ALL your 360° virtual tours? This action cannot be undone.",
-      onConfirm: async () => {
-        try {
-          for (const t of tours) {
-            if (t.id) await apiDeleteOwnerTour(t.id).catch(() => {});
-          }
-        } catch (err) {}
-        const userEmail = (user?.email || "").toLowerCase().trim();
-        if (userEmail) {
-          localStorage.removeItem(`viewroom_tours_${userEmail}`);
-        }
-        setTours([]);
-        setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null });
-      },
-    });
-  };
-
   // Product Handlers
   const handleCreateProduct = async (e) => {
     e.preventDefault();
@@ -683,7 +662,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {(currentRoute === "creator_overview" || currentRoute === "overview" || currentRoute === "tours") && (
         <div className="space-y-6">
           {/* Top Welcome / Header Banner */}
-          <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
+          <div className="p-6 sm:p-7 rounded-sm bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
             <div>
               <span className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider block mb-1">
                 360° Real Estate Studio & Agency Dashboard
@@ -699,28 +678,28 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             <Button
               variant="primary"
               onClick={() => setActiveTab && setActiveTab("uploader")}
-              className="whitespace-nowrap cursor-pointer !rounded-2xl"
+              className="whitespace-nowrap cursor-pointer !rounded-sm !text-xs !py-2.5 !px-5 gap-2"
             >
-              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              <FontAwesomeIcon icon={faPlus} />
               <span>+ Upload New 360° Tour</span>
             </Button>
           </div>
 
           {/* Quick KPI Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Active 360° Tours
                 </span>
                 <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{tours.length}</span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faBuilding} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Total Room Scenes
@@ -729,38 +708,38 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   {tours.reduce((acc, t) => acc + (t.scenes?.length || 0), 0)}
                 </span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faCompass} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Panoramic Views
                 </span>
                 <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.totalViews}</span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faEye} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Engagement Rate
                 </span>
                 <span className="text-2xl sm:text-3xl font-extrabold text-base-content">{stats.engagementRate}</span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faChartLine} />
               </div>
             </div>
           </div>
 
           {/* PROPERTIES TABLE (MadeSnappy Image 3 Style) */}
-          <div className="p-5 sm:p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+          <div className="p-5 sm:p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-base text-base-content flex items-center gap-2">
@@ -773,32 +752,22 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="relative w-full sm:w-56">
+                <div className="relative w-full sm:w-64">
                   <input
                     type="text"
                     placeholder="Search properties..."
                     value={toursSearch}
                     onChange={(e) => setToursSearch(e.target.value)}
-                    className="w-full px-3.5 py-2 pl-9 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                    className="w-full px-3.5 py-2 pl-9 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                   />
                   <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
                 </div>
-                {tours.length > 0 && (
-                  <button
-                    onClick={handleDeleteAllTours}
-                    className="px-3 py-2 rounded-xl bg-error/10 hover:bg-error hover:text-white text-error text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-error/20 whitespace-nowrap"
-                    title="Delete all tours permanently"
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                    <span>Clear All</span>
-                  </button>
-                )}
               </div>
             </div>
 
             {filteredTours.length === 0 ? (
-              <div className="py-12 px-4 rounded-2xl bg-base-200/40 border border-dashed border-base-content/15 text-center space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content/60 flex items-center justify-center mx-auto text-lg">
+              <div className="py-12 px-4 rounded-sm bg-base-200/40 border border-dashed border-base-content/15 text-center space-y-3">
+                <div className="w-12 h-12 rounded-sm bg-base-200 text-base-content/60 flex items-center justify-center mx-auto text-lg">
                   <FontAwesomeIcon icon={faCloudArrowUp} />
                 </div>
                 <h4 className="font-bold text-sm text-base-content">No 360° Properties Found</h4>
@@ -808,7 +777,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 <Button
                   variant="primary"
                   onClick={() => setActiveTab && setActiveTab("uploader")}
-                  className="!text-xs !py-2 !px-4 !rounded-xl cursor-pointer"
+                  className="!text-xs !py-2 !px-4 !rounded-sm cursor-pointer"
                 >
                   <FontAwesomeIcon icon={faPlus} className="mr-1.5" />
                   + Batch Upload Panoramas
@@ -834,7 +803,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                             <img
                               src={tour.coverImage || "/panoramas/panorama_aerial.jpg"}
                               alt={tour.title}
-                              className="w-14 h-10 rounded-xl object-cover bg-base-200 border border-base-content/10 shrink-0 shadow-xs"
+                              className="w-14 h-10 rounded-sm object-cover bg-base-200 border border-base-content/10 shrink-0 shadow-xs"
                             />
                             <div className="min-w-0">
                               <span className="font-bold text-sm text-base-content block truncate max-w-xs">
@@ -848,14 +817,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         </td>
 
                         <td className="py-3 px-4">
-                          <span className="px-2.5 py-1 rounded-lg bg-base-200 font-bold text-base-content text-[11px] whitespace-nowrap">
+                          <span className="px-2.5 py-1 rounded-sm bg-base-200 font-bold text-base-content text-[11px] whitespace-nowrap">
                             {tour.scenes?.length || 1} Rooms
                           </span>
                         </td>
 
                         <td className="py-3 px-4">
-                          <span className="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] uppercase tracking-wider inline-flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span className="px-2.5 py-1 rounded-sm border border-base-content/20 bg-base-200/50 font-bold text-[10px] uppercase tracking-wider text-base-content/80 inline-flex items-center">
                             Published
                           </span>
                         </td>
@@ -867,36 +835,36 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             {/* Studio Editor (MadeSnappy Split View) */}
-                            <button
-                              type="button"
+                            <Button
+                              variant="primary"
                               onClick={() => {
                                 setStudioEditingTour(tour);
                                 setStudioInitialSceneIndex(0);
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-primary text-primary-content hover:opacity-90 font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                              className="!text-xs !py-1.5 !px-3 !rounded-sm gap-1.5 cursor-pointer"
                               title="Open MadeSnappy 360 Studio Editor (Opening Views & Hotspots)"
                             >
                               <FontAwesomeIcon icon={faPenToSquare} />
                               <span className="hidden sm:inline">Studio Editor</span>
-                            </button>
+                            </Button>
 
                             {/* View 360° */}
                             <Link to={`/virtual-tour/${tour.id}`}>
-                              <button
-                                type="button"
-                                className="px-2.5 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer border border-base-content/10"
+                              <Button
+                                variant="secondary"
+                                className="!text-xs !py-1.5 !px-3 !rounded-sm gap-1 cursor-pointer"
                                 title="Preview 360° Virtual Tour"
                               >
                                 <FontAwesomeIcon icon={faEye} />
                                 <span className="hidden sm:inline">View</span>
-                              </button>
+                              </Button>
                             </Link>
 
                             {/* Sound Config */}
                             <button
                               type="button"
                               onClick={() => setSoundModalTour(tour)}
-                              className="p-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content/75 hover:text-base-content text-xs cursor-pointer border border-base-content/10 transition-colors"
+                              className="p-2 rounded-sm bg-base-200 hover:bg-base-300 text-base-content/75 hover:text-base-content text-xs cursor-pointer border border-base-content/10 transition-colors"
                               title={`Sound: ${tour.audioConfig?.enabled ?? true ? "ON" : "OFF"}`}
                             >
                               <FontAwesomeIcon icon={faMusic} />
@@ -906,7 +874,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                             <button
                               type="button"
                               onClick={() => handleCopyShareableLink(tour.id)}
-                              className="p-2 rounded-xl bg-base-200 hover:bg-base-300 text-base-content/75 hover:text-base-content text-xs cursor-pointer border border-base-content/10 transition-colors"
+                              className="p-2 rounded-sm bg-base-200 hover:bg-base-300 text-base-content/75 hover:text-base-content text-xs cursor-pointer border border-base-content/10 transition-colors"
                               title="Copy Shareable Tour Link"
                             >
                               <FontAwesomeIcon
@@ -915,11 +883,11 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                               />
                             </button>
 
-                            {/* Delete Tour */}
+                            {/* Individual Delete Tour */}
                             <button
                               type="button"
                               onClick={() => handleDeleteTour(tour.id)}
-                              className="p-2 rounded-xl bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
+                              className="p-2 rounded-sm bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors border border-base-content/10"
                               title="Delete Tour"
                             >
                               <FontAwesomeIcon icon={faTrash} />
@@ -938,7 +906,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
       {/* 2. BATCH UPLOADER & REORDER STUDIO (MadeSnappy Image 1 & 4 Workflow) */}
       {currentRoute === "uploader" && (
-        <div className="p-6 sm:p-8 rounded-[28px] bg-base-100 border border-base-content/10 space-y-6 max-w-4xl mx-auto shadow-xs">
+        <div className="p-6 sm:p-8 rounded-sm bg-base-100 border border-base-content/10 space-y-6 max-w-4xl mx-auto shadow-xs">
           
           {/* Workflow Pipeline Header (MadeSnappy Image 1) */}
           <div className="border-b border-base-content/10 pb-5 space-y-3">
@@ -963,25 +931,25 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
             {/* Pipeline Visual Progression Bar */}
             <div className="grid grid-cols-4 gap-2 pt-2">
-              <div className="p-2 rounded-xl bg-primary/10 border border-primary text-center">
+              <div className="p-2 rounded-sm bg-primary/10 border border-primary text-center">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary block">
                   1. Info
                 </span>
                 <span className="text-[11px] font-bold text-base-content">Details</span>
               </div>
-              <div className="p-2 rounded-xl bg-primary/10 border border-primary text-center">
+              <div className="p-2 rounded-sm bg-primary/10 border border-primary text-center">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-primary block">
                   2. Upload
                 </span>
                 <span className="text-[11px] font-bold text-base-content">Panoramas</span>
               </div>
-              <div className="p-2 rounded-xl bg-base-200 text-center border border-base-content/10">
+              <div className="p-2 rounded-sm bg-base-200 text-center border border-base-content/10">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-base-content/50 block">
                   3. Reorder
                 </span>
                 <span className="text-[11px] font-bold text-base-content/70">Label Rooms</span>
               </div>
-              <div className="p-2 rounded-xl bg-base-200 text-center border border-base-content/10">
+              <div className="p-2 rounded-sm bg-base-200 text-center border border-base-content/10">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-base-content/50 block">
                   4. Studio
                 </span>
@@ -1010,7 +978,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                           setNewTourTitle(`${cat.label} 360° Space`);
                         }
                       }}
-                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3.5 rounded-sm border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
                           ? "bg-primary/10 border-primary shadow-xs ring-1 ring-primary/40"
                           : "bg-base-200/60 border-base-content/10 hover:border-base-content/20 hover:bg-base-200"
@@ -1018,9 +986,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     >
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-2xl">{cat.icon}</span>
-                        {isSelected && (
-                          <span className="w-2 h-2 rounded-full bg-primary" />
-                        )}
                       </div>
                       <div>
                         <span className="font-extrabold text-xs text-base-content block">
@@ -1046,7 +1011,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 placeholder="e.g. Skyline Sky Lounge Cafe 360°"
                 value={newTourTitle}
                 onChange={(e) => setNewTourTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none focus:border-primary"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none focus:border-primary"
               />
             </div>
 
@@ -1055,7 +1020,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
               <label className="block text-xs font-bold text-base-content/80 mb-1.5">
                 3. Upload 360° Panorama Photos
               </label>
-              <div className="p-6 rounded-2xl border-2 border-dashed border-base-content/20 hover:border-primary/50 transition-colors bg-base-200/40 text-center relative cursor-pointer">
+              <div className="p-6 rounded-sm border-2 border-dashed border-base-content/20 hover:border-primary/50 transition-colors bg-base-200/40 text-center relative cursor-pointer">
                 <input
                   type="file"
                   multiple
@@ -1065,7 +1030,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
                 <div className="flex flex-col items-center justify-center gap-2 pointer-events-none">
-                  <div className="w-12 h-12 rounded-2xl bg-base-100 border border-base-content/10 text-primary flex items-center justify-center text-xl shadow-xs">
+                  <div className="w-12 h-12 rounded-sm bg-base-100 border border-base-content/10 text-primary flex items-center justify-center text-xl shadow-xs">
                     {isProcessingUploads ? (
                       <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
                     ) : (
@@ -1082,7 +1047,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                       Select multiple equirectangular JPEG/PNG images. Rooms will appear below in sequence.
                     </p>
                   </div>
-                  <div className="mt-1 px-3 py-1 rounded-full bg-base-100 border border-base-content/10 text-[10px] font-extrabold uppercase tracking-wider text-base-content/70">
+                  <div className="mt-1 px-3 py-1 rounded-sm bg-base-100 border border-base-content/10 text-[10px] font-extrabold uppercase tracking-wider text-base-content/70">
                     ⚡ Fast Local Disk & Cloud Storage
                   </div>
                 </div>
@@ -1100,14 +1065,14 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     Reorder the visitor's walking path and pick room names.
                   </p>
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={handleAddBlankScene}
-                  className="px-3 py-1.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer border border-base-content/10 flex items-center gap-1.5"
+                  className="!px-3 !py-1.5 !rounded-sm !text-xs gap-1.5 cursor-pointer"
                 >
                   <FontAwesomeIcon icon={faPlus} />
                   <span>Add Room</span>
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-2.5">
@@ -1119,7 +1084,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, idx)}
                     onDragEnd={() => setDraggedSceneIndex(null)}
-                    className={`p-3.5 rounded-2xl border transition-all flex flex-col gap-2.5 ${
+                    className={`p-3.5 rounded-sm border transition-all flex flex-col gap-2.5 ${
                       draggedSceneIndex === idx
                         ? "opacity-50 scale-[0.99] border-dashed border-primary"
                         : sc.isCover
@@ -1139,12 +1104,12 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         </div>
 
                         {/* Step Number Badge */}
-                        <span className="w-6 h-6 rounded-xl bg-base-200 text-base-content font-black text-xs flex items-center justify-center shrink-0">
+                        <span className="w-6 h-6 rounded-sm bg-base-200 text-base-content font-black text-xs flex items-center justify-center shrink-0">
                           {idx + 1}
                         </span>
 
                         {/* Thumbnail & Cover Indicator */}
-                        <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-base-200 shrink-0 border border-base-content/10 shadow-xs">
+                        <div className="relative w-16 h-12 rounded-sm overflow-hidden bg-base-200 shrink-0 border border-base-content/10 shadow-xs">
                           <img
                             src={sc.thumbnailUrl || sc.panoramaUrl}
                             alt={sc.name}
@@ -1169,7 +1134,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                                 );
                               }
                             }}
-                            className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                            className="px-2.5 py-1.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                           >
                             <option value="Custom">Custom Name...</option>
                             {ROOM_NAME_PRESETS.map((p) => (
@@ -1189,7 +1154,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                               );
                             }}
                             placeholder="Room Name"
-                            className="px-2.5 py-1.5 rounded-lg bg-base-200/80 border border-base-content/10 text-xs font-bold text-base-content focus:outline-none"
+                            className="px-2.5 py-1.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-bold text-base-content focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1200,7 +1165,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                           type="button"
                           disabled={idx === 0}
                           onClick={() => handleMoveScene(idx, -1)}
-                          className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
+                          className="p-1.5 rounded-sm bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
                           title="Move Room Up"
                         >
                           <FontAwesomeIcon icon={faArrowUp} />
@@ -1210,7 +1175,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                           type="button"
                           disabled={idx === newTourScenesList.length - 1}
                           onClick={() => handleMoveScene(idx, 1)}
-                          className="p-1.5 rounded-lg bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
+                          className="p-1.5 rounded-sm bg-base-200 hover:bg-base-300 disabled:opacity-20 text-base-content text-xs cursor-pointer transition-colors"
                           title="Move Room Down"
                         >
                           <FontAwesomeIcon icon={faArrowDown} />
@@ -1219,7 +1184,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                         <button
                           type="button"
                           onClick={() => handleSetCoverScene(sc.id)}
-                          className={`px-2.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
+                          className={`px-2.5 py-1.5 rounded-sm text-xs font-bold cursor-pointer transition-all border ${
                             sc.isCover
                               ? "bg-primary text-primary-content border-primary"
                               : "bg-base-200 text-base-content/70 hover:text-base-content border-base-content/10"
@@ -1232,7 +1197,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                           <button
                             type="button"
                             onClick={() => handleRemoveBuilderScene(sc.id)}
-                            className="p-1.5 rounded-lg bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
+                            className="p-1.5 rounded-sm bg-base-200 hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
                             title="Remove Room"
                           >
                             <FontAwesomeIcon icon={faTrash} />
@@ -1253,7 +1218,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                               prev.map((item, i) => (i === idx ? { ...item, name: chip } : item))
                             );
                           }}
-                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-colors cursor-pointer border ${
+                          className={`px-2 py-0.5 rounded-sm text-[10px] font-bold transition-colors cursor-pointer border ${
                             sc.name === chip
                               ? "bg-primary text-primary-content border-primary"
                               : "bg-base-200 text-base-content/70 hover:bg-base-300 border-base-content/10"
@@ -1275,19 +1240,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
               </div>
 
               <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={() => handleCreateTour(false)}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-base-200 hover:bg-base-300 text-base-content text-xs font-bold transition-all cursor-pointer border border-base-content/10"
+                  className="w-full sm:w-auto !px-5 !py-2.5 !rounded-sm !text-xs font-bold cursor-pointer"
                 >
                   Save & Go to Tours List
-                </button>
+                </Button>
 
                 <Button
                   type="button"
                   variant="primary"
                   onClick={() => handleCreateTour(true)}
-                  className="w-full sm:w-auto !px-6 !py-2.5 !rounded-xl cursor-pointer"
+                  className="w-full sm:w-auto !px-6 !py-2.5 !rounded-sm !text-xs font-bold cursor-pointer"
                 >
                   <span>Save & Open 360° Studio Editor ▶</span>
                 </Button>
@@ -1300,7 +1265,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {/* 3. 3D PRODUCT SPINS ROUTE VIEW (products) */}
       {currentRoute === "products" && (
         <div className="space-y-6">
-          <div className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
                 <FontAwesomeIcon icon={faCube} className="text-base-content/60" />
@@ -1317,15 +1282,15 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 placeholder="Search 3D products..."
                 value={productsSearch}
                 onChange={(e) => setProductsSearch(e.target.value)}
-                className="w-full sm:w-56 px-3.5 py-2 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full sm:w-56 px-3.5 py-2 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <Button
                 variant="primary"
                 onClick={() => setShowAddProductModal(true)}
-                className="whitespace-nowrap cursor-pointer !rounded-xl !text-xs !py-2"
+                className="whitespace-nowrap cursor-pointer !rounded-sm !text-xs !py-2 !px-4 gap-1.5"
               >
-                <FontAwesomeIcon icon={faPlus} className="mr-1.5" />
-                Add Product
+                <FontAwesomeIcon icon={faPlus} />
+                <span>Add Product</span>
               </Button>
             </div>
           </div>
@@ -1334,13 +1299,13 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             {filteredProducts.map((p) => (
               <div
                 key={p.id}
-                className="p-5 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between gap-4 shadow-xs"
+                className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col justify-between gap-4 shadow-xs"
               >
                 <div className="flex items-center gap-3.5">
                   <img
                     src={p.image}
                     alt={p.title}
-                    className="w-16 h-16 rounded-2xl object-cover bg-base-200 border border-base-content/10 shrink-0"
+                    className="w-16 h-16 rounded-sm object-cover bg-base-200 border border-base-content/10 shrink-0"
                   />
                   <div className="min-w-0">
                     <h4 className="font-bold text-sm text-base-content truncate">{p.title}</h4>
@@ -1355,7 +1320,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                   <span className="text-xs text-base-content/60">{p.viewsCount || 0} views</span>
                   <button
                     onClick={() => handleDeleteProduct(p.id)}
-                    className="p-2 rounded-xl hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
+                    className="p-2 rounded-sm hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
                     title="Delete Product"
                   >
                     <FontAwesomeIcon icon={faTrash} />
@@ -1372,7 +1337,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
       {/* 5. STUDIO SETTINGS (settings) */}
       {currentRoute === "settings" && (
-        <div className="p-6 sm:p-8 rounded-[28px] bg-base-100 border border-base-content/10 space-y-6 max-w-2xl mx-auto shadow-xs">
+        <div className="p-6 sm:p-8 rounded-sm bg-base-100 border border-base-content/10 space-y-6 max-w-2xl mx-auto shadow-xs">
           <h3 className="font-bold text-lg text-base-content flex items-center gap-2">
             <FontAwesomeIcon icon={faSliders} className="text-base-content/60" />
             360° Studio Brand Settings
@@ -1387,7 +1352,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 type="text"
                 value={studioName}
                 onChange={(e) => setStudioName(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
             </div>
 
@@ -1399,7 +1364,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 type="text"
                 value={watermarkText}
                 onChange={(e) => setWatermarkText(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
             </div>
           </div>
@@ -1428,7 +1393,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {/* ADD 3D PRODUCT MODAL */}
       {showAddProductModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-2xl">
+          <div className="w-full max-w-md p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-2xl">
             <h3 className="font-bold text-base text-base-content">Add 3D Product</h3>
             <form onSubmit={handleCreateProduct} className="space-y-3">
               <input
@@ -1437,31 +1402,35 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 placeholder="Product Title"
                 value={newProdTitle}
                 onChange={(e) => setNewProdTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Category"
                 value={newProdCategory}
                 onChange={(e) => setNewProdCategory(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Price"
                 value={newProdPrice}
                 onChange={(e) => setNewProdPrice(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={() => setShowAddProductModal(false)}
-                  className="px-4 py-2 rounded-xl bg-base-200 text-xs font-semibold text-base-content/70 cursor-pointer"
+                  className="!px-4 !py-2 !rounded-sm !text-xs cursor-pointer"
                 >
                   Cancel
-                </button>
-                <Button type="submit" variant="primary" className="!text-xs !py-2 !px-4 !rounded-xl cursor-pointer">
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="!text-xs !py-2 !px-4 !rounded-sm cursor-pointer"
+                >
                   Create Product
                 </Button>
               </div>
@@ -1473,26 +1442,26 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {/* CUSTOM CONFIRM DELETE MODAL */}
       {deleteConfirmModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-2xl">
+          <div className="w-full max-w-md p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-2xl">
             <h3 className="font-bold text-base text-base-content">{deleteConfirmModal.title}</h3>
             <p className="text-xs text-base-content/70 leading-relaxed">{deleteConfirmModal.message}</p>
             <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
                 onClick={() =>
                   setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null })
                 }
-                className="px-4 py-2 rounded-xl bg-base-200 text-xs font-semibold text-base-content/70 cursor-pointer"
+                className="!px-4 !py-2 !rounded-sm !text-xs cursor-pointer"
               >
                 Cancel
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="danger"
                 onClick={deleteConfirmModal.onConfirm}
-                className="px-4 py-2 rounded-xl bg-error text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="!px-4 !py-2 !rounded-sm !text-xs font-bold cursor-pointer"
               >
                 Delete Permanently
-              </button>
+              </Button>
             </div>
           </div>
         </div>
