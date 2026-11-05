@@ -101,6 +101,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const [newTourCategory, setNewTourCategory] = useState("Cafe & Restaurant");
   const [newTourPrice, setNewTourPrice] = useState("Free");
   const [newTourDesc, setNewTourDesc] = useState("");
+  const [newTourLogo, setNewTourLogo] = useState("");
   const [isProcessingUploads, setIsProcessingUploads] = useState(false);
 
   // Studio Scene Editor Active Tour State
@@ -337,6 +338,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setSoundModalTour(null);
   };
 
+  // Space / Business Brand Logo Upload Handler
+  const handleUploadTourLogo = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      let uploadedUrl = await apiUploadImage(file);
+      if (!uploadedUrl) uploadedUrl = URL.createObjectURL(file);
+      setNewTourLogo(uploadedUrl);
+    } catch (err) {
+      console.warn("Tour logo upload error:", err);
+    }
+  };
+
   // Batch 360 Panorama File Upload Handler
   const handleBatchPanoramaUpload = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -500,6 +514,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       category: newTourCategory,
       price: newTourPrice,
       description: newTourDesc,
+      brandLogo: newTourLogo || "",
       coverImage: coverScene
         ? coverScene.thumbnailUrl || coverScene.panoramaUrl
         : "/panoramas/panorama_aerial.jpg",
@@ -537,6 +552,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     // Reset Form
     setNewTourTitle("");
     setNewTourDesc("");
+    setNewTourLogo("");
     setNewTourScenesList([
       {
         id: "scene_init_1",
@@ -800,11 +816,21 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                       <tr key={tour.id} className="hover:bg-base-200/40 transition-colors">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <img
-                              src={tour.coverImage || "/panoramas/panorama_aerial.jpg"}
-                              alt={tour.title}
-                              className="w-14 h-10 rounded-sm object-cover bg-base-200 border border-base-content/10 shrink-0 shadow-xs"
-                            />
+                            <div className="relative shrink-0">
+                              <img
+                                src={tour.coverImage || "/panoramas/panorama_aerial.jpg"}
+                                alt={tour.title}
+                                className="w-14 h-10 rounded-sm object-cover bg-base-200 border border-base-content/10 shadow-xs"
+                              />
+                              {tour.brandLogo && (
+                                <img
+                                  src={tour.brandLogo}
+                                  alt="Logo"
+                                  className="absolute -bottom-1 -right-1 w-5 h-5 rounded-sm object-cover bg-base-100 border border-base-content/20 shadow-xs"
+                                  title="Space Brand Logo"
+                                />
+                              )}
+                            </div>
                             <div className="min-w-0">
                               <span className="font-bold text-sm text-base-content block truncate max-w-xs">
                                 {tour.title}
@@ -1013,6 +1039,65 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                 onChange={(e) => setNewTourTitle(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none focus:border-primary"
               />
+            </div>
+
+            {/* Space / Business Brand Logo Upload (Cafe, Hotel, Home Logo) */}
+            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                {newTourLogo ? (
+                  <div className="relative w-12 h-12 rounded-sm overflow-hidden bg-base-100 border border-base-content/20 shrink-0 shadow-xs">
+                    <img
+                      src={newTourLogo}
+                      alt="Uploaded Logo"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-sm bg-base-100 border border-dashed border-base-content/25 flex items-center justify-center text-base-content/40 text-lg shrink-0">
+                    <FontAwesomeIcon icon={faBuilding} />
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-bold text-xs text-base-content flex items-center gap-1.5">
+                    <span>Space Brand Logo (Cafe, Hotel, Home)</span>
+                    <span className="text-[10px] font-semibold text-base-content/50 uppercase px-1.5 py-0.2 rounded-sm bg-base-200">
+                      Optional
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
+                    Upload your cafe, hotel, restaurant, or property logo. It will appear in the top-left corner of the 360° tour for all visitors.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="tour_brand_logo_input"
+                  className="hidden"
+                  onChange={handleUploadTourLogo}
+                />
+                <label htmlFor="tour_brand_logo_input">
+                  <Button
+                    variant="secondary"
+                    className="!px-3 !py-1.5 !rounded-sm !text-xs gap-1.5 cursor-pointer pointer-events-none"
+                  >
+                    <FontAwesomeIcon icon={faCloudArrowUp} />
+                    <span>{newTourLogo ? "Change Logo" : "Upload Logo"}</span>
+                  </Button>
+                </label>
+                {newTourLogo && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setNewTourLogo("")}
+                    className="!px-2.5 !py-1.5 !rounded-sm !text-xs !text-error hover:!bg-error/10 cursor-pointer"
+                    title="Remove Logo"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* 3. BATCH UPLOAD DROPZONE */}

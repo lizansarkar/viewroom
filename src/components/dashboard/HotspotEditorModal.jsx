@@ -243,11 +243,11 @@ export default function HotspotEditorModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-3 md:p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full h-full sm:w-[98vw] sm:h-[96vh] sm:max-w-[1600px] rounded-none sm:rounded-[28px] bg-base-100 border-0 sm:border border-base-content/10 shadow-2xl overflow-hidden text-base-content flex flex-col">
+      <div className="relative w-full h-full sm:w-[98vw] sm:h-[96vh] sm:max-w-[1600px] rounded-none sm:rounded-sm bg-base-100 border-0 sm:border border-base-content/10 shadow-2xl overflow-hidden text-base-content flex flex-col">
         {/* Modal Header */}
         <div className="px-5 py-3.5 sm:px-6 sm:py-4 bg-base-200/80 border-b border-base-content/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-base-100 border border-base-content/10 text-base-content flex items-center justify-center text-sm shadow-xs shrink-0">
+            <div className="w-9 h-9 rounded-sm bg-base-100 border border-base-content/10 text-base-content flex items-center justify-center text-sm shadow-xs shrink-0">
               <FontAwesomeIcon icon={faCrosshairs} />
             </div>
             <div className="min-w-0">
@@ -256,7 +256,7 @@ export default function HotspotEditorModal({
               </span>
               <h3 className="font-bold text-xs sm:text-sm md:text-base text-base-content flex items-center gap-2 truncate">
                 <span className="truncate">Editing Hotspots for:</span>
-                <span className="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-base-content text-base-100 shrink-0">
+                <span className="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-sm bg-base-content text-base-100 shrink-0">
                   {scene?.name || "Panorama Scene"}
                 </span>
               </h3>
@@ -267,7 +267,7 @@ export default function HotspotEditorModal({
             type="button"
             onClick={onClose}
             title="Close Editor"
-            className="w-9 h-9 rounded-2xl bg-base-100 hover:bg-base-200 border border-base-content/10 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer shadow-xs shrink-0"
+            className="w-9 h-9 rounded-sm bg-base-100 hover:bg-base-200 border border-base-content/10 text-base-content flex items-center justify-center text-xs transition-colors cursor-pointer shadow-xs shrink-0"
           >
             <FontAwesomeIcon icon={faXmark} />
           </button>
@@ -291,21 +291,21 @@ export default function HotspotEditorModal({
               onReady={handlePsvReady}
             />
 
-            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-2xl text-[10px] sm:text-xs font-bold text-white flex items-center gap-2 shadow-md max-w-[90%]">
+            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 bg-black/80 backdrop-blur-md border border-white/20 px-3.5 py-2 rounded-sm text-[10px] sm:text-xs font-bold text-white flex items-center gap-2 shadow-md max-w-[90%]">
               <FontAwesomeIcon icon={faCompass} className="text-white shrink-0 animate-spin" />
               <span className="truncate font-semibold">Click panorama to position hotspot</span>
             </div>
 
             {/* Quick Switch Scene Bar inside Viewport Header */}
             {tour?.scenes && tour.scenes.length > 1 && (
-              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 max-w-[90%] overflow-x-auto py-1.5 px-2.5 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20">
+              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 max-w-[90%] overflow-x-auto py-1.5 px-2.5 rounded-sm bg-black/80 backdrop-blur-md border border-white/20">
                 <span className="text-[10px] font-bold text-white/70 uppercase px-1">Switch Room:</span>
                 {tour.scenes.map((s) => (
                   <button
                     key={s.id}
                     type="button"
                     onClick={() => onSwitchEditingScene && onSwitchEditingScene(s)}
-                    className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-sm text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                       s.id === scene?.id
                         ? "bg-white text-black font-extrabold shadow-md"
                         : "bg-white/10 hover:bg-white/25 text-white"
@@ -321,7 +321,7 @@ export default function HotspotEditorModal({
           {/* Right Studio Form Panel */}
           <form onSubmit={handleSubmit} className="w-full lg:w-1/4 xl:w-1/5 p-4 sm:p-6 bg-base-100 space-y-4 overflow-y-auto flex flex-col justify-between shrink-0">
             <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-base-200/50 border border-base-content/10">
+              <div className="p-3.5 rounded-sm bg-base-200/50 border border-base-content/10">
                 <span className="text-[10px] font-bold text-base-content/50 uppercase tracking-wider block mb-0.5">
                   Current Room Scene
                 </span>
@@ -337,7 +337,7 @@ export default function HotspotEditorModal({
                   placeholder="e.g. Dining Room or Bedroom"
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                 />
               </div>
 
@@ -350,7 +350,7 @@ export default function HotspotEditorModal({
                     type="text"
                     readOnly
                     value={yaw}
-                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
+                    className="w-full px-3 py-2 rounded-sm bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
                 <div>
@@ -361,7 +361,7 @@ export default function HotspotEditorModal({
                     type="text"
                     readOnly
                     value={pitch}
-                    className="w-full px-3 py-2 rounded-xl bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
+                    className="w-full px-3 py-2 rounded-sm bg-base-200/60 border border-base-content/10 text-base-content font-mono font-bold text-xs"
                   />
                 </div>
               </div>
@@ -373,7 +373,7 @@ export default function HotspotEditorModal({
                 <select
                   value={hotspotType}
                   onChange={(e) => handleTypeChange(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                  className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
                   <option value="arrow">∧ 3D Floor Animated Chevron Arrow</option>
                   <option value="door">🚪 Architectural Doorway Portal</option>
@@ -396,7 +396,7 @@ export default function HotspotEditorModal({
                   <Button
                     variant="secondary"
                     onClick={() => setShowNewSceneForm(!showNewSceneForm)}
-                    className="!text-[10px] !py-1 !px-2.5 !h-auto font-bold flex items-center gap-1"
+                    className="!text-[10px] !py-1 !px-2.5 !h-auto !rounded-sm font-bold flex items-center gap-1"
                   >
                     <FontAwesomeIcon icon={faPlus} />
                     <span>+ New Room Scene</span>
@@ -413,7 +413,7 @@ export default function HotspotEditorModal({
                       handleTitleChange(targetObj.name);
                     }
                   }}
-                  className="w-full px-4 py-2.5 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                  className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                 >
                   <option value="">None (Info Puck)</option>
                   {tour?.scenes?.map((s) => (
@@ -425,7 +425,7 @@ export default function HotspotEditorModal({
 
                 {/* Inline New Linked Scene Creator Card */}
                 {showNewSceneForm && (
-                  <div className="p-3.5 rounded-2xl bg-base-200/60 border border-base-content/15 space-y-3 animate-in fade-in duration-200 mt-2 shadow-xs">
+                  <div className="p-3.5 rounded-sm bg-base-200/60 border border-base-content/15 space-y-3 animate-in fade-in duration-200 mt-2 shadow-xs">
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-base-content/70 block">
                       Add & Link New 360° Room Scene
                     </span>
@@ -435,7 +435,7 @@ export default function HotspotEditorModal({
                         placeholder="e.g. Dining Room or Kitchen"
                         value={newRoomName}
                         onChange={(e) => setNewRoomName(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none"
+                        className="w-full px-3 py-2 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none"
                       />
                     </div>
 
@@ -449,7 +449,7 @@ export default function HotspotEditorModal({
                       />
                       <label
                         htmlFor="inline_scene_image_input"
-                        className={`flex-1 px-3 py-2 rounded-xl border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
+                        className={`flex-1 px-3 py-2 rounded-sm border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all ${
                           newRoomImageUrl
                             ? "bg-base-300 text-base-content border-base-content/30"
                             : "bg-base-100 hover:bg-base-200 border-base-content/15 text-base-content"
@@ -464,7 +464,7 @@ export default function HotspotEditorModal({
                       variant="primary"
                       onClick={handleCreateAndLinkNewScene}
                       disabled={!newRoomName}
-                      className="w-full !text-xs !py-2.5"
+                      className="w-full !rounded-sm !text-xs !py-2.5"
                     >
                       <FontAwesomeIcon icon={faPlus} className="mr-1.5" />
                       Create Scene & Select Destination
@@ -485,7 +485,7 @@ export default function HotspotEditorModal({
                       return (
                         <div
                           key={hp.id}
-                          className="p-2.5 rounded-xl bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
+                          className="p-2.5 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <FontAwesomeIcon icon={faLocationDot} className="text-base-content/60 text-xs shrink-0" />
@@ -499,7 +499,7 @@ export default function HotspotEditorModal({
                           <button
                             type="button"
                             onClick={() => handleDeleteLocalHotspot(hp.id)}
-                            className="p-1 rounded-lg text-base-content/60 hover:text-error hover:bg-error/10 cursor-pointer text-xs shrink-0"
+                            className="p-1 rounded-sm text-base-content/60 hover:text-error hover:bg-error/10 cursor-pointer text-xs shrink-0"
                             title="Delete Hotspot"
                           >
                             <FontAwesomeIcon icon={faTrash} />
@@ -517,7 +517,7 @@ export default function HotspotEditorModal({
               <Button
                 variant="secondary"
                 onClick={onClose}
-                className="!text-xs !py-2.5 !px-4"
+                className="!rounded-sm !text-xs !py-2.5 !px-4"
               >
                 Cancel
               </Button>
@@ -525,7 +525,7 @@ export default function HotspotEditorModal({
                 type="submit"
                 variant="primary"
                 disabled={isSaving}
-                className="!text-xs !py-2.5 !px-5"
+                className="!rounded-sm !text-xs !py-2.5 !px-5"
               >
                 <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
                 {isSaving ? "Saving..." : "Save Hotspot"}

@@ -167,7 +167,7 @@ export default function SpatialHeatmapViewer({ _tourId }) {
           <select
             value={selectedRoomId}
             onChange={(e) => setSelectedRoomId(e.target.value)}
-            className="px-4 py-2.5 rounded-xl bg-base-200 border border-base-content/20 text-xs font-extrabold uppercase focus:outline-none focus:border-primary transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-sm bg-base-200 border border-base-content/20 text-xs font-extrabold uppercase focus:outline-none focus:border-primary transition-all cursor-pointer"
           >
             {Object.keys(GAZE_HEATMAP_DATA).map((key) => (
               <option key={key} value={key}>
@@ -176,14 +176,14 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             ))}
           </select>
 
-          <Button variant="secondary" onClick={() => window.print()} className="py-2.5 text-xs">
+          <Button variant="secondary" onClick={() => window.print()} className="!py-2.5 !px-4 !text-xs !rounded-sm">
             <FontAwesomeIcon icon={faDownload} className="mr-1.5" /> Export Heatmap Report
           </Button>
         </div>
       </div>
 
       {/* Main Heatmap Equirectangular Preview Container */}
-      <div className="relative w-full rounded-3xl overflow-hidden border border-base-content/15 bg-black shadow-2xl group">
+      <div className="relative w-full rounded-sm overflow-hidden border border-base-content/15 bg-black shadow-2xl group">
         <img
           src={activeData.panorama}
           alt={activeData.title}
@@ -199,16 +199,16 @@ export default function SpatialHeatmapViewer({ _tourId }) {
         />
 
         {/* Floating Controls Overlay */}
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-3 p-3 rounded-2xl bg-black/75 backdrop-blur-md border border-white/20 text-white text-xs font-extrabold">
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-3 p-3 rounded-sm bg-black/75 backdrop-blur-md border border-white/20 text-white text-xs font-extrabold">
           <FontAwesomeIcon icon={faCompass} className="text-emerald-400" />
           <span>{activeData.title}</span>
-          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black uppercase">
+          <span className="px-2 py-0.5 rounded-sm bg-rose-500 text-white text-[10px] font-black uppercase">
             {activeData.heatspots.length} Active Hotspots
           </span>
         </div>
 
         {/* Heatmap Customization Sliders */}
-        <div className="absolute bottom-4 right-4 z-10 p-3.5 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs space-y-2 w-64">
+        <div className="absolute bottom-4 right-4 z-10 p-3.5 rounded-sm bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs space-y-2 w-64">
           <div className="flex items-center justify-between font-bold">
             <span className="flex items-center gap-1">
               <FontAwesomeIcon icon={faSliders} /> Heat Radius
@@ -244,7 +244,7 @@ export default function SpatialHeatmapViewer({ _tourId }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Recharts Radar Chart: 360° Directional Gaze Angle Density */}
-        <div className="p-6 rounded-2xl bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-sm">
+        <div className="p-6 rounded-sm bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
@@ -277,7 +277,7 @@ export default function SpatialHeatmapViewer({ _tourId }) {
                   contentStyle={{
                     backgroundColor: "rgba(15, 23, 42, 0.9)",
                     borderColor: "rgba(255, 255, 255, 0.2)",
-                    borderRadius: "12px",
+                    borderRadius: "4px",
                     color: "#ffffff",
                     fontSize: "12px",
                     fontWeight: "bold",
@@ -289,7 +289,7 @@ export default function SpatialHeatmapViewer({ _tourId }) {
         </div>
 
         {/* Recharts Bar Chart: Zone Dwell Time Breakdown */}
-        <div className="p-6 rounded-2xl bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-sm flex flex-col justify-between">
+        <div className="p-6 rounded-sm bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -318,12 +318,12 @@ export default function SpatialHeatmapViewer({ _tourId }) {
                     contentStyle={{
                       backgroundColor: "rgba(15, 23, 42, 0.9)",
                       borderColor: "rgba(255, 255, 255, 0.2)",
-                      borderRadius: "12px",
+                      borderRadius: "4px",
                       color: "#ffffff",
                       fontSize: "12px",
                     }}
                   />
-                  <Bar dataKey="dwellSec" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="dwellSec" radius={[2, 2, 0, 0]}>
                     {activeData.gazeRadar.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
@@ -333,9 +333,9 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             </div>
           </div>
 
-          <div className="mt-4 p-4 rounded-xl bg-base-100 border border-base-content/10 text-xs flex items-center justify-between">
+          <div className="mt-4 p-4 rounded-sm bg-base-100 border border-base-content/10 text-xs flex items-center justify-between">
             <span className="font-extrabold">Peak Visitor Interest Zone</span>
-            <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 font-black uppercase text-[10px]">
+            <span className="px-3 py-1 rounded-sm bg-emerald-500/10 text-emerald-500 font-black uppercase text-[10px]">
               {activeData.focalPoints[0]?.zone || "Main Entrance"}
             </span>
           </div>

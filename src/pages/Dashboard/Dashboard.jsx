@@ -95,7 +95,7 @@ export default function Dashboard({ defaultTab }) {
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="Open navigation menu"
-              className="p-2.5 rounded-2xl bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 transition-colors cursor-pointer shadow-xs flex items-center gap-2 text-xs font-semibold"
+              className="p-2.5 rounded-sm bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 transition-colors cursor-pointer shadow-xs flex items-center gap-2 text-xs font-semibold"
             >
               <FontAwesomeIcon icon={faBars} />
               <span>Menu</span>
@@ -105,7 +105,7 @@ export default function Dashboard({ defaultTab }) {
               <Button
                 variant="secondary"
                 onClick={() => setAdminPreviewRole(null)}
-                className="!text-xs !px-3.5 !py-1.5 !rounded-xl"
+                className="!text-xs !px-3.5 !py-1.5 !rounded-sm"
               >
                 <FontAwesomeIcon icon={faCrown} className="mr-1.5" />
                 Reset Admin View

@@ -35,6 +35,7 @@ import {
 } from "recharts";
 import { apiGetAnalyticsOverview } from "../../services/api";
 import SpatialHeatmapViewer from "../analytics/SpatialHeatmapViewer";
+import Button from "../reuseable/Button";
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState(null);
@@ -124,10 +125,10 @@ export default function AnalyticsDashboard() {
 
         <div className="flex items-center gap-3">
           {/* View Mode Pills */}
-          <div className="flex p-1 rounded-2xl bg-base-200 border border-base-content/15 text-xs font-extrabold">
+          <div className="flex p-1 rounded-sm bg-base-200 border border-base-content/15 text-xs font-extrabold">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`px-4 py-2 rounded-xl transition-all ${
+              className={`px-4 py-2 rounded-sm transition-all cursor-pointer ${
                 activeTab === "overview"
                   ? "bg-primary text-white shadow-md shadow-primary/30"
                   : "text-base-content/70 hover:text-base-content"
@@ -137,7 +138,7 @@ export default function AnalyticsDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("heatmap")}
-              className={`px-4 py-2 rounded-xl transition-all ${
+              className={`px-4 py-2 rounded-sm transition-all cursor-pointer ${
                 activeTab === "heatmap"
                   ? "bg-primary text-white shadow-md shadow-primary/30"
                   : "text-base-content/70 hover:text-base-content"
@@ -147,14 +148,15 @@ export default function AnalyticsDashboard() {
             </button>
           </div>
 
-          <button
+          <Button
+            variant="secondary"
             onClick={loadAnalytics}
             disabled={refreshing}
-            className="px-4 py-2 rounded-full bg-base-200 border border-base-content/15 text-xs font-bold uppercase tracking-wider hover:bg-base-300 transition-colors flex items-center gap-2 cursor-pointer"
+            className="!text-xs !py-2 !px-4 !rounded-sm cursor-pointer"
           >
-            <FontAwesomeIcon icon={faRotateRight} className={refreshing ? "animate-spin" : ""} />
-            {refreshing ? "Syncing..." : "Refresh"}
-          </button>
+            <FontAwesomeIcon icon={faRotateRight} className={`mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
+            <span>{refreshing ? "Syncing..." : "Refresh"}</span>
+          </Button>
         </div>
       </div>
 
@@ -168,7 +170,7 @@ export default function AnalyticsDashboard() {
             {metrics.map((m, i) => (
               <div
                 key={i}
-                className="p-5 rounded-2xl bg-base-200/80 border border-base-content/15 backdrop-blur-md flex flex-col justify-between shadow-sm hover:border-primary/40 transition-all"
+                className="p-5 rounded-sm bg-base-200/80 border border-base-content/15 backdrop-blur-md flex flex-col justify-between shadow-xs hover:border-primary/40 transition-all"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">
@@ -193,7 +195,7 @@ export default function AnalyticsDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             {/* Recharts AreaChart: Weekly Spatial Impressions & Unique Visitors */}
-            <div className="lg:col-span-2 p-6 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-2 p-6 rounded-sm bg-base-200/60 border border-base-content/15 shadow-xs flex flex-col justify-between">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
@@ -233,7 +235,7 @@ export default function AnalyticsDashboard() {
                       contentStyle={{
                         backgroundColor: "rgba(15, 23, 42, 0.9)",
                         borderColor: "rgba(255, 255, 255, 0.2)",
-                        borderRadius: "12px",
+                        borderRadius: "4px",
                         color: "#ffffff",
                         fontSize: "12px",
                         fontWeight: "bold",
@@ -264,7 +266,7 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Recharts PieChart / Donut Chart: Hardware & Device Breakdown */}
-            <div className="p-6 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-sm bg-base-200/60 border border-base-content/15 shadow-xs flex flex-col justify-between">
               <div>
                 <h3 className="font-extrabold text-base uppercase tracking-tight mb-1 flex items-center gap-2">
                   <FontAwesomeIcon icon={faGlobe} className="text-secondary" />
@@ -295,7 +297,7 @@ export default function AnalyticsDashboard() {
                         contentStyle={{
                           backgroundColor: "rgba(15, 23, 42, 0.9)",
                           borderColor: "rgba(255, 255, 255, 0.2)",
-                          borderRadius: "12px",
+                          borderRadius: "4px",
                           color: "#ffffff",
                           fontSize: "12px",
                         }}
@@ -306,9 +308,9 @@ export default function AnalyticsDashboard() {
                 </div>
               </div>
 
-              <div className="mt-4 p-3.5 rounded-xl bg-base-100 border border-base-content/10 text-xs font-bold flex items-center justify-between">
+              <div className="mt-4 p-3.5 rounded-sm bg-base-100 border border-base-content/10 text-xs font-bold flex items-center justify-between">
                 <span>VR Headset Retention</span>
-                <span className="bg-emerald-500/10 text-emerald-500 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase">
+                <span className="bg-emerald-500/10 text-emerald-500 px-2.5 py-0.5 rounded-sm text-[10px] font-black uppercase">
                   High Retention (8.2m)
                 </span>
               </div>
@@ -319,7 +321,7 @@ export default function AnalyticsDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Recharts BarChart: Top Hotspot Click Rankings */}
-            <div className="p-6 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm">
+            <div className="p-6 rounded-sm bg-base-200/60 border border-base-content/15 shadow-xs">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
@@ -351,12 +353,12 @@ export default function AnalyticsDashboard() {
                       contentStyle={{
                         backgroundColor: "rgba(15, 23, 42, 0.9)",
                         borderColor: "rgba(255, 255, 255, 0.2)",
-                        borderRadius: "12px",
+                        borderRadius: "4px",
                         color: "#ffffff",
                         fontSize: "12px",
                       }}
                     />
-                    <Bar dataKey="clicks" name="Total Clicks" radius={[0, 8, 8, 0]}>
+                    <Bar dataKey="clicks" name="Total Clicks" radius={[0, 2, 2, 0]}>
                       {(data?.hotspotRankings || []).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
                       ))}
@@ -367,13 +369,13 @@ export default function AnalyticsDashboard() {
             </div>
 
             {/* Live Real-Time Telemetry Event Log Stream */}
-            <div className="p-6 rounded-2xl bg-base-200/60 border border-base-content/15 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-sm bg-base-200/60 border border-base-content/15 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
                     LIVE EVENT TELEMETRY LOGS
                   </h3>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-sm">
                     Real-Time Stream
                   </span>
                 </div>
@@ -382,10 +384,10 @@ export default function AnalyticsDashboard() {
                   {(data?.recentLogs || []).map((log) => (
                     <div
                       key={log.id}
-                      className="p-3.5 rounded-xl bg-base-100 border border-base-content/15 flex items-center justify-between text-xs transition-all hover:border-primary/40"
+                      className="p-3.5 rounded-sm bg-base-100 border border-base-content/15 flex items-center justify-between text-xs transition-all hover:border-primary/40"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-base-200 text-base-content flex items-center justify-center shrink-0 font-bold border border-base-content/10">
+                        <div className="w-8 h-8 rounded-sm bg-base-200 text-base-content flex items-center justify-center shrink-0 font-bold border border-base-content/10">
                           {log.type === "tour_viewed" ? "👁️" : log.type === "hotspot_clicked" ? "🎯" : "🤖"}
                         </div>
                         <div className="flex flex-col min-w-0">

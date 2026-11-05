@@ -126,9 +126,9 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
       {(currentTab === "admin_overview" || currentTab === "overview") && (
         <div className="space-y-6">
           {/* Top Banner & Admin Preview Mode Bar */}
-          <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
+          <div className="p-6 sm:p-7 rounded-sm bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
+              <div className="w-12 h-12 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
                 <FontAwesomeIcon icon={faShieldHalved} />
               </div>
               <div>
@@ -145,21 +145,21 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
             </div>
 
             {/* Role Preview Switcher */}
-            <div className="flex items-center gap-2 bg-base-200/60 p-2 rounded-2xl border border-base-content/10 shadow-xs self-stretch md:self-auto justify-center">
+            <div className="flex items-center gap-2 bg-base-200/60 p-2 rounded-sm border border-base-content/10 shadow-xs self-stretch md:self-auto justify-center">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-base-content/60 px-2">
                 Preview as:
               </span>
               <Button
                 variant="secondary"
                 onClick={() => onPreviewModeChange && onPreviewModeChange("CREATOR")}
-                className="!text-xs !px-3 !py-1 !rounded-xl"
+                className="!text-xs !px-3 !py-1 !rounded-sm"
               >
                 Creator View
               </Button>
               <Button
                 variant="secondary"
                 onClick={() => onPreviewModeChange && onPreviewModeChange("CLIENT")}
-                className="!text-xs !px-3 !py-1 !rounded-xl"
+                className="!text-xs !px-3 !py-1 !rounded-sm"
               >
                 Client View
               </Button>
@@ -168,7 +168,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
 
           {/* Admin Infrastructure Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-medium text-base-content/60">
                   Registered Users
@@ -179,7 +179,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <span className="text-[10px] text-base-content/50 font-medium mt-1 block">Active Database Users</span>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-medium text-base-content/60">
                   Platform 360 Tours
@@ -190,7 +190,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <span className="text-[10px] text-base-content/50 font-medium mt-1 block">Global Published Tours</span>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-medium text-base-content/60">
                   Server & DB Engine
@@ -201,7 +201,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <span className="text-[10px] text-base-content/50 font-medium mt-1 block">{stats.serverStatus}</span>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-medium text-base-content/60">
                   Gemini AI Engine
@@ -215,7 +215,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
 
           {/* Quick Management Shortcuts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
                   <FontAwesomeIcon icon={faUserCheck} className="text-base-content/60" />
@@ -233,10 +233,10 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 {usersList.slice(0, 3).map((u) => (
                   <div
                     key={u.id}
-                    className="p-3 rounded-2xl bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
+                    className="p-3 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full bg-base-200 text-base-content flex items-center justify-center font-bold text-[10px]">
+                      <div className="w-7 h-7 rounded-sm bg-base-200 text-base-content flex items-center justify-center font-bold text-[10px]">
                         {u.name ? u.name[0] : u.email[0]}
                       </div>
                       <div>
@@ -244,7 +244,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                         <p className="text-[10px] text-base-content/60">{u.name || "User"}</p>
                       </div>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-base-200 text-base-content border border-base-content/10">
+                    <span className="px-2.5 py-0.5 rounded-sm text-[10px] font-bold uppercase bg-base-200 text-base-content border border-base-content/10">
                       {u.role}
                     </span>
                   </div>
@@ -252,7 +252,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               </div>
             </div>
 
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
                   <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
@@ -270,13 +270,13 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 {toursList.slice(0, 3).map((t) => (
                   <div
                     key={t.id}
-                    className="p-3 rounded-2xl bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
+                    className="p-3 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
                   >
                     <div>
                       <p className="font-bold text-base-content">{t.title}</p>
                       <p className="text-[10px] text-base-content/60">{t.category} • {t.viewsCount || 0} views</p>
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-success/15 text-success">
+                    <span className="px-2.5 py-0.5 rounded-sm text-[10px] font-bold uppercase bg-success/15 text-success">
                       Published
                     </span>
                   </div>
@@ -289,7 +289,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
 
       {/* 2. USER MANAGEMENT ROUTE VIEW (users) */}
       {currentTab === "users" && (
-        <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-5 shadow-xs">
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-5 shadow-xs">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
@@ -308,7 +308,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 placeholder="Search users..."
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
-                className="w-full px-3.5 py-2 pl-9 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-3.5 py-2 pl-9 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
             </div>
@@ -329,7 +329,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   <tr key={u.id} className="hover:bg-base-200/40 transition-colors">
                     <td className="p-3.5 font-semibold">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[11px]">
+                        <div className="w-8 h-8 rounded-sm bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[11px]">
                           {u.name ? u.name[0] : u.email[0]}
                         </div>
                         <div>
@@ -340,7 +340,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                     </td>
                     <td className="p-3.5">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                        className={`inline-block px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase ${
                           u.role === "ADMIN"
                             ? "bg-base-content text-base-100"
                             : u.role === "CREATOR"
@@ -356,7 +356,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                       <select
                         value={u.role}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        className="px-3 py-1.5 rounded-xl bg-base-100 border border-base-content/20 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
+                        className="px-3 py-1.5 rounded-sm bg-base-100 border border-base-content/20 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                       >
                         <option value="CLIENT">CLIENT (Standard)</option>
                         <option value="CREATOR">CREATOR (Owner)</option>
@@ -376,7 +376,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
 
       {/* 3. CONTENT MODERATION ROUTE VIEW (content_moderation) */}
       {(currentTab === "content_moderation" || currentTab === "content") && (
-        <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-5 shadow-xs">
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-5 shadow-xs">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
@@ -395,7 +395,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 placeholder="Search tours..."
                 value={contentSearch}
                 onChange={(e) => setContentSearch(e.target.value)}
-                className="w-full px-3.5 py-2 pl-9 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-3.5 py-2 pl-9 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
             </div>
@@ -405,7 +405,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
             {filteredTours.map((t) => (
               <div
                 key={t.id}
-                className="p-4 rounded-2xl bg-base-200/50 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div>
                   <h4 className="font-bold text-sm text-base-content">{t.title}</h4>
@@ -414,13 +414,14 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
+                    variant="danger"
                     onClick={() => handleDeleteTour(t.id)}
-                    className="px-3.5 py-1.5 rounded-full bg-base-200 hover:bg-error hover:text-white text-base-content border border-base-content/10 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="!text-xs !py-1.5 !px-3 !rounded-sm gap-1.5 cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faTrash} />
-                    Delete Tour
-                  </button>
+                    <span>Delete Tour</span>
+                  </Button>
                 </div>
               </div>
             ))}
@@ -434,7 +435,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
       {/* 5. ADMIN SYSTEM SETTINGS ROUTE VIEW (settings) */}
       {currentTab === "settings" && (
         <div className="space-y-6">
-          <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 shadow-xs">
+          <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
             <h3 className="font-bold text-base text-base-content flex items-center gap-2">
               <FontAwesomeIcon icon={faSliders} className="text-base-content/60" />
               Platform System Settings & Infrastructure Config
@@ -446,7 +447,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* General Platform Config */}
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-3">
                 General Platform Configuration
               </h4>
@@ -458,7 +459,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   <input
                     type="text"
                     defaultValue="ViewRoom 360° Virtual Property Platform"
-                    className="w-full px-3.5 py-2 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                    className="w-full px-3.5 py-2 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                   />
                 </div>
                 <div>
@@ -467,7 +468,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   </label>
                   <select
                     defaultValue="CLIENT"
-                    className="w-full px-3.5 py-2 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                    className="w-full px-3.5 py-2 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
                   >
                     <option value="CLIENT">CLIENT (Standard Explorer)</option>
                     <option value="CREATOR">CREATOR (Property Owner)</option>
@@ -484,30 +485,30 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
             </div>
 
             {/* AI & Database Engine Config */}
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-3">
                 Spatial AI & Database Connectivity
               </h4>
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-2xl bg-base-200/60 border border-base-content/10 flex items-center justify-between">
+                <div className="p-3 rounded-sm bg-base-200/60 border border-base-content/10 flex items-center justify-between">
                   <div>
                     <p className="font-bold text-base-content">Google Gemini AI Engine</p>
                     <p className="text-[10px] text-base-content/60">Connected (Gemini 1.5 Flash)</p>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-success/15 text-success">
+                  <span className="px-2.5 py-0.5 rounded-sm text-[10px] font-bold uppercase bg-success/15 text-success">
                     Active
                   </span>
                 </div>
-                <div className="p-3 rounded-2xl bg-base-200/60 border border-base-content/10 flex items-center justify-between">
+                <div className="p-3 rounded-sm bg-base-200/60 border border-base-content/10 flex items-center justify-between">
                   <div>
                     <p className="font-bold text-base-content">Neon PostgreSQL Database</p>
                     <p className="text-[10px] text-base-content/60">Status: Healthy (Serverless Pool)</p>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-success/15 text-success">
+                  <span className="px-2.5 py-0.5 rounded-sm text-[10px] font-bold uppercase bg-success/15 text-success">
                     Online
                   </span>
                 </div>
-                <Button variant="primary" className="w-full !rounded-xl !text-xs !py-2.5">
+                <Button variant="primary" className="w-full !rounded-sm !text-xs !py-2.5">
                   Save Infrastructure Settings
                 </Button>
               </div>
@@ -519,7 +520,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
       {/* 6. ADMIN HELP & DOCUMENTATION ROUTE VIEW (help) */}
       {currentTab === "help" && (
         <div className="space-y-6">
-          <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 shadow-xs">
+          <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
             <h3 className="font-bold text-base text-base-content flex items-center gap-2">
               <FontAwesomeIcon icon={faShieldHalved} className="text-base-content/60" />
               Administrator Technical Guide & Documentation
@@ -530,7 +531,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 User Role Hierarchy & Rights
               </h4>
@@ -550,7 +551,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               </div>
             </div>
 
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 Quick Administrative Actions
               </h4>
@@ -572,9 +573,9 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               backgroundColor: "rgba(18, 18, 24, 0.9)",
               backdropFilter: "blur(24px)",
             }}
-            className="w-full max-w-md p-6 sm:p-7 rounded-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-in zoom-in-95 duration-200"
+            className="w-full max-w-md p-6 sm:p-7 rounded-sm border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-in zoom-in-95 duration-200"
           >
-            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+            <div className="w-14 h-14 mx-auto mb-4 rounded-sm bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">
               <FontAwesomeIcon icon={faTrash} />
             </div>
             <h3 className="text-lg sm:text-xl font-extrabold text-white mb-2">
@@ -587,17 +588,17 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <Button
                 variant="secondary"
                 onClick={() => setDeleteConfirmModal({ isOpen: false, tourId: null })}
-                className="!text-xs !py-2.5 !px-5 !rounded-xl"
+                className="!text-xs !py-2.5 !px-5 !rounded-sm cursor-pointer"
               >
                 Cancel
               </Button>
-              <button
-                type="button"
+              <Button
+                variant="danger"
                 onClick={handleConfirmDeleteTour}
-                className="cursor-pointer transition-all duration-150 select-none inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-[0_4px_15px_rgba(220,38,38,0.4)] active:scale-95"
+                className="!text-xs !py-2.5 !px-5 !rounded-sm font-bold cursor-pointer"
               >
                 Delete Platform-Wide
-              </button>
+              </Button>
             </div>
           </div>
         </div>

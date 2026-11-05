@@ -130,13 +130,13 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-2">
       {/* HEADER MATCHING USER IMAGE */}
-      <div className="flex items-center justify-between gap-4 p-5 rounded-[24px] bg-base-100 border border-base-content/10 shadow-xs">
+      <div className="flex items-center justify-between gap-4 p-5 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
         <div className="flex items-center gap-3">
           <h2 className="text-xl sm:text-2xl font-black text-base-content tracking-tight">
             Notifications
           </h2>
           {unreadCount > 0 && (
-            <span className="px-2.5 py-0.5 rounded-lg bg-base-content text-base-100 text-xs font-black shadow-xs">
+            <span className="px-2.5 py-0.5 rounded-sm bg-base-content text-base-100 text-xs font-black shadow-xs">
               {unreadCount}
             </span>
           )}
@@ -157,7 +157,7 @@ export default function NotificationsPage() {
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-bold transition-all cursor-pointer ${
             filter === "all"
               ? "bg-base-content text-base-100 shadow-xs"
               : "bg-base-200 text-base-content/70 hover:bg-base-300"
@@ -167,7 +167,7 @@ export default function NotificationsPage() {
         </button>
         <button
           onClick={() => setFilter("unread")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-bold transition-all cursor-pointer ${
             filter === "unread"
               ? "bg-base-content text-base-100 shadow-xs"
               : "bg-base-200 text-base-content/70 hover:bg-base-300"
@@ -177,7 +177,7 @@ export default function NotificationsPage() {
         </button>
         <button
           onClick={() => setFilter("messages")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-sm text-xs font-bold transition-all cursor-pointer ${
             filter === "messages"
               ? "bg-base-content text-base-100 shadow-xs"
               : "bg-base-200 text-base-content/70 hover:bg-base-300"
@@ -190,7 +190,7 @@ export default function NotificationsPage() {
       {/* NOTIFICATIONS LIST MATCHING EXACT REFERENCE IMAGE */}
       <div className="space-y-3">
         {filteredNotifications.length === 0 ? (
-          <div className="p-10 rounded-[24px] bg-base-100 border border-base-content/10 text-center space-y-2">
+          <div className="p-10 rounded-sm bg-base-100 border border-base-content/10 text-center space-y-2">
             <FontAwesomeIcon icon={faBell} className="text-3xl text-base-content/30" />
             <p className="text-sm font-bold text-base-content">No notifications found</p>
             <p className="text-xs text-base-content/60">You're all caught up!</p>
@@ -200,7 +200,7 @@ export default function NotificationsPage() {
             <div
               key={n.id}
               onClick={() => markSingleAsRead(n.id)}
-              className={`p-4 sm:p-5 rounded-[22px] border transition-all duration-200 flex flex-col sm:flex-row items-start justify-between gap-4 cursor-pointer relative group ${
+              className={`p-4 sm:p-5 rounded-sm border transition-all duration-200 flex flex-col sm:flex-row items-start justify-between gap-4 cursor-pointer relative group ${
                 n.isUnread
                   ? "bg-base-200/50 border-base-content/20 shadow-xs"
                   : "bg-base-100 border-base-content/10 hover:border-base-content/20"
@@ -212,9 +212,9 @@ export default function NotificationsPage() {
                   <img
                     src={n.avatar}
                     alt={n.user}
-                    className="w-10 h-10 rounded-full object-cover border border-base-content/10"
+                    className="w-10 h-10 rounded-sm object-cover border border-base-content/10"
                   />
-                  <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-base-100 border border-base-content/10 flex items-center justify-center text-[10px]">
+                  <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-center text-[10px]">
                     <FontAwesomeIcon icon={n.icon} className={n.iconColor} />
                   </span>
                 </div>
@@ -228,7 +228,7 @@ export default function NotificationsPage() {
                       <strong className="font-extrabold text-base-content">{n.target}</strong>
                     )}
                     {n.isUnread && (
-                      <span className="inline-block w-2 h-2 rounded-full bg-rose-500 ml-2" />
+                      <span className="inline-block w-2 h-2 rounded-sm bg-rose-500 ml-2" />
                     )}
                   </p>
 
@@ -238,7 +238,7 @@ export default function NotificationsPage() {
 
                   {/* Private Message Card Preview matching image */}
                   {n.message && (
-                    <div className="mt-3 p-4 rounded-2xl bg-base-100 border border-base-content/15 text-xs text-base-content/80 leading-relaxed font-medium shadow-xs">
+                    <div className="mt-3 p-4 rounded-sm bg-base-100 border border-base-content/15 text-xs text-base-content/80 leading-relaxed font-medium shadow-xs">
                       {n.message}
                     </div>
                   )}
@@ -247,7 +247,7 @@ export default function NotificationsPage() {
 
               {/* Optional Right Thumbnail for Comment/Reaction */}
               {n.thumbnail && (
-                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-base-content/10 self-center">
+                <div className="w-12 h-12 rounded-sm overflow-hidden shrink-0 border border-base-content/10 self-center">
                   <img src={n.thumbnail} alt="preview" className="w-full h-full object-cover" />
                 </div>
               )}
@@ -255,7 +255,7 @@ export default function NotificationsPage() {
               {/* Delete hover icon */}
               <button
                 onClick={(e) => deleteNotification(n.id, e)}
-                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-error/10 hover:text-error text-base-content/40 transition-all text-xs cursor-pointer"
+                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-sm hover:bg-error/10 hover:text-error text-base-content/40 transition-all text-xs cursor-pointer"
                 title="Remove notification"
               >
                 <FontAwesomeIcon icon={faTrash} />

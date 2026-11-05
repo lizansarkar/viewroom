@@ -57,8 +57,8 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
       {(currentView === "visitor_overview" || currentView === "overview") && (
         <div className="space-y-6">
           {/* Hero Welcome Banner matching sidebar aesthetic */}
-          <div className="p-8 sm:p-10 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col items-center text-center max-w-4xl mx-auto shadow-xs">
-            <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-xl mb-4 shrink-0">
+          <div className="p-8 sm:p-10 rounded-sm bg-base-100 border border-base-content/10 flex flex-col items-center text-center max-w-4xl mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-xl mb-4 shrink-0">
               <FontAwesomeIcon icon={faGlobe} />
             </div>
 
@@ -77,19 +77,19 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
               <Link to="/sign-up" className="w-full sm:w-auto">
-                <Button variant="primary" className="!rounded-2xl !px-5">
+                <Button variant="primary" className="!rounded-sm !px-5">
                   <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
                   Create Free Account
                 </Button>
               </Link>
               <Link to="/sign-in" className="w-full sm:w-auto">
-                <Button variant="secondary" className="!rounded-2xl !px-5">
+                <Button variant="secondary" className="!rounded-sm !px-5">
                   <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
                   Sign In
                 </Button>
               </Link>
               <Link to="/explore" className="w-full sm:w-auto">
-                <Button variant="neutral" className="!rounded-2xl !px-5">
+                <Button variant="neutral" className="!rounded-sm !px-5">
                   <FontAwesomeIcon icon={faCompass} className="mr-2" />
                   Explore Spaces
                 </Button>
@@ -99,8 +99,8 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
 
           {/* Platform Feature Cards (3 Columns) matching sidebar aesthetic */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-base">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-base">
                 <FontAwesomeIcon icon={faBuilding} />
               </div>
               <h3 className="font-bold text-base text-base-content">360° Property Tours</h3>
@@ -116,8 +116,8 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
               </Link>
             </div>
 
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-base">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-base">
                 <FontAwesomeIcon icon={faCube} />
               </div>
               <h3 className="font-bold text-base text-base-content">3D Product Spins</h3>
@@ -133,8 +133,8 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
               </Link>
             </div>
 
-            <div className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-base">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-base">
                 <FontAwesomeIcon icon={faRobot} />
               </div>
               <h3 className="font-bold text-base text-base-content">AI Concierge Assistant</h3>
@@ -157,7 +157,7 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
       {(currentView === "featured" || currentView === "tours") && (
         <div className="space-y-6">
           {/* Header & Category Filter Bar */}
-          <div className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
                 <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
@@ -169,12 +169,12 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1.5 bg-base-200/60 p-1.5 rounded-2xl border border-base-content/10">
+            <div className="flex items-center gap-1.5 bg-base-200/60 p-1.5 rounded-sm border border-base-content/10">
               {["All", "Real Estate", "3D Products", "Matterport"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-sm text-xs font-semibold transition-all cursor-pointer ${
                     categoryFilter === cat
                       ? "bg-base-100 text-base-content font-bold shadow-xs border border-base-content/10"
                       : "text-base-content/60 hover:text-base-content hover:bg-base-100/50"
@@ -191,15 +191,15 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
             {filteredSpaces.map((space) => (
               <div
                 key={space.id}
-                className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
+                className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all"
               >
                 <div>
-                  <div className="relative h-48 rounded-2xl overflow-hidden mb-4 bg-base-200">
+                  <div className="relative h-48 rounded-sm overflow-hidden mb-4 bg-base-200">
                     <img src={space.image} alt={space.title} className="w-full h-full object-cover" />
-                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
+                    <span className="absolute top-3 left-3 px-3 py-1 rounded-sm bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                       {space.category}
                     </span>
-                    <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-xs text-[10px] font-semibold">
+                    <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-sm bg-black/60 text-white backdrop-blur-xs text-[10px] font-semibold">
                       {space.scenesCount} {space.category === "3D Products" ? "Degrees" : "Scenes"}
                     </span>
                   </div>
@@ -209,7 +209,7 @@ export default function VisitorDashboard({ activeTab, _setActiveTab }) {
                 </div>
 
                 <Link to={space.link} className="w-full pt-2">
-                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs">
+                  <Button variant="primary" className="w-full text-center !rounded-sm !text-xs">
                     Launch 360° Interactive
                   </Button>
                 </Link>

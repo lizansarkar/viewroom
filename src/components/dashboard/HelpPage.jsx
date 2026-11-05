@@ -78,7 +78,7 @@ export default function HelpPage() {
       <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-base-content/10">
         <button
           onClick={() => setActiveCategory("faq")}
-          className={`px-4.5 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
+          className={`px-4.5 py-2.5 rounded-sm text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
             activeCategory === "faq"
               ? "bg-base-content text-base-100 shadow-sm"
               : "bg-base-200/80 text-base-content/70 hover:bg-base-200 hover:text-base-content"
@@ -90,7 +90,7 @@ export default function HelpPage() {
 
         <button
           onClick={() => setActiveCategory("creator")}
-          className={`px-4.5 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
+          className={`px-4.5 py-2.5 rounded-sm text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
             activeCategory === "creator"
               ? "bg-base-content text-base-100 shadow-sm"
               : "bg-base-200/80 text-base-content/70 hover:bg-base-200 hover:text-base-content"
@@ -102,7 +102,7 @@ export default function HelpPage() {
 
         <button
           onClick={() => setActiveCategory("admin")}
-          className={`px-4.5 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
+          className={`px-4.5 py-2.5 rounded-sm text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer ${
             activeCategory === "admin"
               ? "bg-base-content text-base-100 shadow-sm"
               : "bg-base-200/80 text-base-content/70 hover:bg-base-200 hover:text-base-content"
@@ -121,7 +121,7 @@ export default function HelpPage() {
             return (
               <div
                 key={index}
-                className={`rounded-[22px] border-2 transition-all duration-300 overflow-hidden ${
+                className={`rounded-sm border-2 transition-all duration-300 overflow-hidden ${
                   isOpen
                     ? "border-base-content bg-base-100 shadow-md"
                     : "border-base-content/60 bg-base-100/90 hover:border-base-content"
@@ -136,7 +136,7 @@ export default function HelpPage() {
                     {faq.question}
                   </h3>
                   <div
-                    className={`w-8 h-8 rounded-full border border-base-content/30 flex items-center justify-center shrink-0 text-base-content text-sm transition-transform duration-300 ease-in-out ${
+                    className={`w-8 h-8 rounded-sm border border-base-content/30 flex items-center justify-center shrink-0 text-base-content text-sm transition-transform duration-300 ease-in-out ${
                       isOpen ? "rotate-180 bg-base-content text-base-100 border-base-content" : "rotate-0"
                     }`}
                   >
@@ -167,7 +167,7 @@ export default function HelpPage() {
       {/* SECTION 2: CREATOR 360° HOTSPOT DOCUMENTATION GUIDE */}
       {activeCategory === "creator" && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 shadow-xs">
+          <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
             <h3 className="font-bold text-base text-base-content flex items-center gap-2">
               <FontAwesomeIcon icon={faCamera} className="text-base-content/70" />
               <span>Creator Guide & 360° Hotspot Documentation</span>
@@ -178,7 +178,7 @@ export default function HelpPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 1. 360° Panorama Image Requirements
               </h4>
@@ -189,7 +189,7 @@ export default function HelpPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 2. Placing Pitch & Yaw Hotspots
               </h4>
@@ -200,7 +200,7 @@ export default function HelpPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 3. Interactive 3D Product Spins
               </h4>
@@ -211,7 +211,7 @@ export default function HelpPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 4. Sharing & iFrame Embed Code
               </h4>
@@ -227,7 +227,7 @@ export default function HelpPage() {
       {/* SECTION 3: ADMINISTRATOR & MODERATION TECHNICAL GUIDE */}
       {activeCategory === "admin" && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 shadow-xs">
+          <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
             <h3 className="font-bold text-base text-base-content flex items-center gap-2">
               <FontAwesomeIcon icon={faShieldHalved} className="text-base-content/70" />
               <span>Administrator Technical Guide & Documentation</span>
@@ -238,7 +238,7 @@ export default function HelpPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 User Role Hierarchy & Rights
               </h4>
@@ -258,7 +258,7 @@ export default function HelpPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
+            <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs">
               <h4 className="font-bold text-sm text-base-content border-b border-base-content/10 pb-2">
                 Quick Administrative Actions
               </h4>
@@ -281,16 +281,13 @@ export default function HelpPage() {
           Ask us anything. The door is always open.
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="primary" onClick={() => navigate("/contact")} className="!px-6 !py-2.5">
+          <Button variant="primary" onClick={() => navigate("/contact")} className="!px-6 !py-2.5 !rounded-sm">
             <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-xs" />
             Contact
           </Button>
-          <button
-            onClick={() => navigate("/explore")}
-            className="px-6 py-2.5 rounded-full border-2 border-base-content/30 hover:border-base-content text-xs font-bold text-base-content transition-colors cursor-pointer"
-          >
+          <Button variant="secondary" onClick={() => navigate("/explore")} className="!px-6 !py-2.5 !rounded-sm">
             Explore 360° Spaces
-          </button>
+          </Button>
         </div>
       </div>
     </div>

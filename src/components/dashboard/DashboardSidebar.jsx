@@ -236,7 +236,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-[calc(100vh-7rem)] w-64 shrink-0 bg-base-100 border border-base-content/10 rounded-md p-4 flex flex-col justify-between transition-all duration-300 shadow-xs ${
+        className={`fixed lg:sticky lg:top-24 left-0 top-0 z-30 h-screen lg:h-[calc(100vh-7rem)] w-64 shrink-0 bg-base-100 border border-base-content/10 rounded-sm p-4 flex flex-col justify-between transition-all duration-300 shadow-xs ${
           isOpen ? "translate-x-0 !fixed !inset-y-0 !z-50 bg-base-100 shadow-2xl rounded-none w-72" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -248,14 +248,14 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
             </span>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full hover:bg-base-200 text-base-content/70 hover:text-base-content cursor-pointer"
+              className="p-1 rounded-sm hover:bg-base-200 text-base-content/70 hover:text-base-content cursor-pointer"
             >
               <CloseIcon />
             </button>
           </div>
 
           {/* Active Role Indicator Badge - Prominently displayed above Overview */}
-          <div className="p-3 rounded-md bg-base-200/80 flex items-center justify-between">
+          <div className="p-3 rounded-sm bg-base-200/80 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-xs font-bold text-base-content truncate">
                 {user?.name || "ViewRoom User"}
@@ -264,7 +264,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
                 Current Role
               </span>
             </div>
-            <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-base-content text-base-100 shadow-xs tracking-wider">
+            <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-sm bg-base-content text-base-100 shadow-xs tracking-wider">
               {activeRole}
             </span>
           </div>
@@ -285,7 +285,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
                       setActiveTab(item.id);
                       setIsOpen(false);
                     }}
-                    className={`w-full px-3.5 py-2.5 rounded-2xl text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer select-none ${
+                    className={`w-full px-3.5 py-2.5 rounded-sm text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer select-none ${
                       isActive
                         ? "bg-base-200 text-base-content font-bold shadow-xs"
                         : "text-base-content/70 hover:text-base-content hover:bg-base-200/50"
@@ -311,7 +311,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
               setActiveTab("settings");
               setIsOpen(false);
             }}
-            className={`w-full px-3.5 py-2.5 rounded-2xl text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer ${
+            className={`w-full px-3.5 py-2.5 rounded-sm text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer ${
               activeTab === "settings"
                 ? "bg-base-200 text-base-content font-bold shadow-xs"
                 : "bg-base-200/60 hover:bg-base-200 text-base-content/80 hover:text-base-content"
@@ -326,7 +326,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
               setActiveTab("help");
               setIsOpen(false);
             }}
-            className={`w-full px-3.5 py-2.5 rounded-2xl text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer ${
+            className={`w-full px-3.5 py-2.5 rounded-sm text-[13px] font-semibold flex items-center gap-3 transition-all cursor-pointer ${
               activeTab === "help"
                 ? "bg-base-200 text-base-content font-bold shadow-xs"
                 : "bg-base-200/60 hover:bg-base-200 text-base-content/80 hover:text-base-content"
@@ -340,7 +340,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
             onClick={() => {
               if (logout) logout();
             }}
-            className="w-full px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-base-content/70 hover:text-error hover:bg-error/10 flex items-center gap-3 transition-all cursor-pointer mt-1"
+            className="w-full px-3.5 py-2.5 rounded-sm text-[13px] font-medium text-base-content/70 hover:text-error hover:bg-error/10 flex items-center gap-3 transition-all cursor-pointer mt-1"
           >
             <LogoutIcon className="w-4 h-4 text-base-content/70" />
             <span>Log out</span>

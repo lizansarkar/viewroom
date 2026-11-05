@@ -32,6 +32,7 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
   const targetTourId = overrideTourId || searchParams.get("id") || tourId;
 
   const [tourNodes, setTourNodes] = useState(DEFAULT_TOUR_NODES);
+  const [tourBrandLogo, setTourBrandLogo] = useState("");
   const [currentPanoramaId, setCurrentPanoramaId] = useState("aerial_view");
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -263,6 +264,9 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);
+          if (matchedTour.brandLogo || matchedTour.logoUrl) {
+            setTourBrandLogo(matchedTour.brandLogo || matchedTour.logoUrl);
+          }
 
           if (matchedTour.audioConfig) {
             try {
@@ -620,7 +624,15 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
             }}
             className="flex items-center gap-2.5 border border-white/25 px-4 py-2 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
           >
-            <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
+            {tourBrandLogo ? (
+              <img
+                src={tourBrandLogo}
+                alt="Brand Logo"
+                className="w-5 h-5 rounded-sm object-cover border border-white/40 shrink-0"
+              />
+            ) : (
+              <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
+            )}
             <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase drop-shadow-sm">
               {activeNode.name}
             </span>

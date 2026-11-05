@@ -33,7 +33,7 @@ export default function UserSettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-2">
       {/* HEADER */}
-      <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+      <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-base-content tracking-tight flex items-center gap-2.5">
             <FontAwesomeIcon icon={faGear} className="text-base-content/70" />
@@ -45,7 +45,7 @@ export default function UserSettingsPage() {
         </div>
 
         {savedSuccess && (
-          <div className="px-4 py-2 rounded-xl bg-success/15 border border-success/30 text-success text-xs font-extrabold flex items-center gap-2 animate-in fade-in">
+          <div className="px-4 py-2 rounded-sm bg-success/15 border border-success/30 text-success text-xs font-extrabold flex items-center gap-2 animate-in fade-in">
             <FontAwesomeIcon icon={faCheck} />
             <span>Settings Saved!</span>
           </div>
@@ -54,7 +54,7 @@ export default function UserSettingsPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 1. PERSONAL PROFILE */}
-        <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
           <h3 className="font-extrabold text-base text-base-content flex items-center gap-2 border-b border-base-content/10 pb-3">
             <FontAwesomeIcon icon={faUser} className="text-base-content/60" />
             <span>Personal Profile</span>
@@ -69,7 +69,7 @@ export default function UserSettingsPage() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content"
                 required
               />
             </div>
@@ -82,7 +82,7 @@ export default function UserSettingsPage() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content"
+                className="w-full px-4 py-2.5 rounded-sm bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content"
                 required
               />
             </div>
@@ -96,19 +96,19 @@ export default function UserSettingsPage() {
               rows={3}
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content resize-none"
+              className="w-full px-4 py-2.5 rounded-sm bg-base-200/70 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:ring-2 focus:ring-base-content resize-none"
             />
           </div>
         </div>
 
         {/* 2. SECURITY & AUTHENTICATION */}
-        <div className="p-6 rounded-[24px] bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
           <h3 className="font-extrabold text-base text-base-content flex items-center gap-2 border-b border-base-content/10 pb-3">
             <FontAwesomeIcon icon={faLock} className="text-base-content/60" />
             <span>Security & Authentication</span>
           </h3>
 
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-base-200/60 border border-base-content/10 text-xs">
+          <div className="flex items-center justify-between p-4 rounded-sm bg-base-200/60 border border-base-content/10 text-xs">
             <div className="flex items-center gap-3">
               <FontAwesomeIcon icon={faShieldHalved} className="text-xl text-success" />
               <div>
@@ -116,7 +116,7 @@ export default function UserSettingsPage() {
                 <p className="text-[11px] text-base-content/60">Your account is secured with session token authentication.</p>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-success/20 text-success text-[10px] font-extrabold uppercase">
+            <span className="px-3 py-1 rounded-sm bg-success/20 text-success text-[10px] font-extrabold uppercase">
               Protected
             </span>
           </div>
@@ -124,7 +124,7 @@ export default function UserSettingsPage() {
 
         {/* SUBMIT BUTTON */}
         <div className="flex justify-end">
-          <Button type="submit" variant="primary" className="!px-8 !py-3 !rounded-2xl">
+          <Button type="submit" variant="primary" className="!px-8 !py-3 !rounded-sm">
             <FontAwesomeIcon icon={faCheck} className="mr-2" />
             Save Profile Settings
           </Button>

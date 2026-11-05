@@ -15,10 +15,11 @@ import {
   faCrosshairs,
   faDoorOpen,
   faEye,
+  faCloudArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { createFloorPuckMarkerHtml } from "../../utils/tourHotspots";
-import { apiUpdateOwnerScene, apiAddOwnerHotspot } from "../../services/api";
+import { apiUpdateOwnerScene, apiAddOwnerHotspot, apiUploadImage } from "../../services/api";
 
 const ROOM_NAME_PRESETS = [
   "Entrance / Hallway",
@@ -248,6 +249,21 @@ export default function StudioSceneEditor({
     }
   };
 
+  // Upload or update Brand Logo in Studio Editor
+  const handleUploadStudioLogo = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      let uploadedUrl = await apiUploadImage(file);
+      if (!uploadedUrl) uploadedUrl = URL.createObjectURL(file);
+      const updatedTour = { ...currentTour, brandLogo: uploadedUrl };
+      setCurrentTour(updatedTour);
+      if (onSaveTour) onSaveTour(updatedTour);
+    } catch (err) {
+      console.warn("Studio logo upload error:", err);
+    }
+  };
+
   const initialMarkers = (activeScene?.hotspots || []).map((hp) => ({
     id: hp.id,
     position: {
@@ -272,32 +288,67 @@ export default function StudioSceneEditor({
       {/* TOP HEADER: Breadcrumbs & Room Selector Strip */}
       <header className="h-16 px-4 sm:px-6 bg-base-100 border-b border-base-content/10 flex items-center justify-between gap-4 shrink-0 shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex items-center gap-2">
+          {/* Creator Brand / Space Logo (Cafe, Hotel, Home, Restaurant) */}
+          <div className="relative group shrink-0">
+            <input
+              type="file"
+              accept="image/*"
+              id="studio_brand_logo_input"
+              className="hidden"
+              onChange={handleUploadStudioLogo}
+            />
+            {currentTour?.brandLogo ? (
+              <label
+                htmlFor="studio_brand_logo_input"
+                className="block cursor-pointer relative"
+                title="Click to change space/brand logo"
+              >
+                <img
+                  src={currentTour.brandLogo}
+                  alt="Space Logo"
+                  className="w-9 h-9 rounded-sm object-cover bg-base-200 border border-base-content/20 shadow-xs"
+                />
+                <span className="absolute -bottom-1 -right-1 bg-black/80 text-[8px] text-white px-1 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                  Edit
+                </span>
+              </label>
+            ) : (
+              <label
+                htmlFor="studio_brand_logo_input"
+                className="w-9 h-9 rounded-sm border border-dashed border-base-content/30 hover:border-primary bg-base-200/50 hover:bg-base-200 flex items-center justify-center text-base-content/60 hover:text-primary text-xs cursor-pointer transition-all shadow-xs"
+                title="Upload Brand/Space Logo (Cafe, Hotel, Home)"
+              >
+                <FontAwesomeIcon icon={faCloudArrowUp} />
+              </label>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 min-w-0">
             <h2 className="text-sm font-extrabold uppercase tracking-wider text-base-content truncate">
               {currentTour?.title || "360° Studio Editor"}
             </h2>
           </div>
-          <span className="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-sm bg-base-200 text-base-content/70 border border-base-content/10">
+          <span className="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 rounded-sm bg-base-200 text-base-content/70 border border-base-content/10 shrink-0">
             {scenes.length} {scenes.length === 1 ? "Room" : "Rooms"}
           </span>
         </div>
 
-        {/* Room Navigation Pills Strip */}
+        {/* Room Navigation Pills Strip using Reusable Button Component */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-xl">
           {scenes.map((sc, idx) => (
-            <button
+            <Button
               key={sc.id || idx}
-              type="button"
+              variant={idx === activeSceneIndex ? "primary" : "secondary"}
               onClick={() => setActiveSceneIndex(idx)}
-              className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 border ${
+              className={`!py-1.5 !px-3 !rounded-sm !text-xs !border font-bold gap-1.5 shrink-0 cursor-pointer whitespace-nowrap transition-all ${
                 idx === activeSceneIndex
-                  ? "bg-primary text-primary-content border-primary shadow-xs"
-                  : "bg-base-200 hover:bg-base-300 text-base-content/75 border-base-content/10"
+                  ? "!bg-black !text-white !border-black shadow-xs"
+                  : "!bg-base-200 hover:!bg-base-300 !text-base-content/75 !border-base-content/15"
               }`}
             >
               <span>{idx + 1}:</span>
               <span className="truncate max-w-[120px]">{sc.name || `Room ${idx + 1}`}</span>
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -337,6 +388,13 @@ export default function StudioSceneEditor({
           {/* Top-Left Live Status Badge */}
           <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 pointer-events-none">
             <div className="px-3 py-1.5 rounded-sm bg-black/85 backdrop-blur-md border border-white/20 text-white text-xs font-bold flex items-center gap-2 shadow-lg">
+              {currentTour?.brandLogo && (
+                <img
+                  src={currentTour.brandLogo}
+                  alt="Space Logo"
+                  className="w-4 h-4 rounded-sm object-cover border border-white/30 shrink-0"
+                />
+              )}
               <span>Room {activeSceneIndex + 1}: {activeScene?.name}</span>
             </div>
             <div className="px-2.5 py-1 rounded-sm bg-black/75 backdrop-blur-md text-white/70 text-[10px] font-mono border border-white/10">

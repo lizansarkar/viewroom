@@ -116,9 +116,9 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
       {(currentRoute === "client_overview" || currentRoute === "overview") && (
         <div className="space-y-6">
           {/* Top Welcome Header & Upgrade Banner */}
-          <div className="p-6 sm:p-7 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
+          <div className="p-6 sm:p-7 rounded-sm bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
+              <div className="w-12 h-12 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-lg shrink-0">
                 <FontAwesomeIcon icon={faUser} />
               </div>
               <div>
@@ -139,7 +139,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
               variant="primary"
               onClick={handleUpgrade}
               disabled={upgrading}
-              className="whitespace-nowrap cursor-pointer !rounded-2xl"
+              className="whitespace-nowrap cursor-pointer !rounded-sm"
             >
               <FontAwesomeIcon icon={faRocket} className="mr-2" />
               <span>{upgrading ? "Upgrading..." : "Become a 360° Creator (Free)"}</span>
@@ -148,40 +148,40 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
 
           {/* Quick Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Saved 360° Spaces
                 </span>
                 <span className="text-2xl font-extrabold text-base-content">{bookmarks.length}</span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faBookmark} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   AI Concierge Queries
                 </span>
                 <span className="text-2xl font-extrabold text-base-content">{aiHistory.length}</span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faRobot} />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
+            <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-medium text-base-content/60 block mb-1">
                   Account Status
                 </span>
-                <span className="text-xs font-bold text-base-content uppercase px-2 py-0.5 rounded-full bg-base-200 border border-base-content/10 inline-block">
+                <span className="text-xs font-bold text-base-content uppercase px-2 py-0.5 rounded-sm bg-base-200 border border-base-content/10 inline-block">
                   CLIENT EXPLORER
                 </span>
               </div>
-              <div className="w-10 h-10 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
+              <div className="w-10 h-10 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-sm shrink-0">
                 <FontAwesomeIcon icon={faUser} />
               </div>
             </div>
@@ -208,10 +208,10 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 {bookmarks.slice(0, 2).map((b) => (
                   <div
                     key={b.id}
-                    className="p-4 sm:p-5 rounded-[24px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-3"
+                    className="p-4 sm:p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-3"
                   >
                     <div>
-                      <div className="relative h-40 rounded-2xl overflow-hidden mb-3 bg-base-200">
+                      <div className="relative h-40 rounded-sm overflow-hidden mb-3 bg-base-200">
                         <img
                           src={b.image}
                           alt={b.title}
@@ -221,14 +221,14 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                           }}
                           className="w-full h-full object-cover"
                         />
-                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
+                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-sm bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                           {b.category}
                         </span>
                       </div>
                       <h4 className="font-bold text-xs sm:text-sm text-base-content leading-snug line-clamp-1 mt-1 mb-2">{b.title}</h4>
                     </div>
                     <Link to={b.link} className="w-full block mt-3">
-                      <Button variant="secondary" className="w-full text-center !rounded-xl !text-xs !py-2">
+                      <Button variant="secondary" className="w-full text-center !rounded-sm !text-xs !py-2">
                         <FontAwesomeIcon icon={faEye} className="mr-1.5" />
                         Launch 360°
                       </Button>
@@ -257,7 +257,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 {aiHistory.slice(0, 2).map((item) => (
                   <div
                     key={item.id}
-                    className="p-4 rounded-[24px] bg-base-100 border border-base-content/10 text-xs space-y-1.5 shadow-xs"
+                    className="p-4 rounded-sm bg-base-100 border border-base-content/10 text-xs space-y-1.5 shadow-xs"
                   >
                     <div className="flex items-center justify-between text-[10px] font-semibold text-base-content/50 uppercase">
                       <span>Question</span>
@@ -279,7 +279,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
       {currentRoute === "bookmarks" && (
         <div className="space-y-6">
           {/* Header & Search Bar */}
-          <div className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
                 <FontAwesomeIcon icon={faBookmark} className="text-base-content/60" />
@@ -297,7 +297,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 placeholder="Search bookmarks..."
                 value={bookmarksSearch}
                 onChange={(e) => setBookmarksSearch(e.target.value)}
-                className="w-full px-3.5 py-2 pl-9 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-3.5 py-2 pl-9 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
             </div>
@@ -308,17 +308,17 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
             {filteredBookmarks.map((b) => (
               <div
                 key={b.id}
-                className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-4"
+                className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col justify-between shadow-xs hover:border-base-content/20 transition-all gap-4"
               >
                 <div>
-                  <div className="relative h-44 rounded-2xl overflow-hidden mb-3 bg-base-200">
+                  <div className="relative h-44 rounded-sm overflow-hidden mb-3 bg-base-200">
                     <img src={b.image} alt={b.title} className="w-full h-full object-cover" />
-                    <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
+                    <span className="absolute top-3 left-3 px-3 py-1 rounded-sm bg-base-100/90 text-base-content border border-base-content/10 text-[10px] font-semibold">
                       {b.category}
                     </span>
                     <button
                       onClick={() => handleRemoveBookmark(b.id)}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-black/50 text-white hover:bg-error transition-colors cursor-pointer text-xs"
+                      className="absolute top-3 right-3 p-2 rounded-sm bg-black/50 text-white hover:bg-error transition-colors cursor-pointer text-xs"
                       title="Remove Bookmark"
                     >
                       <FontAwesomeIcon icon={faTrash} />
@@ -330,7 +330,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 </div>
 
                 <Link to={b.link} className="w-full block mt-3">
-                  <Button variant="primary" className="w-full text-center !rounded-xl !text-xs !py-2">
+                  <Button variant="primary" className="w-full text-center !rounded-sm !text-xs !py-2">
                     <FontAwesomeIcon icon={faEye} className="mr-2" />
                     Launch 360° Interactive
                   </Button>
@@ -345,7 +345,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
       {currentRoute === "ai_history" && (
         <div className="space-y-6">
           {/* Header & Search Bar */}
-          <div className="p-5 rounded-[28px] bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+          <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
                 <FontAwesomeIcon icon={faRobot} className="text-base-content/60" />
@@ -363,7 +363,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 placeholder="Search AI logs..."
                 value={aiSearchQuery}
                 onChange={(e) => setAiSearchQuery(e.target.value)}
-                className="w-full px-3.5 py-2 pl-9 rounded-xl bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
+                className="w-full px-3.5 py-2 pl-9 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
               />
               <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-3 top-3 text-xs text-base-content/50" />
             </div>
@@ -374,7 +374,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
             {filteredAiHistory.map((item) => (
               <div
                 key={item.id}
-                className="p-6 rounded-[28px] bg-base-100 border border-base-content/10 space-y-3 shadow-xs"
+                className="p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-3 shadow-xs"
               >
                 <div className="flex items-center justify-between text-xs font-semibold text-base-content/50">
                   <span className="flex items-center gap-2">
@@ -384,7 +384,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                   <span className="opacity-70">{item.timestamp}</span>
                 </div>
                 <h4 className="font-bold text-sm text-base-content">"{item.query}"</h4>
-                <div className="p-4 rounded-2xl bg-base-200/60 border border-base-content/10 text-xs text-base-content/80 leading-relaxed">
+                <div className="p-4 rounded-sm bg-base-200/60 border border-base-content/10 text-xs text-base-content/80 leading-relaxed">
                   {item.answer}
                 </div>
               </div>
@@ -395,8 +395,8 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
 
       {/* 4. UPGRADE ROUTE VIEW (upgrade) */}
       {currentRoute === "upgrade" && (
-        <div className="p-8 sm:p-10 rounded-[28px] bg-base-100 border border-base-content/10 max-w-3xl mx-auto space-y-6 text-center shadow-xs">
-          <div className="w-14 h-14 rounded-2xl bg-base-200 text-base-content flex items-center justify-center text-2xl mx-auto shrink-0">
+        <div className="p-8 sm:p-10 rounded-sm bg-base-100 border border-base-content/10 max-w-3xl mx-auto space-y-6 text-center shadow-xs">
+          <div className="w-14 h-14 rounded-sm bg-base-200 text-base-content flex items-center justify-center text-2xl mx-auto shrink-0">
             <FontAwesomeIcon icon={faRocket} />
           </div>
 
@@ -437,7 +437,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
             variant="primary"
             onClick={handleUpgrade}
             disabled={upgrading}
-            className="!px-8 !py-3 !rounded-2xl cursor-pointer"
+            className="!px-8 !py-3 !rounded-sm cursor-pointer"
           >
             <FontAwesomeIcon icon={faRocket} className="mr-2" />
             <span>{upgrading ? "Upgrading Account..." : "Upgrade to Creator Now (Free)"}</span>
