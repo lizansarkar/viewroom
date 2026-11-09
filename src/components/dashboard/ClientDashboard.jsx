@@ -70,8 +70,8 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
     },
     {
       id: "q3",
-      query: "Can I customize 3D furniture materials?",
-      answer: "Yes, open any 3D Product Spin to change fabric textures, metallic finishes, and lighting environments.",
+      query: "Can I inspect architectural floor plans in 360°?",
+      answer: "Yes, you can click on any hotspot door marker or room switcher to view high-resolution 360° spaces with true spatial perspectives.",
       timestamp: "1 week ago",
     },
   ]);
@@ -286,7 +286,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
                 Saved & Bookmarked 360° Spaces
               </h3>
               <p className="text-xs text-base-content/60 mt-0.5">
-                Quick access to your saved property walkthroughs and 3D product spins
+                Quick access to your saved property walkthroughs and virtual rooms
               </p>
             </div>
 
@@ -408,7 +408,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
               Become a 360° Creator & Property Owner
             </h2>
             <p className="text-xs text-base-content/70 mt-2 max-w-xl mx-auto leading-relaxed">
-              Unlock full creator capabilities! Publish 360° virtual property tours, build hot-spot room links, attach 3D product spins, and inspect real-time spatial analytics.
+              Unlock full creator capabilities! Publish 360° virtual property tours, build hot-spot room links, and inspect real-time spatial analytics.
             </p>
           </div>
 
@@ -424,7 +424,7 @@ export default function ClientDashboard({ user, activeTab, setActiveTab, onUpgra
             </div>
             <div className="flex items-center gap-2.5 text-xs text-base-content/80 font-semibold">
               <FontAwesomeIcon icon={faCheckCircle} className="text-success text-sm" />
-              <span>Interactive 3D Product Spins</span>
+              <span>Batch 360 Panorama Uploader</span>
             </div>
             <div className="flex items-center gap-2.5 text-xs text-base-content/80 font-semibold">
               <FontAwesomeIcon icon={faCheckCircle} className="text-success text-sm" />

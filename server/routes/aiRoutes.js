@@ -3,14 +3,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const router = express.Router();
 
-// Catalog dataset for AI product search & smart recommendations
-const CATALOG_PRODUCTS = [
-  { id: "watch", name: "Aero Chronograph 360", category: "Luxury Timepiece", price: "$4,850", tag: "360° SPIN", desc: "Grade 5 titanium Swiss chronograph with live sweeping movement and domed sapphire crystal." },
-  { id: "tshirt", name: "Minimalist Black T-Shirt", category: "Streetwear Apparel", price: "$85", tag: "COTTON 3D", desc: "100% heavyweight organic cotton streetwear tee with relaxed silhouette." },
-  { id: "airpods", name: "AirPods Pro Spatial", category: "Wireless Audio", price: "$249", tag: "NOISE CANCEL", desc: "Adaptive active noise cancellation with personalized spatial audio 3D tracking." },
-  { id: "chair", name: "Eames Silhouette Lounge", category: "Designer Furniture", price: "$1,250", tag: "ARCHITECTURAL", desc: "7-ply American walnut veneer with lambskin leather cushions and 5-star swivel base." },
-  { id: "phone", name: "Horizon Ultra Smartphone", category: "Mobile Tech", price: "$999", tag: "FLAGSHIP 5G", desc: "Flagship 5G smartphone with titanium frame and 200MP pro camera system." },
-  { id: "camera", name: "Lumix Retro Rangefinder", category: "Photography", price: "$1,450", tag: "OPTICAL ZOOM", desc: "Classic rangefinder aesthetic with 35mm f/1.4 prime lens and full-frame sensor." },
+// Featured 360° Spatial Spaces for AI recommendation
+const FEATURED_360_SPACES = [
+  { id: "skyline_villa", name: "Skyline Sunset Villa", category: "Residential Villa & Home", rooms: 6, tag: "360° TOUR", desc: "Luxury modern hilltop villa with infinity pool, panoramic skyline terrace, and designer living room." },
+  { id: "rooftop_lounge", name: "Sky Lounge & Cafe 360°", category: "Cafe & Restaurant", rooms: 4, tag: "HOSPITALITY", desc: "Atmospheric 360° dining space with espresso bar, VIP mezzanine, and ambient spatial audio." },
+  { id: "grand_hotel", name: "Azure Boutique Hotel & Resort", category: "Boutique Hotel & Suite", rooms: 8, tag: "HOTEL SUITE", desc: "5-star luxury seaside suite featuring private balcony, marble bath, and ocean-view bedroom." },
 ];
 
 // Initialize Google Gemini AI SDK if GEMINI_API_KEY is available
@@ -32,11 +29,11 @@ router.get("/spatial-concierge", (req, res) => {
     service: "ViewRoom 360 Spatial AI Concierge",
     status: "active",
     model: "Google Gemini AI",
-    catalogCount: CATALOG_PRODUCTS.length,
+    spacesCount: FEATURED_360_SPACES.length,
   });
 });
 
-// POST /api/v1/ai/spatial-concierge - Authentic AI Virtual Concierge with Smart Product Search & Recommendations
+// POST /api/v1/ai/spatial-concierge - Authentic AI Virtual Concierge for 360° Virtual Tours
 router.post("/spatial-concierge", async (req, res) => {
   try {
     const { prompt, sceneContext, history = [] } = req.body;
@@ -46,51 +43,31 @@ router.post("/spatial-concierge", async (req, res) => {
 
     const currentApiKey = process.env.GEMINI_API_KEY || req.headers["x-api-key"];
 
-    const catalogString = JSON.stringify(CATALOG_PRODUCTS, null, 2);
+    const spacesString = JSON.stringify(FEATURED_360_SPACES, null, 2);
 
-    const systemInstruction = `You are ViewRoom AI Concierge, an intelligent, warm, and highly authentic product recommendation expert for ViewRoom (a luxury 360° virtual tour and 3D spatial product platform).
+    const systemInstruction = `You are ViewRoom AI Concierge, a helpful, polite, and intelligent spatial tour guide for ViewRoom (a dedicated 360° virtual property tour and architectural digital twin platform).
 You talk naturally like a real person. Answer questions concisely, friendly, and directly.
-You have full access to our official 3D product catalog:
-${catalogString}
+You have access to our featured 360° spaces:
+${spacesString}
 
-When users ask for product search, recommendations, or items related to tech, apparel, audio, watches, furniture, or photography:
+When users ask about exploring properties, cafes, hotels, villas, or how to create 360° tours:
 1. Provide a warm, enthusiastic, personalized response.
-2. Recommend the exact matching products from our catalog with prices and key highlights.
-3. If they ask a general question, answer clearly and suggest exploring our 3D interactive product showcase.
+2. Recommend the best matching 360° spaces.
+3. If they ask about creating a tour, explain that Creators can batch upload 360° photos and connect rooms with door hotspots easily.
 
-Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })}`;
+Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom 360 Platform" })}`;
 
     // Fallback AI recommendation generator when API key is missing or calls fail
     const generateSmartFallbackReply = (userQuery) => {
       const q = userQuery.toLowerCase();
-      let matched = [];
 
-      if (q.includes("watch") || q.includes("timepiece") || q.includes("luxury") || q.includes("clock")) {
-        matched.push(CATALOG_PRODUCTS[0]);
-      }
-      if (q.includes("shirt") || q.includes("tshirt") || q.includes("clothes") || q.includes("apparel") || q.includes("wear")) {
-        matched.push(CATALOG_PRODUCTS[1]);
-      }
-      if (q.includes("airpod") || q.includes("audio") || q.includes("headphone") || q.includes("earbud") || q.includes("music") || q.includes("sound")) {
-        matched.push(CATALOG_PRODUCTS[2]);
-      }
-      if (q.includes("chair") || q.includes("furniture") || q.includes("lounge") || q.includes("desk") || q.includes("room")) {
-        matched.push(CATALOG_PRODUCTS[3]);
-      }
-      if (q.includes("phone") || q.includes("mobile") || q.includes("tech") || q.includes("smartphone")) {
-        matched.push(CATALOG_PRODUCTS[4]);
-      }
-      if (q.includes("camera") || q.includes("photo") || q.includes("lens") || q.includes("picture")) {
-        matched.push(CATALOG_PRODUCTS[5]);
+      if (q.includes("tour") || q.includes("space") || q.includes("property") || q.includes("villa") || q.includes("hotel") || q.includes("cafe")) {
+        const itemNames = FEATURED_360_SPACES.map((m) => `• ${m.name} (${m.category} - ${m.rooms} Rooms): ${m.desc}`).join("\n");
+        return `Here are some of our top 360° spaces you can explore on ViewRoom:\n\n${itemNames}\n\nYou can walk through all of them with full 360° panning and door hotspots!`;
       }
 
-      if (matched.length > 0) {
-        const itemNames = matched.map((m) => `• ${m.name} (${m.category} - ${m.price}): ${m.desc}`).join("\n");
-        return `Here are the top 3D products matching your search on ViewRoom:\n\n${itemNames}\n\nYou can rotate and inspect all of them in full 3D right on our platform!`;
-      }
-
-      if (q.includes("product") || q.includes("search") || q.includes("recommend") || q.includes("suggest") || q.includes("show")) {
-        return `Welcome to ViewRoom 3D Showcase! Here are some of our top featured products:\n\n1. Aero Chronograph 360 ($4,850) - Swiss Luxury Timepiece\n2. Minimalist Black T-Shirt ($85) - Organic Cotton Streetwear\n3. AirPods Pro Spatial ($249) - Wireless Audio\n4. Horizon Ultra Smartphone ($999) - Flagship 5G Tech\n\nWhich category would you like to explore in 3D?`;
+      if (q.includes("create") || q.includes("upload") || q.includes("maker") || q.includes("creator")) {
+        return `Creating a 360° tour on ViewRoom is super easy! Simply register as a Creator, go to your Creator Dashboard, drop in your 360° panorama photos, set your room opening view, and click to link rooms with door hotspots.`;
       }
 
       // Handle simple math queries in fallback (e.g., 5+5=?)
@@ -107,7 +84,7 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
         return `${a} ${op} ${b} = ${ans}`;
       }
 
-      return `Hello! I'm ViewRoom AI Concierge. I can help you search for 3D products, explore virtual tours, or find recommendations. Try asking me "Show me watches", "Suggest audio gear", or "What tech products do you have?"`;
+      return `Hello! I'm your ViewRoom AI Spatial Guide. I can help you explore 360° virtual properties, hotels, and cafes, or guide you on building your own virtual tour. What would you like to explore?`;
     };
 
     // Try Google Gemini API call if API key is present
@@ -151,7 +128,7 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
               success: true,
               reply: replyText.trim(),
               source: modelName,
-              products: CATALOG_PRODUCTS,
+              spaces: FEATURED_360_SPACES,
             });
           }
         } catch (geminiError) {
@@ -160,13 +137,13 @@ Current Context: ${JSON.stringify(sceneContext || { page: "ViewRoom Platform" })
       }
     }
 
-    // Return intelligent product recommendation fallback
+    // Return intelligent space recommendation fallback
     const fallbackReply = generateSmartFallbackReply(prompt);
     return res.json({
       success: true,
       reply: fallbackReply,
       source: "ViewRoom AI Smart Engine",
-      products: CATALOG_PRODUCTS,
+      spaces: FEATURED_360_SPACES,
     });
 
   } catch (err) {

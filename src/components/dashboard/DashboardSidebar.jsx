@@ -184,7 +184,6 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
       {
         title: "Content",
         items: [
-          { id: "products", label: "3D Product Spins", icon: ProductIcon },
           { id: "uploader", label: "Scene & Tour Builder", icon: BuilderIcon },
         ],
       },

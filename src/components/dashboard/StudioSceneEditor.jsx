@@ -90,7 +90,23 @@ export default function StudioSceneEditor({
     setOpeningViewSaved(false);
   }, [activeScene?.id, scenes.length]);
 
+  // Unmount WebGL cleanup
+  useEffect(() => {
+    return () => {
+      if (psvRef.current) {
+        try {
+          psvRef.current.destroy();
+        } catch (e) {}
+      }
+    };
+  }, []);
+
   const handlePsvReady = (instance) => {
+    if (psvRef.current && psvRef.current !== instance) {
+      try {
+        psvRef.current.destroy();
+      } catch (e) {}
+    }
     psvRef.current = instance;
 
     // Track camera angle in real time

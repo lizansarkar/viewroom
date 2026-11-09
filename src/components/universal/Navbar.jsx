@@ -10,7 +10,6 @@ const NAV_LINKS = [
     label: "360° Services",
     dropdown: [
       { label: "360 Virtual Tour", to: "/360-virtual-tour" },
-      { label: "360 Product", to: "/360-product" },
       { label: "360 Video", to: "/360-video" },
     ],
   },
@@ -158,7 +157,6 @@ const MOBILE_NAV_ITEMS = [
   { to: "/", label: "Home", icon: HomeIcon },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboardIcon, authOnly: true },
   { to: "/360-virtual-tour", label: "360° Virtual Tour", icon: TourIcon },
-  { to: "/360-product", label: "360° Product", icon: ProductIcon },
   { to: "/360-video", label: "360° Video", icon: VideoIcon },
   { to: "/matterport", label: "Matterport", icon: MatterportIcon },
   { to: "/photography", label: "Photography", icon: CameraIcon },

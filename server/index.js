@@ -21,7 +21,6 @@ const audioDir = path.join(uploadsDir, "audio");
 
 import authRoutes from "./routes/authRoutes.js";
 import tourRoutes from "./routes/tourRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import ownerRoutes from "./routes/ownerRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
@@ -70,8 +69,16 @@ app.use(
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
-// Serve static uploaded 360 images & audio files reliably from absolute directory
-app.use("/uploads", express.static(uploadsDir));
+// Serve static uploaded 360 images & audio files with high-performance 7-day browser & CDN caching
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    maxAge: "7d",
+    etag: true,
+    lastModified: true,
+    immutable: true,
+  })
+);
 
 // Performance Cache-Control Header Middleware for API responses
 app.use((req, res, next) => {
@@ -96,7 +103,6 @@ app.get("/health", (req, res) => {
 // API Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/tours", tourRoutes);
-app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/owner", ownerRoutes);
 app.use("/api/v1/admin", adminRoutes);
@@ -113,7 +119,6 @@ app.get("/", (req, res) => {
     endpoints: {
       auth: "/api/v1/auth",
       tours: "/api/v1/tours",
-      products: "/api/v1/products",
       ai: "/api/v1/ai/spatial-concierge",
     },
   });

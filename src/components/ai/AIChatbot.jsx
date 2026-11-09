@@ -14,7 +14,7 @@ import { trackEvent } from "../../services/analyticsService";
 const INPUT_SUGGESTIONS = [
   'Ask: "How do 360° Virtual Tours work?"',
   'Ask: "Explain Matterport 3D Pro Scans"',
-  'Ask: "Can I customize 360° 3D Products?"',
+  'Ask: "How do I create a 360° tour?"',
   'Ask: "Pricing & Photography Booking"',
 ];
 
@@ -87,7 +87,7 @@ export default function AIChatbot() {
     {
       id: "intro-msg",
       sender: "ai",
-      text: "Hello! I am your ViewRoom AI Spatial Concierge. I can guide you through our 360° virtual tours, Matterport 3D digital twins, interactive 3D products, and booking inquiries. How can I help you today?",
+      text: "Hello! I am your ViewRoom AI Spatial Concierge. I can guide you through our 360° virtual tours, Matterport 3D digital twins, spatial navigation, and booking inquiries. How can I help you today?",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     },
   ]);

@@ -15,9 +15,10 @@ model User {
   passwordHash  String?
   role          Role           @default(CLIENT)
   tours         VirtualTour[]
-  products      Product360[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+
+  @@index([role])
 }
 
 enum Role {
@@ -34,6 +35,7 @@ model VirtualTour {
   description   String?
   category      String
   coverImage    String?
+  brandLogo     String?        // Space / Property Brand Logo (Cafe, Hotel, Home, Office)
   audioConfig   String?        // JSON string containing ambient audio track preferences & custom URL
   floorPlanUrl  String?
   sqft          Int?
@@ -43,6 +45,11 @@ model VirtualTour {
   scenes        Scene[]
   analytics     Analytics[]
   createdAt     DateTime       @default(now())
+
+  @@index([authorId])
+  @@index([category])
+  @@index([isPublished])
+  @@index([createdAt])
 }
 
 model Scene {
@@ -57,6 +64,9 @@ model Scene {
   defaultPitch  String?        @default("0deg")
   orderIndex    Int            @default(0)
   hotspots      Hotspot[]
+
+  @@index([tourId])
+  @@index([orderIndex])
 }
 
 model Hotspot {
@@ -69,6 +79,9 @@ model Hotspot {
   targetSceneId String?        // Destination Scene ID
   label         String
   description   String?
+
+  @@index([sceneId])
+  @@index([targetSceneId])
 }
 
 enum HotspotType {
@@ -79,41 +92,6 @@ enum HotspotType {
   INFO
 }
 
-// 360° Interactive Product Models
-model Product360 {
-  id            String         @id @default(uuid())
-  title         String
-  category      String
-  status        String         @default("Studio Ready")
-  model3DUrl    String?        // .gltf / .glb / .usdz
-  variants      ProductVariant[]
-  specHotspots  ProductHotspot[]
-  authorId      String
-  author        User           @relation(fields: [authorId], references: [id])
-  createdAt     DateTime       @default(now())
-}
-
-model ProductVariant {
-  id            String         @id @default(uuid())
-  productId     String
-  product       Product360     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name          String
-  colorHex      String
-  accentHex     String
-  imageSequence String[]       // Array of 36-72 frame URLs for 360 spin
-}
-
-model ProductHotspot {
-  id            String         @id @default(uuid())
-  productId     String
-  product       Product360     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  angle         Float          // Rotation frame angle
-  xPercent      Float          // X position %
-  yPercent      Float          // Y position %
-  title         String
-  description   String
-}
-
 // Analytics & Heatmaps
 model Analytics {
   id            String         @id @default(uuid())
@@ -122,6 +100,8 @@ model Analytics {
   viewsCount    Int            @default(0)
   durationSec   Int            @default(0)
   createdAt     DateTime       @default(now())
+
+  @@index([tourId])
 }
 
 // Contact Messages Submitted via Website
@@ -132,4 +112,3 @@ model ContactMessage {
   message   String
   createdAt DateTime @default(now())
 }
-

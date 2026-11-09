@@ -101,72 +101,8 @@ export async function apiGetTourById(id) {
 }
 
 // -------------------------------------------------------------
-// 3. 3D PRODUCTS APIS (PostgreSQL Product360 Table)
+// 3. SPATIAL AI CONCIERGE APIS
 // -------------------------------------------------------------
-export async function apiGetProducts(params = {}) {
-  try {
-    const query = new URLSearchParams(params).toString();
-    return await apiRequest(`/products${query ? `?${query}` : ""}`);
-  } catch (err) {
-    return { success: true, data: [] };
-  }
-}
-
-export async function apiGetProductById(id) {
-  try {
-    return await apiRequest(`/products/${id}`);
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-}
-
-export async function apiCreateProduct(productData) {
-  try {
-    return await apiRequest("/products", {
-      method: "POST",
-      body: JSON.stringify(productData),
-    });
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-}
-
-export async function apiDeleteProduct(productId) {
-  try {
-    return await apiRequest(`/products/${productId}`, { method: "DELETE" });
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-}
-
-export async function apiGetOwnerProducts() {
-  try {
-    return await apiRequest("/owner/products");
-  } catch (err) {
-    return { success: true, data: [] };
-  }
-}
-
-export async function apiCreateOwnerProduct(productData) {
-  try {
-    return await apiRequest("/owner/products", {
-      method: "POST",
-      body: JSON.stringify(productData),
-    });
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-}
-
-export async function apiDeleteOwnerProduct(productId) {
-  try {
-    return await apiRequest(`/owner/products/${productId}`, {
-      method: "DELETE",
-    });
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-}
 
 // -------------------------------------------------------------
 // 4. SPATIAL AI CONCIERGE & VOICE AI
@@ -522,11 +458,6 @@ export default {
   apiGetProfile,
   apiGetTours,
   apiGetTourById,
-  apiGetProducts,
-  apiGetProductById,
-  apiCreateProduct,
-  apiDeleteProduct,
-  apiGetOwnerProducts,
   apiAskSpatialConcierge,
   apiGetOwnerStats,
   apiGetOwnerTours,

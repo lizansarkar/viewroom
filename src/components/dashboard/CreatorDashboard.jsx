@@ -35,9 +35,6 @@ import {
   apiUploadImage,
   apiSaveTourAudio,
   apiDeleteOwnerTour,
-  apiGetOwnerProducts,
-  apiCreateOwnerProduct,
-  apiDeleteOwnerProduct,
 } from "../../services/api";
 
 const SPACE_CATEGORIES = [
@@ -83,18 +80,13 @@ const QUICK_ROOM_CHIPS = [
 export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const [stats, setStats] = useState({
     totalTours: 0,
-    totalProducts: 0,
     totalViews: 0,
     aiConversations: 184,
     engagementRate: "96.4%",
   });
 
   const [tours, setTours] = useState([]);
-  const [products, setProducts] = useState([]);
-
   const [toursSearch, setToursSearch] = useState("");
-  const [productsSearch, setProductsSearch] = useState("");
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
 
   // Tour Creator Form State (uploader)
   const [newTourTitle, setNewTourTitle] = useState("");
@@ -122,11 +114,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       hotspots: [],
     },
   ]);
-
-  // Product Form State
-  const [newProdTitle, setNewProdTitle] = useState("");
-  const [newProdCategory, setNewProdCategory] = useState("Modern Furniture");
-  const [newProdPrice, setNewProdPrice] = useState("$500");
 
   // Settings State
   const [studioName, setStudioName] = useState("ViewRoom Spatial Studio");
@@ -219,44 +206,18 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     }
   };
 
-  const saveProductsToStorage = (updatedProducts) => {
-    try {
-      const userEmail = (user?.email || "").toLowerCase().trim();
-      if (!userEmail) return;
-      localStorage.setItem(`viewroom_products_${userEmail}`, JSON.stringify(updatedProducts));
-    } catch (err) {
-      console.warn("Failed to save custom products:", err);
-    }
-  };
-
   const loadDashboardData = async () => {
     try {
       const userEmail = (user?.email || "").toLowerCase().trim();
       const userId = user?.id || "";
 
-      const [fetchedStats, fetchedToursRes, fetchedProdsRes] = await Promise.all([
+      const [fetchedStats, fetchedToursRes] = await Promise.all([
         apiGetOwnerStats(),
         apiGetOwnerTours(userEmail || userId ? { authorEmail: userEmail, authorId: userId } : {}),
-        apiGetOwnerProducts(),
       ]);
       const fetchedTours = fetchedToursRes && (fetchedToursRes.data || fetchedToursRes);
-      const fetchedProds = fetchedProdsRes && (fetchedProdsRes.data || fetchedProdsRes);
 
       if (fetchedStats) setStats((prev) => ({ ...prev, ...fetchedStats }));
-
-      let myProducts = [];
-      const userSpecificProds = localStorage.getItem(`viewroom_products_${userEmail}`);
-      if (userSpecificProds) {
-        try {
-          const parsed = JSON.parse(userSpecificProds);
-          if (Array.isArray(parsed)) myProducts = parsed;
-        } catch (e) {}
-      } else if (Array.isArray(fetchedProds)) {
-        myProducts = fetchedProds.filter(
-          (p) => !userEmail || (p.authorEmail && p.authorEmail.toLowerCase().trim() === userEmail)
-        );
-      }
-      setProducts(myProducts);
 
       let myTours = [];
       const userSpecificTours = localStorage.getItem(`viewroom_tours_${userEmail}`);
@@ -607,68 +568,12 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     });
   };
 
-  // Product Handlers
-  const handleCreateProduct = async (e) => {
-    e.preventDefault();
-    if (!newProdTitle) return;
-
-    const productObj = {
-      id: `prod_${Date.now()}`,
-      title: newProdTitle,
-      category: newProdCategory,
-      price: newProdPrice,
-      image: "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&q=80&w=800",
-      modelFormat: "GLTF / GLB",
-      authorEmail: user?.email,
-      authorId: user?.id,
-      viewsCount: 0,
-    };
-
-    try {
-      await apiCreateOwnerProduct(productObj);
-    } catch (err) {}
-
-    setProducts((prev) => {
-      const updated = [productObj, ...prev];
-      saveProductsToStorage(updated);
-      return updated;
-    });
-
-    setNewProdTitle("");
-    setShowAddProductModal(false);
-  };
-
-  const handleDeleteProduct = (productId) => {
-    setDeleteConfirmModal({
-      isOpen: true,
-      title: "Delete 3D Product",
-      message: "Are you sure you want to delete this 3D product?",
-      onConfirm: async () => {
-        try {
-          await apiDeleteOwnerProduct(productId);
-        } catch (err) {}
-        setProducts((prev) => {
-          const updated = prev.filter((p) => p.id !== productId);
-          saveProductsToStorage(updated);
-          return updated;
-        });
-        setDeleteConfirmModal({ isOpen: false, title: "", message: "", onConfirm: null });
-      },
-    });
-  };
-
   const currentRoute = activeTab || "creator_overview";
 
   const filteredTours = tours.filter(
     (t) =>
       t.title.toLowerCase().includes(toursSearch.toLowerCase()) ||
       (t.category && t.category.toLowerCase().includes(toursSearch.toLowerCase()))
-  );
-
-  const filteredProducts = products.filter(
-    (p) =>
-      p.title.toLowerCase().includes(productsSearch.toLowerCase()) ||
-      (p.category && p.category.toLowerCase().includes(productsSearch.toLowerCase()))
   );
 
   return (
@@ -1347,76 +1252,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         </div>
       )}
 
-      {/* 3. 3D PRODUCT SPINS ROUTE VIEW (products) */}
-      {currentRoute === "products" && (
-        <div className="space-y-6">
-          <div className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
-            <div>
-              <h3 className="font-bold text-base text-base-content flex items-center gap-2">
-                <FontAwesomeIcon icon={faCube} className="text-base-content/60" />
-                3D Interactive Products ({products.length})
-              </h3>
-              <p className="text-xs text-base-content/60 mt-0.5">
-                Manage 3D GLTF product spins and AR models
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <input
-                type="text"
-                placeholder="Search 3D products..."
-                value={productsSearch}
-                onChange={(e) => setProductsSearch(e.target.value)}
-                className="w-full sm:w-56 px-3.5 py-2 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-              />
-              <Button
-                variant="primary"
-                onClick={() => setShowAddProductModal(true)}
-                className="whitespace-nowrap cursor-pointer !rounded-sm !text-xs !py-2 !px-4 gap-1.5"
-              >
-                <FontAwesomeIcon icon={faPlus} />
-                <span>Add Product</span>
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((p) => (
-              <div
-                key={p.id}
-                className="p-5 rounded-sm bg-base-100 border border-base-content/10 flex flex-col justify-between gap-4 shadow-xs"
-              >
-                <div className="flex items-center gap-3.5">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="w-16 h-16 rounded-sm object-cover bg-base-200 border border-base-content/10 shrink-0"
-                  />
-                  <div className="min-w-0">
-                    <h4 className="font-bold text-sm text-base-content truncate">{p.title}</h4>
-                    <p className="text-xs text-base-content/60">{p.category} • {p.price}</p>
-                    <span className="text-[10px] font-bold text-primary mt-1 block">
-                      {p.modelFormat || "GLTF 3D"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-base-content/10">
-                  <span className="text-xs text-base-content/60">{p.viewsCount || 0} views</span>
-                  <button
-                    onClick={() => handleDeleteProduct(p.id)}
-                    className="p-2 rounded-sm hover:bg-error hover:text-white text-base-content/50 text-xs cursor-pointer transition-colors"
-                    title="Delete Product"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* 4. SPATIAL ANALYTICS ROUTE VIEW (analytics) */}
       {currentRoute === "analytics" && <AnalyticsDashboard />}
 
@@ -1473,55 +1308,6 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
           onClose={() => setSoundModalTour(null)}
           onSave={handleSaveSoundConfig}
         />
-      )}
-
-      {/* ADD 3D PRODUCT MODAL */}
-      {showAddProductModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-2xl">
-            <h3 className="font-bold text-base text-base-content">Add 3D Product</h3>
-            <form onSubmit={handleCreateProduct} className="space-y-3">
-              <input
-                type="text"
-                required
-                placeholder="Product Title"
-                value={newProdTitle}
-                onChange={(e) => setNewProdTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Category"
-                value={newProdCategory}
-                onChange={(e) => setNewProdCategory(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Price"
-                value={newProdPrice}
-                onChange={(e) => setNewProdPrice(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-sm bg-base-200/80 border border-base-content/10 text-xs font-semibold text-base-content focus:outline-none"
-              />
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowAddProductModal(false)}
-                  className="!px-4 !py-2 !rounded-sm !text-xs cursor-pointer"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="!text-xs !py-2 !px-4 !rounded-sm cursor-pointer"
-                >
-                  Create Product
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
 
       {/* CUSTOM CONFIRM DELETE MODAL */}

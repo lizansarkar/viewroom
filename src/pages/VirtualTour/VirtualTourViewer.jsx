@@ -378,6 +378,11 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
 
   // Photo Sphere Viewer Instance Callback
   const handleReady = (instance) => {
+    if (psvRef.current && psvRef.current !== instance) {
+      try {
+        psvRef.current.destroy();
+      } catch (e) {}
+    }
     psvRef.current = instance;
 
     let lastEmit = 0;
