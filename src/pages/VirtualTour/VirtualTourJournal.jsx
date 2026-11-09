@@ -215,22 +215,6 @@ export default function VirtualTourJournal() {
             </a>
           </div>
 
-          {/* Pill Tag Badges (Exact match to reference image) */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-2">
-            <span className="px-4 py-1.5 rounded-full border border-[var(--app-border)]/40 text-xs sm:text-sm font-semibold text-[var(--app-text-primary)] bg-base-200/40 hover:border-[var(--app-border)] transition-colors cursor-default">
-              Virtual tours
-            </span>
-            <span className="px-4 py-1.5 rounded-full border border-[var(--app-border)]/40 text-xs sm:text-sm font-semibold text-[var(--app-text-primary)] bg-base-200/40 hover:border-[var(--app-border)] transition-colors cursor-default">
-              360°
-            </span>
-            <span className="px-4 py-1.5 rounded-full border border-[var(--app-border)]/40 text-xs sm:text-sm font-semibold text-[var(--app-text-primary)] bg-base-200/40 hover:border-[var(--app-border)] transition-colors cursor-default">
-              Real estate
-            </span>
-            <span className="px-4 py-1.5 rounded-full border border-[var(--app-border)]/40 text-xs sm:text-sm font-semibold text-[var(--app-text-primary)] bg-base-200/40 hover:border-[var(--app-border)] transition-colors cursor-default">
-              Hotels
-            </span>
-          </div>
-
           {/* Section Divider Line */}
           <div className="w-full h-px bg-[var(--app-border)]/20 my-8" />
 
@@ -238,14 +222,14 @@ export default function VirtualTourJournal() {
           <div className="flex flex-col items-center text-center gap-3">
             <div className="w-14 h-14 rounded-full bg-base-300 text-base-content/60 flex items-center justify-center overflow-hidden border border-[var(--app-border)]/20 shadow-sm">
               <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300"
+                src="https://scontent.fdac206-1.fna.fbcdn.net/v/t39.30808-1/659892543_122284604282033382_696716499735653998_n.jpg?stp=dst-jpg_tt6&cstp=mx1024x1024&ctp=s200x200&_nc_cat=101&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFvFz1ZntBoYs-54nPcfYkipDApPMpaV0GkMCk8ylpXQefw35-6ptFYTzO4cS0Wj6RO82kHiXqc7IE8LsEiFmIa&_nc_ohc=C1PAtC5FAXkQ7kNvwFrZjNl&_nc_oc=AdpDz6ahaTScB4HAV7TH_Vv5ky7EuuI_GwhL_S5VHJadG_GVLelb4DGwCWEd-qRUHbM&_nc_zt=24&_nc_ht=scontent.fdac206-1.fna&_nc_gid=JcxYmfs6l8SaO2HKBtSlhg&_nc_ss=7b2a8&oh=00_AQTo3vK9Lb_OgAIJ27E8DiXbaoaxNjLfu3OC4fIJskFYmw&oe=6AF735B7"
                 alt="Elena Marchetti"
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="flex flex-col items-center">
               <h4 className="font-heading font-black text-lg sm:text-xl text-[var(--app-text-primary)] tracking-tight">
-                Elena Marchetti
+                Lizan
               </h4>
               <p className="text-xs sm:text-sm text-[var(--app-text-secondary)] font-medium mt-0.5">
                 Founder, ViewRoom
