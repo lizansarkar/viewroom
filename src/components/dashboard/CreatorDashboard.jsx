@@ -950,27 +950,28 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 {newTourLogo ? (
-                  <div className="relative w-12 h-12 rounded-sm overflow-hidden bg-base-100 border border-base-content/20 shrink-0 shadow-xs">
+                  <div className="relative w-28 h-16 rounded-sm bg-base-100 border border-base-content/20 shrink-0 shadow-xs p-1.5 flex items-center justify-center">
                     <img
                       src={newTourLogo}
                       alt="Uploaded Logo"
-                      className="w-full h-full object-cover"
+                      className="max-w-full max-h-full object-contain"
                     />
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-sm bg-base-100 border border-dashed border-base-content/25 flex items-center justify-center text-base-content/40 text-lg shrink-0">
-                    <FontAwesomeIcon icon={faBuilding} />
+                  <div className="w-28 h-16 rounded-sm bg-base-100 border border-dashed border-base-content/25 flex flex-col items-center justify-center text-base-content/40 text-xs shrink-0 gap-1">
+                    <FontAwesomeIcon icon={faBuilding} className="text-base" />
+                    <span className="text-[9px] font-semibold">No Logo</span>
                   </div>
                 )}
                 <div>
                   <h4 className="font-bold text-xs text-base-content flex items-center gap-1.5">
-                    <span>Space Brand Logo (Cafe, Hotel, Home)</span>
+                    <span>Space Brand Logo (Cafe, Hotel, Home, Company)</span>
                     <span className="text-[10px] font-semibold text-base-content/50 uppercase px-1.5 py-0.2 rounded-sm bg-base-200">
                       Optional
                     </span>
                   </h4>
                   <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
-                    Upload your cafe, hotel, restaurant, or property logo. It will appear in the top-left corner of the 360° tour for all visitors.
+                    Upload your official transparent PNG or SVG logo. It will appear prominently in the top-left corner above the room name in the 360° virtual tour.
                   </p>
                 </div>
               </div>

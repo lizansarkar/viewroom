@@ -26,7 +26,8 @@ import {
   createDroneHotspotHtml,
 } from "../../utils/tourHotspots";
 
-export default function VirtualTourViewer({ _fullScreenMode = false, overrideTourId }) {
+export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenMode = false, overrideTourId }) {
+  const isPublicViewer = fullScreenMode || _fullScreenMode;
   const [searchParams] = useSearchParams();
   const { tourId } = useParams();
   const targetTourId = overrideTourId || searchParams.get("id") || tourId;
@@ -264,9 +265,7 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           }));
           setTourNodes(mappedNodes);
           setCurrentPanoramaId(mappedNodes[0].id);
-          if (matchedTour.brandLogo || matchedTour.logoUrl) {
-            setTourBrandLogo(matchedTour.brandLogo || matchedTour.logoUrl);
-          }
+          setTourBrandLogo(matchedTour.brandLogo || matchedTour.logoUrl || "");
 
           if (matchedTour.audioConfig) {
             try {
@@ -601,46 +600,51 @@ export default function VirtualTourViewer({ _fullScreenMode = false, overrideTou
           <div className="absolute inset-0 bg-white animate-in fade-in fade-out duration-300 pointer-events-none z-50" />
         )}
 
-        {/* TOP-LEFT EXIT / BACK BUTTON & SCENE BADGE */}
-        <div className="absolute top-5 left-5 z-20 flex items-center gap-2 pointer-events-auto">
-          <button
-            type="button"
-            onClick={() => {
-              if (window.history.length > 1) {
-                window.history.back();
-              } else {
-                window.location.href = "/dashboard";
-              }
-            }}
-            className="px-3.5 py-2 rounded-full bg-black/60 hover:bg-black/85 border border-white/25 text-white text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg cursor-pointer hover:scale-105"
-            title="Exit Tour & Go Back"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
-              <path d="m15 18-6-6 6-6"/>
-            </svg>
-            <span>Back</span>
-          </button>
+        {/* TOP-LEFT BRAND LOGO & CURRENT ROOM NAME (Commercial 360 Style - Matching Reference Image) */}
+        <div className="absolute top-5 left-5 sm:top-6 sm:left-7 z-20 flex flex-col items-start pointer-events-auto select-none">
+          {/* Subtle Floating Back Button */}
+          {(!isPublicViewer || window.history.length > 1) && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = "/dashboard";
+                }
+              }}
+              className="mb-2.5 px-3 py-1.5 rounded-full bg-black/45 hover:bg-black/80 border border-white/20 text-white/90 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg cursor-pointer hover:scale-105"
+              title="Exit Tour & Go Back"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              <span>Back</span>
+            </button>
+          )}
 
-          <div
-            style={{
-              backgroundColor: "rgba(15, 15, 20, 0.45)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-            }}
-            className="flex items-center gap-2.5 border border-white/25 px-4 py-2 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
-          >
-            {tourBrandLogo ? (
+          {/* Prominent Space Brand Logo (Matching Reference Image) */}
+          {tourBrandLogo ? (
+            <div className="max-w-[170px] sm:max-w-[210px] max-h-16 sm:max-h-20 flex items-center mb-1">
               <img
                 src={tourBrandLogo}
                 alt="Brand Logo"
-                className="w-5 h-5 rounded-sm object-cover border border-white/40 shrink-0"
+                className="max-h-16 sm:max-h-20 w-auto object-contain drop-shadow-[0_4px_14px_rgba(0,0,0,0.85)] filter"
               />
-            ) : (
-              <FontAwesomeIcon icon={faLayerGroup} className="text-white text-xs sm:text-sm" />
-            )}
-            <span className="text-xs sm:text-sm font-extrabold tracking-wider text-white uppercase drop-shadow-sm">
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2.5 py-1 rounded-sm bg-black/40 backdrop-blur-md border border-white/15 text-white/90 text-xs font-extrabold tracking-wider uppercase shadow-md">
+                ViewRoom 360°
+              </span>
+            </div>
+          )}
+
+          {/* Current Room / Scene Name directly below the logo (Matching Reference Image: Aerial View) */}
+          <div className="text-left select-none max-w-xs sm:max-w-md">
+            <h1 className="text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight">
               {activeNode.name}
-            </span>
+            </h1>
           </div>
         </div>
 

@@ -100,6 +100,10 @@ export async function apiGetTourById(id) {
   }
 }
 
+export async function apiGetProducts() {
+  return { success: true, data: [] };
+}
+
 // -------------------------------------------------------------
 // 3. SPATIAL AI CONCIERGE APIS
 // -------------------------------------------------------------
@@ -458,6 +462,7 @@ export default {
   apiGetProfile,
   apiGetTours,
   apiGetTourById,
+  apiGetProducts,
   apiAskSpatialConcierge,
   apiGetOwnerStats,
   apiGetOwnerTours,
