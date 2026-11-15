@@ -59,11 +59,26 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
         apiGetAdminContent(),
       ]);
 
-      if (fetchedStats) setStats(fetchedStats);
-      if (fetchedUsers) setUsersList(fetchedUsers);
-      if (fetchedContent) setToursList(fetchedContent);
+      if (fetchedStats) {
+        setStats(fetchedStats.data || fetchedStats);
+      }
+      const safeUsers = Array.isArray(fetchedUsers)
+        ? fetchedUsers
+        : Array.isArray(fetchedUsers?.data)
+        ? fetchedUsers.data
+        : [];
+      setUsersList(safeUsers);
+
+      const safeTours = Array.isArray(fetchedContent)
+        ? fetchedContent
+        : Array.isArray(fetchedContent?.data)
+        ? fetchedContent.data
+        : [];
+      setToursList(safeTours);
     } catch (err) {
       console.warn("Error loading admin dashboard:", err);
+      setUsersList([]);
+      setToursList([]);
     } finally {
       setLoading(false);
     }
@@ -72,9 +87,10 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
   const handleRoleChange = async (userId, newRole) => {
     const res = await apiUpdateUserRole(userId, newRole);
     if (res.success) {
-      setUsersList((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
-      );
+      setUsersList((prev) => {
+        const arr = Array.isArray(prev) ? prev : [];
+        return arr.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
+      });
     }
   };
 
@@ -94,21 +110,28 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
     if (!deleteConfirmModal.tourId) return;
     const res = await apiAdminDeleteTour(deleteConfirmModal.tourId);
     if (res.success) {
-      setToursList((prev) => prev.filter((t) => t.id !== deleteConfirmModal.tourId));
+      setToursList((prev) => {
+        const arr = Array.isArray(prev) ? prev : [];
+        return arr.filter((t) => t.id !== deleteConfirmModal.tourId);
+      });
     }
     setDeleteConfirmModal({ isOpen: false, tourId: null });
   };
 
-  const filteredUsers = usersList.filter(
+  const safeUsers = Array.isArray(usersList) ? usersList : [];
+  const filteredUsers = safeUsers.filter(
     (u) =>
-      u.email.toLowerCase().includes(userSearch.toLowerCase()) ||
-      (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase()))
+      u &&
+      ((u.email && u.email.toLowerCase().includes(userSearch.toLowerCase())) ||
+       (u.name && u.name.toLowerCase().includes(userSearch.toLowerCase())))
   );
 
-  const filteredTours = toursList.filter(
+  const safeTours = Array.isArray(toursList) ? toursList : [];
+  const filteredTours = safeTours.filter(
     (t) =>
-      t.title.toLowerCase().includes(contentSearch.toLowerCase()) ||
-      (t.category && t.category.toLowerCase().includes(contentSearch.toLowerCase()))
+      t &&
+      ((t.title && t.title.toLowerCase().includes(contentSearch.toLowerCase())) ||
+       (t.category && t.category.toLowerCase().includes(contentSearch.toLowerCase())))
   );
 
   if (loading) {
@@ -219,7 +242,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
                   <FontAwesomeIcon icon={faUserCheck} className="text-base-content/60" />
-                  Recent Registered Users ({usersList.length})
+                  Recent Registered Users ({safeUsers.length})
                 </h3>
                 <button
                   onClick={() => parentSetActiveTab && parentSetActiveTab("users")}
@@ -230,7 +253,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               </div>
 
               <div className="space-y-2.5">
-                {usersList.slice(0, 3).map((u) => (
+                {safeUsers.slice(0, 3).map((u) => (
                   <div
                     key={u.id}
                     className="p-3 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
@@ -256,7 +279,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
                   <FontAwesomeIcon icon={faBuilding} className="text-base-content/60" />
-                  Platform Tours Moderation ({toursList.length})
+                  Platform Tours Moderation ({safeTours.length})
                 </h3>
                 <button
                   onClick={() => parentSetActiveTab && parentSetActiveTab("content_moderation")}
@@ -267,7 +290,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
               </div>
 
               <div className="space-y-2.5">
-                {toursList.slice(0, 3).map((t) => (
+                {safeTours.slice(0, 3).map((t) => (
                   <div
                     key={t.id}
                     className="p-3 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
@@ -294,7 +317,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
             <div>
               <h3 className="font-bold text-base text-base-content flex items-center gap-2">
                 <FontAwesomeIcon icon={faUserCheck} className="text-base-content/60" />
-                User Management & Role Assignment ({usersList.length})
+                User Management & Role Assignment ({safeUsers.length})
               </h3>
               <p className="text-xs text-base-content/60 mt-0.5">
                 Promote users, update roles, and manage permissions (Syncs to Neon DB)

@@ -37,9 +37,10 @@ router.post("/google", async (req, res) => {
     }
 
     const allowedSelfRoles = ["CREATOR", "CLIENT", "VISITOR"];
+    // Default role: CREATOR (per user specification)
     const targetRole = role && allowedSelfRoles.includes(role.toUpperCase())
       ? role.toUpperCase()
-      : "CLIENT";
+      : "CREATOR";
 
     // 1. Check if user exists by email or firebaseUid
     let existingUser = null;
@@ -59,7 +60,9 @@ router.post("/google", async (req, res) => {
     let user = null;
 
     if (existingUser) {
-      // 2. User exists: Update profile picture, name, and link firebaseUid
+      // 2. User exists: Update profile picture, name, link firebaseUid, and ensure CREATOR role (preserve ADMIN)
+      const resolvedRole = existingUser.role === "ADMIN" ? "ADMIN" : (targetRole || "CREATOR");
+
       try {
         user = await prisma.user.update({
           where: { id: existingUser.id },
@@ -67,6 +70,7 @@ router.post("/google", async (req, res) => {
             name: name || existingUser.name,
             avatar: avatar || existingUser.avatar,
             firebaseUid: firebaseUid || existingUser.firebaseUid,
+            role: resolvedRole,
             authProvider: existingUser.authProvider === "email" && !existingUser.passwordHash ? "google" : existingUser.authProvider,
           },
         });
@@ -77,6 +81,7 @@ router.post("/google", async (req, res) => {
           name: name || existingUser.name,
           avatar: avatar || existingUser.avatar,
           firebaseUid: firebaseUid || existingUser.firebaseUid,
+          role: resolvedRole,
         };
       }
     } else {

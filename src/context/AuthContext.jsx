@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
   /**
    * Google OAuth Login / Register via Firebase + Backend PostgreSQL Sync
    */
-  const loginWithGoogle = async ({ role = "CLIENT" } = {}) => {
+  const loginWithGoogle = async ({ role = "CREATOR" } = {}) => {
     setAuthLoading(true);
     try {
       // 1. Trigger Firebase Google Popup
@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
         name: displayName,
         avatar: photoURL,
         firebaseUid: uid,
-        role,
+        role: role || "CREATOR",
         idToken,
       });
 
@@ -78,7 +78,7 @@ export function AuthProvider({ children }) {
         name: displayName || email.split("@")[0],
         email,
         avatar: photoURL,
-        role,
+        role: res.user?.role || role || "CREATOR",
         firebaseUid: uid,
         authProvider: "google",
       };
