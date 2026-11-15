@@ -253,17 +253,30 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
             </button>
           </div>
 
-          {/* Active Role Indicator Badge - Prominently displayed above Overview */}
-          <div className="p-3 rounded-sm bg-base-200/80 flex items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-base-content truncate">
-                {user?.name || "ViewRoom User"}
-              </span>
-              <span className="text-[10px] font-medium text-base-content/50 uppercase tracking-wider">
-                Current Role
-              </span>
+          {/* Active Role Indicator Badge with Profile Avatar */}
+          <div className="p-3 rounded-sm bg-base-200/80 flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.name || "User"}
+                  className="w-8 h-8 rounded-full object-cover border border-base-content/20 shrink-0 shadow-xs"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-base-content/10 border border-base-content/20 flex items-center justify-center text-xs font-black text-base-content shrink-0 shadow-xs">
+                  {(user?.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-bold text-base-content truncate">
+                  {user?.name || "ViewRoom User"}
+                </span>
+                <span className="text-[10px] font-medium text-base-content/50 uppercase tracking-wider truncate">
+                  {user?.email || "Current Role"}
+                </span>
+              </div>
             </div>
-            <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-sm bg-base-content text-base-100 shadow-xs tracking-wider">
+            <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-sm bg-base-content text-base-100 shadow-xs tracking-wider shrink-0">
               {activeRole}
             </span>
           </div>

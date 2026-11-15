@@ -12,13 +12,18 @@ model User {
   id            String         @id @default(uuid())
   email         String         @unique
   name          String?
+  avatar        String?        // Profile picture URL (Google photoURL or custom upload)
   passwordHash  String?
   role          Role           @default(CLIENT)
+  firebaseUid   String?        @unique
+  authProvider  String         @default("email") // "email" | "google"
+  bio           String?
   tours         VirtualTour[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   @@index([role])
+  @@index([firebaseUid])
 }
 
 enum Role {

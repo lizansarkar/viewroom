@@ -96,7 +96,7 @@ function calculatePasswordStrength(pass) {
 function Auth() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { register, login } = useAuth();
+  const { register, login, loginWithGoogle } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -193,17 +193,7 @@ function Auth() {
     setError("");
     setIsSubmitting(true);
     try {
-      let res;
-      if (isSignUp) {
-        res = await register({
-          name: "Demo Creator",
-          email: `creator_${Date.now()}@viewroom.com`,
-          password: "Password123!",
-          role: selectedRole,
-        });
-      } else {
-        res = await login({ email: "user@gmail.com", password: "Password123!" });
-      }
+      const res = await loginWithGoogle({ role: selectedRole });
       const userRole = res?.user?.role || selectedRole;
       if (userRole === "CREATOR" || userRole === "ADMIN") {
         navigate("/dashboard/creator");
@@ -212,7 +202,11 @@ function Auth() {
       }
     } catch (err) {
       console.error("Google Auth error:", err);
-      setError(err.message || "Google Authentication failed.");
+      if (err?.code === "auth/popup-closed-by-user") {
+        setError("Sign in popup was closed. Please try again.");
+      } else {
+        setError(err.message || "Google Authentication failed. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

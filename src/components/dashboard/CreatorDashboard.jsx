@@ -584,16 +584,29 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         <div className="space-y-6">
           {/* Top Welcome / Header Banner */}
           <div className="p-6 sm:p-7 rounded-sm bg-base-100 border border-base-content/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
-            <div>
-              <span className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider block mb-1">
-                360° Real Estate Studio & Agency Dashboard
-              </span>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
-                Welcome back, {user?.name || "360° Creator"}
-              </h2>
-              <p className="text-xs text-base-content/70 mt-1 max-w-xl">
-                Batch upload equirectangular panoramas, configure opening camera views, and link rooms with interactive floor pucks.
-              </p>
+            <div className="flex items-center gap-4">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.name || "Creator"}
+                  className="w-14 h-14 rounded-full object-cover border-2 border-primary/30 shadow-md shrink-0"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-lg font-black text-primary shadow-xs shrink-0">
+                  {(user?.name || "C").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <span className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider block mb-1">
+                  360° Real Estate Studio & Agency Dashboard
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-base-content">
+                  Welcome back, {user?.name || "360° Creator"}
+                </h2>
+                <p className="text-xs text-base-content/70 mt-1 max-w-xl">
+                  Batch upload equirectangular panoramas, configure opening camera views, and link rooms with interactive floor pucks.
+                </p>
+              </div>
             </div>
 
             <Button

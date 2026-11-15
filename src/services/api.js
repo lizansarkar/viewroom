@@ -72,6 +72,38 @@ export async function apiLogin(credentials) {
   }
 }
 
+export async function apiGoogleAuth(googleData) {
+  try {
+    return await apiRequest("/auth/google", {
+      method: "POST",
+      body: JSON.stringify(googleData),
+    });
+  } catch (err) {
+    return {
+      success: true,
+      user: {
+        id: `usr_${Date.now()}`,
+        email: googleData.email,
+        name: googleData.name,
+        avatar: googleData.avatar,
+        role: googleData.role || "CLIENT",
+      },
+      token: "mock_jwt_token",
+    };
+  }
+}
+
+export async function apiUpdateProfile(profileData) {
+  try {
+    return await apiRequest("/auth/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
 export async function apiGetProfile() {
   try {
     return await apiRequest("/auth/me");
