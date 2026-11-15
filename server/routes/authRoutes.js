@@ -71,7 +71,7 @@ router.post("/google", async (req, res) => {
             avatar: avatar || existingUser.avatar,
             firebaseUid: firebaseUid || existingUser.firebaseUid,
             role: resolvedRole,
-            authProvider: existingUser.authProvider === "email" && !existingUser.passwordHash ? "google" : existingUser.authProvider,
+            authProvider: "google",
           },
         });
       } catch (updateErr) {

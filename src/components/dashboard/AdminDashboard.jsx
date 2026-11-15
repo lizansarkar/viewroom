@@ -259,11 +259,26 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                     className="p-3 rounded-sm bg-base-200/50 border border-base-content/10 flex items-center justify-between text-xs"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-sm bg-base-200 text-base-content flex items-center justify-center font-bold text-[10px]">
-                        {u.name ? u.name[0] : u.email[0]}
-                      </div>
+                      {u.avatar ? (
+                        <img
+                          src={u.avatar}
+                          alt={u.name || "User"}
+                          className="w-7 h-7 rounded-full object-cover border border-base-content/20 shadow-xs shrink-0"
+                        />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[10px] shrink-0">
+                          {u.name ? u.name[0].toUpperCase() : u.email[0].toUpperCase()}
+                        </div>
+                      )}
                       <div>
-                        <p className="font-bold text-base-content">{u.email}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-bold text-base-content">{u.email}</p>
+                          {u.authProvider === "google" && (
+                            <span className="px-1.5 py-0.2 rounded-sm bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase tracking-wider border border-emerald-500/20">
+                              Google
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[10px] text-base-content/60">{u.name || "User"}</p>
                       </div>
                     </div>
@@ -352,11 +367,26 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   <tr key={u.id} className="hover:bg-base-200/40 transition-colors">
                     <td className="p-3.5 font-semibold">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-sm bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[11px]">
-                          {u.name ? u.name[0] : u.email[0]}
-                        </div>
+                        {u.avatar ? (
+                          <img
+                            src={u.avatar}
+                            alt={u.name || "User"}
+                            className="w-8 h-8 rounded-full object-cover border border-base-content/20 shadow-xs shrink-0"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-base-200 text-base-content border border-base-content/10 flex items-center justify-center font-bold text-[11px] shrink-0">
+                            {u.name ? u.name[0].toUpperCase() : u.email[0].toUpperCase()}
+                          </div>
+                        )}
                         <div>
-                          <p className="font-bold text-base-content">{u.email}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-bold text-base-content">{u.email}</p>
+                            {u.authProvider === "google" && (
+                              <span className="px-1.5 py-0.2 rounded-sm bg-emerald-500/10 text-emerald-600 text-[9px] font-black uppercase tracking-wider border border-emerald-500/20">
+                                Google
+                              </span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-base-content/60">{u.name || "User"}</p>
                         </div>
                       </div>
