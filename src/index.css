@@ -250,40 +250,40 @@ canvas {
 
 @keyframes vrDoorSwing {
   0%, 15% {
-    transform: perspective(130px) rotateY(0deg);
+    transform: perspective(110px) rotateY(0deg);
   }
-  42%, 65% {
-    transform: perspective(130px) rotateY(56deg);
+  40%, 68% {
+    transform: perspective(110px) rotateY(54deg);
   }
   88%, 100% {
-    transform: perspective(130px) rotateY(0deg);
+    transform: perspective(110px) rotateY(0deg);
   }
 }
 
 @keyframes vrDoorPulse {
   0%, 100% {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.65), 0 0 0 0 rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 255, 255, 0.35);
   }
   50% {
-    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.75), 0 0 0 6px rgba(255, 255, 255, 0);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7), 0 0 0 5px rgba(255, 255, 255, 0);
   }
 }
 
 .vr-door-ring {
-  animation: vrDoorPulse 3s ease-in-out infinite;
+  animation: vrDoorPulse 3.2s ease-in-out infinite;
 }
 
 .vr-door-leaf {
   transform-origin: right center;
   transform-style: preserve-3d;
-  animation: vrDoorSwing 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: vrDoorSwing 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
   will-change: transform;
 }
 
 .group:hover .vr-door-leaf {
   animation-play-state: paused !important;
-  transform: perspective(130px) rotateY(65deg) !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform: perspective(110px) rotateY(62deg) !important;
+  transition: transform 0.25s ease-out !important;
 }
 
 

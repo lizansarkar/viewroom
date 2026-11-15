@@ -63,52 +63,52 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
     `;
   }
 
-  // 2. DOORWAY / PORTAL (অ্যানিমেটেড দরজা - 3D ওপেন ও ক্লোজ সাইকেল)
+  // 2. DOORWAY / PORTAL (অ্যানিমেটেড প্রফেশনাল ৩D দরজা)
   if (iconType === "door") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
         <style>
           @keyframes vrDoorSwing {
-            0%, 15% { transform: perspective(130px) rotateY(0deg); }
-            42%, 65% { transform: perspective(130px) rotateY(56deg); }
-            88%, 100% { transform: perspective(130px) rotateY(0deg); }
+            0%, 15% { transform: perspective(110px) rotateY(0deg); }
+            40%, 68% { transform: perspective(110px) rotateY(54deg); }
+            88%, 100% { transform: perspective(110px) rotateY(0deg); }
           }
           @keyframes vrDoorPulse {
-            0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.65), 0 0 0 0 rgba(255,255,255,0.4); }
-            50% { box-shadow: 0 4px 22px rgba(0,0,0,0.75), 0 0 0 6px rgba(255,255,255,0); }
+            0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.6), 0 0 0 0 rgba(255,255,255,0.35); }
+            50% { box-shadow: 0 4px 18px rgba(0,0,0,0.7), 0 0 0 5px rgba(255,255,255,0); }
           }
           .vr-door-ring {
-            animation: vrDoorPulse 3s ease-in-out infinite;
+            animation: vrDoorPulse 3.2s ease-in-out infinite;
           }
           .vr-door-leaf {
             transform-origin: right center;
             transform-style: preserve-3d;
-            animation: vrDoorSwing 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            animation: vrDoorSwing 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
             will-change: transform;
           }
           .group:hover .vr-door-leaf {
             animation-play-state: paused !important;
-            transform: perspective(130px) rotateY(65deg) !important;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: perspective(110px) rotateY(62deg) !important;
+            transition: transform 0.25s ease-out !important;
           }
         </style>
 
         <!-- Room Target Title Label Pill -->
-        <div class="mb-2 px-3 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_14px_rgba(0,0,0,0.35)] border border-black/15 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-105 pointer-events-none whitespace-nowrap">
+        <div class="mb-2 px-3 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_12px_rgba(0,0,0,0.3)] border border-black/10 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-105 pointer-events-none whitespace-nowrap">
           <span class="text-xs font-black">🚪</span>
           <span>${displayLabel}</span>
         </div>
 
-        <!-- Circular White Ring Puck (Matching Reference Images) -->
-        <div class="vr-door-ring relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3.5px] border-white bg-black/40 backdrop-blur-xs flex items-center justify-center transition-all duration-300 group-hover:scale-115">
-          <!-- 3D Perspective Door Frame & Leaf Stage -->
-          <div style="perspective: 130px;" class="relative w-8 h-8 flex items-center justify-center pointer-events-none">
-            <!-- Hollow White Door Frame on the Left (Revealed on Open) -->
-            <div class="absolute left-[6px] top-[3.5px] w-[15px] h-[25px] border-[2.2px] border-white rounded-[1px] box-border"></div>
+        <!-- Circular White Ring Puck (No blur, crystal clear matching reference) -->
+        <div class="vr-door-ring relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3.5px] border-white bg-black/25 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+          <!-- 3D Perspective Door Stage -->
+          <div style="perspective: 110px;" class="relative w-7 h-8 flex items-center justify-center pointer-events-none">
+            <!-- Hollow White Door Frame on Left (Revealed When Open) -->
+            <div class="absolute left-[3px] top-[1px] w-[19px] h-[30px] border-[2.2px] border-white rounded-[1.5px] box-border"></div>
             <!-- Solid White Door Leaf (Swings in 3D Perspective) -->
-            <div class="vr-door-leaf absolute left-[6px] top-[3.5px] w-[15px] h-[25px] bg-white rounded-[1px] box-border shadow-xs">
+            <div class="vr-door-leaf absolute left-[3px] top-[1px] w-[19px] h-[30px] bg-white rounded-[1.5px] box-border shadow-xs">
               <!-- Dark Doorknob Dot -->
-              <div class="absolute left-[2.5px] top-1/2 -translate-y-1/2 w-[2.8px] h-[2.8px] bg-neutral-900 rounded-full"></div>
+              <div class="absolute left-[3px] top-1/2 -translate-y-1/2 w-[2.8px] h-[2.8px] bg-neutral-900 rounded-full"></div>
             </div>
           </div>
         </div>
