@@ -602,7 +602,7 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
 
         {/* TOP-LEFT BRAND LOGO & CURRENT ROOM NAME (Commercial 360 Style - Matching Reference Image) */}
         <div className="absolute top-5 left-5 sm:top-6 sm:left-7 z-20 flex flex-col items-start pointer-events-auto select-none">
-          {/* Subtle Floating Back Button */}
+          {/* Pure White Text Back Button with Left Arrow (No Background Box) */}
           {(!isPublicViewer || window.history.length > 1) && (
             <button
               type="button"
@@ -613,13 +613,14 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
                   window.location.href = "/dashboard";
                 }
               }}
-              className="mb-2.5 px-3 py-1.5 rounded-full bg-black/45 hover:bg-black/80 border border-white/20 text-white/90 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg cursor-pointer hover:scale-105"
+              style={{ color: "#ffffff", textShadow: "0 2px 4px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.8)" }}
+              className="group mb-2 flex items-center gap-1.5 !text-white text-xs sm:text-sm font-extrabold tracking-wide cursor-pointer transition-transform duration-200 hover:-translate-x-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] select-none bg-transparent border-0 p-0"
               title="Exit Tour & Go Back"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white transition-transform group-hover:-translate-x-0.5 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
                 <path d="m15 18-6-6 6-6"/>
               </svg>
-              <span>Back</span>
+              <span className="leading-none">Back</span>
             </button>
           )}
 
