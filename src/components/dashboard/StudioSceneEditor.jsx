@@ -441,7 +441,10 @@ export default function StudioSceneEditor({
             )}
 
             {/* Current Room Title directly below the logo (Matching Reference Image: Aerial View) */}
-            <h2 className="text-white font-extrabold text-base sm:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight">
+            <h2
+              style={{ color: "#ffffff", textShadow: "0 2px 4px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.8)" }}
+              className="!text-white font-extrabold text-base sm:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight select-none"
+            >
               {activeScene?.name || `Room ${activeSceneIndex + 1}`}
             </h2>
 
@@ -643,6 +646,7 @@ export default function StudioSceneEditor({
                       >
                         <option value="arrow">Chevron Arrow ➔</option>
                         <option value="door">Doorway 🚪</option>
+                        <option value="puck">Animated Round Beacon ⭕</option>
                         <option value="stairs">Staircase 🪜</option>
                       </select>
                     </div>

@@ -245,18 +245,18 @@ canvas {
 }
 
 /* =========================================================
-   360° ANIMATED DOORWAY HOTSPOT (Matterport / Commercial Style)
+   360° ANIMATED DOORWAY HOTSPOT (2D GPU Composited — Zero Lag)
    ========================================================= */
 
-@keyframes vrDoorSwing {
-  0%, 15% {
-    transform: perspective(110px) rotateY(0deg);
+@keyframes vrDoorSwing2D {
+  0% {
+    transform: scaleX(1) skewY(0deg);
   }
-  40%, 68% {
-    transform: perspective(110px) rotateY(54deg);
+  30%, 65% {
+    transform: scaleX(0.28) skewY(-5deg);
   }
-  88%, 100% {
-    transform: perspective(110px) rotateY(0deg);
+  85%, 100% {
+    transform: scaleX(1) skewY(0deg);
   }
 }
 
@@ -270,20 +270,43 @@ canvas {
 }
 
 .vr-door-ring {
-  animation: vrDoorPulse 3.2s ease-in-out infinite;
+  animation: vrDoorPulse 2.4s ease-in-out infinite;
 }
 
 .vr-door-leaf {
   transform-origin: right center;
-  transform-style: preserve-3d;
-  animation: vrDoorSwing 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  animation: vrDoorSwing2D 2.4s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
   will-change: transform;
 }
 
 .group:hover .vr-door-leaf {
   animation-play-state: paused !important;
-  transform: perspective(110px) rotateY(62deg) !important;
-  transition: transform 0.25s ease-out !important;
+  transform: scaleX(0.25) skewY(-6deg) !important;
+  transition: transform 0.2s ease-out !important;
+}
+
+/* =========================================================
+   360° ANIMATED ROUND BEACON (Matterport / Image 4 Style)
+   ========================================================= */
+
+@keyframes vrBeaconWave {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+
+.vr-beacon-ring {
+  animation: vrDoorPulse 2.4s ease-in-out infinite;
+}
+
+.vr-beacon-wave {
+  animation: vrBeaconWave 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  will-change: transform, opacity;
 }
 
 

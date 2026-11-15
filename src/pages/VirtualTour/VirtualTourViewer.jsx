@@ -642,7 +642,10 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
 
           {/* Current Room / Scene Name directly below the logo (Matching Reference Image: Aerial View) */}
           <div className="text-left select-none max-w-xs sm:max-w-md">
-            <h1 className="!text-white text-sm sm:text-base md:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight">
+            <h1
+              style={{ color: "#ffffff", textShadow: "0 2px 4px rgba(0,0,0,0.95), 0 0 8px rgba(0,0,0,0.8)" }}
+              className="!text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight"
+            >
               {activeNode.name}
             </h1>
           </div>

@@ -17,6 +17,15 @@ export const getHotspotIcon = (type) => {
   }
 };
 
+// Helper for Pure White Bold Label with Drop Shadow (Matching Reference Image)
+const makeLabelHtml = (text) => `
+  <div class="mt-2 flex items-center justify-center pointer-events-none select-none">
+    <span style="color: #ffffff !important; text-shadow: 0 2px 4px rgba(0,0,0,0.95), 0 0 10px rgba(0,0,0,0.85);" class="!text-white text-xs sm:text-sm font-extrabold tracking-wide uppercase whitespace-nowrap drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+      ${text}
+    </span>
+  </div>
+`;
+
 export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   const displayLabel = label || "NAVIGATE";
   let iconType = String(rawIconType || "").toLowerCase().trim();
@@ -31,25 +40,21 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   else if (iconType === "stair" || iconType === "step") iconType = "stairs";
   else if (iconType === "bed") iconType = "bedroom";
 
-  // Fallback check against label text if iconType is generic or missing
-  if (!iconType || iconType === "floor_puck" || iconType === "arrow" || iconType === "puck") {
+  // Fallback check against label text ONLY if iconType is generic or missing
+  if (!iconType || iconType === "floor_puck" || iconType === "arrow") {
     const lbl = displayLabel.toLowerCase();
     if (lbl.includes("bath") || lbl.includes("washroom") || lbl.includes("toilet")) iconType = "bathroom";
     else if (lbl.includes("kitchen") || lbl.includes("cook") || lbl.includes("stove")) iconType = "kitchen";
     else if (lbl.includes("dining") || lbl.includes("cafe") || lbl.includes("food")) iconType = "dining";
     else if (lbl.includes("door") || lbl.includes("enter") || lbl.includes("entry") || lbl.includes("suite")) iconType = "door";
     else if (lbl.includes("stair") || lbl.includes("step") || lbl.includes("level")) iconType = "stairs";
-    else if (lbl.includes("bed") || lbl.includes("room")) iconType = "bedroom";
+    else if (lbl.includes("bedroom")) iconType = "bedroom";
   }
 
   // 1. CHEVRON ARROW (তীর)
   if (iconType === "arrow") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2.5 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_15px_rgba(0,0,0,0.35)] border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs font-black">➔</span>
-          <span>${displayLabel}</span>
-        </div>
         <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
           <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
           <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
@@ -59,59 +64,28 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
             <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
 
-  // 2. DOORWAY / PORTAL (অ্যানিমেটেড প্রফেশনাল ৩D দরজা)
+  // 2. DOORWAY / PORTAL (অ্যানিমেটেড দরজা - দ্রুত, লাইটওয়েট ও স্মুথ ২D অ্যাক্সিলারেশন)
   if (iconType === "door") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <style>
-          @keyframes vrDoorSwing {
-            0%, 15% { transform: perspective(110px) rotateY(0deg); }
-            40%, 68% { transform: perspective(110px) rotateY(54deg); }
-            88%, 100% { transform: perspective(110px) rotateY(0deg); }
-          }
-          @keyframes vrDoorPulse {
-            0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,0.6), 0 0 0 0 rgba(255,255,255,0.35); }
-            50% { box-shadow: 0 4px 18px rgba(0,0,0,0.7), 0 0 0 5px rgba(255,255,255,0); }
-          }
-          .vr-door-ring {
-            animation: vrDoorPulse 3.2s ease-in-out infinite;
-          }
-          .vr-door-leaf {
-            transform-origin: right center;
-            transform-style: preserve-3d;
-            animation: vrDoorSwing 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-            will-change: transform;
-          }
-          .group:hover .vr-door-leaf {
-            animation-play-state: paused !important;
-            transform: perspective(110px) rotateY(62deg) !important;
-            transition: transform 0.25s ease-out !important;
-          }
-        </style>
-
-        <!-- Room Target Title Label Pill -->
-        <div class="mb-2 px-3 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-[0_4px_12px_rgba(0,0,0,0.3)] border border-black/10 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-105 pointer-events-none whitespace-nowrap">
-          <span class="text-xs font-black">🚪</span>
-          <span>${displayLabel}</span>
-        </div>
-
         <!-- Circular White Ring Puck (No blur, crystal clear matching reference) -->
-        <div class="vr-door-ring relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3.5px] border-white bg-black/25 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-          <!-- 3D Perspective Door Stage -->
-          <div style="perspective: 110px;" class="relative w-7 h-8 flex items-center justify-center pointer-events-none">
-            <!-- Hollow White Door Frame on Left (Revealed When Open) -->
+        <div class="vr-door-ring relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3.5px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6)] transition-all duration-300 group-hover:scale-110">
+          <div class="relative w-7 h-8 flex items-center justify-center pointer-events-none">
+            <!-- Hollow White Door Frame on Left (Revealed on Open) -->
             <div class="absolute left-[3px] top-[1px] w-[19px] h-[30px] border-[2.2px] border-white rounded-[1.5px] box-border"></div>
-            <!-- Solid White Door Leaf (Swings in 3D Perspective) -->
+            <!-- Solid White Door Leaf (Snappy Smooth Swing) -->
             <div class="vr-door-leaf absolute left-[3px] top-[1px] w-[19px] h-[30px] bg-white rounded-[1.5px] box-border shadow-xs">
               <!-- Dark Doorknob Dot -->
               <div class="absolute left-[3px] top-1/2 -translate-y-1/2 w-[2.8px] h-[2.8px] bg-neutral-900 rounded-full"></div>
             </div>
           </div>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -120,18 +94,15 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "bathroom") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🛁</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 11h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/>
             <path d="M6 11V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/>
             <circle cx="11" cy="6" r="0.8" fill="white"/>
             <path d="M5 18l-1 2m16-2l1 2"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -140,18 +111,15 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "kitchen") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🍳</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="6" width="18" height="12" rx="3"/>
             <circle cx="8" cy="11" r="2.2" fill="white"/>
             <circle cx="16" cy="11" r="2.2" fill="white"/>
             <path d="M4 15h16"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -160,15 +128,12 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "dining") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🍽️</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 2v20M18 2a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3M6 2v7a3 3 0 0 0 6 0V2M9 12v10"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -177,16 +142,13 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "stairs") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🪜</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 20h4v-4h4v-4h4V8h4V4"/>
             <path d="M6 10l8-8m0 0h-5m5 0v5"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -195,17 +157,14 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "bedroom") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">🛏️</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-9 h-9 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 19h20M2 17v2m20-2v2M2 8v9h20V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
             <circle cx="7" cy="11" r="2" fill="white"/>
             <circle cx="17" cy="11" r="2" fill="white"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
@@ -214,32 +173,29 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
   if (iconType === "info") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-          <span class="text-xs">ℹ️</span>
-          <span>${displayLabel}</span>
-        </div>
-        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-115 text-white">
-          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-[3px] border-white bg-black/25 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-110 text-white">
+          <svg class="w-8 h-8 text-white fill-none stroke-current filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"/>
             <line x1="12" y1="8" x2="12.01" y2="8" stroke-width="3"/>
             <line x1="12" y1="12" x2="12" y2="16"/>
           </svg>
         </div>
+        ${makeLabelHtml(displayLabel)}
       </div>
     `;
   }
 
-  // 9. CONCENTRIC TARGET FLOOR PUCK (গোল / টার্গেট রিং)
+  // 9. ANIMATED CONCENTRIC ROUND BEACON (অ্যানিমেটেড গোল আইকন - ইমেজ ৪ অনুযায়ী)
   return `
     <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-      <div class="mb-2 px-3.5 py-1 rounded-full bg-white text-black font-extrabold text-[11px] uppercase tracking-wider shadow-2xl border border-black/20 flex items-center gap-1.5 transition-transform duration-300 group-hover:scale-110">
-        <span class="text-xs font-black">⭕</span>
-        <span>${displayLabel}</span>
+      <!-- Animated Round Beacon Puck -->
+      <div class="vr-beacon-ring relative w-13 h-13 sm:w-15 sm:h-15 rounded-full border-[3.5px] border-white bg-black/30 flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.6)] transition-all duration-300 group-hover:scale-115">
+        <!-- Expanding Radar Ripple Wave -->
+        <div class="vr-beacon-wave absolute inset-0 rounded-full border-2 border-white/80 pointer-events-none"></div>
+        <!-- Center Solid White Dot -->
+        <div class="w-3.5 h-3.5 sm:w-4 sm:h-4 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.9)]"></div>
       </div>
-      <div style="transform: perspective(400px) rotateX(65deg);" class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 group-hover:scale-120">
-        <div class="absolute -inset-1 rounded-full bg-white/15 animate-ping opacity-50"></div>
-        <div class="w-6 h-6 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
-      </div>
+      ${makeLabelHtml(displayLabel)}
     </div>
   `;
 };
