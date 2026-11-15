@@ -244,3 +244,46 @@ canvas {
   background: var(--app-text-primary);
 }
 
+/* =========================================================
+   360° ANIMATED DOORWAY HOTSPOT (Matterport / Commercial Style)
+   ========================================================= */
+
+@keyframes vrDoorSwing {
+  0%, 15% {
+    transform: perspective(130px) rotateY(0deg);
+  }
+  42%, 65% {
+    transform: perspective(130px) rotateY(56deg);
+  }
+  88%, 100% {
+    transform: perspective(130px) rotateY(0deg);
+  }
+}
+
+@keyframes vrDoorPulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.65), 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.75), 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+}
+
+.vr-door-ring {
+  animation: vrDoorPulse 3s ease-in-out infinite;
+}
+
+.vr-door-leaf {
+  transform-origin: right center;
+  transform-style: preserve-3d;
+  animation: vrDoorSwing 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.group:hover .vr-door-leaf {
+  animation-play-state: paused !important;
+  transform: perspective(130px) rotateY(65deg) !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+

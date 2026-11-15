@@ -625,7 +625,7 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
 
           {/* Prominent Space Brand Logo (Matching Reference Image) */}
           {tourBrandLogo ? (
-            <div className="max-w-[170px] sm:max-w-[210px] max-h-16 sm:max-h-20 flex items-center mb-1">
+            <div className="max-w-[170px] sm:max-w-[210px] max-h-16 sm:max-h-20 flex items-center mb-3">
               <img
                 src={tourBrandLogo}
                 alt="Brand Logo"
@@ -642,7 +642,7 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
 
           {/* Current Room / Scene Name directly below the logo (Matching Reference Image: Aerial View) */}
           <div className="text-left select-none max-w-xs sm:max-w-md">
-            <h1 className="text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight">
+            <h1 className="!text-white text-sm sm:text-base md:text-lg tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] leading-tight">
               {activeNode.name}
             </h1>
           </div>
