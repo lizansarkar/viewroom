@@ -26,9 +26,10 @@ const makeLabelHtml = (text) => `
   </div>
 `;
 
-export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
+export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow", rotation = 0) => {
   const displayLabel = label || "NAVIGATE";
   let iconType = String(rawIconType || "").toLowerCase().trim();
+  const rotDeg = typeof rotation === "number" ? rotation : (parseInt(rotation, 10) || 0);
 
   // Normalize synonyms
   if (iconType === "chevron") iconType = "arrow";
@@ -51,25 +52,26 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
     else if (lbl.includes("bedroom")) iconType = "bedroom";
   }
 
-  // 1. FLOOR CHEVRON NAVIGATION ARROW (Matching Reference Image 2)
+  // 1. FLOOR CHEVRON NAVIGATION ARROW (Matching Reference Image 2 / Image 6)
   if (iconType === "arrow") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div class="relative flex flex-col items-center justify-center">
-          <!-- Soft Ground Contact Shadow -->
-          <div class="w-24 h-6 bg-black/50 rounded-full blur-md absolute top-7 -z-10 pointer-events-none"></div>
+        <!-- Rotatable Chevron Container (Supports Full 0° to 360° Direction) -->
+        <div class="vr-arrow-rotator relative flex items-center justify-center w-24 h-20" style="transform: rotate(${rotDeg}deg); transform-origin: 50% 50%;">
+          <!-- Soft Ground Contact Ambient Shadow -->
+          <div class="w-20 h-5 bg-black/60 rounded-full blur-md absolute top-10 pointer-events-none -z-10"></div>
 
-          <!-- Pulsing Forward Wave Echo -->
-          <div class="vr-chevron-wave absolute -top-1 pointer-events-none">
-            <svg class="w-24 h-16 text-white/50" viewBox="0 0 100 60" fill="none">
-              <polygon points="50,6 94,38 80,49 50,26 20,49 6,38" fill="currentColor"/>
+          <!-- Pulsing Forward Wave Echo (Glides forward along arrow direction) -->
+          <div class="vr-chevron-wave absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg class="w-22 h-18 text-white/50" viewBox="0 0 120 90" fill="none">
+              <polygon points="60,10 108,58 94,72 60,38 26,72 12,58" fill="currentColor"/>
             </svg>
           </div>
 
-          <!-- Primary Perspective Floor Chevron (Crisp Solid White with Shadow) -->
-          <div class="vr-chevron-arrow relative flex items-center justify-center transition-transform duration-300 group-hover:scale-115">
-            <svg class="w-24 h-16 filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]" viewBox="0 0 100 60">
-              <polygon points="50,6 94,38 80,49 50,26 20,49 6,38" fill="#ffffff" stroke="rgba(0,0,0,0.18)" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- Primary Crisp Solid White Chevron (Matching Reference Image) -->
+          <div class="vr-chevron-arrow relative flex items-center justify-center transition-transform duration-300">
+            <svg class="w-22 h-18 filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" viewBox="0 0 120 90">
+              <polygon points="60,10 108,58 94,72 60,38 26,72 12,58" fill="#ffffff" stroke="rgba(0,0,0,0.35)" stroke-width="2" stroke-linejoin="round"/>
             </svg>
           </div>
         </div>

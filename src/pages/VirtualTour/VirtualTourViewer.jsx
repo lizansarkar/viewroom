@@ -237,11 +237,19 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
                 else if (textToCheck.includes("bed") || textToCheck.includes("room")) detectedIcon = "bedroom";
               }
 
+              let detectedRotation =
+                typeof hp.rotation === "number" ? hp.rotation : parseInt(hp.rotation, 10) || 0;
+              if (!detectedRotation && hp.description && hp.description.includes("rot:")) {
+                const parts = hp.description.split("rot:");
+                detectedRotation = parseInt(parts[1], 10) || 0;
+              }
+
               return {
                 targetNodeId: hp.targetSceneId || hp.targetId,
                 label: hp.label || hp.title,
                 type: hp.type === "drone" ? "drone_badge" : "floor_puck",
                 iconType: detectedIcon || "arrow",
+                rotation: detectedRotation,
                 position: {
                   yaw:
                     typeof hp.yaw === "number"
@@ -302,7 +310,8 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
         ? createDroneHotspotHtml(conn.label)
         : createFloorPuckMarkerHtml(
             conn.label,
-            conn.iconType || (conn.type && conn.type !== "floor_puck" ? conn.type : "arrow")
+            conn.iconType || (conn.type && conn.type !== "floor_puck" ? conn.type : "arrow"),
+            conn.rotation || 0
           ),
     targetId: conn.targetNodeId,
   }));

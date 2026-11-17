@@ -26,8 +26,8 @@ const toDeg = (val, fallback = "0deg") => {
   return str.endsWith("deg") || str.endsWith("rad") ? str : `${str}deg`;
 };
 
-const createPreviewPuckHtml = (label, type = "arrow") => {
-  return createFloorPuckMarkerHtml(label, type);
+const createPreviewPuckHtml = (label, type = "arrow", rot = 0) => {
+  return createFloorPuckMarkerHtml(label, type, rot);
 };
 
 export default function HotspotEditorModal({
@@ -46,6 +46,7 @@ export default function HotspotEditorModal({
     tour?.scenes?.find((s) => s.id !== scene?.id)?.id || ""
   );
   const [hotspotType, setHotspotType] = useState("arrow");
+  const [rotation, setRotation] = useState(0);
 
   // Inline New Linked Room Creator State
   const [showNewSceneForm, setShowNewSceneForm] = useState(false);
@@ -101,15 +102,14 @@ export default function HotspotEditorModal({
           markersPlugin.addMarker({
             id: "temp_preview_marker",
             position: { yaw: yawDeg, pitch: pitchDeg },
-            html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
+            html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType, rotation),
           });
         }
       }
     });
   };
 
-  const handleTitleChange = (newTitle, newType = hotspotType) => {
-    setTitle(newTitle);
+  const updatePreviewMarker = (newTitle = title, newType = hotspotType, newRot = rotation) => {
     if (psvRef.current) {
       const markersPlugin = psvRef.current.getPlugin(MarkersPlugin);
       if (markersPlugin) {
@@ -119,15 +119,26 @@ export default function HotspotEditorModal({
         markersPlugin.addMarker({
           id: "temp_preview_marker",
           position: { yaw, pitch },
-          html: createPreviewPuckHtml(newTitle || "HOTSPOT", newType),
+          html: createPreviewPuckHtml(newTitle || "HOTSPOT", newType, newRot),
         });
       }
     }
   };
 
+  const handleTitleChange = (newTitle, newType = hotspotType) => {
+    setTitle(newTitle);
+    updatePreviewMarker(newTitle, newType, rotation);
+  };
+
   const handleTypeChange = (newType) => {
     setHotspotType(newType);
-    handleTitleChange(title, newType);
+    updatePreviewMarker(title, newType, rotation);
+  };
+
+  const handleRotationChange = (newRot) => {
+    const rotVal = Number(newRot);
+    setRotation(rotVal);
+    updatePreviewMarker(title, hotspotType, rotVal);
   };
 
   const handleFileUploadForNewScene = async (e) => {
@@ -185,11 +196,14 @@ export default function HotspotEditorModal({
       const newHotspot = {
         id: `hp_${Date.now()}`,
         title: finalTitle,
+        label: finalTitle,
         yaw: yaw.includes("deg") ? yaw : `${yaw}deg`,
         pitch: pitch.includes("deg") ? pitch : `${pitch}deg`,
         targetId,
+        targetSceneId: targetId,
         type: hotspotType,
         iconType: hotspotType,
+        rotation: Number(rotation) || 0,
       };
       if (onSave) {
         await onSave(newHotspot);
@@ -223,12 +237,16 @@ export default function HotspotEditorModal({
     {
       id: "temp_preview_marker",
       position: { yaw, pitch },
-      html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType),
+      html: createPreviewPuckHtml(title || "HOTSPOT", hotspotType, rotation),
     },
     ...existingHotspots.map((hp) => ({
       id: hp.id,
       position: { yaw: toDeg(hp.yaw, "0deg"), pitch: toDeg(hp.pitch, "-20deg") },
-      html: createPreviewPuckHtml(hp.title || "SAVED HOTSPOT", hp.iconType || hp.type || "arrow"),
+      html: createPreviewPuckHtml(
+        hp.title || hp.label || "SAVED HOTSPOT",
+        hp.iconType || hp.type || "arrow",
+        hp.rotation || 0
+      ),
     })),
   ];
 
@@ -386,6 +404,83 @@ export default function HotspotEditorModal({
                   <option value="info">ℹ️ Spatial Info Beacon</option>
                 </select>
               </div>
+
+              {/* Arrow Direction Angle Slider & Compass Presets */}
+              {hotspotType === "arrow" && (
+                <div className="p-3.5 rounded-sm bg-base-200/60 border border-base-content/10 space-y-3 animate-in fade-in">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-base-content/80 flex items-center gap-1.5">
+                      <span>Arrow Direction (Angle)</span>
+                    </label>
+                    <span className="px-2 py-0.5 rounded-xs bg-base-content text-base-100 text-[10px] font-black font-mono">
+                      {rotation}°
+                    </span>
+                  </div>
+
+                  {/* Visual Compass Dial & Slider */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-full border-2 border-base-content/20 bg-base-100 flex items-center justify-center shrink-0 shadow-xs cursor-pointer hover:border-primary transition-colors"
+                      title="Click to rotate +45°"
+                      onClick={() => handleRotationChange((rotation + 45) % 360)}
+                    >
+                      <span
+                        className="text-lg text-primary transition-transform duration-200 pointer-events-none inline-block font-black"
+                        style={{ transform: `rotate(${rotation}deg)` }}
+                      >
+                        ⬆
+                      </span>
+                    </div>
+
+                    <div className="flex-1 space-y-1">
+                      <input
+                        type="range"
+                        min="0"
+                        max="360"
+                        step="5"
+                        value={rotation}
+                        onChange={(e) => handleRotationChange(Number(e.target.value))}
+                        className="w-full accent-primary cursor-pointer h-2 bg-base-200 rounded-lg appearance-none"
+                      />
+                      <div className="flex justify-between text-[9px] text-base-content/50 font-mono">
+                        <span>0° (N)</span>
+                        <span>90° (E)</span>
+                        <span>180° (S)</span>
+                        <span>270° (W)</span>
+                        <span>360°</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Direction Presets */}
+                  <div className="grid grid-cols-4 gap-1.5 pt-1">
+                    {[
+                      { label: "↑ 0°", deg: 0, title: "Straight / Ahead" },
+                      { label: "↗ 45°", deg: 45, title: "Front-Right" },
+                      { label: "➔ 90°", deg: 90, title: "Right / East" },
+                      { label: "↘ 135°", deg: 135, title: "Back-Right" },
+                      { label: "↓ 180°", deg: 180, title: "Backward / South" },
+                      { label: "↙ 225°", deg: 225, title: "Back-Left" },
+                      { label: "⬅ 270°", deg: 270, title: "Left / West" },
+                      { label: "↖ 315°", deg: 315, title: "Front-Left" },
+                    ].map((preset) => (
+                      <button
+                        key={preset.deg}
+                        type="button"
+                        onClick={() => handleRotationChange(preset.deg)}
+                        title={preset.title}
+                        className={`py-1 px-1 rounded-sm text-[10px] font-bold transition-all cursor-pointer text-center ${
+                          rotation === preset.deg
+                            ? "bg-primary text-primary-content shadow-xs font-black"
+                            : "bg-base-100 hover:bg-base-200 text-base-content/80 border border-base-content/10"
+                        }`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Target Scene Portal Destination Selector & Inline Creator */}
               <div className="space-y-2">

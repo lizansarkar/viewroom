@@ -70,6 +70,7 @@ export default function StudioSceneEditor({
   const [hotspotYaw, setHotspotYaw] = useState("0deg");
   const [hotspotPitch, setHotspotPitch] = useState("-20deg");
   const [hotspotType, setHotspotType] = useState("arrow");
+  const [hotspotRotation, setHotspotRotation] = useState(0);
   const [customHotspotLabel, setCustomHotspotLabel] = useState("");
 
   const psvRef = useRef(null);
@@ -91,6 +92,39 @@ export default function StudioSceneEditor({
     }
     setOpeningViewSaved(false);
   }, [activeScene?.id, scenes.length]);
+
+  // Helper to re-render temporary preview marker in real time
+  const updateStudioPreviewMarker = (label, type, rot, y = hotspotYaw, p = hotspotPitch) => {
+    if (psvRef.current) {
+      const markersPlugin = psvRef.current.getPlugin(MarkersPlugin);
+      if (markersPlugin) {
+        try {
+          markersPlugin.removeMarker("temp_preview_marker");
+        } catch (err) {}
+        markersPlugin.addMarker({
+          id: "temp_preview_marker",
+          position: { yaw: toDeg(y), pitch: toDeg(p) },
+          html: createFloorPuckMarkerHtml(label || "LINK", type, rot),
+        });
+      }
+    }
+  };
+
+  const handleRotationChange = (newRot) => {
+    const rotVal = Number(newRot);
+    setHotspotRotation(rotVal);
+    updateStudioPreviewMarker(customHotspotLabel, hotspotType, rotVal);
+  };
+
+  const handleTypeChange = (newType) => {
+    setHotspotType(newType);
+    updateStudioPreviewMarker(customHotspotLabel, newType, hotspotRotation);
+  };
+
+  const handleLabelChange = (newLabel) => {
+    setCustomHotspotLabel(newLabel);
+    updateStudioPreviewMarker(newLabel, hotspotType, hotspotRotation);
+  };
 
   // Unmount WebGL cleanup
   useEffect(() => {
@@ -131,19 +165,7 @@ export default function StudioSceneEditor({
         setHotspotPitch(pitchDeg);
         setHotspotYaw(yawDeg);
 
-        const markersPlugin = instance.getPlugin(MarkersPlugin);
-        if (markersPlugin) {
-          try {
-            markersPlugin.removeMarker("temp_preview_marker");
-          } catch (err) {}
-
-          const label = customHotspotLabel || "LINK";
-          markersPlugin.addMarker({
-            id: "temp_preview_marker",
-            position: { yaw: yawDeg, pitch: pitchDeg },
-            html: createFloorPuckMarkerHtml(label, hotspotType),
-          });
-        }
+        updateStudioPreviewMarker(customHotspotLabel || "LINK", hotspotType, hotspotRotation, yawDeg, pitchDeg);
       }
     });
   };
@@ -227,6 +249,7 @@ export default function StudioSceneEditor({
       targetSceneId: selectedTargetSceneId,
       type: hotspotType,
       iconType: hotspotType,
+      rotation: Number(hotspotRotation) || 0,
     };
 
     const updatedScenes = scenes.map((s, idx) => {
@@ -255,7 +278,7 @@ export default function StudioSceneEditor({
         markersPlugin.addMarker({
           id: newHp.id,
           position: { yaw: toDeg(newHp.yaw), pitch: toDeg(newHp.pitch) },
-          html: createFloorPuckMarkerHtml(finalLabel, hotspotType),
+          html: createFloorPuckMarkerHtml(finalLabel, hotspotType, hotspotRotation),
         });
       }
     }
@@ -306,7 +329,11 @@ export default function StudioSceneEditor({
       yaw: toDeg(hp.yaw || hp.position?.yaw, "0deg"),
       pitch: toDeg(hp.pitch || hp.position?.pitch, "-20deg"),
     },
-    html: createFloorPuckMarkerHtml(hp.title || hp.label || "LINK", hp.iconType || hp.type || "arrow"),
+    html: createFloorPuckMarkerHtml(
+      hp.title || hp.label || "LINK",
+      hp.iconType || hp.type || "arrow",
+      hp.rotation || 0
+    ),
   }));
 
   const plugins = [[MarkersPlugin, { markers: initialMarkers }]];
@@ -611,7 +638,7 @@ export default function StudioSceneEditor({
                       </label>
                       <select
                         value={hotspotType}
-                        onChange={(e) => setHotspotType(e.target.value)}
+                        onChange={(e) => handleTypeChange(e.target.value)}
                         className="w-full px-2.5 py-1.5 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none cursor-pointer"
                       >
                         <option value="arrow">Chevron Arrow ➔</option>
@@ -630,6 +657,83 @@ export default function StudioSceneEditor({
                       </div>
                     </div>
                   </div>
+
+                  {/* Arrow Direction Angle Slider & Compass Presets */}
+                  {hotspotType === "arrow" && (
+                    <div className="p-3 rounded-sm bg-base-100 border border-base-content/10 space-y-2.5 animate-in fade-in">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-base-content/70">
+                          Arrow Direction (Angle)
+                        </label>
+                        <span className="px-2 py-0.5 rounded-xs bg-base-content text-base-100 text-[10px] font-black font-mono">
+                          {hotspotRotation}°
+                        </span>
+                      </div>
+
+                      {/* Visual Compass Dial & Slider */}
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="w-10 h-10 rounded-full border border-base-content/20 bg-base-200/50 flex items-center justify-center shrink-0 shadow-xs cursor-pointer hover:border-primary transition-colors"
+                          title="Click to rotate +45°"
+                          onClick={() => handleRotationChange((hotspotRotation + 45) % 360)}
+                        >
+                          <span
+                            className="text-base text-primary transition-transform duration-200 pointer-events-none inline-block font-black"
+                            style={{ transform: `rotate(${hotspotRotation}deg)` }}
+                          >
+                            ⬆
+                          </span>
+                        </div>
+
+                        <div className="flex-1 space-y-0.5">
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            step="5"
+                            value={hotspotRotation}
+                            onChange={(e) => handleRotationChange(Number(e.target.value))}
+                            className="w-full accent-primary cursor-pointer h-2 bg-base-200 rounded-lg appearance-none"
+                          />
+                          <div className="flex justify-between text-[8px] text-base-content/40 font-mono">
+                            <span>0° (N)</span>
+                            <span>90° (E)</span>
+                            <span>180° (S)</span>
+                            <span>270° (W)</span>
+                            <span>360°</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Quick 1-Click Direction Presets */}
+                      <div className="grid grid-cols-4 gap-1 pt-0.5">
+                        {[
+                          { label: "↑ 0°", deg: 0, title: "Straight Ahead" },
+                          { label: "↗ 45°", deg: 45, title: "Front-Right" },
+                          { label: "➔ 90°", deg: 90, title: "Right / East" },
+                          { label: "↘ 135°", deg: 135, title: "Back-Right" },
+                          { label: "↓ 180°", deg: 180, title: "Backward / South" },
+                          { label: "↙ 225°", deg: 225, title: "Back-Left" },
+                          { label: "⬅ 270°", deg: 270, title: "Left / West" },
+                          { label: "↖ 315°", deg: 315, title: "Front-Left" },
+                        ].map((preset) => (
+                          <button
+                            key={preset.deg}
+                            type="button"
+                            onClick={() => handleRotationChange(preset.deg)}
+                            title={preset.title}
+                            className={`py-1 px-0.5 rounded-xs text-[9px] font-bold transition-all cursor-pointer text-center ${
+                              hotspotRotation === preset.deg
+                                ? "bg-primary text-primary-content font-black shadow-xs"
+                                : "bg-base-200/60 hover:bg-base-200 text-base-content/70 border border-base-content/10"
+                            }`}
+                          >
+                            {preset.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <Button
                     type="submit"
@@ -657,15 +761,26 @@ export default function StudioSceneEditor({
                           className="p-2 rounded-sm bg-base-100 border border-base-content/10 flex items-center justify-between gap-2 text-xs"
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-primary font-bold">➔</span>
+                            <span
+                              className="text-primary font-black inline-block text-sm shrink-0"
+                              style={{ transform: `rotate(${hp.rotation || 0}deg)` }}
+                              title={`Direction: ${hp.rotation || 0}°`}
+                            >
+                              ⬆
+                            </span>
                             <span className="font-bold truncate text-base-content">
                               {hp.title || hp.label || dest?.name || "Next Room"}
                             </span>
+                            {hp.rotation !== undefined && hp.rotation !== null && (
+                              <span className="text-[10px] text-base-content/40 font-mono shrink-0">
+                                {hp.rotation}°
+                              </span>
+                            )}
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDeleteHotspot(hp.id)}
-                            className="p-1.5 rounded-sm hover:bg-error hover:text-white text-base-content/50 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-sm hover:bg-error hover:text-white text-base-content/50 transition-colors cursor-pointer shrink-0"
                             title="Remove Hotspot"
                           >
                             <FontAwesomeIcon icon={faTrash} className="text-[10px]" />

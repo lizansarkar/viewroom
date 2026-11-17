@@ -286,39 +286,44 @@ canvas {
 }
 
 /* =========================================================
-   360° PERSPECTIVE FLOOR CHEVRON (Image 2 Street View Style)
+   360° FLOOR CHEVRON NAVIGATION ARROW (Matching Reference Image 6)
+   Ultra-Crisp Vector, Zero 3D Distortion, Full 0°-360° Direction
    ========================================================= */
 
-@keyframes vrChevronFloorGlide {
+@keyframes vrChevronPulse {
   0%, 100% {
-    transform: perspective(280px) rotateX(58deg) translateY(0px) scale(1);
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.85));
+    transform: translateY(0px) scale(1);
   }
   50% {
-    transform: perspective(280px) rotateX(58deg) translateY(-8px) scale(1.08);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(255,255,255,0.7));
+    transform: translateY(-6px) scale(1.05);
   }
 }
 
-@keyframes vrChevronFloorWave {
+@keyframes vrChevronWavePulse {
   0% {
-    transform: perspective(280px) rotateX(58deg) translateY(0px) scale(1);
+    transform: translateY(0px) scale(0.95);
     opacity: 0.8;
   }
   100% {
-    transform: perspective(280px) rotateX(58deg) translateY(-18px) scale(1.35);
+    transform: translateY(-14px) scale(1.22);
     opacity: 0;
   }
 }
 
 .vr-chevron-arrow {
-  animation: vrChevronFloorGlide 2.4s ease-in-out infinite;
+  animation: vrChevronPulse 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: transform;
 }
 
 .vr-chevron-wave {
-  animation: vrChevronFloorWave 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+  animation: vrChevronWavePulse 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
   will-change: transform, opacity;
+}
+
+.group:hover .vr-chevron-arrow {
+  animation-play-state: paused !important;
+  transform: translateY(-3px) scale(1.15) !important;
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
 }
 
 /* =========================================================
