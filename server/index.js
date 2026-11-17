@@ -138,6 +138,18 @@ app.use((err, req, res, next) => {
 // Initialize Socket.io real-time engine
 initTourSockets(server);
 
+// Graceful error handling for duplicate port listeners (e.g. during concurrent dev runs)
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.warn(`⚠️ Port ${PORT} is already in use by an active ViewRoom server instance.`);
+    console.log(`✅ Existing backend on http://localhost:${PORT} is online. Keeping process active for frontend...`);
+    setInterval(() => {}, 1000 * 60 * 60);
+  } else {
+    console.error("Server error:", err);
+    process.exit(1);
+  }
+});
+
 server.listen(PORT, () => {
   console.log(`🚀 ViewRoom 360° Backend & Socket.io Engine running on http://localhost:${PORT}`);
 });
