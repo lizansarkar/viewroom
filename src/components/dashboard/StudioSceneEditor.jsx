@@ -17,6 +17,7 @@ import {
   faEye,
   faCloudArrowUp,
   faBuilding,
+  faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { createFloorPuckMarkerHtml } from "../../utils/tourHotspots";
@@ -170,6 +171,24 @@ export default function StudioSceneEditor({
       }).catch(() => {});
     }
     setTimeout(() => setOpeningViewSaved(false), 2500);
+  };
+
+  const [coverCapturedSaved, setCoverCapturedSaved] = useState(false);
+
+  const handleCapture2DCover = () => {
+    try {
+      const canvas = document.querySelector("#studio-psv-container canvas") || document.querySelector(".psv-container canvas");
+      if (canvas) {
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const updatedTour = { ...currentTour, coverImage: dataUrl };
+        setCurrentTour(updatedTour);
+        if (onSaveTour) onSaveTour(updatedTour);
+        setCoverCapturedSaved(true);
+        setTimeout(() => setCoverCapturedSaved(false), 3000);
+      }
+    } catch (err) {
+      console.warn("Could not capture 2D view snapshot:", err);
+    }
   };
 
   // 2. Room Title Change (MadeSnappy Step 2)
@@ -477,7 +496,7 @@ export default function StudioSceneEditor({
               <p className="text-[11px] text-base-content/70 leading-relaxed">
                 Rotate the 360° viewer to the best angle. This is what visitors will see first when entering this room.
               </p>
-              <div className="pt-1">
+              <div className="pt-1 flex flex-col gap-2">
                 <Button
                   variant="primary"
                   onClick={handleSaveOpeningView}
@@ -486,10 +505,25 @@ export default function StudioSceneEditor({
                   <FontAwesomeIcon icon={faEye} />
                   <span>Set Opening View ▶</span>
                 </Button>
+
+                <Button
+                  variant="secondary"
+                  onClick={handleCapture2DCover}
+                  className="w-full !rounded-sm !text-xs !py-2 gap-2 cursor-pointer border border-base-content/20 hover:border-base-content/40 !bg-base-100"
+                  title="Capture current view as clean 2D thumbnail for tour cards"
+                >
+                  <FontAwesomeIcon icon={faCamera} className="text-primary" />
+                  <span>📸 Set Current View as Tour 2D Cover</span>
+                </Button>
               </div>
               {openingViewSaved && (
                 <div className="p-2 rounded-sm bg-success/15 text-success text-center text-xs font-bold border border-success/20 animate-in fade-in">
                   ✓ Opening view saved ({liveYaw}, {livePitch})!
+                </div>
+              )}
+              {coverCapturedSaved && (
+                <div className="p-2 rounded-sm bg-primary/15 text-primary text-center text-xs font-bold border border-primary/20 animate-in fade-in">
+                  ✓ Clean 2D snapshot saved as Tour Card Cover!
                 </div>
               )}
             </div>
@@ -532,71 +566,7 @@ export default function StudioSceneEditor({
               </div>
             </div>
 
-            {/* SPACE BRAND LOGO CONFIGURATION (Matching Reference Image) */}
-            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
-                  <FontAwesomeIcon icon={faBuilding} className="text-xs text-base-content/60" />
-                  Space Brand Logo
-                </span>
-                {currentTour?.brandLogo ? (
-                  <span className="text-[10px] font-bold text-success bg-success/15 px-2 py-0.5 rounded-sm border border-success/20">
-                    Active ✓
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-semibold text-base-content/50 uppercase px-1.5 py-0.2 rounded-sm bg-base-200">
-                    Optional
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-base-content/70 leading-relaxed">
-                Upload your official transparent PNG or SVG logo. It will appear prominently on the top-left corner above the room name for all visitors.
-              </p>
-              <div className="flex items-center gap-3">
-                {currentTour?.brandLogo ? (
-                  <div className="relative w-28 h-16 rounded-sm bg-base-100 border border-base-content/20 shrink-0 p-1.5 flex items-center justify-center shadow-xs">
-                    <img
-                      src={currentTour.brandLogo}
-                      alt="Brand Logo"
-                      className="max-w-full max-h-full object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-28 h-16 rounded-sm bg-base-100 border border-dashed border-base-content/25 flex flex-col items-center justify-center text-base-content/40 text-xs shrink-0 gap-1">
-                    <FontAwesomeIcon icon={faBuilding} className="text-base" />
-                    <span className="text-[9px] font-semibold">No Logo</span>
-                  </div>
-                )}
-                <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="studio_sidebar_brand_logo_input"
-                    className="hidden"
-                    onChange={handleUploadStudioLogo}
-                  />
-                  <label
-                    htmlFor="studio_sidebar_brand_logo_input"
-                    className="w-full text-center px-3 py-1.5 rounded-sm bg-primary text-primary-content hover:bg-primary/90 text-xs font-bold cursor-pointer transition-all shadow-xs"
-                  >
-                    {currentTour?.brandLogo ? "Change Logo" : "Upload Logo"}
-                  </label>
-                  {currentTour?.brandLogo && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = { ...currentTour, brandLogo: "" };
-                        setCurrentTour(updated);
-                        if (onSaveTour) onSaveTour(updated);
-                      }}
-                      className="text-[11px] text-error hover:underline font-semibold text-left cursor-pointer"
-                    >
-                      Remove Logo
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+
 
             {/* STEP 3: CONNECT / HOTSPOT LINK TO ANOTHER ROOM */}
             <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">

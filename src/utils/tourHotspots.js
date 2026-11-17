@@ -51,18 +51,27 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow") => {
     else if (lbl.includes("bedroom")) iconType = "bedroom";
   }
 
-  // 1. CHEVRON ARROW (তীর)
+  // 1. FLOOR CHEVRON NAVIGATION ARROW (Matching Reference Image 2)
   if (iconType === "arrow") {
     return `
       <div class="cursor-pointer group relative flex flex-col items-center justify-center p-2 select-none">
-        <div style="transform: perspective(300px) rotateX(58deg);" class="relative flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-125">
-          <div class="w-16 h-8 bg-black/40 rounded-full blur-md absolute top-4 -z-10"></div>
-          <svg class="w-16 h-10 text-white/70 animate-ping opacity-75 absolute -top-2" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <svg class="w-16 h-10 text-white filter drop-shadow-[0_0_12px_rgba(255,255,255,0.95)]" viewBox="0 0 64 36" fill="none">
-            <path d="M8 28L32 10L56 28" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <div class="relative flex flex-col items-center justify-center">
+          <!-- Soft Ground Contact Shadow -->
+          <div class="w-24 h-6 bg-black/50 rounded-full blur-md absolute top-7 -z-10 pointer-events-none"></div>
+
+          <!-- Pulsing Forward Wave Echo -->
+          <div class="vr-chevron-wave absolute -top-1 pointer-events-none">
+            <svg class="w-24 h-16 text-white/50" viewBox="0 0 100 60" fill="none">
+              <polygon points="50,6 94,38 80,49 50,26 20,49 6,38" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <!-- Primary Perspective Floor Chevron (Crisp Solid White with Shadow) -->
+          <div class="vr-chevron-arrow relative flex items-center justify-center transition-transform duration-300 group-hover:scale-115">
+            <svg class="w-24 h-16 filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]" viewBox="0 0 100 60">
+              <polygon points="50,6 94,38 80,49 50,26 20,49 6,38" fill="#ffffff" stroke="rgba(0,0,0,0.18)" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
         ${makeLabelHtml(displayLabel)}
       </div>

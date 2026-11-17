@@ -20,6 +20,7 @@ import {
   apiUpdateUserRole,
   apiGetAdminContent,
   apiAdminDeleteTour,
+  apiAdminDeleteUser,
 } from "../../services/api";
 
 export default function AdminDashboard({ _user, activeTab, setActiveTab: parentSetActiveTab, onPreviewModeChange }) {
@@ -98,6 +99,30 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
     isOpen: false,
     tourId: null,
   });
+
+  const [deleteUserModal, setDeleteUserModal] = useState({
+    isOpen: false,
+    user: null,
+  });
+
+  const handleDeleteUser = (userToDelete) => {
+    setDeleteUserModal({
+      isOpen: true,
+      user: userToDelete,
+    });
+  };
+
+  const handleConfirmDeleteUser = async () => {
+    if (!deleteUserModal.user?.id) return;
+    const res = await apiAdminDeleteUser(deleteUserModal.user.id);
+    if (res.success) {
+      setUsersList((prev) => {
+        const arr = Array.isArray(prev) ? prev : [];
+        return arr.filter((u) => u.id !== deleteUserModal.user.id);
+      });
+    }
+    setDeleteUserModal({ isOpen: false, user: null });
+  };
 
   const handleDeleteTour = (tourId) => {
     setDeleteConfirmModal({
@@ -360,6 +385,7 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                   <th className="p-3.5">Current Role</th>
                   <th className="p-3.5">Role Action / Promotion</th>
                   <th className="p-3.5">Joined Date</th>
+                  <th className="p-3.5 text-right">Delete Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-base-content/10">
@@ -418,6 +444,21 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                     </td>
                     <td className="p-3.5 text-base-content/60">
                       {new Date(u.createdAt || Date.now()).toLocaleDateString()}
+                    </td>
+                    <td className="p-3.5 text-right">
+                      {u.role !== "ADMIN" ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUser(u)}
+                          className="px-2.5 py-1 rounded-sm bg-error/10 hover:bg-error/20 text-error border border-error/20 text-[11px] font-bold cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                          title={`Delete user ${u.email}`}
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                          <span>Delete</span>
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-base-content/40 font-semibold uppercase">Protected</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -651,6 +692,45 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
                 className="!text-xs !py-2.5 !px-5 !rounded-sm font-bold cursor-pointer"
               >
                 Delete Platform-Wide
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin User Account Deletion Confirmation Modal */}
+      {deleteUserModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+          <div
+            style={{
+              backgroundColor: "rgba(18, 18, 24, 0.9)",
+              backdropFilter: "blur(24px)",
+            }}
+            className="w-full max-w-md p-6 sm:p-7 rounded-sm border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-in zoom-in-95 duration-200"
+          >
+            <div className="w-14 h-14 mx-auto mb-4 rounded-sm bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+              <FontAwesomeIcon icon={faTrash} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-extrabold text-white mb-2">
+              Delete User Account
+            </h3>
+            <p className="text-xs sm:text-sm text-white/70 mb-6 leading-relaxed">
+              Are you sure you want to permanently delete user <strong className="text-white underline">{deleteUserModal.user?.email}</strong> ({deleteUserModal.user?.name || "User"})? This will permanently delete their account and all their virtual tours from the database.
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => setDeleteUserModal({ isOpen: false, user: null })}
+                className="!text-xs !py-2.5 !px-5 !rounded-sm cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleConfirmDeleteUser}
+                className="!text-xs !py-2.5 !px-5 !rounded-sm font-bold cursor-pointer"
+              >
+                Delete User
               </Button>
             </div>
           </div>

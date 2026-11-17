@@ -245,44 +245,80 @@ canvas {
 }
 
 /* =========================================================
-   360° ANIMATED DOORWAY HOTSPOT (2D GPU Composited — Zero Lag)
+   360° ANIMATED DOORWAY HOTSPOT (Ultra-Smooth 2D GPU Composited)
    ========================================================= */
 
 @keyframes vrDoorSwing2D {
-  0% {
+  0%, 15% {
     transform: scaleX(1) skewY(0deg);
   }
-  30%, 65% {
-    transform: scaleX(0.28) skewY(-5deg);
+  42%, 68% {
+    transform: scaleX(0.20) skewY(-6deg);
   }
-  85%, 100% {
+  90%, 100% {
     transform: scaleX(1) skewY(0deg);
   }
 }
 
 @keyframes vrDoorPulse {
   0%, 100% {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(255, 255, 255, 0.4);
   }
   50% {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7), 0 0 0 5px rgba(255, 255, 255, 0);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75), 0 0 0 6px rgba(255, 255, 255, 0);
   }
 }
 
 .vr-door-ring {
-  animation: vrDoorPulse 2.4s ease-in-out infinite;
+  animation: vrDoorPulse 2.6s ease-in-out infinite;
 }
 
 .vr-door-leaf {
   transform-origin: right center;
-  animation: vrDoorSwing2D 2.4s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+  animation: vrDoorSwing2D 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   will-change: transform;
 }
 
 .group:hover .vr-door-leaf {
   animation-play-state: paused !important;
-  transform: scaleX(0.25) skewY(-6deg) !important;
-  transition: transform 0.2s ease-out !important;
+  transform: scaleX(0.18) skewY(-7deg) !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+}
+
+/* =========================================================
+   360° PERSPECTIVE FLOOR CHEVRON (Image 2 Street View Style)
+   ========================================================= */
+
+@keyframes vrChevronFloorGlide {
+  0%, 100% {
+    transform: perspective(280px) rotateX(58deg) translateY(0px) scale(1);
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.85));
+  }
+  50% {
+    transform: perspective(280px) rotateX(58deg) translateY(-8px) scale(1.08);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(255,255,255,0.7));
+  }
+}
+
+@keyframes vrChevronFloorWave {
+  0% {
+    transform: perspective(280px) rotateX(58deg) translateY(0px) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: perspective(280px) rotateX(58deg) translateY(-18px) scale(1.35);
+    opacity: 0;
+  }
+}
+
+.vr-chevron-arrow {
+  animation: vrChevronFloorGlide 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.vr-chevron-wave {
+  animation: vrChevronFloorWave 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+  will-change: transform, opacity;
 }
 
 /* =========================================================

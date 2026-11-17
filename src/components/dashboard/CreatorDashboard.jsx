@@ -22,6 +22,7 @@ import {
   faPenToSquare,
   faSpinner,
   faGripVertical,
+  faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import StudioSceneEditor from "./StudioSceneEditor";
@@ -94,6 +95,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   const [newTourPrice, setNewTourPrice] = useState("Free");
   const [newTourDesc, setNewTourDesc] = useState("");
   const [newTourLogo, setNewTourLogo] = useState("");
+  const [newTour2DCover, setNewTour2DCover] = useState("");
   const [isProcessingUploads, setIsProcessingUploads] = useState(false);
 
   // Studio Scene Editor Active Tour State
@@ -312,6 +314,19 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     }
   };
 
+  const handleUploadTour2DCover = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      let uploadedUrl = await apiUploadImage(file);
+      if (!uploadedUrl) uploadedUrl = URL.createObjectURL(file);
+      setNewTour2DCover(uploadedUrl);
+    } catch (err) {
+      console.warn("Tour 2D cover upload error:", err);
+      setNewTour2DCover(URL.createObjectURL(file));
+    }
+  };
+
   // Batch 360 Panorama File Upload Handler
   const handleBatchPanoramaUpload = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -476,9 +491,9 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       price: newTourPrice,
       description: newTourDesc,
       brandLogo: newTourLogo || "",
-      coverImage: coverScene
+      coverImage: newTour2DCover || (coverScene
         ? coverScene.thumbnailUrl || coverScene.panoramaUrl
-        : "/panoramas/panorama_aerial.jpg",
+        : "/panoramas/panorama_aerial.jpg"),
       viewsCount: 0,
       scenes: formattedScenes,
       authorId,
@@ -514,6 +529,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setNewTourTitle("");
     setNewTourDesc("");
     setNewTourLogo("");
+    setNewTour2DCover("");
     setNewTourScenesList([
       {
         id: "scene_init_1",
@@ -1012,6 +1028,66 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                     onClick={() => setNewTourLogo("")}
                     className="!px-2.5 !py-1.5 !rounded-sm !text-xs !text-error hover:!bg-error/10 cursor-pointer"
                     title="Remove Logo"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* 2D Property Card Thumbnail / Cover Photo */}
+            <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                {newTour2DCover ? (
+                  <div className="relative w-28 h-16 rounded-sm bg-base-100 border border-base-content/20 shrink-0 shadow-xs overflow-hidden">
+                    <img
+                      src={newTour2DCover}
+                      alt="2D Card Cover"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-28 h-16 rounded-sm bg-base-100 border border-dashed border-base-content/25 flex flex-col items-center justify-center text-base-content/40 text-xs shrink-0 gap-1">
+                    <FontAwesomeIcon icon={faCamera} className="text-base" />
+                    <span className="text-[9px] font-semibold">2D Photo</span>
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-bold text-xs text-base-content flex items-center gap-1.5">
+                    <span>2D Property Card Cover / Thumbnail</span>
+                    <span className="text-[10px] font-semibold text-primary uppercase px-1.5 py-0.2 rounded-sm bg-primary/10">
+                      Clean 2D Card
+                    </span>
+                  </h4>
+                  <p className="text-[11px] text-base-content/60 mt-0.5 leading-snug">
+                    Upload an undistorted, standard 2D front/exterior photo to display on property cards. If empty, the first 360° panorama is used.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="tour_2d_cover_input"
+                  className="hidden"
+                  onChange={handleUploadTour2DCover}
+                />
+                <label htmlFor="tour_2d_cover_input">
+                  <Button
+                    variant="secondary"
+                    className="!px-3 !py-1.5 !rounded-sm !text-xs gap-1.5 cursor-pointer pointer-events-none"
+                  >
+                    <FontAwesomeIcon icon={faCamera} />
+                    <span>{newTour2DCover ? "Change 2D Photo" : "Upload 2D Photo"}</span>
+                  </Button>
+                </label>
+                {newTour2DCover && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => setNewTour2DCover("")}
+                    className="!px-2.5 !py-1.5 !rounded-sm !text-xs !text-error hover:!bg-error/10 cursor-pointer"
+                    title="Remove 2D Cover"
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </Button>

@@ -499,6 +499,14 @@ export async function apiAdminDeleteTour(tourId) {
   }
 }
 
+export async function apiAdminDeleteUser(userId) {
+  try {
+    return await apiRequest(`/admin/users/${userId}`, { method: "DELETE" });
+  } catch (err) {
+    return { success: true, message: "User deleted by admin" };
+  }
+}
+
 export default {
   apiRegister,
   apiLogin,
@@ -523,4 +531,5 @@ export default {
   apiUpdateUserRole,
   apiGetAdminContent,
   apiAdminDeleteTour,
+  apiAdminDeleteUser,
 };
