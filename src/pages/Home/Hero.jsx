@@ -18,22 +18,17 @@ function Hero() {
         <div className="relative w-full max-w-3xl flex flex-col items-center mb-10">
           {/* Hexagonal / 3D Isometric Outer Frame (PC Screen) */}
           <div className="relative w-full h-[320px] sm:h-[420px] md:h-[480px] rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl bg-[#0e1117] p-2 flex items-center justify-center">
-            {/* Room Image */}
-            {/* <img
-              src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1200"
-              alt="3D Interior Room Space"
-              className="w-full h-full object-cover rounded-2xl opacity-90"
-            /> */}
-
-            {/* Room Video Tag */}
+            {/* Room Video Tag with FastStart & Instant Poster */}
             <video
               ref={videoRef}
               src="/video/home.mp4"
+              poster="/video/home-poster.jpg"
+              preload="auto"
               autoPlay
               loop
               muted
               playsInline
-              className="w-full h-full object-cover rounded-2xl opacity-90"
+              className="w-full h-full object-cover rounded-2xl opacity-90 transition-opacity duration-300"
             />
 
             {/* Glowing Accent Borders */}

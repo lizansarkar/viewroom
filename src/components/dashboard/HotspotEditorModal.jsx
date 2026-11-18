@@ -17,7 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import { apiUploadImage } from "../../services/api";
-import { createFloorPuckMarkerHtml, getHotspotIcon } from "../../utils/tourHotspots";
+import { createFloorPuckMarkerHtml } from "../../utils/tourHotspots";
 
 const toDeg = (val, fallback = "0deg") => {
   if (val === undefined || val === null || val === "") return fallback;

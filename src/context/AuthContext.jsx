@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { apiRegister, apiLogin, apiGoogleAuth, apiUpdateProfile, apiGetProfile } from "../services/api";
-import { signInWithGoogle, signOutFirebase, auth } from "../config/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { signInWithGoogle, signOutFirebase } from "../config/firebase";
 
 const AuthContext = createContext();
 
@@ -53,6 +52,7 @@ export function AuthProvider({ children }) {
         }
       }).catch(() => {});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**

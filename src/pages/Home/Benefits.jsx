@@ -120,6 +120,8 @@ function Benefits() {
           <video
             ref={videoRef}
             src="/video/home.mp4"
+            poster="/video/home-poster.jpg"
+            preload="none"
             loop
             muted
             playsInline

@@ -5,8 +5,6 @@ import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import "@photo-sphere-viewer/core/index.css";
 import "@photo-sphere-viewer/markers-plugin/index.css";
 import gsap from "gsap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 
 import { trackEvent } from "../../services/analyticsService";
 import { apiGetTourById, apiGetOwnerTours } from "../../services/api";
@@ -485,6 +483,7 @@ export default function VirtualTourViewer({ fullScreenMode = false, _fullScreenM
     return () => {
       clearInterval(intervalId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAutoPilot, isAutoPilotPaused, currentPanoramaId, tourNodes]);
 
   const toggleAutoPilot = () => {

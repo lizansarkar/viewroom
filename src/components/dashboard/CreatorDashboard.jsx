@@ -4,14 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartLine,
   faBuilding,
-  faCube,
   faEye,
   faPlus,
-  faExternalLinkAlt,
   faCompass,
   faMagnifyingGlass,
   faTrash,
-  faCheckCircle,
   faSliders,
   faCloudArrowUp,
   faShareNodes,
@@ -32,7 +29,6 @@ import {
   apiGetOwnerStats,
   apiGetOwnerTours,
   apiCreateOwnerTour,
-  apiAddOwnerScene,
   apiUploadImage,
   apiSaveTourAudio,
   apiDeleteOwnerTour,
@@ -92,7 +88,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   // Tour Creator Form State (uploader)
   const [newTourTitle, setNewTourTitle] = useState("");
   const [newTourCategory, setNewTourCategory] = useState("Cafe & Restaurant");
-  const [newTourPrice, setNewTourPrice] = useState("Free");
+  const [newTourPrice] = useState("Free");
   const [newTourDesc, setNewTourDesc] = useState("");
   const [newTourLogo, setNewTourLogo] = useState("");
   const [newTour2DCover, setNewTour2DCover] = useState("");

@@ -8,7 +8,6 @@ import {
   faLock,
   faCheck,
   faShieldHalved,
-  faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function UserSettingsPage() {

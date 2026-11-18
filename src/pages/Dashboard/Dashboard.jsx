@@ -68,7 +68,7 @@ export default function Dashboard({ defaultTab }) {
     } else if (isCreatorPath && (!activeTab || activeTab.startsWith("client_") || activeTab.startsWith("visitor_"))) {
       setActiveTab("creator_overview");
     }
-  }, [tabQueryParam, defaultTab, isCreatorPath]);
+  }, [tabQueryParam, defaultTab, isCreatorPath, activeTab]);
 
   return (
     <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 font-sans">

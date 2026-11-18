@@ -1,22 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import "@photo-sphere-viewer/core/index.css";
 import "@photo-sphere-viewer/markers-plugin/index.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faXmark,
   faCheck,
-  faCompass,
   faTrash,
   faPlus,
   faArrowRight,
   faArrowLeft,
-  faCrosshairs,
-  faDoorOpen,
   faEye,
   faCloudArrowUp,
-  faBuilding,
   faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
@@ -57,7 +52,7 @@ export default function StudioSceneEditor({
   const [currentTour, setCurrentTour] = useState(tour);
   const [activeSceneIndex, setActiveSceneIndex] = useState(initialSceneIndex);
 
-  const scenes = currentTour?.scenes || [];
+  const scenes = useMemo(() => currentTour?.scenes || [], [currentTour?.scenes]);
   const activeScene = scenes[activeSceneIndex] || scenes[0];
 
   // Camera Live Coordinates
@@ -91,7 +86,7 @@ export default function StudioSceneEditor({
       setCustomHotspotLabel("");
     }
     setOpeningViewSaved(false);
-  }, [activeScene?.id, scenes.length]);
+  }, [activeScene?.id, scenes]);
 
   // Helper to re-render temporary preview marker in real time
   const updateStudioPreviewMarker = (label, type, rot, y = hotspotYaw, p = hotspotPitch) => {
@@ -629,6 +624,19 @@ export default function StudioSceneEditor({
                         </option>
                       ))}
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-base-content/60 mb-1">
+                      Button / Hotspot Label
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Master Bedroom"
+                      value={customHotspotLabel}
+                      onChange={(e) => handleLabelChange(e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-sm bg-base-100 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none"
+                    />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
