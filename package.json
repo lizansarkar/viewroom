@@ -7,7 +7,7 @@
     "dev": "concurrently -k -n \"server,client\" -c \"cyan,green\" \"npm run server\" \"vite\"",
     "dev:client": "vite",
     "dev:server": "node server/index.js",
-    "studio": "prisma studio --schema=./server/prisma/schema.prisma",
+    "studio": "npm --prefix server run studio",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -48,8 +48,5 @@
     "globals": "^15.14.0",
     "prisma": "^5.22.0",
     "vite": "^8.2.1"
-  },
-  "prisma": {
-    "schema": "server/prisma/schema.prisma"
   }
 }
