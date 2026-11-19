@@ -97,7 +97,7 @@ enum HotspotType {
   INFO
 }
 
-// Analytics & Heatmaps
+// Tour Analytics & Engagement Telemetry
 model Analytics {
   id            String         @id @default(uuid())
   tourId        String
