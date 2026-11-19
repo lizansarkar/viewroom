@@ -149,7 +149,7 @@ router.post("/register", async (req, res) => {
     const allowedSelfRoles = ["CREATOR", "CLIENT", "VISITOR"];
     const userRole = role && allowedSelfRoles.includes(role.toUpperCase())
       ? role.toUpperCase()
-      : "CLIENT";
+      : "CREATOR";
 
     // Check if user already exists in Prisma database
     let existingUser = null;
@@ -255,7 +255,7 @@ router.post("/login", async (req, res) => {
       email,
       name: email.split("@")[0],
       avatar: null,
-      role: "CLIENT",
+      role: "CREATOR",
       authProvider: "email",
     };
 
