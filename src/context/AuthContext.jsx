@@ -140,7 +140,7 @@ export function AuthProvider({ children }) {
       const userData = res.user || {
         name: email.split("@")[0],
         email,
-        role: "CLIENT",
+        role: "CREATOR",
         authProvider: "email",
       };
 
