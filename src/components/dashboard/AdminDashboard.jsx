@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../reuseable/Button";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import SpatialHeatmapViewer from "../analytics/SpatialHeatmapViewer";
 import {
   apiGetAdminStats,
   apiGetAdminUsers,
@@ -526,7 +527,10 @@ export default function AdminDashboard({ _user, activeTab, setActiveTab: parentS
       {/* 4. SYSTEM ANALYTICS ROUTE VIEW (analytics) */}
       {currentTab === "analytics" && <AnalyticsDashboard />}
 
-      {/* 5. ADMIN SYSTEM SETTINGS ROUTE VIEW (settings) */}
+      {/* 5. DEDICATED GAZE HEATMAPS ROUTE VIEW (gaze_heatmap) */}
+      {currentTab === "gaze_heatmap" && <SpatialHeatmapViewer />}
+
+      {/* 6. ADMIN SYSTEM SETTINGS ROUTE VIEW (settings) */}
       {currentTab === "settings" && (
         <div className="space-y-6">
           <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">

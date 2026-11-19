@@ -146,20 +146,25 @@ export default function SpatialHeatmapViewer({ _tourId }) {
     });
   }, [selectedRoomId, heatRadius, heatOpacity, activeData]);
 
-  const COLORS = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
+  const COLORS = ["#2563eb", "#38bdf8", "#0284c7", "#64748b", "#0ea5e9", "#475569"];
 
   return (
-    <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 text-base-content max-w-7xl mx-auto w-full">
+      {/* Header Card */}
+      <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider opacity-70 block mb-1">
-            360° VISUAL ATTENTION TELEMETRY
+          <span className="text-[11px] font-semibold tracking-wider uppercase text-base-content/60 block mb-1">
+            Spatial Telemetry & Engagement
           </span>
-          <h2 className="font-heading font-black text-2xl sm:text-3xl uppercase tracking-tight flex items-center gap-2">
-            <FontAwesomeIcon icon={faFire} className="text-rose-500" />
-            SPATIAL GAZE HEATMAP ANALYTICS
+          <h2 className="font-heading font-bold text-xl sm:text-2xl text-base-content flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-sm bg-primary/10 text-primary flex items-center justify-center text-sm shrink-0">
+              <FontAwesomeIcon icon={faFire} />
+            </span>
+            Gaze Heatmaps
           </h2>
+          <p className="text-xs text-base-content/60 mt-1">
+            Visual attention density and directional dwell time across 360° scenes.
+          </p>
         </div>
 
         {/* Room Selector Dropdown */}
@@ -167,7 +172,7 @@ export default function SpatialHeatmapViewer({ _tourId }) {
           <select
             value={selectedRoomId}
             onChange={(e) => setSelectedRoomId(e.target.value)}
-            className="px-4 py-2.5 rounded-sm bg-base-200 border border-base-content/20 text-xs font-extrabold uppercase focus:outline-none focus:border-primary transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-sm bg-base-200/60 border border-base-content/15 text-xs font-semibold text-base-content focus:outline-none focus:border-primary transition-all cursor-pointer"
           >
             {Object.keys(GAZE_HEATMAP_DATA).map((key) => (
               <option key={key} value={key}>
@@ -176,14 +181,14 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             ))}
           </select>
 
-          <Button variant="secondary" onClick={() => window.print()} className="!py-2.5 !px-4 !text-xs !rounded-sm">
-            <FontAwesomeIcon icon={faDownload} className="mr-1.5" /> Export Heatmap Report
+          <Button variant="secondary" onClick={() => window.print()} className="!py-2 !px-3.5 !text-xs !rounded-sm">
+            <FontAwesomeIcon icon={faDownload} className="mr-1.5" /> Export Report
           </Button>
         </div>
       </div>
 
       {/* Main Heatmap Equirectangular Preview Container */}
-      <div className="relative w-full rounded-sm overflow-hidden border border-base-content/15 bg-black shadow-2xl group">
+      <div className="relative w-full rounded-sm overflow-hidden border border-base-content/10 bg-black/90 shadow-xs group">
         <img
           src={activeData.panorama}
           alt={activeData.title}
@@ -199,21 +204,21 @@ export default function SpatialHeatmapViewer({ _tourId }) {
         />
 
         {/* Floating Controls Overlay */}
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-3 p-3 rounded-sm bg-black/75 backdrop-blur-md border border-white/20 text-white text-xs font-extrabold">
-          <FontAwesomeIcon icon={faCompass} className="text-emerald-400" />
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2.5 p-2.5 px-3 rounded-sm bg-base-100/90 backdrop-blur-md border border-base-content/10 text-base-content text-xs font-semibold shadow-xs">
+          <FontAwesomeIcon icon={faCompass} className="text-primary" />
           <span>{activeData.title}</span>
-          <span className="px-2 py-0.5 rounded-sm bg-rose-500 text-white text-[10px] font-black uppercase">
-            {activeData.heatspots.length} Active Hotspots
+          <span className="px-2 py-0.5 rounded-sm bg-primary/10 text-primary text-[10px] font-bold uppercase">
+            {activeData.heatspots.length} Focus Points
           </span>
         </div>
 
         {/* Heatmap Customization Sliders */}
-        <div className="absolute bottom-4 right-4 z-10 p-3.5 rounded-sm bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs space-y-2 w-64">
-          <div className="flex items-center justify-between font-bold">
-            <span className="flex items-center gap-1">
-              <FontAwesomeIcon icon={faSliders} /> Heat Radius
+        <div className="absolute bottom-4 right-4 z-10 p-3.5 rounded-sm bg-base-100/90 backdrop-blur-md border border-base-content/10 text-base-content text-xs space-y-2.5 w-60 shadow-lg">
+          <div className="flex items-center justify-between font-medium">
+            <span className="flex items-center gap-1.5 text-base-content/80 text-[11px]">
+              <FontAwesomeIcon icon={faSliders} className="text-base-content/60" /> Radius
             </span>
-            <span>{heatRadius}px</span>
+            <span className="font-semibold text-xs">{heatRadius}px</span>
           </div>
           <input
             type="range"
@@ -221,12 +226,12 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             max="90"
             value={heatRadius}
             onChange={(e) => setHeatRadius(Number(e.target.value))}
-            className="w-full accent-rose-500 cursor-pointer"
+            className="w-full accent-primary cursor-pointer h-1.5 bg-base-300 rounded-sm"
           />
 
-          <div className="flex items-center justify-between font-bold pt-1">
-            <span>Heat Intensity</span>
-            <span>{Math.round(heatOpacity * 100)}%</span>
+          <div className="flex items-center justify-between font-medium pt-0.5">
+            <span className="text-base-content/80 text-[11px]">Intensity</span>
+            <span className="font-semibold text-xs">{Math.round(heatOpacity * 100)}%</span>
           </div>
           <input
             type="range"
@@ -235,53 +240,55 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             step="0.05"
             value={heatOpacity}
             onChange={(e) => setHeatOpacity(Number(e.target.value))}
-            className="w-full accent-amber-500 cursor-pointer"
+            className="w-full accent-primary cursor-pointer h-1.5 bg-base-300 rounded-sm"
           />
         </div>
       </div>
 
-      {/* RECHARTS REVIEWS & ANALYTICS VISUALIZATIONS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* RECHARTS VISUALIZATIONS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Recharts Radar Chart: 360° Directional Gaze Angle Density */}
-        <div className="p-6 rounded-sm bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
-                <FontAwesomeIcon icon={faChartPie} className="text-primary" />
-                360° GAZE DIRECTIONAL RADAR
-              </h3>
-              <p className="text-xs opacity-70">
-                Visitor orientation gaze density across 360° pitch/yaw compass directions.
-              </p>
-            </div>
+        {/* Recharts Radar Chart: Directional Gaze Density */}
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs">
+          <div className="mb-4">
+            <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+              <span className="w-6 h-6 rounded-sm bg-primary/10 text-primary flex items-center justify-center text-xs shrink-0">
+                <FontAwesomeIcon icon={faChartPie} />
+              </span>
+              Directional Gaze Distribution
+            </h3>
+            <p className="text-xs text-base-content/60 mt-0.5">
+              Visitor orientation across 360° pitch and yaw compass directions.
+            </p>
           </div>
 
-          <div className="h-72 w-full">
+          <div className="h-68 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={activeData.gazeRadar}>
-                <PolarGrid stroke="var(--color-base-content, #666)" strokeOpacity={0.2} />
+                <PolarGrid stroke="var(--color-base-content, #64748b)" strokeOpacity={0.12} />
                 <PolarAngleAxis
                   dataKey="direction"
-                  tick={{ fill: "currentColor", fontSize: 11, fontWeight: "bold" }}
+                  tick={{ fill: "currentColor", fontSize: 10, fontWeight: "600", opacity: 0.8 }}
                 />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} strokeOpacity={0.2} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} strokeOpacity={0.12} />
                 <Radar
                   name="Gaze Density"
                   dataKey="gaze"
-                  stroke="#ef4444"
-                  fill="#ef4444"
-                  fillOpacity={0.5}
+                  stroke="#2563eb"
+                  fill="#2563eb"
+                  fillOpacity={0.25}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "rgba(15, 23, 42, 0.9)",
-                    borderColor: "rgba(255, 255, 255, 0.2)",
-                    borderRadius: "4px",
-                    color: "#ffffff",
+                    backgroundColor: "var(--color-base-100, #ffffff)",
+                    borderColor: "var(--app-border, rgba(163, 163, 163, 0.2))",
+                    borderRadius: "6px",
+                    color: "var(--color-base-content, #0f172a)",
                     fontSize: "12px",
-                    fontWeight: "bold",
+                    fontWeight: "600",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                   }}
+                  itemStyle={{ color: "var(--color-base-content, #0f172a)" }}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -289,41 +296,44 @@ export default function SpatialHeatmapViewer({ _tourId }) {
         </div>
 
         {/* Recharts Bar Chart: Zone Dwell Time Breakdown */}
-        <div className="p-6 rounded-sm bg-base-200/80 border border-base-content/15 backdrop-blur-md shadow-xs flex flex-col justify-between">
+        <div className="p-6 rounded-sm bg-base-100 border border-base-content/10 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="font-extrabold text-base uppercase tracking-tight flex items-center gap-2">
-                  <FontAwesomeIcon icon={faBullseye} className="text-emerald-500" />
-                  ZONE DWELL TIME DURATION (SECONDS)
-                </h3>
-                <p className="text-xs opacity-70">
-                  Average time visitors spent looking at specific focal zones inside this room.
-                </p>
-              </div>
+            <div className="mb-4">
+              <h3 className="font-bold text-sm text-base-content flex items-center gap-2">
+                <span className="w-6 h-6 rounded-sm bg-sky-500/10 text-sky-600 flex items-center justify-center text-xs shrink-0">
+                  <FontAwesomeIcon icon={faBullseye} />
+                </span>
+                Zone Dwell Duration (Seconds)
+              </h3>
+              <p className="text-xs text-base-content/60 mt-0.5">
+                Average duration visitors engaged with specific zones in this scene.
+              </p>
             </div>
 
-            <div className="h-64 w-full">
+            <div className="h-60 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={activeData.gazeRadar} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                   <XAxis
                     dataKey="direction"
-                    tick={{ fill: "currentColor", fontSize: 10, fontWeight: "bold" }}
+                    tick={{ fill: "currentColor", fontSize: 10, fontWeight: "500", opacity: 0.8 }}
                     interval={0}
                     angle={-15}
                     textAnchor="end"
                   />
-                  <YAxis tick={{ fill: "currentColor", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "currentColor", fontSize: 10, opacity: 0.8 }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "rgba(15, 23, 42, 0.9)",
-                      borderColor: "rgba(255, 255, 255, 0.2)",
-                      borderRadius: "4px",
-                      color: "#ffffff",
+                      backgroundColor: "var(--color-base-100, #ffffff)",
+                      borderColor: "var(--app-border, rgba(163, 163, 163, 0.2))",
+                      borderRadius: "6px",
+                      color: "var(--color-base-content, #0f172a)",
                       fontSize: "12px",
+                      fontWeight: "600",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                     }}
+                    itemStyle={{ color: "var(--color-base-content, #0f172a)" }}
                   />
-                  <Bar dataKey="dwellSec" radius={[2, 2, 0, 0]}>
+                  <Bar dataKey="dwellSec" radius={[3, 3, 0, 0]}>
                     {activeData.gazeRadar.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
@@ -333,9 +343,9 @@ export default function SpatialHeatmapViewer({ _tourId }) {
             </div>
           </div>
 
-          <div className="mt-4 p-4 rounded-sm bg-base-100 border border-base-content/10 text-xs flex items-center justify-between">
-            <span className="font-extrabold">Peak Visitor Interest Zone</span>
-            <span className="px-3 py-1 rounded-sm bg-emerald-500/10 text-emerald-500 font-black uppercase text-[10px]">
+          <div className="mt-4 p-3.5 rounded-sm bg-base-200/40 border border-base-content/10 text-xs flex items-center justify-between">
+            <span className="font-medium text-base-content/70">Peak Visitor Interest Zone</span>
+            <span className="px-2.5 py-1 rounded-sm bg-primary/10 text-primary font-semibold text-[11px]">
               {activeData.focalPoints[0]?.zone || "Main Entrance"}
             </span>
           </div>

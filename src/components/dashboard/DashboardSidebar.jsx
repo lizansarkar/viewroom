@@ -54,6 +54,15 @@ function AnalyticsIcon(props) {
   );
 }
 
+function HeatmapIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
+      <path d="M12 2c1.5 3 4 4.5 4 8a6 6 0 1 1-12 0c0-3.5 2.5-5 4-8 0 2 1 3 2 3s2-1 2-3z" />
+      <circle cx="12" cy="14" r="2" />
+    </svg>
+  );
+}
+
 function UsersIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 shrink-0" {...props}>
@@ -170,6 +179,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
         title: "Analytics",
         items: [
           { id: "analytics", label: "System Analytics", icon: AnalyticsIcon },
+          { id: "gaze_heatmap", label: "Gaze Heatmaps", icon: HeatmapIcon },
         ],
       },
     ],
@@ -191,6 +201,7 @@ export default function DashboardSidebar({ activeTab, setActiveTab, isOpen, setI
         title: "Analytics",
         items: [
           { id: "analytics", label: "Spatial Analytics", icon: AnalyticsIcon },
+          { id: "gaze_heatmap", label: "Gaze Heatmaps", icon: HeatmapIcon },
         ],
       },
     ],

@@ -24,6 +24,7 @@ import {
 import Button from "../reuseable/Button";
 import StudioSceneEditor from "./StudioSceneEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import SpatialHeatmapViewer from "../analytics/SpatialHeatmapViewer";
 import TourSoundModal from "./TourSoundModal";
 import {
   apiGetOwnerStats,
@@ -1341,7 +1342,10 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {/* 4. SPATIAL ANALYTICS ROUTE VIEW (analytics) */}
       {currentRoute === "analytics" && <AnalyticsDashboard />}
 
-      {/* 5. STUDIO SETTINGS (settings) */}
+      {/* 5. GAZE HEATMAPS DEDICATED ROUTE VIEW (gaze_heatmap) */}
+      {currentRoute === "gaze_heatmap" && <SpatialHeatmapViewer />}
+
+      {/* 6. STUDIO SETTINGS (settings) */}
       {currentRoute === "settings" && (
         <div className="p-6 sm:p-8 rounded-sm bg-base-100 border border-base-content/10 space-y-6 max-w-2xl mx-auto shadow-xs">
           <h3 className="font-bold text-lg text-base-content flex items-center gap-2">
