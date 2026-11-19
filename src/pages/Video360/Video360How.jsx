@@ -60,7 +60,7 @@ function Video360How() {
           <div className="mt-8 flex items-center gap-6">
             <Link
               to="/360-virtual-tour"
-              className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
+              className="btn-pill-primary !text-base-100 shadow-sm"
             >
               Start Experience
             </Link>

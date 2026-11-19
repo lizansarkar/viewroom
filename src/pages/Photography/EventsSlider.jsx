@@ -273,7 +273,7 @@ function EventsSlider() {
                   onClick={() => setActiveTab(cat)}
                   className={`px-5 py-2.5 rounded-md text-xs font-extrabold uppercase tracking-wider transition-all duration-300 border ${
                     isActive
-                      ? 'bg-base-content text-base-100 border-base-content shadow-md scale-105'
+                      ? 'bg-base-content !text-base-100 border-base-content shadow-md scale-105'
                       : 'bg-base-200/80 text-base-content/70 border-base-content/20 hover:border-base-content hover:text-base-content'
                   }`}
                   style={{ cursor: 'pointer' }}

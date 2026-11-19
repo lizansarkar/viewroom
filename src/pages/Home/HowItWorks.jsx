@@ -68,15 +68,15 @@ function HowItWorks() {
         <div className="mt-14 sm:mt-16 flex items-center gap-6">
           <Link
             to="/360-virtual-tour"
-            className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
+            className="btn-pill-primary !text-base-100 shadow-sm"
           >
             Start Tour
           </Link>
           <Link
-            to="/products"
-            className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
+            to="/explore"
+            className="inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-base-content hover:opacity-75 transition-opacity"
           >
-            Explore Spaces
+            <span>Explore Spaces</span>
             <svg
               viewBox="0 0 24 24"
               fill="none"

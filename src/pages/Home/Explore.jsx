@@ -113,15 +113,15 @@ function Explore() {
         <div className="flex items-center gap-6">
           <Link
             to="/360-virtual-tour"
-            className="btn rounded-full bg-base-content text-base-100 hover:bg-base-content/90 border-none px-8 font-heading text-sm font-semibold"
+            className="btn-pill-primary !text-base-100 shadow-sm"
           >
             View Tour
           </Link>
           <Link
-            to="/products"
-            className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
+            to="/explore"
+            className="inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-base-content hover:opacity-75 transition-opacity"
           >
-            All Spaces
+            <span>All Spaces</span>
             <IconChevronRight className="h-4 w-4" />
           </Link>
         </div>

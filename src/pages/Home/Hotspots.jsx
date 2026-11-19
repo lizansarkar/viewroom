@@ -156,15 +156,15 @@ function Hotspots() {
             <div className="mt-9 flex items-center gap-6">
               <Link
                 to="/360-virtual-tour"
-                className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90"
+                className="btn-pill-primary !text-base-100 shadow-sm"
               >
                 Enter
               </Link>
               <Link
-                to="/products"
-                className="inline-flex items-center gap-1 font-heading text-sm font-semibold text-base-content hover:opacity-70 transition-opacity"
+                to="/explore"
+                className="inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-base-content hover:opacity-75 transition-opacity"
               >
-                Explore Tours
+                <span>Explore Tours</span>
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -257,7 +257,7 @@ function Hotspots() {
             <div className="flex items-center gap-4 mt-12">
               <Link
                 to="/dashboard"
-                className="btn bg-[var(--color-primary)] text-[var(--color-primary-content)] hover:opacity-90 rounded-full px-8 border-none font-medium text-sm transition-all duration-200 cursor-pointer"
+                className="btn bg-[var(--color-primary)] !text-[var(--color-primary-content)] hover:opacity-90 rounded-full px-8 border-none font-medium text-sm transition-all duration-200 cursor-pointer"
               >
                 Create
               </Link>

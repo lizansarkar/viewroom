@@ -113,7 +113,7 @@ function HomeCategories() {
               onClick={() => setActive(cat)}
               className={`btn btn-sm sm:btn-md rounded-md font-heading text-[11px] sm:text-xs tracking-wide font-semibold px-4 sm:px-5 border transition-colors duration-200 ${
                 isActive
-                  ? "bg-base-content text-base-100 border-base-content hover:bg-base-content hover:text-base-100"
+                  ? "bg-base-content !text-base-100 border-base-content hover:bg-base-content hover:!text-base-100"
                   : "text-base-content border-[var(--app-border)]/40 hover:border-base-content hover:text-base-content"
               }`}
             >

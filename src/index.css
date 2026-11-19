@@ -179,6 +179,45 @@ select {
   transition: all 200ms ease;
 }
 
+/* Fix: Guarantee buttons with bg-base-content always have visible contrast text */
+.btn.bg-base-content,
+.btn-pill-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-base-content) !important;
+  color: var(--color-base-100) !important;
+  border-radius: 9999px;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 2rem;
+  transition: all 200ms ease;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.btn.bg-base-content:hover,
+.btn-pill-primary:hover {
+  background-color: var(--color-base-content) !important;
+  color: var(--color-base-100) !important;
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn.bg-base-content:active,
+.btn-pill-primary:active {
+  transform: translateY(0);
+}
+
+/* Ensure text-base-100 on any .btn overrides DaisyUI's default text color */
+.btn.text-base-100,
+.btn.text-white {
+  color: var(--color-base-100) !important;
+}
+
 .btn-outline {
   background-color: transparent;
   border-color: var(--color-base-content);

@@ -109,7 +109,7 @@ function Video360RecentVideos() {
                   onClick={() => setActive(cat)}
                   className={`btn btn-md rounded-lg font-heading text-xs tracking-wide uppercase font-semibold px-4 border-none transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? "bg-base-content text-base-100 shadow-sm"
+                      ? "bg-base-content !text-base-100 shadow-sm"
                       : "bg-base-200 text-base-content hover:bg-base-300"
                   }`}
                 >

@@ -61,7 +61,7 @@ function Featured() {
             <Link to="/explore">
               <button
                 type="button"
-                className="btn rounded-full bg-base-content text-base-100 border-none px-8 font-heading text-sm font-semibold hover:opacity-90 cursor-pointer"
+                className="btn-pill-primary !text-base-100 shadow-sm cursor-pointer"
               >
                 Enter
               </button>
