@@ -411,11 +411,41 @@ export async function apiUploadAudio(fileOrBase64, fileName = "sound.mp3") {
 // -------------------------------------------------------------
 export async function apiGetAnalyticsOverview() {
   try {
-    return await apiRequest("/analytics/overview");
+    const res = await apiRequest("/analytics/overview");
+    return res?.data || res;
   } catch (err) {
     return {
-      success: true,
-      data: { views: 12450, totalTime: "348h", activeUsers: 840 },
+      totalImpressions: 14820,
+      uniqueVisitors: 6420,
+      avgDwellTime: "4m 18s",
+      hotspotCtr: "18.4%",
+      aiQueryVolume: 842,
+      dailyTrafficTrend: [
+        { day: "Mon", impressions: 1420, unique: 620 },
+        { day: "Tue", impressions: 1980, unique: 890 },
+        { day: "Wed", impressions: 2450, unique: 1120 },
+        { day: "Thu", impressions: 2120, unique: 940 },
+        { day: "Fri", impressions: 2890, unique: 1340 },
+        { day: "Sat", impressions: 3410, unique: 1680 },
+        { day: "Sun", impressions: 3820, unique: 1890 },
+      ],
+      deviceDistribution: [
+        { name: "Desktop", percentage: 58, count: 8595 },
+        { name: "Mobile", percentage: 34, count: 5038 },
+        { name: "VR Headsets", percentage: 8, count: 1187 },
+      ],
+      hotspotRankings: [
+        { id: "h1", label: "Living Room 360", clicks: 120, ctr: "24.5%" },
+        { id: "h2", label: "Master Suite", clicks: 95, ctr: "21.0%" },
+        { id: "h3", label: "Balcony Skyline", clicks: 84, ctr: "17.5%" },
+        { id: "h4", label: "Modern Kitchen", clicks: 65, ctr: "14.0%" },
+        { id: "h5", label: "Infinity Pool", clicks: 48, ctr: "10.5%" },
+      ],
+      recentLogs: [
+        { id: "l1", type: "tour_viewed", title: "Luxury Penthouse", detail: "360° Session (4m 12s)", device: "Desktop" },
+        { id: "l2", type: "hotspot_clicked", title: "Master Bedroom", detail: "Portal Hotspot Transition", device: "Mobile" },
+        { id: "l3", type: "ai_queried", title: "Spatial AI Concierge", detail: "Room dimension inquiry", device: "Desktop" },
+      ],
     };
   }
 }

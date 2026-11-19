@@ -54,7 +54,7 @@ function Benefits() {
   };
 
   return (
-    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-16 sm:py-24 px-6 sm:px-12 lg:px-20">
+    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] transition-colors duration-250 py-14 sm:py-20 px-4 sm:px-8 lg:px-16">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
         {/* LEFT COLUMN: Text Content & Benefits */}

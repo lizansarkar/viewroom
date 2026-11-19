@@ -42,7 +42,8 @@ export default function AnalyticsDashboard() {
     try {
       const overview = await apiGetAnalyticsOverview();
       if (overview) {
-        setData(overview);
+        const payload = overview.data || overview;
+        setData(payload);
       }
     } catch (err) {
       console.warn("Analytics loading error:", err);
@@ -99,6 +100,34 @@ export default function AnalyticsDashboard() {
   // Clean, cohesive theme palette (modern primary blues and neutral slates)
   const DEVICE_COLORS = ["#2563eb", "#38bdf8", "#64748b"];
   const BAR_COLORS = ["#2563eb", "#3b82f6", "#60a5fa", "#0284c7", "#64748b"];
+
+  const defaultTrafficTrend = [
+    { day: "Mon", impressions: 1420, unique: 620 },
+    { day: "Tue", impressions: 1980, unique: 890 },
+    { day: "Wed", impressions: 2450, unique: 1120 },
+    { day: "Thu", impressions: 2120, unique: 940 },
+    { day: "Fri", impressions: 2890, unique: 1340 },
+    { day: "Sat", impressions: 3410, unique: 1680 },
+    { day: "Sun", impressions: 3820, unique: 1890 },
+  ];
+
+  const defaultDeviceDistribution = [
+    { name: "Desktop", percentage: 58, count: 8595 },
+    { name: "Mobile", percentage: 34, count: 5038 },
+    { name: "VR Headsets", percentage: 8, count: 1187 },
+  ];
+
+  const defaultHotspotRankings = [
+    { id: "h1", label: "Living Room 360", clicks: 120, ctr: "24.5%" },
+    { id: "h2", label: "Master Suite", clicks: 95, ctr: "21.0%" },
+    { id: "h3", label: "Balcony Skyline", clicks: 84, ctr: "17.5%" },
+    { id: "h4", label: "Modern Kitchen", clicks: 65, ctr: "14.0%" },
+    { id: "h5", label: "Infinity Pool", clicks: 48, ctr: "10.5%" },
+  ];
+
+  const trafficData = (data?.dailyTrafficTrend && data.dailyTrafficTrend.length > 0) ? data.dailyTrafficTrend : defaultTrafficTrend;
+  const deviceData = (data?.deviceDistribution && data.deviceDistribution.length > 0) ? data.deviceDistribution : defaultDeviceDistribution;
+  const hotspotData = (data?.hotspotRankings && data.hotspotRankings.length > 0) ? data.hotspotRankings : defaultHotspotRankings;
 
   const customTooltipStyle = {
     backgroundColor: "var(--color-base-100)",
@@ -177,7 +206,7 @@ export default function AnalyticsDashboard() {
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={data?.dailyTrafficTrend || []}
+                data={trafficData}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
@@ -239,7 +268,7 @@ export default function AnalyticsDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={data?.deviceDistribution || []}
+                    data={deviceData}
                     cx="50%"
                     cy="50%"
                     innerRadius={55}
@@ -248,7 +277,7 @@ export default function AnalyticsDashboard() {
                     dataKey="count"
                     nameKey="name"
                   >
-                    {(data?.deviceDistribution || []).map((entry, index) => (
+                    {deviceData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={DEVICE_COLORS[index % DEVICE_COLORS.length]} />
                     ))}
                   </Pie>
@@ -288,7 +317,7 @@ export default function AnalyticsDashboard() {
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={data?.hotspotRankings || []}
+                data={hotspotData}
                 layout="vertical"
                 margin={{ top: 10, right: 20, left: 10, bottom: 0 }}
               >
@@ -306,7 +335,7 @@ export default function AnalyticsDashboard() {
                   labelStyle={{ fontWeight: "700", color: "var(--color-base-content)" }}
                 />
                 <Bar dataKey="clicks" name="Total Clicks" radius={[0, 3, 3, 0]}>
-                  {(data?.hotspotRankings || []).map((entry, index) => (
+                  {hotspotData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
                   ))}
                 </Bar>

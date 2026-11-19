@@ -4,7 +4,7 @@ import Button from '../../components/reuseable/Button';
 
 function Cta() {
   return (
-    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-20 px-6 sm:px-12 transition-colors duration-250">
+    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-16 sm:py-20 px-4 sm:px-8 transition-colors duration-250">
       <div className="max-w-4xl mx-auto text-center flex flex-col items-center justify-center gap-0 md:gap-5">
         
         {/* Main Heading */}

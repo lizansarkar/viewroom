@@ -27,7 +27,7 @@ export default function TourThumbnailCarousel({
             scrollThumbnails("left");
           }}
           onMouseEnter={() => uiSound.playHoverClick()}
-          className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 mr-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-xs sm:text-sm shrink-0 mr-1.5 sm:mr-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
         >
           <FontAwesomeIcon icon={faChevronLeft} />
         </button>
@@ -87,7 +87,7 @@ export default function TourThumbnailCarousel({
             scrollThumbnails("right");
           }}
           onMouseEnter={() => uiSound.playHoverClick()}
-          className="w-9 h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-sm shrink-0 ml-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-black/75 hover:bg-black/95 text-white border border-white/20 flex items-center justify-center text-xs sm:text-sm shrink-0 ml-1.5 sm:ml-2 cursor-pointer shadow-xl transition-colors backdrop-blur-md"
         >
           <FontAwesomeIcon icon={faChevronRight} />
         </button>

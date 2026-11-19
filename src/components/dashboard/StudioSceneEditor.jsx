@@ -165,7 +165,7 @@ export default function StudioSceneEditor({
     });
   };
 
-  // 1. Set Opening View (MadeSnappy Step 1)
+  // 1. Set Opening View (ViewRoom Step 1)
   const handleSaveOpeningView = async () => {
     const updatedScenes = scenes.map((s, idx) => {
       if (idx !== activeSceneIndex) return s;
@@ -208,7 +208,7 @@ export default function StudioSceneEditor({
     }
   };
 
-  // 2. Room Title Change (MadeSnappy Step 2)
+  // 2. Room Title Change (ViewRoom Step 2)
   const handleRoomNameChange = (newName) => {
     const updatedScenes = scenes.map((s, idx) => {
       if (idx !== activeSceneIndex) return s;
@@ -226,7 +226,7 @@ export default function StudioSceneEditor({
     }
   };
 
-  // 3. Add Hotspot Link (MadeSnappy Step 3)
+  // 3. Add Hotspot Link (ViewRoom Step 3)
   const handleAddHotspot = async (e) => {
     e.preventDefault();
     if (!selectedTargetSceneId) return;
@@ -496,11 +496,11 @@ export default function StudioSceneEditor({
           </div>
         </div>
 
-        {/* RIGHT COLUMN: MADESNAPPY 3-STEP SETUP PANEL */}
+        {/* RIGHT COLUMN: VIEWROOM 3-STEP SETUP PANEL */}
         <div className="w-full lg:w-96 xl:w-[420px] bg-base-100 border-l border-base-content/10 flex flex-col justify-between overflow-y-auto shrink-0 shadow-lg">
           <div className="p-5 sm:p-6 space-y-5">
             
-            {/* STEP 1: OPENING VIEW (MadeSnappy Image 2) */}
+            {/* STEP 1: OPENING VIEW */}
             <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
@@ -550,7 +550,7 @@ export default function StudioSceneEditor({
               )}
             </div>
 
-            {/* STEP 2: ROOM TITLE (MadeSnappy Image 2) */}
+            {/* STEP 2: ROOM TITLE */}
             <div className="p-4 rounded-sm bg-base-200/50 border border-base-content/10 space-y-3">
               <span className="text-[11px] font-extrabold uppercase tracking-wider text-base-content/70 flex items-center gap-1.5">
                 <span className="w-5 h-5 rounded-sm bg-base-content/10 text-base-content text-[11px] flex items-center justify-center font-black">

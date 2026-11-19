@@ -222,7 +222,7 @@ function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-base-100/95 backdrop-blur-md border-b border-[var(--app-border)]/15">
-        <nav className="w-full max-w-7xl mx-auto h-[72px] flex items-center justify-between">
+        <nav className="w-full max-w-7xl mx-auto h-[72px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
           <Logo size="md" />
 

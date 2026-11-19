@@ -24,7 +24,6 @@ import {
 import Button from "../reuseable/Button";
 import StudioSceneEditor from "./StudioSceneEditor";
 import AnalyticsDashboard from "./AnalyticsDashboard";
-import SpatialHeatmapViewer from "../analytics/SpatialHeatmapViewer";
 import TourSoundModal from "./TourSoundModal";
 import {
   apiGetOwnerStats,
@@ -385,7 +384,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
     setIsProcessingUploads(false);
   };
 
-  // Move Room Scene Up / Down & Drag-and-Drop (MadeSnappy Image 4)
+  // Move Room Scene Up / Down & Drag-and-Drop (ViewRoom Workflow)
   const [draggedSceneIndex, setDraggedSceneIndex] = useState(null);
 
   const handleDragStart = (e, index) => {
@@ -592,7 +591,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
   return (
     <div className="space-y-8 text-base-content max-w-7xl mx-auto w-full select-none">
       
-      {/* 1. OVERVIEW & TOURS ROUTE (MadeSnappy Image 3 Enterprise Property Table) */}
+      {/* 1. OVERVIEW & TOURS ROUTE (ViewRoom Enterprise Property Table) */}
       {(currentRoute === "creator_overview" || currentRoute === "overview" || currentRoute === "tours") && (
         <div className="space-y-6">
           {/* Top Welcome / Header Banner */}
@@ -685,7 +684,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
             </div>
           </div>
 
-          {/* PROPERTIES TABLE (MadeSnappy Image 3 Style) */}
+          {/* PROPERTIES TABLE (ViewRoom Style) */}
           <div className="p-5 sm:p-6 rounded-sm bg-base-100 border border-base-content/10 space-y-4 shadow-xs">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
@@ -791,7 +790,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
 
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
-                            {/* Studio Editor (MadeSnappy Split View) */}
+                            {/* Studio Editor (ViewRoom Split View) */}
                             <Button
                               variant="primary"
                               onClick={() => {
@@ -799,7 +798,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
                                 setStudioInitialSceneIndex(0);
                               }}
                               className="!text-xs !py-1.5 !px-3 !rounded-sm gap-1.5 cursor-pointer"
-                              title="Open MadeSnappy 360 Studio Editor (Opening Views & Hotspots)"
+                              title="Open ViewRoom 360 Studio Editor (Opening Views & Hotspots)"
                             >
                               <FontAwesomeIcon icon={faPenToSquare} />
                               <span className="hidden sm:inline">Studio Editor</span>
@@ -861,16 +860,16 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         </div>
       )}
 
-      {/* 2. BATCH UPLOADER & REORDER STUDIO (MadeSnappy Image 1 & 4 Workflow) */}
+      {/* 2. BATCH UPLOADER & REORDER STUDIO (ViewRoom Workflow) */}
       {currentRoute === "uploader" && (
         <div className="p-6 sm:p-8 rounded-sm bg-base-100 border border-base-content/10 space-y-6 max-w-4xl mx-auto shadow-xs">
           
-          {/* Workflow Pipeline Header (MadeSnappy Image 1) */}
+          {/* Workflow Pipeline Header */}
           <div className="border-b border-base-content/10 pb-5 space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-semibold text-base-content/50 uppercase tracking-wider block mb-1">
-                  MadeSnappy 360 Studio Pipeline
+                  ViewRoom 360 Studio Pipeline
                 </span>
                 <h3 className="font-bold text-xl text-base-content flex items-center gap-2">
                   <FontAwesomeIcon icon={faCloudArrowUp} className="text-base-content/60" />
@@ -1342,10 +1341,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
       {/* 4. SPATIAL ANALYTICS ROUTE VIEW (analytics) */}
       {currentRoute === "analytics" && <AnalyticsDashboard />}
 
-      {/* 5. GAZE HEATMAPS DEDICATED ROUTE VIEW (gaze_heatmap) */}
-      {currentRoute === "gaze_heatmap" && <SpatialHeatmapViewer />}
-
-      {/* 6. STUDIO SETTINGS (settings) */}
+      {/* 5. STUDIO SETTINGS (settings) */}
       {currentRoute === "settings" && (
         <div className="p-6 sm:p-8 rounded-sm bg-base-100 border border-base-content/10 space-y-6 max-w-2xl mx-auto shadow-xs">
           <h3 className="font-bold text-lg text-base-content flex items-center gap-2">
@@ -1381,7 +1377,7 @@ export default function CreatorDashboard({ user, activeTab, setActiveTab }) {
         </div>
       )}
 
-      {/* MADESNAPPY 360 STUDIO SCENE EDITOR MODAL / SPLIT SCREEN */}
+      {/* VIEWROOM 360 STUDIO SCENE EDITOR MODAL / SPLIT SCREEN */}
       {studioEditingTour && (
         <StudioSceneEditor
           tour={studioEditingTour}

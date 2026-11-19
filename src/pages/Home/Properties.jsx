@@ -109,7 +109,7 @@ function Properties() {
   }, []);
 
   return (
-    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-16 px-6 sm:px-12 lg:px-20 transition-colors duration-250">
+    <section className="w-full bg-[var(--app-background)] text-[var(--app-text-primary)] py-14 sm:py-16 px-4 sm:px-8 lg:px-16 transition-colors duration-250">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}

@@ -89,7 +89,7 @@ export const createFloorPuckMarkerHtml = (label, rawIconType = "arrow", rotation
           <div class="relative w-7 h-8 flex items-center justify-center pointer-events-none">
             <!-- Hollow White Door Frame on Left (Revealed on Open) -->
             <div class="absolute left-[3px] top-[1px] w-[19px] h-[30px] border-[2.2px] border-white rounded-[1.5px] box-border"></div>
-            <!-- Solid White Door Leaf (Snappy Smooth Swing) -->
+            <!-- Solid White Door Leaf (Smooth Swing) -->
             <div class="vr-door-leaf absolute left-[3px] top-[1px] w-[19px] h-[30px] bg-white rounded-[1.5px] box-border shadow-xs">
               <!-- Dark Doorknob Dot -->
               <div class="absolute left-[3px] top-1/2 -translate-y-1/2 w-[2.8px] h-[2.8px] bg-neutral-900 rounded-full"></div>
